@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Akun · LANJUT</title>
+<meta name="description" content="Profil akun kamu di LANJUT.">
+<meta name="theme-color" content="#456A8C">
+<meta name="lanjut-api-base" content="/api/v1">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/img/mascot-tile-primary.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<script src="assets/app.js" defer></script>
+<script src="assets/api.js" defer></script>
+</head>
+
+<!-- Halaman cabang seperti arsip*/latihan*/bank-soal: navigasi bawah sama,
+     tab Beranda ditandai aktif (README "Navigasi bawah — empat ikon").
+
+     Dua keadaan, TIDAK PERNAH dipaksa lewat redirect (SDD §6.5 / B-K1):
+     "tamu" tampil bila belum masuk ATAU sesi sudah tidak sah (401 dari
+     server sudah menghapus token di assets/api.js sebelum blok ini dibaca).
+     "masuk" tampil bila LANJUT.api.isLoggedIn() benar DAN LANJUT.api.profil()
+     berhasil. Ini SENGAJA berbeda dari ringkasan tugas B8 ("401 → redirect
+     masuk.html") — lihat laporan ui-engineer ke PM untuk alasannya. -->
+<body data-peran="akun">
+<a class="lewati" href="#isi">Lewati ke konten</a>
+
+<div class="app">
+
+  <header class="appbar">
+    <img class="appbar__mark" src="assets/img/mascot-tile-primary.png" alt="" width="32" height="32">
+    <p class="appbar__wordmark"><img src="assets/img/lanjut-wordmark-badge.png" alt="LANJUT"></p>
+  </header>
+
+  <div class="pagebar">
+    <a class="icon-btn" href="beranda.html" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></a>
+    <h1>Akun</h1>
+  </div>
+
+  <main class="layar" id="isi">
+    <div class="layar__isi layar__isi--rapat">
+
+      <!-- Galat jaringan/server saat memuat profil (pola sama seperti
+           halaman lain: div hidden, app.js hanya mengubah atributnya). -->
+      <div class="peringatan" role="note" hidden data-keadaan="galat">
+        <span class="peringatan__ikon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></svg>
+        </span>
+        <div class="peringatan__isi">
+          <p>Sedang tidak tersambung. Coba lagi sebentar lagi.</p>
+        </div>
+      </div>
+
+      <!-- ============ Keadaan: sudah masuk ============ -->
+      <section data-keadaan="masuk" hidden aria-live="polite">
+        <div class="kartu">
+          <p class="eyebrow">Masuk sebagai</p>
+          <p style="font:var(--text-h3);margin-top:var(--space-1)" data-isi="nama_pengguna">—</p>
+
+          <dl class="tumpuk" style="gap:var(--space-3);margin-top:var(--space-4)">
+            <div class="baris-nilai">
+              <dt class="caption">Email</dt>
+              <dd data-isi="email">—</dd>
+            </div>
+            <div class="baris-nilai">
+              <dt class="caption">Kelas</dt>
+              <dd data-isi="kelas">—</dd>
+            </div>
+            <div class="baris-nilai">
+              <dt class="caption">Prodi impian</dt>
+              <dd data-isi="prodi">—</dd>
+            </div>
+          </dl>
+        </div>
+
+        <p class="penafian" style="margin-top:var(--space-3)">
+          Keluar akan menghapus catatan di perangkat ini juga, bukan cuma di
+          akun. Catatan yang sudah kamu simpan ke akun tetap ada.
+        </p>
+
+        <button type="button" class="btn btn--ghost btn--lg btn--penuh"
+                style="margin-top:var(--space-3)" data-aksi="keluar">
+          <span data-keadaan="idle">Keluar</span>
+          <span data-keadaan="proses" hidden>Mengeluarkan&hellip;</span>
+        </button>
+      </section>
+
+      <!-- ============ Keadaan: tamu / sesi tidak sah ============
+           Layar kosong yang ditulis, bukan halaman putih atau redirect
+           paksa — konsisten dengan aturan layar kosong di seluruh app ini. -->
+      <section class="kosong" data-keadaan="tamu" aria-live="polite">
+        <img src="assets/img/mascot-blue.png" alt="" width="96" height="96">
+        <h2>Belum masuk akun.</h2>
+        <p>Kamu tetap bisa memakai LANJUT tanpa akun. Buat akun untuk membawa
+           catatanmu kalau ganti HP.</p>
+        <div class="tumpuk" style="gap:var(--space-2);width:100%;max-width:280px;margin-top:var(--space-2)">
+          <a class="btn btn--lg btn--penuh" href="daftar.html">Buat akun</a>
+          <a class="btn btn--ghost btn--penuh" href="masuk.html">Masuk</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- NAVIGASI BAWAH — empat ikon, tidak pernah lebih.
+       akun.html adalah halaman cabang: memakai nav yang sama, Beranda
+       ditandai sebagai tab aktif (sama seperti alumni.html, arsip*.html). -->
+  <nav class="tabbar" aria-label="Navigasi utama">
+    <a href="beranda.html" aria-current="page">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></span>
+      Beranda
+    </a>
+    <a href="khusus-smk.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9 12 4l10 5-10 5-10-5Z"/><path d="M6 11.5V16c0 1.1 2.7 2 6 2s6-.9 6-2v-4.5"/></svg></span>
+      Khusus SMK
+    </a>
+    <a href="pilih-mapel.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg></span>
+      Pilih Mapel
+    </a>
+    <a href="checklist.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg></span>
+      Checklist
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Buat Akun · LANJUT</title>
+<meta name="description" content="Simpan kemajuanmu supaya tidak hilang saat ganti HP.">
+<meta name="theme-color" content="#456A8C">
+<!-- TODO(PM/DevOps): isi domain API produksi di sini sebelum rilis, atau
+     hapus baris ini kalau server nanti menyajikan app/ dari origin yang sama
+     (lihat catatan alamatDasar() di assets/api.js). -->
+<meta name="lanjut-api-base" content="/api/v1">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/img/mascot-tile-primary.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<script src="assets/app.js" defer></script>
+<script src="assets/api.js" defer></script>
+</head>
+
+<!-- Halaman pra-akun, sejenis dengan onboarding.html: tidak ada navigasi
+     bawah (tools/check.js §4 mendaftarkannya sebagai pengecualian bersama
+     onboarding.html), karena tab Beranda/Checklist/dst. belum relevan
+     sebelum orang punya akun.
+
+     Kontrak dengan assets/app.js: fungsi pasangDaftar() mencari
+     [data-form="daftar"], mengisi <select id="prodi_impian"> lewat
+     LANJUT.api.ambilProdi(), dan menangani submit lewat LANJUT.api.daftar(). -->
+<body data-peran="daftar">
+<a class="lewati" href="#isi">Lewati ke konten</a>
+
+<div class="app">
+
+  <header class="appbar">
+    <img class="appbar__mark" src="assets/img/mascot-tile-primary.png" alt="" width="32" height="32">
+    <p class="appbar__wordmark"><img src="assets/img/lanjut-wordmark-badge.png" alt="LANJUT"></p>
+  </header>
+
+  <main class="layar" id="isi">
+    <div class="layar__isi">
+
+      <div class="kepala">
+        <h1>Buat akun</h1>
+        <p>Simpan kemajuanmu supaya tidak hilang saat ganti HP.</p>
+      </div>
+
+      <!-- Muncul hanya kalau ada catatan lokal (profil/checklist) yang bisa
+           dibawa ke akun baru — SDD §6.3 Alur B. Klaim data tamu adalah
+           pekerjaan terpisah (endpoint /api/v1/sinkron/klaim), BELUM
+           disambungkan di tiket ini; kartu ini murni informatif. -->
+      <p class="kartu kartu--soft" style="font:var(--text-body-small);color:var(--ink-700)">
+        Yang sudah kamu isi di perangkat ini (kelas, prodi, checklist) tetap
+        tersimpan di sini. Menyambungkannya ke akun ini menyusul.
+      </p>
+
+      <form class="tumpuk" style="gap:var(--space-5)" data-form="daftar">
+
+        <div class="field">
+          <label class="field__label" for="nama_pengguna">Nama pengguna</label>
+          <input class="input" id="nama_pengguna" name="nama_pengguna" type="text"
+                 autocomplete="username" required minlength="3" maxlength="32"
+                 pattern="[a-zA-Z0-9._]{3,32}" placeholder="mis. budi.smk12">
+          <p class="field__hint">3–32 karakter: huruf, angka, titik, atau garis bawah.</p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="email">Email <span class="muted">(boleh dikosongkan)</span></label>
+          <input class="input" id="email" name="email" type="email" autocomplete="email"
+                 placeholder="nama@contoh.com">
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="kata_sandi">Kata sandi</label>
+          <input class="input" id="kata_sandi" name="kata_sandi" type="password"
+                 autocomplete="new-password" required minlength="8" placeholder="Minimal 8 karakter">
+          <p class="field__hint">Minimal 8 karakter.</p>
+        </div>
+
+        <!-- Sama seperti onboarding.html: "belum" adalah jawaban sah, bukan
+             kekosongan (PRD F3). Opsi prodi asli disisipkan oleh
+             pasangDaftar() lewat LANJUT.api.ambilProdi(); opsi ini yang
+             tampil dulu supaya formulir tidak kosong sebelum data datang. -->
+        <div class="field">
+          <label class="field__label" for="prodi_impian">Prodi impian</label>
+          <select class="select" id="prodi_impian" name="prodi_impian" required>
+            <option value="" disabled selected>Pilih prodi</option>
+            <option value="belum">Belum, aku belum tahu</option>
+          </select>
+          <p class="field__hint">Boleh dijawab &ldquo;belum&rdquo;.</p>
+        </div>
+
+        <!-- Galat umum (kredensial dipakai, validasi server, jaringan, dst).
+             Diisi teksnya oleh pasangDaftar() lewat LANJUT.api.pesanUntuk() —
+             lihat catatan di assets/api.js soal kalimat ini belum ada di
+             salinan-teks-lanjut.md. -->
+        <p class="field__error" role="alert" data-isi="galat-daftar" hidden></p>
+
+        <button type="submit" class="btn btn--lg btn--penuh" data-tombol="submit">
+          <span data-keadaan="idle">Daftar</span>
+          <span data-keadaan="proses" hidden>Mendaftarkan&hellip;</span>
+        </button>
+
+        <p style="text-align:center">
+          Sudah punya akun? <a href="masuk.html">Masuk</a>
+        </p>
+      </form>
+
+    </div>
+  </main>
+
+  <noscript>
+    <div style="padding:var(--gutter-screen)">
+      <a class="btn btn--secondary btn--penuh" href="beranda.html">Lewati, lanjut sebagai tamu</a>
+    </div>
+  </noscript>
+
+</div>
+
+</body>
+</html>
