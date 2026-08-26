@@ -69,7 +69,7 @@ a:hover{color:var(--text-link-hover)}
 @media (min-width:520px){
   body{background:var(--ink-050);display:flex;justify-content:center;padding:var(--space-6) 0}
   .app{min-height:auto;height:min(760px,calc(100dvh - var(--space-12)));
-    border-radius:var(--radius-xl);box-shadow:var(--shadow-4);overflow:hidden}
+    border-radius:var(--radius-xl);box-shadow:var(--shadow-4);overflow-y:auto;overflow-x:hidden}
 }
 
 /* Layar penuh gradasi (splash & onboarding): tanpa app bar dan tab bar. */
@@ -145,7 +145,7 @@ a:hover{color:var(--text-link-hover)}
   background:var(--white);border-top:1px solid var(--border-hairline);
   padding:var(--space-2) var(--space-2) var(--space-3);
   padding-bottom:calc(var(--space-3) + env(safe-area-inset-bottom,0px));
-  flex-shrink:0;position:fixed;bottom:0;left:0;right:0;max-width:420px;margin-inline:auto;z-index:10;
+  flex-shrink:0;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;z-index:10;
 }
 .tabbar a{
   display:flex;flex-direction:column;align-items:center;gap:var(--space-1);
