@@ -66,10 +66,11 @@ a:hover{color:var(--text-link-hover)}
   overflow-x:hidden;
   padding-bottom:calc(60px + var(--space-3) + env(safe-area-inset-bottom,0px));
 }
-@media (min-width:520px){
+/* Desktop/laptop TRUE (punya hover capability) — bukan mobile inspect mode */
+@media (hover:hover) and (min-width:520px){
   body{background:var(--ink-050);display:flex;justify-content:center;padding:var(--space-6) 0}
   .app{min-height:auto;height:min(760px,calc(100dvh - var(--space-12)));
-    border-radius:var(--radius-xl);box-shadow:var(--shadow-4);overflow-y:auto;overflow-x:hidden}
+    border-radius:var(--radius-xl);box-shadow:var(--shadow-4)}
 }
 
 /* Layar penuh gradasi (splash & onboarding): tanpa app bar dan tab bar. */
