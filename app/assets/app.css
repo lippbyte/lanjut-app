@@ -64,6 +64,7 @@ a:hover{color:var(--text-link-hover)}
   flex-direction:column;
   position:relative;
   overflow-x:hidden;
+  padding-bottom:calc(60px + var(--space-3) + env(safe-area-inset-bottom,0px));
 }
 @media (min-width:520px){
   body{background:var(--ink-050);display:flex;justify-content:center;padding:var(--space-6) 0}
@@ -144,7 +145,7 @@ a:hover{color:var(--text-link-hover)}
   background:var(--white);border-top:1px solid var(--border-hairline);
   padding:var(--space-2) var(--space-2) var(--space-3);
   padding-bottom:calc(var(--space-3) + env(safe-area-inset-bottom,0px));
-  flex-shrink:0;position:sticky;bottom:0;z-index:10;
+  flex-shrink:0;position:fixed;bottom:0;left:0;right:0;max-width:420px;margin-inline:auto;z-index:10;
 }
 .tabbar a{
   display:flex;flex-direction:column;align-items:center;gap:var(--space-1);
