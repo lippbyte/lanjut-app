@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Khusus SMK · LANJUT</title>
+<meta name="description" content="Hal-hal yang memang beda buat kita.">
+<meta name="theme-color" content="#456A8C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="assets/img/mascot-tile-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<script src="assets/app.js" defer></script>
+</head>
+
+<body data-peran="khusus-smk">
+<a class="lewati" href="#isi">Lewati ke konten</a>
+
+<div class="app">
+
+  <header class="appbar">
+    <img class="appbar__mark" src="assets/img/mascot-tile-primary.png" alt="" width="32" height="32">
+    <p class="appbar__wordmark"><img src="assets/img/lanjut-wordmark-badge.png" alt="LANJUT"></p>
+    <a class="appbar__profil" href="onboarding.html" aria-label="Profil kamu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+    </a>
+  </header>
+
+  <main class="layar" id="isi">
+    <div class="layar__isi layar__isi--rapat">
+
+      <div class="kepala">
+        <h1>Khusus SMK</h1>
+        <p>Hal-hal yang memang beda buat kita.</p>
+      </div>
+
+      <!-- Pembuka halaman (salinan teks §4.2). Bingkainya informasi yang
+           tersebar, bukan sekolah yang lalai — jangan diubah nadanya. -->
+      <p style="color:var(--ink-700)">
+        Sebagian aturan seleksi menganggap semua pendaftar berasal dari SMA.
+        Halaman ini merangkum bagian yang tidak berlaku sama untuk kita — dan
+        apa yang bisa dilakukan.
+      </p>
+
+      <!-- Keadaan galat pemuatan data (salinan teks §6). Mulai hidden dan
+           tetap hidden di sumber; app.js cuma mengubah atributnya ketika
+           data/khusus-smk.json gagal dimuat — misalnya saat halaman dibuka
+           lewat file://. Isi contoh di bawahnya sengaja dibiarkan utuh,
+           jadi halaman ini tidak pernah menjadi layar kosong. -->
+      <div class="peringatan" role="note" hidden data-keadaan="galat">
+        <span class="peringatan__ikon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></svg>
+        </span>
+        <div class="peringatan__isi">
+          <p>Sedang tidak tersambung. Yang sudah pernah dibuka masih bisa dilihat.</p>
+        </div>
+      </div>
+
+      <!-- Tiap butir WAJIB berpasangan: "apa yang berbeda" + "apa yang bisa
+           dilakukan" (PRD F2). Butir yang cuma menjelaskan masalah tanpa
+           langkah lanjutan tidak boleh tayang.
+           Buka-tutup memakai <details>, jadi tetap jalan tanpa JavaScript. -->
+
+      <!-- Wadah butir. Isi di bawah adalah contoh hidup: ia yang tampil
+           tanpa JavaScript atau lewat file://, dan ia juga cetakan yang
+           diklon app.js saat data/khusus-smk.json berhasil dimuat. Jumlah
+           butir selalu ikut datanya, tidak pernah dipaku di kode. -->
+      <div class="tumpuk" style="gap:var(--space-4)" data-daftar="butir">
+        <details class="kartu" open>
+          <summary>
+            <span class="baris__judul" data-isi="judul">Nilai rapor mapel pendukung SNBP</span>
+            <span class="baris__panah">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </span>
+          </summary>
+          <div class="pasangan">
+            <div class="pasangan__blok pasangan__blok--beda">
+              <p class="pasangan__label">Apa yang berbeda</p>
+              <p data-isi="apa_yang_beda">PDSS menilai rata-rata rapor pada mapel pendukung program studi, sementara sebagian mapel itu memang tidak ada di struktur kurikulum SMK.</p>
+            </div>
+            <div class="pasangan__blok pasangan__blok--bisa">
+              <p class="pasangan__label">Apa yang bisa dilakukan</p>
+              <p data-isi="apa_yang_bisa_dilakukan">Cek mapel pengganti yang diakui lewat Penolong Pilih Mapel, lalu konfirmasi ke BK sebelum PDSS diisi.</p>
+            </div>
+            <p class="sumber" data-sumber-isi="snpmb">Perlu dicek ke laman resmi SNPMB · belum diverifikasi</p>
+            <p class="sumber" data-sumber-isi="vokasi" hidden>Perlu dicek ke Direktorat SMK, Kemendikdasmen · belum diverifikasi</p>
+          </div>
+        </details>
+
+        <details class="kartu">
+          <summary>
+            <span class="baris__judul">Sertifikat kompetensi keahlian dan PKL</span>
+            <span class="baris__panah">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </span>
+          </summary>
+          <div class="pasangan">
+            <div class="pasangan__blok pasangan__blok--beda">
+              <p class="pasangan__label">Apa yang berbeda</p>
+              <p>SMK punya Uji Kompetensi Keahlian dan sertifikat industri dari PKL yang tidak dimiliki lulusan SMA.</p>
+            </div>
+            <div class="pasangan__blok pasangan__blok--bisa">
+              <p class="pasangan__label">Apa yang bisa dilakukan</p>
+              <p>Lampirkan sertifikat UKK dan PKL sebagai nilai tambah di jalur seleksi mandiri kampus.</p>
+            </div>
+            <p class="sumber" data-sumber-isi="snpmb" hidden>Perlu dicek ke laman resmi SNPMB · belum diverifikasi</p>
+            <p class="sumber" data-sumber-isi="vokasi">Perlu dicek ke Direktorat SMK, Kemendikdasmen · belum diverifikasi</p>
+          </div>
+        </details>
+
+        <details class="kartu">
+          <summary>
+            <span class="baris__judul">Kuota siswa eligible SNBP</span>
+            <span class="baris__panah">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </span>
+          </summary>
+          <div class="pasangan">
+            <div class="pasangan__blok pasangan__blok--beda">
+              <p class="pasangan__label">Apa yang berbeda</p>
+              <p>Jumlah siswa yang eligible SNBP dihitung dari akreditasi dan jumlah siswa per sekolah, bukan dari nilai tiap siswa saja.</p>
+            </div>
+            <div class="pasangan__blok pasangan__blok--bisa">
+              <p class="pasangan__label">Apa yang bisa dilakukan</p>
+              <p>Tanyakan kuota eligible sekolahmu ke BK di awal semester, sebelum menyusun urutan pilihan.</p>
+            </div>
+            <p class="sumber" data-sumber-isi="snpmb">Perlu dicek ke laman resmi SNPMB · belum diverifikasi</p>
+            <p class="sumber" data-sumber-isi="vokasi" hidden>Perlu dicek ke Direktorat SMK, Kemendikdasmen · belum diverifikasi</p>
+          </div>
+        </details>
+
+        <details class="kartu">
+          <summary>
+            <span class="baris__judul">Jalur vokasi Politeknik (D3/D4)</span>
+            <span class="baris__panah">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </span>
+          </summary>
+          <div class="pasangan">
+            <div class="pasangan__blok pasangan__blok--beda">
+              <p class="pasangan__label">Apa yang berbeda</p>
+              <p>Lulusan SMK punya opsi tambahan lewat jalur vokasi yang menghitung nilai mapel produktif kejuruan secara langsung.</p>
+            </div>
+            <div class="pasangan__blok pasangan__blok--bisa">
+              <p class="pasangan__label">Apa yang bisa dilakukan</p>
+              <p>Bandingkan pilihan D4 Politeknik dengan S1 sebelum menentukan urutan pilihan SNBP.</p>
+            </div>
+            <p class="sumber" data-sumber-isi="snpmb">Perlu dicek ke laman resmi SNPMB · belum diverifikasi</p>
+            <p class="sumber" data-sumber-isi="vokasi" hidden>Perlu dicek ke Direktorat SMK, Kemendikdasmen · belum diverifikasi</p>
+          </div>
+        </details>
+
+        <details class="kartu">
+          <summary>
+            <span class="baris__judul">Mapel pilihan TKA yang tidak diajarkan di SMK</span>
+            <span class="baris__panah">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </span>
+          </summary>
+          <div class="pasangan">
+            <div class="pasangan__blok pasangan__blok--beda">
+              <p class="pasangan__label">Apa yang berbeda</p>
+              <p>Sosiologi, Geografi, dan Antropologi umumnya tidak ada di struktur kurikulum SMK, padahal beberapa prodi memakainya sebagai mapel pendukung.</p>
+            </div>
+            <div class="pasangan__blok pasangan__blok--bisa">
+              <p class="pasangan__label">Apa yang bisa dilakukan</p>
+              <p>Pilih dua mapel pilihan TKA dari yang benar-benar diajarkan di sekolahmu lewat Penolong Pilih Mapel.</p>
+            </div>
+            <p class="sumber" data-sumber-isi="snpmb">Perlu dicek ke laman resmi SNPMB · belum diverifikasi</p>
+            <p class="sumber" data-sumber-isi="vokasi" hidden>Perlu dicek ke Direktorat SMK, Kemendikdasmen · belum diverifikasi</p>
+          </div>
+        </details>
+
+        <details class="kartu">
+          <summary>
+            <span class="baris__judul">Jadwal PKL berdekatan dengan pendaftaran</span>
+            <span class="baris__panah">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </span>
+          </summary>
+          <div class="pasangan">
+            <div class="pasangan__blok pasangan__blok--beda">
+              <p class="pasangan__label">Apa yang berbeda</p>
+              <p>Praktik Kerja Lapangan kelas 12 kadang berjalan bersamaan dengan periode pendaftaran SNBP dan UTBK.</p>
+            </div>
+            <div class="pasangan__blok pasangan__blok--bisa">
+              <p class="pasangan__label">Apa yang bisa dilakukan</p>
+              <p>Koordinasikan jadwal PKL dengan panitia sekolah lebih awal supaya tidak bentrok dengan jadwal ujian atau pendaftaran.</p>
+            </div>
+            <p class="sumber" data-sumber-isi="snpmb" hidden>Perlu dicek ke laman resmi SNPMB · belum diverifikasi</p>
+            <p class="sumber" data-sumber-isi="vokasi">Perlu dicek ke Direktorat SMK, Kemendikdasmen · belum diverifikasi</p>
+          </div>
+        </details>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- NAVIGASI BAWAH — empat ikon, tidak pernah lebih.
+       Halaman cabang (alumni, arsip*, latihan*, bank-soal) memakai nav yang
+       sama tetapi menandai Beranda sebagai tab aktif. -->
+  <nav class="tabbar" aria-label="Navigasi utama">
+    <a href="beranda.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></span>
+      Beranda
+    </a>
+    <a href="khusus-smk.html" aria-current="page">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9 12 4l10 5-10 5-10-5Z"/><path d="M6 11.5V16c0 1.1 2.7 2 6 2s6-.9 6-2v-4.5"/></svg></span>
+      Khusus SMK
+    </a>
+    <a href="pilih-mapel.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg></span>
+      Pilih Mapel
+    </a>
+    <a href="checklist.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg></span>
+      Checklist
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>

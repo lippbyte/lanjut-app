@@ -1,0 +1,48 @@
+---
+title: Activity Diagram — F3 Penolong Pilih Mapel (sudut pandang siswa)
+config:
+  flowchart:
+    nodeSpacing: 30
+    rankSpacing: 35
+    curve: basis
+    useMaxWidth: false
+---
+%% Lingkaran (( )) = mulai/selesai,  persegi [ ] = aksi,  belah ketupat { } = keputusan
+flowchart TD
+
+    MULAI((Mulai))
+    A1["Buka fitur Penolong Pilih Mapel"]
+    D1{"Sudah tahu<br/>prodi tujuan?"}
+    A2["Pilih jalur eksplorasi minat"]
+    A3["Pilih prodi dari daftar"]
+    A4["Sistem menampilkan mapel pendukung<br/>dan status ketersediaannya di SMK"]
+    D2{"Semua mapel<br/>tersedia di SMK?"}
+    A5["Tampilkan catatan dan mapel alternatif"]
+    A6["Sistem menyarankan 2 mapel pilihan TKA"]
+    A7["Tampilkan penafian sumber dan tanggal cek<br/>(rangkuman, bukan keputusan resmi — cek laman SNPMB)"]
+    D3{"Simpan ke<br/>Daftar Periksa?"}
+    A8["Tambahkan item ke Daftar Periksa"]
+    SELESAI((Selesai))
+
+    MULAI --> A1
+    A1 --> D1
+    D1 -- "Ya" --> A3
+    D1 -- "Belum" --> A2
+    A2 --> A3
+    A3 --> A4
+    A4 --> D2
+    D2 -- "Tidak" --> A5
+    A5 --> A6
+    D2 -- "Ya" --> A6
+    A6 --> A7
+    A7 --> D3
+    D3 -- "Ya" --> A8
+    A8 --> SELESAI
+    D3 -- "Tidak" --> SELESAI
+
+    classDef mulaiSelesai fill:#78A4CB,stroke:#456A8C,stroke-width:2px,color:#1A1A1A;
+    classDef aksi fill:#B4E1EB,stroke:#78A4CB,stroke-width:1.5px,color:#1A1A1A;
+    classDef keputusan fill:#95BDD7,stroke:#456A8C,stroke-width:1.5px,color:#1A1A1A;
+    class MULAI,SELESAI mulaiSelesai;
+    class A1,A2,A3,A4,A5,A6,A7,A8 aksi;
+    class D1,D2,D3 keputusan;

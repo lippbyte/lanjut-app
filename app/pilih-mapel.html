@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pilih Mapel · LANJUT</title>
+<meta name="description" content="Prodi tujuan, mapel pendukung, dan mana yang ada di SMK.">
+<meta name="theme-color" content="#456A8C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="assets/img/mascot-tile-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<script src="assets/app.js" defer></script>
+</head>
+
+<body data-peran="pilih-mapel">
+<a class="lewati" href="#isi">Lewati ke konten</a>
+
+<div class="app">
+
+  <header class="appbar">
+    <img class="appbar__mark" src="assets/img/mascot-tile-primary.png" alt="" width="32" height="32">
+    <p class="appbar__wordmark"><img src="assets/img/lanjut-wordmark-badge.png" alt="LANJUT"></p>
+    <a class="appbar__profil" href="onboarding.html" aria-label="Profil kamu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+    </a>
+  </header>
+
+  <main class="layar" id="isi">
+    <div class="layar__isi layar__isi--rapat">
+
+      <div class="kepala">
+        <h1>Penolong Pilih Mapel</h1>
+        <p>Prodi tujuan, mapel pendukung, dan mana yang ada di SMK.</p>
+      </div>
+
+      <!-- Profil dari sesi sebelumnya. app.js mengisi dua slot di bawah dari
+           localStorage; kalau belum ada profil, seluruh kartu disembunyikan.
+           "Ubah profil" di sini mengganti KELAS sekaligus prodi lewat
+           onboarding.html; tombol "Ubah prodi" di langkah hasil (di bawah)
+           cuma mengganti prodi tanpa mengulang pertanyaan kelas. -->
+      <section class="kartu kartu--soft" data-profil-tersimpan hidden aria-live="polite">
+        <p class="eyebrow">Dari jawaban kamu sebelumnya</p>
+        <p style="margin-top:var(--space-2)">
+          Kelas <strong data-isi="kelas">—</strong> ·
+          prodi <strong data-isi="prodi">—</strong>
+        </p>
+        <p style="margin-top:var(--space-3)">
+          <a class="btn btn--ghost btn--sm" href="onboarding.html">Ubah profil</a>
+        </p>
+      </section>
+
+      <!-- Keadaan galat pemuatan data (salinan teks §6). app.js mengubah
+           atributnya kalau data/prodi.json, mapel.json, atau prodi-mapel.json
+           gagal dimuat — misalnya saat halaman dibuka lewat file://. -->
+      <div class="peringatan" role="note" hidden data-keadaan="galat">
+        <span class="peringatan__ikon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></svg>
+        </span>
+        <div class="peringatan__isi">
+          <p>Sedang tidak tersambung. Yang sudah pernah dibuka masih bisa dilihat.</p>
+        </div>
+      </div>
+
+      <!-- Langkah 1/3 — "masuk". Dua pintu, satu tujuan: PRD F3 mewajibkan
+           jalur "belum tahu" tetap berguna, dan data hari ini baru
+           mengelompokkan prodi per rumpun (belum ada taksonomi minat
+           terpisah) — jadi kedua tombol menuju langkah "daftar" yang sama.
+           Ditandai [data-langkah] supaya app.js bisa menukar langkah yang
+           tampil (pola sama dengan slide onboarding.html). -->
+      <div data-langkah="masuk">
+        <p style="color:var(--ink-700)">Sudah tahu prodi tujuan?</p>
+
+        <button type="button" class="kartu kartu--outline" data-aksi="mulai-tahu" style="width:100%;text-align:left">
+          <span class="baris">
+            <span class="baris__isi">
+              <span class="baris__judul">Ya, sudah tahu</span>
+              <span class="baris__ket">Langsung pilih dari daftar prodi.</span>
+            </span>
+            <span class="baris__panah">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </span>
+          </span>
+        </button>
+
+        <button type="button" class="kartu kartu--soft" data-aksi="mulai-eksplor" style="width:100%;text-align:left;margin-top:var(--space-3)">
+          <span class="baris">
+            <span class="baris__isi">
+              <span class="baris__judul">Belum, bantu aku eksplorasi</span>
+              <span class="baris__ket">Mulai dari rumpun ilmu.</span>
+            </span>
+            <span class="baris__panah">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </span>
+          </span>
+        </button>
+      </div>
+
+      <!-- Langkah 2/3 — daftar prodi dikelompokkan per rumpun. Dua wadah
+           bersarang (rumpun -> prodi), diklon app.js dari data/prodi.json —
+           pola yang sama dengan kategori/butir di checklist.html. Seksi
+           pertama di bawah adalah prototipe/contoh hidup: itu yang tampil
+           tanpa JavaScript. Tombol "belum tahu" ditaruh di langkah ini juga
+           untuk pengguna yang berubah pikiran setelah mulai menjelajah. -->
+      <section id="daftar-prodi" data-langkah="daftar" hidden style="margin-top:var(--space-4)">
+        <div data-daftar="rumpun">
+          <section class="seksi">
+            <h2 class="seksi__judul" data-isi="rumpun">Teknologi &amp; Rekayasa</h2>
+            <div class="tumpuk" data-daftar="prodi">
+              <button type="button" class="kartu kartu--rapat" data-prodi-id="teknik-informatika" style="width:100%;text-align:left">
+                <span class="baris"><span class="baris__isi" data-isi="nama">Teknik Informatika</span>
+                <span class="baris__panah"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span></span>
+              </button>
+            </div>
+          </section>
+        </div>
+
+        <button type="button" class="kartu kartu--soft" data-aksi="belum-tahu-prodi" style="width:100%;text-align:left;margin-top:var(--space-4)">
+          <span class="baris">
+            <span class="baris__isi">
+              <span class="baris__judul">Masih belum tahu, tampilkan rangkuman umum</span>
+              <span class="baris__ket">Mapel yang paling sering jadi penentu di banyak prodi.</span>
+            </span>
+            <span class="baris__panah">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </span>
+          </span>
+        </button>
+      </section>
+
+      <!-- Langkah 3/3 — hasil: mapel pendukung + status ketersediaan di SMK
+           untuk SATU prodi (atau rangkuman umum kalau "belum tahu"), dihitung
+           app.js dari data/prodi-mapel.json x data/mapel.json (F3). Wadah
+           <ul data-daftar="mapel"> punya SATU <li> prototipe/contoh hidup;
+           dua pasang ikon+keterangan di dalamnya ("Tersedia di SMK" /
+           "Cek alternatif") sudah tertulis lengkap — app.js cuma memilih
+           pasangan mana yang tampil per mapel, tidak mengarang teks baru. -->
+      <section id="hasil-mapel" data-langkah="hasil" hidden style="margin-top:var(--space-6)">
+        <div class="baris-nilai">
+          <h2 style="font:var(--text-h3)" data-isi="prodi-nama">Teknik Informatika</h2>
+          <button type="button" class="btn btn--ghost btn--sm" data-aksi="ubah-prodi">Ubah prodi</button>
+        </div>
+
+        <ul class="tumpuk" data-daftar="mapel">
+          <li class="kartu kartu--rapat baris">
+            <span class="baris__ikon" data-slot="ikon-ok" style="color:var(--status-ok)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.5 2.5 5-6"/></svg>
+            </span>
+            <!-- Peringatan wajib: prodi menuntut mapel yang tidak diambil di
+                 SMK (PRD F3). Nadanya tetap tenang, tanpa merah, tanpa tanda
+                 seru. -->
+            <span class="baris__ikon" data-slot="ikon-warn" hidden>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.9 2.5 18a1 1 0 0 0 .9 1.5h17.2a1 1 0 0 0 .9-1.5L13.7 3.9a1 1 0 0 0-1.7 0Z"/><path d="M12 9v4"/><path d="M12 16.5h.01"/></svg>
+            </span>
+            <span class="baris__isi" data-isi="nama">Matematika</span>
+            <span class="caption" data-slot="caption-ok" style="color:var(--status-ok)">Tersedia di SMK</span>
+            <span class="caption" data-slot="caption-warn" hidden style="color:var(--blue-600)">Cek alternatif</span>
+          </li>
+        </ul>
+
+        <div class="kartu kartu--brand" style="margin-top:var(--space-3)">
+          <p class="eyebrow" style="color:var(--white);opacity:.85">Saran mapel pilihan TKA</p>
+          <p style="font:var(--text-h3);color:var(--white);margin-top:6px" data-isi="saran-mapel">Matematika &amp; Informatika</p>
+        </div>
+
+        <!-- Penafian WAJIB tampil (PRD F3). Jangan pernah dihapus atau
+             disembunyikan di balik tautan. -->
+        <p class="penafian" style="margin-top:var(--space-3)">
+          Ini rangkuman, bukan keputusan resmi. Cek laman SNPMB.
+        </p>
+
+        <!-- CTA F10 Eksplorasi Tujuan (SDD-F10-eksplorasi-tujuan.md §G.1).
+             Pola sama dengan kartu data-aksi="mulai-eksplor" di langkah
+             "masuk" di atas: a.kartu.kartu--soft, judul + baris .caption.
+             href="eksplorasi-tujuan.html" di sini hanya PLACEHOLDER statis
+             (dan supaya check.js aturan 1 lolos — berkas tujuannya sudah
+             ada); app.js (tampilkanHasil()) mengganti href menjadi
+             "eksplorasi-tujuan.html?prodi=<id>" dan mengisi
+             [data-isi="prodi-nama"] di bawah, lalu MENYEMBUNYIKAN kartu ini
+             (hidden) kalau hasil yang tampil adalah rangkuman umum
+             (prodi_impian = "belum") — F10 selalu butuh satu prodi tertentu.
+
+             CATATAN untuk PM/backend-engineer: [data-isi="prodi-nama"] di
+             sini adalah instance KEDUA atribut data-isi itu di halaman ini
+             (yang pertama ada di <h2> baris-nilai di atas). isiSlot(document,
+             'prodi-nama', ...) yang sudah ada di app.js memakai
+             querySelector (bukan querySelectorAll), jadi HANYA mengisi
+             instance PERTAMA (h2). Supaya kartu ini ikut terisi, panggilan
+             isiSlot untuk kartu ini perlu di-scope ke elemen kartunya sendiri
+             (isiSlot(kartuCta, 'prodi-nama', ...)), bukan ke document — kartu
+             ini juga sudah diberi data-aksi="lihat-eksplorasi" supaya mudah
+             di-querySelector terpisah dari h2. -->
+        <a class="kartu kartu--soft" href="eksplorasi-tujuan.html" data-aksi="lihat-eksplorasi" style="margin-top:var(--space-3)">
+          <span class="baris__judul">Lihat prospek &amp; kampus untuk <span data-isi="prodi-nama">Teknik Informatika</span></span>
+          <span class="caption" style="display:block;margin-top:var(--space-1)">Peminat, mata kuliah, dan kampus yang cocok.</span>
+        </a>
+
+        <div class="tumpuk--lebar tumpuk" style="margin-top:var(--space-4)">
+          <button type="button" class="btn btn--lg btn--penuh" data-aksi="simpan-checklist">Simpan ke Daftar Periksa</button>
+          <a class="btn btn--ghost btn--lg btn--penuh" href="beranda.html">Lewati</a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- NAVIGASI BAWAH — empat ikon, tidak pernah lebih.
+       Halaman cabang (alumni, arsip*, latihan*, bank-soal) memakai nav yang
+       sama tetapi menandai Beranda sebagai tab aktif. -->
+  <nav class="tabbar" aria-label="Navigasi utama">
+    <a href="beranda.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></span>
+      Beranda
+    </a>
+    <a href="khusus-smk.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9 12 4l10 5-10 5-10-5Z"/><path d="M6 11.5V16c0 1.1 2.7 2 6 2s6-.9 6-2v-4.5"/></svg></span>
+      Khusus SMK
+    </a>
+    <a href="pilih-mapel.html" aria-current="page">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg></span>
+      Pilih Mapel
+    </a>
+    <a href="checklist.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg></span>
+      Checklist
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>

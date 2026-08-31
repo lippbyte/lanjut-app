@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mulai · LANJUT</title>
+<meta name="theme-color" content="#456A8C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="assets/img/mascot-tile-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<script src="assets/app.js" defer></script>
+</head>
+
+<!-- Empat layar cerita + satu layar pertanyaan, semuanya di satu dokumen.
+     app.js menyalakan satu layar dan menyembunyikan sisanya dengan [hidden],
+     supaya pembaca layar ikut melewati layar yang tidak aktif.
+     Teks diambil dari salinan-teks-lanjut.md §3, tidak ditulis ulang. -->
+<body data-peran="onboarding">
+
+<div class="app app--cover">
+
+  <!-- Judul dokumen. Tersembunyi secara visual karena tiap layar onboarding
+       sudah punya judulnya sendiri, tetapi struktur dokumen tetap butuh
+       tepat satu <h1>. -->
+  <h1 class="hanya-baca-layar">Mulai pakai LANJUT</h1>
+
+  <!-- ================= Layar 1 — Pembuka ================= -->
+  <section class="cover" data-slide="1">
+    <div class="cover__gambar">
+      <img src="assets/img/mascot-white.png" alt="" width="140" height="140">
+    </div>
+    <div class="cover__teks">
+      <h2 style="font:var(--text-h2)">Anak SMK juga bisa kuliah.</h2>
+      <p>Ini caranya, dari awal.</p>
+    </div>
+  </section>
+
+  <!-- ================= Layar 2 — Masalah ================= -->
+  <section class="cover" data-slide="2" hidden>
+    <div class="cover__gambar">
+      <img src="assets/img/mascot-white.png" alt="" width="140" height="140">
+    </div>
+    <div class="cover__teks">
+      <h2 style="font:var(--text-h2)">Penjelasan yang ada dibuat untuk anak SMA.</h2>
+      <p>Mapel pendukungnya beda, jadwalnya beda, sarannya beda. Kami susun ulang untuk kamu.</p>
+    </div>
+  </section>
+
+  <!-- ================= Layar 3 — Yang didapat ================= -->
+  <section class="cover" data-slide="3" hidden>
+    <div class="cover__gambar">
+      <img src="assets/img/mascot-white.png" alt="" width="140" height="140">
+    </div>
+    <div class="cover__teks">
+      <h2 style="font:var(--text-h2)">Yang bisa kamu pakai di sini</h2>
+      <ul>
+        <li>Linimasa: apa yang jatuh tempo, dan kapan</li>
+        <li>Khusus SMK: hal yang berbeda buat kita</li>
+        <li>Cerita alumni: mereka sudah lewat jalan ini</li>
+        <li>Latihan harian: 15 menit, bukan semalam suntuk</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= Layar 4 — Ajakan ================= -->
+  <section class="cover" data-slide="4" hidden>
+    <div class="cover__gambar">
+      <img src="assets/img/mascot-white.png" alt="" width="140" height="140">
+    </div>
+    <div class="cover__teks">
+      <h2 style="font:var(--text-h2)">Mulai dari mana kamu sekarang.</h2>
+      <p>Belum tahu mau ke mana pun tidak apa-apa. Nanti kita cari sama-sama.</p>
+    </div>
+  </section>
+
+  <!-- Kendali empat layar cerita: titik langkah + tombol Lanjut/Mulai.
+       Keduanya disembunyikan app.js begitu masuk layar pertanyaan. -->
+  <div style="padding:0 var(--gutter-screen) var(--space-6)">
+    <div class="langkah-titik" role="presentation">
+      <span data-aktif="true"></span><span></span><span></span><span></span>
+    </div>
+    <button type="button" class="btn btn--secondary btn--lg btn--penuh" data-aksi="lanjut">Lanjut</button>
+    <p style="text-align:center;margin-top:var(--space-3)">
+      <button type="button" class="cover__lewati" data-aksi="lewati">Lewati</button>
+    </p>
+  </div>
+
+  <!-- ================= Layar pertanyaan =================
+       Dua pertanyaan pembuka (salinan teks §3). Jawabannya jadi objek
+       profil di localStorage, dipakai lagi oleh pilih-mapel.html. -->
+  <section class="layar" data-slide="tanya" hidden
+           style="background:var(--surface-page);color:var(--text-body)">
+    <div class="layar__isi">
+
+      <div class="layar__isi--tengah" style="display:flex;flex-direction:column;gap:var(--space-3)">
+        <img src="assets/img/mascot-blue.png" alt="" width="64" height="64">
+        <h2 style="font:var(--text-h3)">Profil kamu di LANJUT</h2>
+        <p class="muted" style="font:var(--text-body-small);max-width:280px">
+          Biar kami bisa menyaring yang perlu kamu lihat saja.
+        </p>
+      </div>
+
+      <!-- Pertanyaan 1 — kelas -->
+      <fieldset class="field" style="border:0;padding:0;margin:0">
+        <legend class="field__label" style="padding:0">Kamu kelas berapa?</legend>
+        <div class="keping-grup" role="group">
+          <button type="button" class="keping" data-grup="kelas" data-nilai="10" aria-pressed="false">10</button>
+          <button type="button" class="keping" data-grup="kelas" data-nilai="11" aria-pressed="false">11</button>
+          <button type="button" class="keping" data-grup="kelas" data-nilai="12" aria-pressed="false">12</button>
+        </div>
+      </fieldset>
+
+      <!-- Pertanyaan 2 — prodi impian.
+           "Belum" adalah jawaban sah, bukan kekosongan (PRD F3). -->
+      <fieldset class="field" style="border:0;padding:0;margin:0">
+        <legend class="field__label" style="padding:0">Sudah ada bayangan prodi?</legend>
+        <p class="field__hint">Boleh dijawab &ldquo;belum&rdquo;.</p>
+
+        <div class="seksi" style="margin-top:var(--space-3)">
+          <p class="caption" style="text-transform:uppercase;letter-spacing:var(--ls-label)">Teknologi &amp; Rekayasa</p>
+          <div class="keping-grup">
+            <button type="button" class="keping" data-grup="prodi" data-nilai="teknik-informatika" aria-pressed="false">Teknik Informatika</button>
+            <button type="button" class="keping" data-grup="prodi" data-nilai="teknik-elektro" aria-pressed="false">Teknik Elektro</button>
+          </div>
+        </div>
+
+        <div class="seksi" style="margin-top:var(--space-4)">
+          <p class="caption" style="text-transform:uppercase;letter-spacing:var(--ls-label)">Kesehatan</p>
+          <div class="keping-grup">
+            <button type="button" class="keping" data-grup="prodi" data-nilai="keperawatan" aria-pressed="false">Keperawatan</button>
+            <button type="button" class="keping" data-grup="prodi" data-nilai="farmasi" aria-pressed="false">Farmasi</button>
+          </div>
+        </div>
+
+        <div class="seksi" style="margin-top:var(--space-4)">
+          <p class="caption" style="text-transform:uppercase;letter-spacing:var(--ls-label)">Ekonomi &amp; Bisnis</p>
+          <div class="keping-grup">
+            <button type="button" class="keping" data-grup="prodi" data-nilai="akuntansi" aria-pressed="false">Akuntansi</button>
+          </div>
+        </div>
+
+        <div class="keping-grup" style="margin-top:var(--space-4)">
+          <button type="button" class="keping" data-grup="prodi" data-nilai="belum" aria-pressed="false">Belum, aku belum tahu</button>
+        </div>
+      </fieldset>
+
+      <button type="button" class="btn btn--lg btn--penuh" data-aksi="simpan-profil">Mulai sekarang</button>
+
+      <p class="penafian">
+        Jawabanmu disimpan di perangkat ini saja, tidak dikirim ke mana pun.
+      </p>
+    </div>
+  </section>
+
+  <noscript>
+    <div style="padding:var(--gutter-screen)">
+      <a class="btn btn--secondary btn--penuh" href="beranda.html">Lanjut ke beranda</a>
+    </div>
+  </noscript>
+
+</div>
+
+</body>
+</html>

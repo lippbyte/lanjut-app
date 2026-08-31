@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tambah Kartu Baru · LANJUT</title>
+<meta name="theme-color" content="#456A8C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="assets/img/mascot-tile-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<script src="assets/app.js" defer></script>
+</head>
+
+<body data-peran="arsip-tambah">
+<a class="lewati" href="#isi">Lewati ke konten</a>
+
+<div class="app">
+
+  <header class="appbar">
+    <img class="appbar__mark" src="assets/img/mascot-tile-primary.png" alt="" width="32" height="32">
+    <p class="appbar__wordmark"><img src="assets/img/lanjut-wordmark-badge.png" alt="LANJUT"></p>
+    <a class="appbar__profil" href="onboarding.html" aria-label="Profil kamu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+    </a>
+  </header>
+
+  <div class="pagebar">
+    <a class="icon-btn" href="arsip.html" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></a>
+    <h1>Tambah Kartu Baru</h1>
+  </div>
+
+  <main class="layar" id="isi">
+    <div class="layar__isi">
+
+      <!-- Formulir asli <form>, bukan tumpukan div. Belum ada penanganan
+           submit; action sengaja dikosongkan sampai lapisan penyimpanan ada. -->
+      <form class="tumpuk" style="gap:var(--space-5)" novalidate data-form="arsip-tambah">
+
+        <div class="field">
+          <label class="field__label" for="mapel">Mapel</label>
+          <select class="select" id="mapel" name="mapel">
+            <option value="matematika">Matematika</option>
+            <option value="bahasa-indonesia">Bahasa Indonesia</option>
+            <option value="bahasa-inggris">Bahasa Inggris</option>
+            <option value="informatika">Informatika</option>
+            <option value="fisika">Fisika</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="kategori">Kategori</label>
+          <select class="select" id="kategori" name="kategori">
+            <option value="catatan">Catatan</option>
+            <option value="soal">Soal</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="judul">Judul</label>
+          <input class="input" id="judul" name="judul" type="text"
+                 placeholder="mis. Turunan fungsi aljabar" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="isi">Isi</label>
+          <textarea class="textarea" id="isi" name="isi" placeholder="Tulis di sini..."></textarea>
+        </div>
+
+        <!-- Hanya relevan kalau kategorinya Soal. Di kerangka ini selalu
+             tampil; penyembunyiannya menyusul bersama logika formulir. -->
+        <div class="field">
+          <label class="field__label" for="jawaban">Jawaban</label>
+          <textarea class="textarea" id="jawaban" name="jawaban"
+                    placeholder="Jawaban atau pembahasan singkat..."
+                    style="min-height:80px"></textarea>
+          <p class="field__hint">Isi bila kartunya berbentuk soal.</p>
+        </div>
+
+        <!-- Penanda kartu pengguna bersifat TETAP dan tidak bisa disembunyikan
+             (salinan teks §4.5). Ditulis di sini supaya jelas sejak awal,
+             bukan kejutan setelah kartu tersimpan. -->
+        <p class="kartu kartu--soft" style="font:var(--text-body-small);color:var(--ink-700)">
+          Kartu ini akan bertanda <strong>Diunggah pengguna — belum diverifikasi tim</strong>.
+        </p>
+
+        <button type="submit" class="btn btn--lg btn--penuh" data-tombol="submit">Simpan kartu</button>
+      </form>
+
+    </div>
+  </main>
+
+  <!-- NAVIGASI BAWAH — empat ikon, tidak pernah lebih.
+       Halaman cabang (alumni, arsip*, latihan*, bank-soal) memakai nav yang
+       sama tetapi menandai Beranda sebagai tab aktif. -->
+  <nav class="tabbar" aria-label="Navigasi utama">
+    <a href="beranda.html" aria-current="page">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></span>
+      Beranda
+    </a>
+    <a href="khusus-smk.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9 12 4l10 5-10 5-10-5Z"/><path d="M6 11.5V16c0 1.1 2.7 2 6 2s6-.9 6-2v-4.5"/></svg></span>
+      Khusus SMK
+    </a>
+    <a href="pilih-mapel.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg></span>
+      Pilih Mapel
+    </a>
+    <a href="checklist.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg></span>
+      Checklist
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LANJUT</title>
+<meta name="description" content="Navigasi jalur kuliah untuk anak SMK.">
+<meta name="theme-color" content="#456A8C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="assets/img/mascot-tile-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<script src="assets/app.js" defer></script>
+</head>
+
+<!-- data-peran="splash": app.js membaca profil di localStorage, lalu pindah ke
+     beranda.html kalau profil sudah ada, atau onboarding.html kalau belum. -->
+<body data-peran="splash">
+
+<div class="app app--cover">
+  <main class="cover cover--tengah">
+    <img src="assets/img/mascot-white.png" alt="" width="150" height="150">
+    <!-- Wordmark ini judul dokumen splash, jadi dibungkus <h1>: identitas
+         halaman dibawa gambar, tetapi strukturnya tetap punya satu judul. -->
+    <h1><img src="assets/img/lanjut-wordmark-standalone.png" alt="LANJUT" style="height:40px;width:auto"></h1>
+
+    <p class="titik-muat" role="status" aria-label="Sedang memuat">
+      <span></span><span></span><span></span>
+    </p>
+
+    <!-- Tanpa JavaScript, splash tidak boleh jadi jalan buntu. -->
+    <noscript>
+      <p style="text-align:center">
+        <a class="btn btn--secondary" href="onboarding.html">Mulai</a>
+      </p>
+      <p style="text-align:center;margin-top:var(--space-3)">
+        <a href="beranda.html" style="color:var(--white)">Sudah pernah pakai? Buka beranda</a>
+      </p>
+    </noscript>
+  </main>
+</div>
+
+</body>
+</html>

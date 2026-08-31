@@ -1,0 +1,25 @@
+{
+  "name": "lanjut-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fondasi backend LANJUT — Express + MySQL, sesuai docs/SDD-Backend-Foundation.md",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "migrasi": "node src/db/jalankan-migrasi.js",
+    "benih": "node src/db/benih/benih.js",
+    "test": "node --test tests/*.test.js",
+    "periksa-sql": "node tools/periksa-sql.js"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^7.1.0",
+    "mysql2": "^3.11.0",
+    "zod": "^3.23.8"
+  }
+}

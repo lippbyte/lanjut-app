@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Latihan Hari Ini · LANJUT</title>
+<meta name="theme-color" content="#456A8C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="assets/img/mascot-tile-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/levelin.css">
+<script src="assets/app.js" defer></script>
+<script src="assets/levelin.js" defer></script>
+</head>
+
+<body data-peran="latihan">
+<a class="lewati" href="#isi">Lewati ke konten</a>
+
+<div class="app">
+
+  <header class="appbar">
+    <img class="appbar__mark" src="assets/img/mascot-tile-primary.png" alt="" width="32" height="32">
+    <p class="appbar__wordmark"><img src="assets/img/lanjut-wordmark-badge.png" alt="LANJUT"></p>
+    <a class="appbar__profil" href="onboarding.html" aria-label="Profil kamu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+    </a>
+  </header>
+
+  <div class="pagebar">
+    <a class="icon-btn" href="arsip.html" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></a>
+    <h1>Latihan Hari Ini</h1>
+  </div>
+
+  <main class="layar" id="isi">
+    <div class="layar__isi">
+
+      <p class="muted" style="font:var(--text-body-small);text-align:center">15 menit cukup.</p>
+
+      <!-- Sebelum mulai (salinan teks §4.7): "12 kartu, kira-kira 8 menit."
+           Perkiraan waktu ikut disebut supaya siswa bisa memutuskan sekarang
+           atau nanti — waktu belajarnya memang 15–25 menit dan tidak tiap hari. -->
+      <p class="caption" style="text-align:center" aria-live="polite">Kartu latihan · kira-kira 8 menit</p>
+
+      <!-- Level-In (FL2) — strip pembanding untuk KARTU SEBELUMNYA. SDD-
+           LevelIn.md §6.2: muncul otomatis di atas kartu berikutnya, tanpa
+           ketukan tambahan (anggaran ketukan §7.2 sudah habis di FL1).
+           Kosong sama sekali di kartu pertama sesi — bukan strip kosong,
+           makanya mulai [hidden] dan TIDAK dibuka sampai ada kartu
+           sebelumnya untuk dibandingkan.
+
+           Nada netral untuk KEEMPAT varian (AC FL2) — tidak ada beda warna
+           per varian, termasuk untuk overconfident yang paling rawan
+           terbaca sebagai teguran (SDD §7.1, §7.3).
+
+           Kontrak untuk levelin.js:
+             - buka strip:     hilangkan [hidden] di .levelin-gap-strip
+             - pilih varian:   set data-varian="overconfident|underconfident|
+                                selaras|netral" di kontainer (hook CSS/uji)
+             - tampilkan SATU <p data-varian-isi="..."> yang cocok, sembunyikan
+               tiga lainnya (keempatnya sudah tertulis lengkap, bukan
+               dikarang JS — lihat docs/salinan-teks-lanjut.md §4.8)
+             - isi <span data-isi="..."> tingkat keyakinan / nama mapel di
+               dalam paragraf yang ditampilkan -->
+      <div class="levelin-gap-strip" data-varian="" hidden aria-live="polite">
+        <span class="levelin-gap-strip__ikon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><path d="M2 15h4v5H4a2 2 0 0 1-2-2v-3Zm20 0h-4v5h2a2 2 0 0 0 2-2v-3Z"/></svg>
+        </span>
+        <div class="levelin-gap-strip__isi">
+          <p data-varian-isi="overconfident" hidden>Kamu pilih yakin <span data-isi="gap-oc-tingkat">4</span>/5, tapi jawabannya meleset. Ini bagian dari pola kamu di <span data-isi="gap-oc-mapel">Matematika</span> — coba pelan-pelan lagi di sini.</p>
+          <p data-varian-isi="underconfident" hidden>Kamu pilih ragu <span data-isi="gap-uc-tingkat">2</span>/5, ternyata jawabannya benar. Kamu bisa lebih dari yang kamu kira.</p>
+          <p data-varian-isi="selaras" hidden>Perkiraanmu pas — <span data-isi="gap-sl-tingkat">5</span>/5 dan hasilnya sesuai.</p>
+          <p data-varian-isi="netral" hidden>Keyakinanmu ada di tengah. Tetap dihitung, lanjut ke kartu berikutnya.</p>
+        </div>
+      </div>
+
+      <!-- data-kartu-id/data-mapel: identitas kartu untuk kontrak event Level-In
+           (levelin:jawaban-dicatat, lihat assets/app.js pasangLatihan() dan
+           assets/levelin.js). Nilai di bawah cocok dengan kartu k-mtk-1 di
+           data/arsip.json (mapel_id "matematika") — kartu contoh statis ini
+           memang kartu pertama arsip resmi Matematika, bukan id karangan. -->
+      <article class="kartu kartu-latihan" data-kartu-id="k-mtk-1" data-mapel="matematika">
+        <p class="eyebrow">Matematika</p>
+        <p class="kartu-latihan__soal">Turunan dari f(x) = 3x&sup2; + 5x adalah...</p>
+
+        <!-- Jawaban baru tampil setelah ditekan. Disembunyikan dengan [hidden]
+             supaya pembaca layar tidak membocorkannya lebih dulu. -->
+        <p class="kartu-latihan__jawaban" hidden data-jawaban>f&prime;(x) = 6x + 5</p>
+      </article>
+
+      <!-- Level-In (FL1) — keyakinan dipilih SEBELUM jawaban dibuka (SDD-
+           LevelIn.md §6.2, §7.2). Lima chip diskrit, final: bukan slider.
+           Terisi ulang kosong tiap kartu baru — levelin.js WAJIB me-reset
+           aria-pressed semua chip dan menyembunyikan .levelin-confidence-arti
+           saat merender kartu berikutnya, supaya jelas ini pertanyaan baru,
+           bukan sisa pilihan sebelumnya.
+
+           Pola data-grup/data-nilai/aria-pressed mengikuti keping kelas &
+           prodi yang sudah ada di onboarding.html (lihat pasangKeping() di
+           assets/app.js) — dipertahankan sama supaya levelin.js bisa memakai
+           pola pemasangan listener yang identik.
+
+           Kontrak untuk levelin.js:
+             - saat chip ditekan: set aria-pressed="true" di chip itu,
+               "false" di empat lainnya; tampilkan SATU <p> yang cocok di
+               .levelin-confidence-arti (data-nilai sama dengan chip);
+               lepas aria-disabled tombol "Lihat jawaban" di bawah -->
+      <div class="levelin-confidence-section" data-peran="latihan" data-tahap="keyakinan">
+        <p class="levelin-confidence-tanya">Seberapa yakin kamu bisa jawab ini?</p>
+        <div class="levelin-confidence-chips" role="group" aria-label="Tingkat keyakinan, 1 sampai 5">
+          <button type="button" class="levelin-confidence-chip" data-grup="keyakinan" data-nilai="1" aria-pressed="false" aria-label="Tingkat 1 dari 5 — ragu banget">1</button>
+          <button type="button" class="levelin-confidence-chip" data-grup="keyakinan" data-nilai="2" aria-pressed="false" aria-label="Tingkat 2 dari 5 — ragu">2</button>
+          <button type="button" class="levelin-confidence-chip" data-grup="keyakinan" data-nilai="3" aria-pressed="false" aria-label="Tingkat 3 dari 5 — lumayan yakin">3</button>
+          <button type="button" class="levelin-confidence-chip" data-grup="keyakinan" data-nilai="4" aria-pressed="false" aria-label="Tingkat 4 dari 5 — yakin">4</button>
+          <button type="button" class="levelin-confidence-chip" data-grup="keyakinan" data-nilai="5" aria-pressed="false" aria-label="Tingkat 5 dari 5 — yakin banget">5</button>
+        </div>
+        <div class="levelin-confidence-arti" aria-live="polite">
+          <p data-nilai="1" hidden>Ragu banget</p>
+          <p data-nilai="2" hidden>Ragu</p>
+          <p data-nilai="3" hidden>Lumayan yakin</p>
+          <p data-nilai="4" hidden>Yakin</p>
+          <p data-nilai="5" hidden>Yakin banget</p>
+        </div>
+      </div>
+
+      <!-- aria-disabled, BUKAN [disabled]: tombol tetap di urutan fokus dan
+           tetap bisa ditekan, supaya levelin.js bisa menampilkan petunjuk di
+           bawah alih-alih membisu (SDD §7.2 — "wajib menjelaskan kenapa"). -->
+      <button type="button" class="btn btn--lg btn--penuh" data-aksi="lihat-jawaban" aria-disabled="true">Lihat jawaban</button>
+      <p class="levelin-confidence-hint" data-isi="keyakinan-petunjuk" hidden>Pilih dulu seberapa yakin kamu, baru jawabannya kelihatan.</p>
+
+      <!-- Muncul menggantikan tombol di atas setelah jawaban dibuka.
+           "Salah" bukan hukuman: kartunya cuma kembali lebih cepat.
+
+           data-nilai-jawaban: dipakai assets/app.js (pasangLatihan()) untuk
+           men-dispatch 'levelin:jawaban-dicatat' TEPAT sebelum navigasi ke
+           latihan-selesai.html (kontrak event, lihat kepala assets/levelin.js). -->
+      <div class="tumpuk" hidden data-tahap="nilai" style="flex-direction:row;gap:var(--space-3)">
+        <a class="btn btn--outline btn--penuh" href="latihan-selesai.html" data-nilai-jawaban="salah">Salah</a>
+        <a class="btn btn--penuh" href="latihan-selesai.html" data-nilai-jawaban="benar">Benar</a>
+      </div>
+
+      <!-- Keadaan lain yang sudah ditulis (salinan teks §4.7), disiapkan
+           supaya tidak terlupakan saat F7 dikerjakan:
+           - setelah bolong beberapa hari
+           - ketika waktu mepet -->
+      <section class="kartu kartu--soft" hidden data-keadaan="kembali">
+        <p style="font:var(--text-body-small);color:var(--ink-700)">
+          Sempat berhenti beberapa hari — tidak apa-apa. Kartunya masih di sini.
+        </p>
+        <p style="margin-top:var(--space-3)"><button type="button" class="btn btn--secondary btn--sm">Lanjut</button></p>
+      </section>
+
+      <section class="kartu kartu--soft" hidden data-keadaan="mepet">
+        <p style="font:var(--text-body-small);color:var(--ink-700)">
+          Lagi padat? Ambil 5 kartu saja. Lebih baik sedikit daripada tidak sama sekali.
+        </p>
+        <p style="margin-top:var(--space-3)"><button type="button" class="btn btn--secondary btn--sm">Ambil 5 kartu</button></p>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- NAVIGASI BAWAH — empat ikon, tidak pernah lebih.
+       Halaman cabang (alumni, arsip*, latihan*, bank-soal) memakai nav yang
+       sama tetapi menandai Beranda sebagai tab aktif. -->
+  <nav class="tabbar" aria-label="Navigasi utama">
+    <a href="beranda.html" aria-current="page">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></span>
+      Beranda
+    </a>
+    <a href="khusus-smk.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9 12 4l10 5-10 5-10-5Z"/><path d="M6 11.5V16c0 1.1 2.7 2 6 2s6-.9 6-2v-4.5"/></svg></span>
+      Khusus SMK
+    </a>
+    <a href="pilih-mapel.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg></span>
+      Pilih Mapel
+    </a>
+    <a href="checklist.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg></span>
+      Checklist
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>

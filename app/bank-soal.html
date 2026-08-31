@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bank Soal · LANJUT</title>
+<meta name="theme-color" content="#456A8C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="assets/img/mascot-tile-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<script src="assets/app.js" defer></script>
+</head>
+
+<body data-peran="bank-soal">
+<a class="lewati" href="#isi">Lewati ke konten</a>
+
+<div class="app">
+
+  <header class="appbar">
+    <img class="appbar__mark" src="assets/img/mascot-tile-primary.png" alt="" width="32" height="32">
+    <p class="appbar__wordmark"><img src="assets/img/lanjut-wordmark-badge.png" alt="LANJUT"></p>
+    <a class="appbar__profil" href="onboarding.html" aria-label="Profil kamu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+    </a>
+  </header>
+
+  <div class="pagebar">
+    <a class="icon-btn" href="arsip.html" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></a>
+    <h1>Bank Soal</h1>
+  </div>
+
+  <main class="layar" id="isi">
+    <div class="layar__isi layar__isi--rapat">
+
+      <p class="muted" style="font:var(--text-body-small)">Soal dari mitra, terbuka untuk semua.</p>
+
+      <!-- PRD F9 + Bukan Tujuan §3: konten mitra TIDAK boleh dicampur ke
+           halaman resmi. Karena itu Bank Soal berdiri sebagai halaman sendiri,
+           dijangkau dari Arsip Belajar, dan tidak pernah muncul di Linimasa,
+           Khusus SMK, atau Pilih Mapel. Netralitas LANJUT adalah keunggulannya. -->
+
+      <!-- Keadaan terisi. Identitas penyedia WAJIB tampil di tiap kartu. -->
+      <div class="tumpuk--lebar tumpuk">
+        <article class="kartu">
+          <p class="lencana" style="align-self:flex-start">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Disediakan oleh [nama mitra]
+          </p>
+          <p class="baris__judul" style="margin-top:var(--space-2)">Matematika, Fisika, Kimia</p>
+          <p class="sumber" style="margin-top:var(--space-2)">
+            Soal dan pembahasan menjadi tanggung jawab penyedia.
+          </p>
+        </article>
+
+        <article class="kartu">
+          <p class="lencana" style="align-self:flex-start">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Disediakan oleh [nama mitra]
+          </p>
+          <p class="baris__judul" style="margin-top:var(--space-2)">Semua mapel TKA</p>
+          <p class="sumber" style="margin-top:var(--space-2)">
+            Soal dan pembahasan menjadi tanggung jawab penyedia.
+          </p>
+        </article>
+      </div>
+
+      <p class="penafian">
+        Nama mitra masih placeholder. Belum ada perjanjian yang ditandatangani,
+        jadi jangan pernah menuliskan nama lembaga nyata di sini sampai ada.
+      </p>
+
+      <!-- Keadaan kosong — kemungkinan besar inilah yang tampil saat rilis,
+           karena belum ada mitra (salinan teks §4.6). -->
+      <section class="kosong" hidden data-keadaan="kosong">
+        <img src="assets/img/mascot-blue.png" alt="" width="96" height="96">
+        <h2>Belum ada mitra yang bergabung.</h2>
+        <p>Sementara ini, latihan bisa dijalankan dari Arsip Belajar kamu sendiri.</p>
+        <a class="btn btn--secondary" href="arsip.html">Buka Arsip Belajar</a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- NAVIGASI BAWAH — empat ikon, tidak pernah lebih.
+       Halaman cabang (alumni, arsip*, latihan*, bank-soal) memakai nav yang
+       sama tetapi menandai Beranda sebagai tab aktif. -->
+  <nav class="tabbar" aria-label="Navigasi utama">
+    <a href="beranda.html" aria-current="page">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></span>
+      Beranda
+    </a>
+    <a href="khusus-smk.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9 12 4l10 5-10 5-10-5Z"/><path d="M6 11.5V16c0 1.1 2.7 2 6 2s6-.9 6-2v-4.5"/></svg></span>
+      Khusus SMK
+    </a>
+    <a href="pilih-mapel.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg></span>
+      Pilih Mapel
+    </a>
+    <a href="checklist.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg></span>
+      Checklist
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>

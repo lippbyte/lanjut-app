@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LANJUT — Anak SMK juga bisa kuliah. Ini caranya.</title>
+<meta name="description" content="Jalur kuliah untuk anak SMK, dijelaskan dari awal.">
+<meta name="theme-color" content="#456A8C">
+
+<!-- Poppins — typeface tunggal sistem LANJUT (design.md §6 / design system).
+     Berkas font, bukan pustaka: tidak ada JS atau kerangka kerja dari luar. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<style>
+/* =========================================================================
+   1. TOKEN — nama variabel mengikuti design system LANJUT (_ds/tokens/*.css)
+      supaya sama persis dengan halaman aplikasi lain di PWA ini.
+   ========================================================================= */
+:root{
+  /* Biru merek — tiga tingkat, terang ke gelap */
+  --blue-100:#E4F3F7;
+  --blue-200:#B4E1EB;   /* biru muda   — puncak gradasi */
+  --blue-300:#95BDD7;   /* biru sedang — tengah gradasi */
+  --blue-400:#78A4CB;   /* biru tua    — dasar gradasi, tombol utama */
+  --blue-500:#5E88AF;
+  --blue-600:#456A8C;
+
+  /* Netral — tidak pernah hitam murni */
+  --white:#FFFFFF;
+  --ink-900:#1A1A1A;
+  --ink-700:#3D4450;
+  --ink-100:#E6E9ED;
+  --ink-050:#F5F7F9;
+
+  /* Alias semantik */
+  --text-body:var(--ink-900);
+  --text-muted:var(--ink-700);
+  --text-on-brand:var(--white);
+  --text-link:var(--blue-600);
+  --text-link-hover:var(--blue-500);
+  --surface-card:var(--white);
+  --surface-soft:var(--blue-100);
+  --border-hairline:var(--ink-100);
+  --border-soft:#D6E5EE;
+  --border-brand:var(--blue-300);
+
+  /* Gradasi — satu bentuk saja: vertikal, terang ke gelap. Hanya dipakai hero. */
+  --gradient-cover:linear-gradient(180deg,var(--blue-200) 0%,var(--blue-300) 52%,var(--blue-400) 100%);
+
+  /* Tipografi */
+  --font-core:"Poppins",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fw-regular:400; --fw-medium:500; --fw-semibold:600;
+  --ls-label:.08em;
+
+  /* Ukuran teks — nilai dasar untuk 360px, ditimpa di tiap breakpoint */
+  --fs-h1:32px;   --lh-h1:1.14;
+  --fs-h2:24px;   --lh-h2:1.25;
+  --fs-h3:18px;   --lh-h3:1.35;
+  --fs-lead:17px;
+  --fs-body:16px; --lh-body:1.65;
+  --fs-body-sm:14px;
+  --fs-caption:13px;
+  --fs-label:12px;
+
+  /* Jarak */
+  --space-2:8px;  --space-3:12px; --space-4:16px; --space-5:20px;
+  --space-6:24px; --space-8:32px; --space-10:40px; --space-12:48px;
+  --gutter:20px;                 /* pinggiran halaman di HP */
+  --pad-bagian:48px;
+  --lebar-konten:1080px;
+
+  /* Sudut — membulat, tidak pernah kotak */
+  --radius-sm:12px; --radius-md:16px; --radius-lg:24px; --radius-pill:999px;
+
+  /* Bayangan — selalu bernada biru, bukan abu netral */
+  --shadow-1:0 1px 2px rgba(69,106,140,.08);
+  --shadow-2:0 2px 8px rgba(69,106,140,.10);
+  --shadow-3:0 6px 20px rgba(69,106,140,.12);
+
+  /* Gerak */
+  --dur-fast:120ms;
+  --ease-standard:cubic-bezier(.4,0,.2,1);
+
+  /* Sasaran sentuh minimum */
+  --sentuh:44px;
+}
+
+/* =========================================================================
+   2. DASAR
+   ========================================================================= */
+*,*::before,*::after{box-sizing:border-box}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:136px;   /* tinggi header lengket, supaya jangkar tidak tertutup */
+}
+
+body{
+  margin:0;
+  background:var(--white);    /* latar halaman putih */
+  color:var(--text-body);
+  font:var(--fw-regular) var(--fs-body)/var(--lh-body) var(--font-core);
+  -webkit-font-smoothing:antialiased;
+  text-wrap:pretty;
+}
+
+h1,h2,h3{margin:0;font-family:var(--font-core);font-weight:var(--fw-semibold);color:var(--text-body)}
+h1{font-size:var(--fs-h1);line-height:var(--lh-h1);letter-spacing:-.02em}
+h2{font-size:var(--fs-h2);line-height:var(--lh-h2);letter-spacing:-.01em}
+h3{font-size:var(--fs-h3);line-height:var(--lh-h3)}
+p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+img{display:block;max-width:100%;height:auto}
+[hidden]{display:none !important}
+
+a{color:var(--text-link);text-decoration-color:var(--border-brand);text-underline-offset:3px;
+  transition:color var(--dur-fast) var(--ease-standard)}
+a:hover{color:var(--text-link-hover)}
+
+/* Fokus papan ketik selalu terlihat — tidak pernah dihapus */
+:focus-visible{outline:3px solid var(--blue-600);outline-offset:2px}
+
+::selection{background:var(--blue-200);color:var(--ink-900)}
+
+.wrap{width:100%;max-width:var(--lebar-konten);margin-inline:auto}
+.bagian{padding:var(--pad-bagian) var(--gutter)}
+/* Latar semua bagian putih, jadi pemisahnya garis rambut — bukan blok warna */
+.bagian + .bagian{border-top:1px solid var(--border-hairline)}
+.eyebrow{font-size:var(--fs-label);font-weight:var(--fw-medium);letter-spacing:var(--ls-label);
+  text-transform:uppercase;color:var(--blue-600)}
+
+/* =========================================================================
+   3. WORDMARK — badge biru dengan wordmark putih (design.md §2 & §5)
+   ========================================================================= */
+.wordmark{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:var(--sentuh);padding:10px 14px;
+  background:var(--blue-600);border-radius:var(--radius-md);
+  text-decoration:none;
+  transition:background var(--dur-fast) var(--ease-standard);
+}
+.wordmark:hover{background:var(--blue-500)}
+.wordmark img{width:86px}
+
+/* =========================================================================
+   4. TOMBOL — sasaran sentuh minimal 44x44
+   ========================================================================= */
+.tombol{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:var(--sentuh);min-width:var(--sentuh);
+  padding:10px var(--space-6);
+  border:1px solid transparent;border-radius:var(--radius-pill);
+  font:var(--fw-medium) var(--fs-body-sm)/1.3 var(--font-core);
+  text-align:center;text-decoration:none;cursor:pointer;
+  transition:background var(--dur-fast) var(--ease-standard),
+             box-shadow var(--dur-fast) var(--ease-standard),
+             transform var(--dur-fast) var(--ease-standard);
+}
+.tombol:active{transform:scale(.97)}
+
+/* Isian biru tua + teks gelap = 6,6:1. Putih di atas biru tua hanya 2,6:1. */
+.tombol-utama{background:var(--blue-400);color:var(--ink-900);box-shadow:var(--shadow-2)}
+.tombol-utama:hover{background:var(--blue-500);color:var(--ink-900);box-shadow:var(--shadow-3)}
+
+.tombol-garis{background:var(--white);color:var(--blue-600);border-color:var(--border-brand)}
+.tombol-garis:hover{background:var(--blue-100);color:var(--blue-600)}
+
+.tombol-lg{min-height:52px;padding:14px var(--space-8);font-size:var(--fs-body)}
+
+/* =========================================================================
+   5. HEADER + NAVIGASI JANGKAR
+   ========================================================================= */
+.situs-header{
+  position:sticky;top:0;z-index:20;
+  padding:var(--space-3) var(--gutter);
+  background:var(--white);
+  border-bottom:1px solid var(--border-hairline);
+}
+.header-isi{
+  max-width:var(--lebar-konten);margin-inline:auto;
+  display:grid;grid-template-columns:auto 1fr;
+  grid-template-areas:"merek aksi" "nav nav";
+  align-items:center;gap:var(--space-2) var(--space-3);
+}
+.header-merek{grid-area:merek}
+.header-aksi{grid-area:aksi;justify-self:end}
+.nav-jangkar{grid-area:nav}
+.nav-jangkar ul{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-2)}
+.nav-jangkar a{
+  display:inline-flex;align-items:center;
+  min-height:var(--sentuh);padding:0 var(--space-3);
+  border-radius:var(--radius-pill);
+  color:var(--ink-700);text-decoration:none;
+  font-size:var(--fs-body-sm);font-weight:var(--fw-medium);
+  transition:background var(--dur-fast) var(--ease-standard),
+             color var(--dur-fast) var(--ease-standard);
+}
+.nav-jangkar a:hover{background:var(--blue-100);color:var(--blue-600)}
+
+/* =========================================================================
+   6. BAGIAN 1 — HERO (satu-satunya pemakai gradasi)
+   ========================================================================= */
+.hero{
+  padding:var(--space-10) var(--gutter) var(--space-12);
+  background:var(--gradient-cover);
+}
+.hero .wrap{display:flex;flex-direction:column;gap:var(--space-6)}
+.hero-teks-kolom{display:flex;flex-direction:column;gap:var(--space-5);align-items:flex-start}
+
+/* Di atas gradasi semua teks memakai ink-900: biru-600 turun ke 2,2:1 di kaki gradasi. */
+.hero .eyebrow{color:var(--ink-900)}
+.hero-lead{font-size:var(--fs-lead);font-weight:var(--fw-medium);line-height:1.5;color:var(--ink-900)}
+.hero-teks{font-size:15px;line-height:1.65;color:var(--ink-900)}
+.hero-catatan{font-size:var(--fs-caption);line-height:1.5;color:var(--ink-900)}
+.hero-aksi{display:flex;flex-direction:column;gap:var(--space-3);align-self:stretch}
+
+.hero-visual{display:flex;align-items:flex-end;justify-content:center;gap:var(--space-3)}
+/* Berkas maskot punya ruang kosong di bawah gambar; margin negatif mendudukkannya
+   sejajar dengan kaki bingkai HP. */
+.hero-visual img{width:110px;flex:none;margin-bottom:-21px}
+.bingkai-hp{
+  width:170px;height:330px;flex:none;
+  padding:7px;background:var(--ink-900);border-radius:26px;
+  box-shadow:0 12px 28px rgba(69,106,140,.3);
+}
+.layar-kosong{
+  width:100%;height:100%;padding:0 var(--space-2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-2);
+  background:var(--blue-100);border:1px dashed var(--border-brand);border-radius:20px;
+  text-align:center;
+}
+.layar-kosong span:last-child{font-size:12px;color:var(--ink-700)}
+
+/* =========================================================================
+   7. KARTU & KISI
+   ========================================================================= */
+.kartu{
+  display:flex;flex-direction:column;gap:var(--space-3);
+  padding:var(--space-6);
+  background:var(--surface-card);
+  border:1px solid var(--border-hairline);
+  border-radius:var(--radius-lg);          /* sudut membulat */
+  box-shadow:var(--shadow-1);
+}
+.kartu p{font-size:var(--fs-body-sm);line-height:1.6;color:var(--text-muted)}
+.kartu-lunak{background:var(--surface-soft);border-color:var(--border-soft);box-shadow:none}
+
+/* Kartu: satu kolom di HP, tiga kolom di layar lebar */
+.grid{display:grid;grid-template-columns:1fr;gap:var(--space-5);margin-top:var(--space-8)}
+
+.layar-contoh{
+  min-height:120px;padding:var(--space-4);
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  background:var(--blue-100);border:1px dashed var(--border-brand);border-radius:var(--radius-md);
+}
+
+/* Bagian 2 — masalah */
+.penutup-bagian{
+  margin-top:var(--space-8);
+  font-size:var(--fs-lead);font-weight:var(--fw-medium);line-height:1.5;color:var(--blue-600);
+}
+
+/* Bagian 3 — fitur */
+.sorotan{margin-top:var(--space-8);gap:var(--space-4)}
+.sorotan-teks{display:flex;flex-direction:column;gap:var(--space-3)}
+.sorotan h3{font-size:var(--fs-h2);line-height:var(--lh-h2);letter-spacing:-.01em}
+.sorotan p{font-size:var(--fs-body)}
+.sorotan .layar-contoh{min-height:170px;background:var(--white)}
+
+/* Bagian 4 — cerita alumni */
+.kosong{
+  margin-top:var(--space-6);padding:var(--space-8) var(--space-6);
+  display:flex;flex-direction:column;align-items:center;gap:var(--space-3);
+  background:var(--ink-050);border:1px dashed var(--border-brand);border-radius:var(--radius-lg);
+  text-align:center;
+}
+.kosong p{max-width:56ch;font-size:var(--fs-body-sm);line-height:1.6;color:var(--text-muted)}
+
+/* Bagian 5 — tiga langkah */
+.langkah{counter-reset:langkah;display:flex;flex-direction:column;gap:var(--space-6);
+  margin-top:var(--space-8)}
+.langkah li{display:flex;align-items:flex-start;gap:var(--space-4)}
+.langkah li::before{
+  counter-increment:langkah;content:counter(langkah);
+  flex:none;width:var(--sentuh);height:var(--sentuh);
+  display:flex;align-items:center;justify-content:center;
+  background:var(--blue-600);color:var(--text-on-brand);border-radius:var(--radius-pill);
+  font-size:var(--fs-body);font-weight:var(--fw-semibold);
+}
+.langkah p{padding-top:10px;font-size:15px}
+.ajakan{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-3);
+  margin-top:var(--space-8)}
+.ajakan p{font-size:var(--fs-caption);color:var(--blue-600)}
+
+/* Bagian 6 — dari mana datanya */
+.daftar-sumber{display:flex;flex-direction:column;gap:var(--space-3);margin-top:var(--space-6)}
+.daftar-sumber li{display:flex;gap:var(--space-3);font-size:15px;line-height:1.6}
+.daftar-sumber li::before{content:"—";flex:none;color:var(--blue-600)}
+.catatan-sumber{margin-top:var(--space-6);color:var(--text-muted)}
+.penafian{
+  margin-top:var(--space-5);padding:var(--space-5);
+  background:var(--ink-050);border:1px solid var(--border-hairline);border-radius:var(--radius-md);
+}
+.penafian p{font-size:var(--fs-caption);line-height:1.6;color:var(--text-muted)}
+
+/* Bagian 7 — tentang */
+.tentang{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-4)}
+.tentang img{width:88px}
+.tentang-teks{display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-4)}
+.tentang-teks p{color:var(--text-muted)}
+
+/* =========================================================================
+   8. FOOTER
+   ========================================================================= */
+.situs-footer{
+  padding:var(--space-8) var(--gutter);
+  background:var(--white);
+  border-top:1px solid var(--border-hairline);
+}
+.footer-isi{
+  max-width:var(--lebar-konten);margin-inline:auto;
+  display:flex;flex-direction:column;align-items:flex-start;gap:var(--space-4);
+}
+.footer-baris{display:flex;flex-wrap:wrap;align-items:center;gap:var(--space-4);
+  font-size:var(--fs-caption);color:var(--text-muted)}
+.footer-catatan{font-size:12px;line-height:1.5;color:var(--text-muted)}
+
+/* =========================================================================
+   9. TABLET — min-width 768px
+   ========================================================================= */
+@media (min-width:768px){
+  :root{
+    --fs-h1:44px; --lh-h1:1.12;
+    --fs-h2:28px;
+    --fs-lead:19px;
+    --gutter:40px;
+    --pad-bagian:72px;
+  }
+  html{scroll-padding-top:88px}
+
+  .header-isi{grid-template-columns:auto 1fr auto;grid-template-areas:"merek nav aksi";
+    gap:var(--space-6)}
+  .nav-jangkar{justify-self:end}
+  .nav-jangkar ul{flex-wrap:nowrap;gap:var(--space-3)}
+  .wordmark img{width:98px}
+
+  .hero{padding:var(--space-12) var(--gutter)}
+  .hero h1{max-width:16ch}
+  .hero-lead{max-width:34ch}
+  .hero-teks{font-size:var(--fs-body);max-width:52ch}
+  .hero-aksi{flex-direction:row;flex-wrap:wrap;align-self:auto;gap:var(--space-4)}
+  .hero-visual{gap:var(--space-5)}
+  .hero-visual img{width:150px;margin-bottom:-28px}
+  .bingkai-hp{width:210px;height:420px;padding:8px;border-radius:30px}
+
+  .grid{gap:var(--space-4)}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .grid-4{grid-template-columns:repeat(2,1fr)}
+  .grid .kartu{padding:var(--space-5)}   /* kolom menyempit, isian ikut dirapatkan */
+
+  .sorotan{display:grid;grid-template-columns:1fr 300px;gap:var(--space-8);align-items:center;
+    padding:var(--space-8)}
+  .sorotan .layar-contoh{min-height:190px;height:100%}
+
+  .langkah{flex-direction:row;gap:var(--space-8)}
+  .langkah li{flex:1;flex-direction:column;gap:var(--space-4)}
+  .langkah p{max-width:26ch;padding-top:0}
+
+  .dua-kolom{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-12);align-items:start}
+  .dua-kolom .catatan-sumber{margin-top:0}
+
+  .tentang{flex-direction:row;align-items:center;gap:var(--space-8)}
+  .tentang img{width:110px;flex:none}
+  .tentang-teks p{max-width:60ch}
+
+  .footer-isi{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;
+    gap:var(--space-6)}
+  .footer-catatan{flex-basis:100%}
+}
+
+/* =========================================================================
+   10. LAYAR LEBAR — min-width 1024px
+   ========================================================================= */
+@media (min-width:1024px){
+  :root{
+    --fs-h1:52px; --lh-h1:1.1;
+    --fs-h2:32px;
+    --fs-h3:20px;
+    --fs-lead:20px;
+    --gutter:64px;
+    --pad-bagian:96px;
+  }
+
+  .wordmark img{width:110px}
+
+  .hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:var(--space-12);
+    align-items:center}
+  .hero-visual img{width:190px;margin-bottom:-36px}
+  .bingkai-hp{width:246px;height:500px;padding:9px;border-radius:34px}
+  .layar-kosong{border-radius:26px}
+
+  /* Tiga kolom di layar lebar */
+  .grid{gap:var(--space-6)}
+  .grid .kartu{padding:var(--space-6)}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .grid-4{grid-template-columns:repeat(6,1fr)}
+  .grid-4 > .kartu{grid-column:span 2}
+  .grid-4 > .kartu:nth-child(4){grid-column:3 / span 2}  /* kartu keempat di tengah */
+
+  .sorotan{grid-template-columns:1fr 340px;padding:var(--space-10)}
+  .sorotan .layar-contoh{min-height:210px}
+}
+
+/* =========================================================================
+   11. GERAK — dihormati bila pengguna meminta gerak dikurangi
+   ========================================================================= */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.01ms !important;animation-duration:.01ms !important}
+  .tombol:active{transform:none}
+}
+</style>
+</head>
+
+<body>
+
+<header class="situs-header">
+  <div class="header-isi">
+
+    <!-- Wordmark: putih di atas badge biru. Ada di paro atas layar, jadi tidak lazy. -->
+    <a class="wordmark header-merek" href="/">
+      <img src="assets/lanjut-wordmark-trimmed.png" alt="LANJUT" width="452" height="160">
+    </a>
+
+    <nav class="nav-jangkar">
+      <ul>
+        <li><a href="#fitur">Fitur</a></li>
+        <li><a href="#sumber">Dari mana datanya</a></li>
+        <li><a href="#tentang">Tentang</a></li>
+      </ul>
+    </nav>
+
+    <a class="tombol tombol-utama header-aksi" href="https://edilakso.my.id/">Mulai — Gratis</a>
+
+  </div>
+</header>
+
+<main>
+
+  <!-- ===== BAGIAN 1 — HERO ==================================================
+       Satu-satunya bagian yang memakai gradasi vertikal #B4E1EB → #78A4CB.
+       ====================================================================== -->
+  <section id="hero" class="hero">
+    <div class="wrap">
+
+      <div class="hero-teks-kolom">
+        <p class="eyebrow">Untuk siswa SMK kelas 12</p>
+
+        <h1>Anak SMK juga bisa kuliah. Ini caranya.</h1>
+
+        <p class="hero-lead">Jalur kuliah untuk anak SMK, dijelaskan dari awal.</p>
+
+        <p class="hero-teks">SNBP, SNBT, dan TKA hampir selalu dijelaskan dengan contoh anak SMA. LANJUT menyusun ulang penjelasannya untuk siswa SMK — lengkap dengan linimasa, daftar periksa, dan cerita alumni SMK yang sudah lebih dulu lewat jalur ini.</p>
+
+        <div class="hero-aksi">
+          <a class="tombol tombol-utama tombol-lg" href="https://edilakso.my.id/">Mulai — Gratis</a>
+          <a class="tombol tombol-garis tombol-lg" href="https://edilakso.my.id/">Lihat Linimasa</a>
+        </div>
+
+        <p class="hero-catatan">Buka langsung di HP. Tidak perlu pasang aplikasi.</p>
+      </div>
+
+      <div class="hero-visual">
+        <!-- Gambar hero: sengaja tanpa loading="lazy" supaya tampil sejak muat pertama. -->
+        <img src="assets/mascot-white.png" alt="Maskot kelinci wisudawan LANJUT" width="1048" height="1048">
+        <div class="bingkai-hp">
+          <div class="layar-kosong">
+            <span class="eyebrow">[ tangkapan layar ]</span>
+            <span>Halaman Linimasa</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== BAGIAN 2 — MASALAH ============================================== -->
+  <section id="masalah" class="bagian">
+    <div class="wrap">
+
+      <h2>Informasinya ada. Tapi tersebar, dan contohnya selalu anak SMA.</h2>
+
+      <div class="grid grid-3">
+
+        <article class="kartu">
+          <h3>Mapel pendukungnya beda</h3>
+          <p>Penilaian SNBP mempertimbangkan nilai mapel pendukung prodi tujuan — sebagian tidak diambil di SMK.</p>
+        </article>
+
+        <article class="kartu">
+          <h3>Tenggatnya mudah terlewat</h3>
+          <p>TKA tidak wajib, tetapi nilainya jadi syarat pendaftaran. Kombinasi yang mudah membuat lengah.</p>
+        </article>
+
+        <article class="kartu">
+          <h3>Waktunya paling sedikit</h3>
+          <p>Tugas, proyek, PKL, lomba. Yang tersisa 15–25 menit sehari.</p>
+        </article>
+
+      </div>
+
+      <p class="penutup-bagian">Akibatnya bukan siswa jadi malas. Akibatnya siswa terlambat tahu.</p>
+
+    </div>
+  </section>
+
+  <!-- ===== BAGIAN 3 — FITUR ================================================ -->
+  <section id="fitur" class="bagian">
+    <div class="wrap">
+
+      <h2>Yang bisa kamu pakai di sini</h2>
+
+      <article class="kartu kartu-lunak sorotan">
+        <div class="sorotan-teks">
+          <p class="eyebrow">Pembeda utama</p>
+          <h3>Penolong Pilih Mapel</h3>
+          <p>Prodi yang kamu incar butuh mapel apa — dan mana yang ada di SMK.</p>
+        </div>
+        <div class="layar-contoh">
+          <span class="eyebrow">[ tangkapan layar ]</span>
+        </div>
+      </article>
+
+      <div class="grid grid-4">
+
+        <article class="kartu">
+          <div class="layar-contoh"><span class="eyebrow">[ tangkapan layar ]</span></div>
+          <h3>Linimasa</h3>
+          <p>Apa yang jatuh tempo, dan kapan.</p>
+        </article>
+
+        <article class="kartu">
+          <div class="layar-contoh"><span class="eyebrow">[ tangkapan layar ]</span></div>
+          <h3>Khusus SMK</h3>
+          <p>Hal-hal yang memang beda buat kita.</p>
+        </article>
+
+        <article class="kartu">
+          <div class="layar-contoh"><span class="eyebrow">[ tangkapan layar ]</span></div>
+          <h3>Cerita Alumni SMK</h3>
+          <p>Mereka sudah lewat jalan ini.</p>
+        </article>
+
+        <article class="kartu">
+          <div class="layar-contoh"><span class="eyebrow">[ tangkapan layar ]</span></div>
+          <h3>Daftar Periksa</h3>
+          <p>Satu per satu, tidak perlu sekaligus.</p>
+        </article>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== BAGIAN 4 — CERITA ALUMNI ========================================
+       CARA MENYEMBUNYIKAN BAGIAN INI: tambahkan satu atribut `hidden` pada
+       <section> tepat di bawah ini, lalu simpan. Tidak ada bagian lain yang
+       perlu diubah — tidak ada tautan navigasi yang menunjuk ke sini.
+
+           <section id="cerita" class="bagian" hidden>
+
+       Hapus `hidden` untuk menayangkannya kembali.
+       ====================================================================== -->
+  <section id="cerita" class="bagian">
+    <div class="wrap">
+
+      <h2>Bukan teori. Mereka sudah lewat jalan ini.</h2>
+
+      <div class="kosong">
+        <p class="eyebrow">Bagian ini belum tayang</p>
+        <p>Disembunyikan sampai ada minimal dua cerita nyata. Tidak diisi contoh karangan — kredibilitas adalah satu-satunya aset yang tidak bisa dipulihkan setelah rusak.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== BAGIAN 5 — TIGA LANGKAH ========================================= -->
+  <section id="langkah" class="bagian">
+    <div class="wrap">
+
+      <h2>Gratis. Tiga langkah.</h2>
+
+      <ol class="langkah">
+        <li><p>Buka edilakso.my.id di HP</p></li>
+        <li><p>Jawab dua pertanyaan: kelas berapa, sudah ada bayangan prodi belum</p></li>
+        <li><p>Lihat tenggat terdekat dan mulai dari satu langkah</p></li>
+      </ol>
+
+      <div class="ajakan">
+        <a class="tombol tombol-utama tombol-lg" href="https://edilakso.my.id/">Mulai Sekarang</a>
+        <p>Tidak perlu pasang aplikasi. Tidak perlu bayar.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== BAGIAN 6 — DARI MANA DATANYA ==================================== -->
+  <section id="sumber" class="bagian">
+    <div class="wrap dua-kolom">
+
+      <div>
+        <h2>Dari mana datanya</h2>
+        <ul class="daftar-sumber">
+          <li>Hanya dari laman resmi Kemendikdasmen dan SNPMB</li>
+          <li>Setiap tanggal mencantumkan kapan terakhir kami cek</li>
+          <li>Kalau kami belum yakin, kami tidak menampilkannya</li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="catatan-sumber">Informasi yang keliru di bidang ini merugikan siswa secara permanen. Karena itu kami tidak menebak.</p>
+        <div class="penafian">
+          <p>LANJUT bukan lembaga resmi dan tidak berafiliasi dengan SNPMB maupun Kemendikdasmen. Keputusan akhir selalu mengacu pada pengumuman resmi.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== BAGIAN 7 — TENTANG ============================================== -->
+  <section id="tentang" class="bagian">
+    <div class="wrap tentang">
+
+      <img src="assets/mascot-blue.png" alt="Maskot LANJUT" width="1048" height="1048" loading="lazy">
+
+      <div class="tentang-teks">
+        <h2>Dibuat oleh siswa SMK, untuk siswa SMK</h2>
+        <p>EDILAKSO GROUP — kelompok siswa XII RPL 2 SMKN 4 Bandung. Kami membuat LANJUT karena kami sendiri mengalami masalahnya.</p>
+        <p>Kenal alumni SMK yang tembus PTN?</p>
+        <!-- Sambungkan ke kanal kontak tim begitu alamatnya diputuskan (PRD Bagian 11). -->
+        <button class="tombol tombol-garis" type="button" data-aksi="hubungi-kami">Kabari kami</button>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="situs-footer">
+  <div class="footer-isi">
+
+    <a class="wordmark" href="/">
+      <img src="assets/lanjut-wordmark-trimmed.png" alt="LANJUT" width="452" height="160" loading="lazy">
+    </a>
+
+    <p class="footer-baris">
+      <span>EDILAKSO GROUP © <time datetime="2026">2026</time></span>
+      <!-- Isi tautan Kontak & Instagram begitu alamatnya diputuskan. -->
+      <span>Kontak</span>
+      <span>Instagram</span>
+    </p>
+
+    <p class="footer-catatan">Proyek mata pelajaran Kreatif, Inovasi, dan Kewirausahaan — SMKN 4 Bandung</p>
+
+  </div>
+</footer>
+
+</body>
+</html>

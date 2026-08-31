@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eksplorasi Tujuan · LANJUT</title>
+<meta name="description" content="Peminat, mata kuliah, dan kampus yang cocok.">
+<meta name="theme-color" content="#456A8C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="assets/img/mascot-tile-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<script src="assets/app.js" defer></script>
+</head>
+
+<body data-peran="eksplorasi-tujuan">
+<a class="lewati" href="#isi">Lewati ke konten</a>
+
+<div class="app">
+
+  <header class="appbar">
+    <img class="appbar__mark" src="assets/img/mascot-tile-primary.png" alt="" width="32" height="32">
+    <p class="appbar__wordmark"><img src="assets/img/lanjut-wordmark-badge.png" alt="LANJUT"></p>
+    <a class="appbar__profil" href="onboarding.html" aria-label="Profil kamu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+    </a>
+  </header>
+
+  <!-- Kepala (blok #1 SDD §F.2): tautan kembali ke pilih-mapel.html, pola
+       sama dengan halaman cabang lain (arsip-detail.html, bank-soal.html,
+       latihan.html) — .pagebar (bukan .kepala) karena halaman ini butuh
+       tautan kembali + <h1> sekaligus, bukan cuma h1+p seperti .kepala.
+       h1 ditaruh DI LUAR wadah [data-keadaan], supaya "TEPAT SATU <h1>"
+       (check.js aturan 7) tetap terpenuhi juga saat keadaan "kosong"
+       (fallback) atau "galat" sedang tampil. -->
+  <div class="pagebar">
+    <a class="icon-btn" href="pilih-mapel.html" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></a>
+    <h1 data-isi="nama-prodi">Keselamatan dan Kesehatan Kerja (K3)</h1>
+  </div>
+
+  <main class="layar" id="isi">
+    <div class="layar__isi layar__isi--rapat">
+
+      <!-- Keadaan galat pemuatan data (salinan teks §6). Mulai hidden;
+           app.js (pasangEksplorasiTujuan()) hanya mengubah atributnya kalau
+           data/profil-prodi.json gagal dimuat — misalnya saat halaman
+           dibuka lewat file://. Isi contoh K3 di bawah (data-keadaan="profil")
+           TETAP tampil apa adanya (SDD §E.3), jadi halaman ini tidak pernah
+           menjadi layar putih walau sedang luring. -->
+      <div class="peringatan" role="note" hidden data-keadaan="galat">
+        <span class="peringatan__ikon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></svg>
+        </span>
+        <div class="peringatan__isi">
+          <p>Sedang tidak tersambung. Yang sudah pernah dibuka masih bisa dilihat.</p>
+        </div>
+      </div>
+
+      <!-- Keadaan "profil" (SDD §E.3): seluruh blok 1b-7. Contoh hidup di
+           bawah memakai data K3 (SDD §C.2, prodi contoh pertama). Wadah ini
+           TAMPIL sebagai bawaan (tidak [hidden]) — begitu juga isi cadangan
+           tanpa JavaScript atau saat fetch gagal. app.js hanya menyembunyikan
+           wadah ini kalau id prodi tidak ketemu (keadaan "kosong" di bawah). -->
+      <div data-keadaan="profil">
+
+        <!-- 1b. Lencana jenjang + lencana SMK. Lencana SMK sengaja paling
+             menonjol (lencana--solid, SDD §F.2 baris 1b) karena itu pembeda
+             produk untuk anak SMK — tapi K3 (prodi contoh) punya
+             badge_relevan_smk:false (SDD §C.2, keputusan P2/P3 §M), jadi
+             disembunyikan di contoh statis ini. -->
+        <div style="display:flex;flex-wrap:wrap;gap:var(--space-2);align-items:center">
+          <span class="lencana lencana--neutral" data-isi="jenjang">D4</span>
+          <span data-slot="badge-smk" hidden>
+            <span class="lencana lencana--solid">Relevan untuk RPL/TKJ/Teknik</span>
+          </span>
+        </div>
+
+        <!-- 2. Dua metrik berdampingan — SATU .kartu, grid 2 kolom lewat
+             kelas baru .metrik-duo (lihat assets/app.css §7b). Dua metrik
+             SELALU tampil berpasangan (SDD §E.4): jumlah peminat tidak boleh
+             berdiri sendiri tanpa rasio keketatannya, walau rasionya "—". -->
+        <div class="kartu metrik-duo" style="margin-top:var(--space-4)">
+          <div>
+            <p style="font:var(--text-h2)" data-isi="peminat-jumlah">5.582</p>
+            <p class="caption">Pendaftar</p>
+          </div>
+          <div>
+            <p style="font:var(--text-h2)" data-isi="rasio-keketatan">0,8%</p>
+            <p class="caption">Diterima dari pendaftar</p>
+            <!-- Tampil hanya kalau rasio "—" (diterima null / peminat 0).
+                 Untuk K3, diterima = 43 (bukan null), jadi disembunyikan di
+                 contoh statis ini — app.js yang membuka kalau prodi lain
+                 tidak punya angka diterima (mis. informatika, manajemen,
+                 akuntansi di SDD §C.2 punya diterima: null). Atribut ini
+                 TIDAK ada di daftar data-isi yang dikunci SDD §0 — ditambah
+                 karena salinan teks §F.3 mewajibkan kalimat ini tampil saat
+                 rasio tidak terhitung; dicatat di laporan akhir untuk PM. -->
+            <p class="caption" data-isi="rasio-catatan" hidden>Angka diterima belum tersedia.</p>
+          </div>
+        </div>
+
+        <!-- 2b. Baris sumber + lencana status. Frasa memakai "diperiksa"
+             (bukan "dicek <angka>") dan TIDAK memakai "Sumber: Laman resmi"
+             supaya lolos check.js aturan 9 — tanggal & jalur di sini contoh
+             statis untuk K3, app.js yang menimpanya dari diperiksa_pada
+             kepala berkas dan peminat.jalur/tahun saat data hidup. -->
+        <div class="baris-nilai" style="align-items:flex-start;margin-top:var(--space-2)">
+          <p class="sumber" data-isi="sumber-baris">Sumber: SNPMB SNBT 2026 · diperiksa 31 Agustus 2026</p>
+          <span class="lencana lencana--resmi" data-isi="status-peminat">Terverifikasi</span>
+        </div>
+
+        <!-- 3. "Yang akan kamu pelajari" — 1-6 butir apa adanya, tidak pernah
+             ditambal supaya genap (SDD §C.1). K3 py 6 mata kuliah, status
+             sumbernya "Perkiraan" (bukan kurikulum resmi satu kampus). -->
+        <section class="seksi" style="margin-top:var(--space-5)">
+          <div class="baris-nilai">
+            <h2 class="seksi__judul">Yang akan kamu pelajari</h2>
+            <span class="lencana lencana--neutral" data-isi="status-mata-kuliah">Perkiraan</span>
+          </div>
+          <ul class="tumpuk" data-daftar="mata-kuliah">
+            <li class="kartu kartu--rapat">Higiene Industri</li>
+            <li class="kartu kartu--rapat">Keselamatan Kerja</li>
+            <li class="kartu kartu--rapat">K3 Lingkungan</li>
+            <li class="kartu kartu--rapat">Pengendalian Proses</li>
+            <li class="kartu kartu--rapat">Instrumentasi</li>
+            <li class="kartu kartu--rapat">Pertolongan Pertama</li>
+          </ul>
+          <!-- catatan_studi K3 = null -> disembunyikan & dikosongkan di
+               contoh statis (SDD tugas §1 poin 3). app.js yang mengisi teks
+               dan membuka elemen ini untuk prodi yang punya catatan_studi
+               (mis. kedokteran, farmasi, keperawatan). -->
+          <p class="caption" data-isi="catatan-studi" hidden></p>
+        </section>
+
+        <!-- 4. "Ke mana lulusannya" — 2-4 kartu bertumpuk VERTIKAL (bukan 2
+             kolom, nama peran panjang di 360px, SDD §F.2 baris 4). TIDAK ADA
+             angka gaji di mana pun (spec §3 & §8). -->
+        <section class="seksi" style="margin-top:var(--space-5)">
+          <div class="baris-nilai">
+            <h2 class="seksi__judul">Ke mana lulusannya</h2>
+            <span class="lencana lencana--resmi" data-isi="status-profesi">Terverifikasi</span>
+          </div>
+          <ul class="tumpuk" data-daftar="profesi">
+            <li class="kartu kartu--rapat">Safety Officer / HSE Officer</li>
+            <li class="kartu kartu--rapat">Safety Inspector</li>
+            <li class="kartu kartu--rapat">Environmental Specialist</li>
+            <li class="kartu kartu--rapat">Auditor K3</li>
+          </ul>
+        </section>
+
+        <!-- 5. "Kampus yang cocok" — urutan MENGIKUTI data apa adanya (SDD
+             §C.4): kampus sumber angka peminat lebih dulu (UNS), lalu PTN
+             Vokasi (PPNS, kartu--outline supaya setara menonjol dengan PTN
+             akademik), lalu PTN akademik lain (UNAIR), PTS selalu terakhir
+             (Universitas Binawan). JANGAN diurutkan ulang. -->
+        <section class="seksi" style="margin-top:var(--space-5)">
+          <div class="baris-nilai">
+            <h2 class="seksi__judul">Kampus yang cocok</h2>
+            <span class="lencana lencana--resmi" data-isi="status-kampus">Terverifikasi</span>
+          </div>
+          <div class="tumpuk" data-daftar="kampus">
+            <div class="kartu">
+              <p style="font:var(--text-h3)">UNS</p>
+              <p style="margin-top:var(--space-2);display:flex;flex-wrap:wrap;gap:6px">
+                <span class="pil">PTN Akademik</span>
+                <span class="pil">SNBP</span>
+                <span class="pil">SNBT</span>
+              </p>
+            </div>
+            <div class="kartu kartu--outline">
+              <p style="font:var(--text-h3)">PPNS (Politeknik Perkapalan Negeri Surabaya)</p>
+              <p style="margin-top:var(--space-2);display:flex;flex-wrap:wrap;gap:6px">
+                <span class="pil">PTN Vokasi</span>
+                <span class="pil">SNBT</span>
+              </p>
+            </div>
+            <div class="kartu">
+              <p style="font:var(--text-h3)">UNAIR</p>
+              <p style="margin-top:var(--space-2);display:flex;flex-wrap:wrap;gap:6px">
+                <span class="pil">PTN Akademik</span>
+                <span class="pil">SNBP</span>
+                <span class="pil">SNBT</span>
+              </p>
+            </div>
+            <div class="kartu">
+              <p style="font:var(--text-h3)">Universitas Binawan</p>
+              <p style="margin-top:var(--space-2);display:flex;flex-wrap:wrap;gap:6px">
+                <span class="pil">PTS</span>
+                <span class="pil">Mandiri</span>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Disclaimer — WAJIB tampil selalu, tidak boleh disembunyikan
+             di balik tautan (SDD §F.2 baris 6, salinan-teks §4.9). -->
+        <p class="penafian" style="margin-top:var(--space-5)">
+          Data ini rangkuman dari SNPMB/BAN-PT, bisa berubah. Cek laman resmi untuk info terkini.
+        </p>
+
+        <!-- 7. Aksi — dua keadaan (idle/tersimpan, SDD §F.2 baris 7). Saat
+             tersimpan, tombol disembunyikan dan kalimat konfirmasi + tautan
+             ke checklist.html tampil sebagai gantinya. app.js
+             (ChecklistTambahan.tambah, kategori "Riset Kampus", SDD §G.2)
+             yang menukar dua wadah ini setelah tombol ditekan. -->
+        <div style="margin-top:var(--space-4)">
+          <button type="button" class="btn btn--lg btn--penuh" data-aksi="simpan-checklist" data-keadaan="idle">Simpan ke Daftar Periksa</button>
+          <p style="margin-top:var(--space-2)" data-keadaan="tersimpan" hidden>
+            Sudah masuk Daftar Periksa. <a href="checklist.html">Lihat Daftar Periksa</a>
+          </p>
+        </div>
+
+      </div><!-- /data-keadaan="profil" -->
+
+      <!-- 8. Fallback (SDD §E.3 "kosong") — tampil kalau tidak ada ?prodi,
+           prodi_impian = "belum", atau id tidak ketemu di profil-prodi.json.
+           Wadah [data-daftar="fallback-daftar"] SENGAJA dibiarkan kosong di
+           markup statis (SDD tugas §1 poin 8 mengizinkan ini "opsional,
+           boleh kosong total") — app.js yang membangun satu <section
+           class="seksi"> per rumpun berisi <a class="kartu kartu--rapat">
+           per prodi dari profil-prodi.json (bukan prodi.json), supaya yang
+           ditawarkan di sini dijamin punya profil F10. -->
+      <section class="kosong" hidden data-keadaan="kosong">
+        <img src="assets/img/mascot-blue.png" alt="" width="96" height="96">
+        <h2>Profil lengkap untuk prodi ini belum kami siapkan.</h2>
+        <p>Yang sudah tersedia:</p>
+        <div data-daftar="fallback-daftar" style="width:100%"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- NAVIGASI BAWAH — empat ikon, tidak pernah lebih. Tab aktif: Pilih
+       Mapel (F10 kelanjutan langsung dari F3/pilih-mapel.html, bukan
+       halaman cabang dari Beranda seperti alumni/arsip/latihan/bank-soal —
+       SDD §E.1). -->
+  <nav class="tabbar" aria-label="Navigasi utama">
+    <a href="beranda.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></span>
+      Beranda
+    </a>
+    <a href="khusus-smk.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9 12 4l10 5-10 5-10-5Z"/><path d="M6 11.5V16c0 1.1 2.7 2 6 2s6-.9 6-2v-4.5"/></svg></span>
+      Khusus SMK
+    </a>
+    <a href="pilih-mapel.html" aria-current="page">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg></span>
+      Pilih Mapel
+    </a>
+    <a href="checklist.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg></span>
+      Checklist
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>

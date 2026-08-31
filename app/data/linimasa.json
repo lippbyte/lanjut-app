@@ -1,0 +1,63 @@
+{
+  "_catatan": "Entitas `tahapan_linimasa` (PRD/SDD §13): id, judul, tanggal_mulai, tanggal_selesai, jalur, url_sumber, diperiksa_pada.",
+  "_peringatan": "SELURUH TANGGAL DI BERKAS INI BELUM DIVERIFIKASI. Nilainya disalin dari mockup desain, BUKAN dari laman resmi. PRD F1 melarang menampilkan tanggal yang belum diverifikasi, dan Pertanyaan Terbuka §11 mencatat hal ini sebagai pemblokir F1.",
+  "_url_sumber_artinya": "url_sumber adalah TEMPAT MEMVERIFIKASI, bukan tempat data ini diambil. Selama asal masih 'mockup', jangan pernah menulis 'Sumber: Laman resmi SNPMB' di antarmuka — itu klaim yang tidak benar.",
+  "_cara_memverifikasi": "Buka laman SNPMB dan Kemendikdasmen, ganti tiap tanggal dengan yang resmi, ubah asal menjadi 'resmi', isi diperiksa_pada dengan tanggal pengecekan, lalu ubah status di sini menjadi 'terverifikasi'. Setelah itu barulah blok .peringatan di beranda.html boleh dihapus.",
+  "status": "belum_diverifikasi",
+  "asal": "mockup",
+  "sumber": "resmi",
+  "pemilik": "tim",
+  "diperiksa_pada": null,
+  "data": [
+    {
+      "id": "sosialisasi",
+      "judul": "Sosialisasi jalur TKA/SNBP/SNBT di sekolah",
+      "tanggal_mulai": "2026-07-01",
+      "tanggal_selesai": "2026-07-31",
+      "jalur": "TKA",
+      "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+      "diperiksa_pada": null,
+      "asal": "mockup"
+    },
+    {
+      "id": "daftar-akun-tka",
+      "judul": "Pendaftaran akun TKA",
+      "tanggal_mulai": "2026-08-01",
+      "tanggal_selesai": "2026-09-27",
+      "jalur": "TKA",
+      "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+      "diperiksa_pada": null,
+      "asal": "mockup"
+    },
+    {
+      "id": "pelaksanaan-tka",
+      "judul": "Pelaksanaan TKA",
+      "tanggal_mulai": "2026-10-01",
+      "tanggal_selesai": "2026-11-30",
+      "jalur": "TKA",
+      "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+      "diperiksa_pada": null,
+      "asal": "mockup"
+    },
+    {
+      "id": "pdss",
+      "judul": "Pengisian PDSS oleh sekolah",
+      "tanggal_mulai": "2026-12-01",
+      "tanggal_selesai": "2026-12-31",
+      "jalur": "SNBP",
+      "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+      "diperiksa_pada": null,
+      "asal": "mockup"
+    },
+    {
+      "id": "daftar-snbp",
+      "judul": "Pendaftaran SNBP",
+      "tanggal_mulai": "2027-02-04",
+      "tanggal_selesai": "2027-02-18",
+      "jalur": "SNBP",
+      "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
+      "diperiksa_pada": null,
+      "asal": "mockup"
+    }
+  ]
+}

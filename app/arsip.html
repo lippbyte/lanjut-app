@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arsip Belajar · LANJUT</title>
+<meta name="theme-color" content="#456A8C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="assets/img/mascot-tile-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<script src="assets/app.js" defer></script>
+<script src="assets/levelin.js" defer></script>
+</head>
+
+<body data-peran="arsip">
+<a class="lewati" href="#isi">Lewati ke konten</a>
+
+<div class="app">
+
+  <header class="appbar">
+    <img class="appbar__mark" src="assets/img/mascot-tile-primary.png" alt="" width="32" height="32">
+    <p class="appbar__wordmark"><img src="assets/img/lanjut-wordmark-badge.png" alt="LANJUT"></p>
+    <a class="appbar__profil" href="onboarding.html" aria-label="Profil kamu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+    </a>
+  </header>
+
+  <div class="pagebar">
+    <a class="icon-btn" href="beranda.html" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></a>
+    <h1>Arsip Belajar</h1>
+  </div>
+
+  <main class="layar" id="isi">
+    <div class="layar__isi">
+
+      <p class="muted" style="font:var(--text-body-small)">Yang kamu simpan hari ini, kepakai nanti.</p>
+
+      <!-- PRD F6: arsip HARUS sudah berisi kartu kurasi tim sebelum pengguna
+           menambah apa pun. Kartu di bawah bersumber "resmi" (kurasi tim),
+           bukan kerangka kosong yang menunggu diisi pengguna. -->
+
+      <!-- Keadaan galat pemuatan data (salinan teks §6). Mulai hidden dan
+           tetap hidden di sumber; app.js cuma mengubah atributnya ketika
+           data/arsip.json atau data/mapel.json gagal dimuat — misalnya saat
+           halaman dibuka lewat file://. Baris di bawahnya dibiarkan apa
+           adanya, jadi halaman ini tidak pernah menjadi layar kosong. -->
+      <div class="peringatan" role="note" hidden data-keadaan="galat">
+        <span class="peringatan__ikon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></svg>
+        </span>
+        <div class="peringatan__isi">
+          <p>Sedang tidak tersambung. Yang sudah pernah dibuka masih bisa dilihat.</p>
+        </div>
+      </div>
+
+      <!-- Baris mapel TIDAK dibangun ulang dari data: pembagian "Wajib TKA"
+           dan "Pilihan" tidak ada di data/mapel.json, jadi taksonominya tetap
+           tinggal di markup ini. Yang diikat per baris hanya nama mapel dan
+           jumlah kartunya, lewat data-mapel="<id>".
+
+           href-nya sengaja tanpa query di sumber: tools/check.js:22 memeriksa
+           keberadaan berkas tanpa membuang query string, jadi "?mapel=" hanya
+           dipasang app.js saat halaman dijalankan. -->
+
+      <!-- Level-In (FL3, §7.6) — PENDING, SENGAJA TIDAK DIRENDER.
+           Keputusan §10.2 no. 3 di SDD-LevelIn.md (apakah tampilan agregat
+           kalibrasi per mapel di halaman ini gratis atau berbayar) masih
+           terbuka. Selama belum diputuskan, komponen penanda status per
+           baris mapel TIDAK BOLEH tampil sama sekali — bukan versi
+           "terkunci" per baris, karena itu mengubah halaman Arsip yang
+           gratis menjadi etalase berbayar (SDD §7.6). Ini tidak mengurangi
+           satu pun fitur must-have: FL3 tetap dihitung penuh dan tetap
+           menyalakan FL4 di Beranda (SDD K6).
+
+           Begitu keputusan diambil dan bernilai "gratis": kelas
+           .levelin-status-badge (--belum-data / --selaras / --overconfident)
+           sudah siap di assets/levelin.css — tinggal ditambahkan satu span
+           di tiap baris <a class="kartu kartu--rapat" data-mapel="...">
+           di bawah, dan assets/levelin.js yang mengisinya. -->
+
+      <section class="seksi">
+        <h2 class="seksi__judul">Mapel Wajib TKA</h2>
+        <div class="tumpuk">
+          <a class="kartu kartu--rapat" href="arsip-detail.html" data-mapel="matematika">
+            <span class="baris">
+              <span class="baris__isi" style="font-weight:var(--fw-medium)" data-isi="nama">Matematika</span>
+              <span class="caption"><span data-isi="jumlah">4</span> kartu</span>
+              <span class="caption" hidden data-keadaan="kosong">belum ada kartu</span>
+              <span class="baris__panah"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+            </span>
+          </a>
+          <a class="kartu kartu--rapat" href="arsip-detail.html" data-mapel="bahasa-inggris">
+            <span class="baris">
+              <span class="baris__isi" style="font-weight:var(--fw-medium)" data-isi="nama">Bahasa Inggris</span>
+              <span class="caption"><span data-isi="jumlah">4</span> kartu</span>
+              <span class="caption" hidden data-keadaan="kosong">belum ada kartu</span>
+              <span class="baris__panah"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+            </span>
+          </a>
+          <a class="kartu kartu--rapat" href="arsip-detail.html" data-mapel="bahasa-indonesia">
+            <span class="baris">
+              <span class="baris__isi" style="font-weight:var(--fw-medium)" data-isi="nama">Bahasa Indonesia</span>
+              <span class="caption" hidden><span data-isi="jumlah">0</span> kartu</span>
+              <span class="caption" data-keadaan="kosong">belum ada kartu</span>
+              <span class="baris__panah"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+            </span>
+          </a>
+        </div>
+      </section>
+
+      <section class="seksi">
+        <h2 class="seksi__judul">Mapel Pilihan</h2>
+        <div class="tumpuk">
+          <a class="kartu kartu--rapat" href="arsip-detail.html" data-mapel="informatika">
+            <span class="baris">
+              <span class="baris__isi" style="font-weight:var(--fw-medium)" data-isi="nama">Informatika</span>
+              <span class="caption"><span data-isi="jumlah">4</span> kartu</span>
+              <span class="caption" hidden data-keadaan="kosong">belum ada kartu</span>
+              <span class="baris__panah"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+            </span>
+          </a>
+          <a class="kartu kartu--rapat" href="arsip-detail.html" data-mapel="fisika">
+            <span class="baris">
+              <span class="baris__isi" style="font-weight:var(--fw-medium)" data-isi="nama">Fisika</span>
+              <span class="caption" hidden><span data-isi="jumlah">0</span> kartu</span>
+              <span class="caption" data-keadaan="kosong">belum ada kartu</span>
+              <span class="baris__panah"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></span>
+            </span>
+          </a>
+        </div>
+      </section>
+
+      <div class="tumpuk--lebar tumpuk">
+        <a class="btn btn--outline btn--lg btn--penuh" href="arsip-tambah.html">Tambah kartu baru</a>
+        <a class="btn btn--lg btn--penuh" href="latihan.html">Mulai latihan harian</a>
+        <a class="btn btn--ghost btn--penuh" href="bank-soal.html">Cari referensi dari Bank Soal Mitra</a>
+      </div>
+
+      <!-- Layar kosong (salinan teks §4.5). Untuk kelas 10–11 teksnya berbeda:
+           "Kelas 12 nanti tidak akan sempat mengulang semuanya dari nol."
+           Dipilih nanti berdasarkan profil.kelas. -->
+      <section class="kosong" hidden data-keadaan="kosong">
+        <img src="assets/img/mascot-blue.png" alt="" width="96" height="96">
+        <h2>Belum ada kartu.</h2>
+        <p>Mulai dari satu saja — catatan hari ini juga boleh.</p>
+        <a class="btn btn--secondary" href="arsip-tambah.html">Tambah kartu baru</a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- NAVIGASI BAWAH — empat ikon, tidak pernah lebih.
+       Halaman cabang (alumni, arsip*, latihan*, bank-soal) memakai nav yang
+       sama tetapi menandai Beranda sebagai tab aktif. -->
+  <nav class="tabbar" aria-label="Navigasi utama">
+    <a href="beranda.html" aria-current="page">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></span>
+      Beranda
+    </a>
+    <a href="khusus-smk.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9 12 4l10 5-10 5-10-5Z"/><path d="M6 11.5V16c0 1.1 2.7 2 6 2s6-.9 6-2v-4.5"/></svg></span>
+      Khusus SMK
+    </a>
+    <a href="pilih-mapel.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg></span>
+      Pilih Mapel
+    </a>
+    <a href="checklist.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg></span>
+      Checklist
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+---
+title: ERD Bagian B — Konten Resmi yang Dikelola Admin (LANJUT)
+config:
+  er:
+    useMaxWidth: false
+---
+%% Nama tabel fisik memakai snake_case huruf kecil (tahapan_seleksi, info_khusus_smk, ...).
+%% Di diagram ditulis huruf besar mengikuti konvensi penulisan entitas Mermaid.
+%% Bagian A (entitas milik Pengguna + Prodi/Mapel) ada di erd-a.mmd.
+erDiagram
+
+    ADMIN ||--o{ TAHAPAN_SELEKSI : mengelola
+    ADMIN ||--o{ INFO_KHUSUS_SMK : mengelola
+    ADMIN ||--o{ CERITA_ALUMNI : memverifikasi
+
+    ADMIN {
+        int id PK
+        string nama
+        string peran
+    }
+
+    TAHAPAN_SELEKSI {
+        int id PK
+        string jalur
+        string nama_tahapan
+        date tanggal_mulai
+        date tanggal_selesai
+        string sumber
+        date diperiksa_pada
+    }
+
+    INFO_KHUSUS_SMK {
+        int id PK
+        string judul
+        text isi
+        string sumber
+        date diperiksa_pada
+    }
+
+    CERITA_ALUMNI {
+        int id PK
+        string nama_alumni
+        string asal_smk
+        string prodi_diterima
+        string jalur_masuk
+        text isi_cerita
+        string sumber
+        boolean izin_tayang
+        date diperiksa_pada
+    }

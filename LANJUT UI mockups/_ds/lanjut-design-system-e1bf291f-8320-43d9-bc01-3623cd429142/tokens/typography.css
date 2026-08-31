@@ -1,0 +1,25 @@
+:root{
+  --font-core:"Poppins",system-ui,-apple-system,"Segoe UI",sans-serif;
+
+  --fs-display:64px;  --lh-display:1.05; /* @kind other */ --ls-display:-.02em; /* @kind other */
+  --fs-h1:44px;       --lh-h1:1.12; /* @kind other */      --ls-h1:-.015em; /* @kind other */
+  --fs-h2:32px;       --lh-h2:1.18; /* @kind other */      --ls-h2:-.01em; /* @kind other */
+  --fs-h3:24px;       --lh-h3:1.25; /* @kind other */      --ls-h3:-.005em; /* @kind other */
+  --fs-title:20px;    --lh-title:1.35; /* @kind other */
+  --fs-body-lg:18px;  --lh-body-lg:1.6; /* @kind other */
+  --fs-body:16px;     --lh-body:1.6; /* @kind other */
+  --fs-body-sm:14px;  --lh-body-sm:1.55; /* @kind other */
+  --fs-caption:12px;  --lh-caption:1.45; /* @kind other */  --ls-caption:.01em; /* @kind other */
+  --fs-label:12px;    --ls-label:.08em; /* @kind other */   /* uppercase eyebrow */
+
+  --fw-light:300; /* @kind font */ --fw-regular:400; /* @kind font */ --fw-medium:500; /* @kind font */ --fw-semibold:600; /* @kind font */ --fw-bold:700; /* @kind font */
+
+  --text-display:var(--fw-semibold) var(--fs-display)/var(--lh-display) var(--font-core);
+  --text-h1:var(--fw-semibold) var(--fs-h1)/var(--lh-h1) var(--font-core);
+  --text-h2:var(--fw-semibold) var(--fs-h2)/var(--lh-h2) var(--font-core);
+  --text-h3:var(--fw-semibold) var(--fs-h3)/var(--lh-h3) var(--font-core);
+  --text-title:var(--fw-medium) var(--fs-title)/var(--lh-title) var(--font-core);
+  --text-body-default:var(--fw-regular) var(--fs-body)/var(--lh-body) var(--font-core);
+  --text-body-small:var(--fw-regular) var(--fs-body-sm)/var(--lh-body-sm) var(--font-core);
+  --text-caption:var(--fw-regular) var(--fs-caption)/var(--lh-caption) var(--font-core);
+}

@@ -1,0 +1,60 @@
+---
+title: ERD Bagian A — Data Pengguna & Pemetaan Prodi–Mapel (LANJUT)
+config:
+  er:
+    useMaxWidth: false
+---
+%% Nama tabel fisik memakai snake_case huruf kecil (pengguna, item_daftar_periksa, ...).
+%% Di diagram ditulis huruf besar mengikuti konvensi penulisan entitas Mermaid.
+%% Bagian B (entitas yang dikelola Admin) ada di erd-b.mmd.
+erDiagram
+
+    PENGGUNA ||--o{ ITEM_DAFTAR_PERIKSA : memiliki
+    PENGGUNA ||--o{ KARTU_ARSIP : memiliki
+    PRODI ||--o{ PRODI_MAPEL : terhubung
+    MATA_PELAJARAN ||--o{ PRODI_MAPEL : terhubung
+
+    PENGGUNA {
+        int id PK
+        string nama
+        string kelas
+        string prodi_impian
+        datetime dibuat_pada
+    }
+
+    ITEM_DAFTAR_PERIKSA {
+        int id PK
+        int pengguna_id FK
+        string deskripsi
+        boolean selesai
+        datetime ditandai_pada
+    }
+
+    KARTU_ARSIP {
+        int id PK
+        int pengguna_id FK
+        string kategori_mapel
+        string judul
+        text isi
+        text jawaban
+        string sumber
+        string pemilik
+    }
+
+    PRODI {
+        int id PK
+        string nama_prodi
+        string rumpun
+    }
+
+    MATA_PELAJARAN {
+        int id PK
+        string nama_mapel
+        boolean tersedia_di_smk
+    }
+
+    PRODI_MAPEL {
+        int prodi_id PK,FK
+        int mapel_id PK,FK
+        string tingkat_kepentingan
+    }

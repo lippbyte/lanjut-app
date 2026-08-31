@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Beranda · LANJUT</title>
+<meta name="theme-color" content="#456A8C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="assets/img/mascot-tile-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/levelin.css">
+<script src="assets/app.js" defer></script>
+<script src="assets/levelin.js" defer></script>
+</head>
+
+<body data-peran="beranda">
+<a class="lewati" href="#isi">Lewati ke konten</a>
+
+<div class="app">
+
+  <header class="appbar">
+    <img class="appbar__mark" src="assets/img/mascot-tile-primary.png" alt="" width="32" height="32">
+    <p class="appbar__wordmark"><img src="assets/img/lanjut-wordmark-badge.png" alt="LANJUT"></p>
+    <a class="appbar__profil" href="onboarding.html" aria-label="Profil kamu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+    </a>
+  </header>
+
+  <main class="layar" id="isi">
+    <div class="layar__isi">
+
+      <!-- Kalimat kembali K1 (salinan teks §2). Tetap, tidak diganti-ganti. -->
+      <h1 style="font:var(--text-title)">Tahu harus ngapain hari ini.</h1>
+
+      <!-- Tenggat terdekat, tanpa perlu gulir (PRD F1).
+           Angka hari, bukan detik berdetak — tenggat diketahui, bukan ditekankan.
+
+           Ini tanggal paling menonjol di seluruh aplikasi, dan angkanya masih
+           turunan dari tanggal contoh. Selama begitu, lencana "Contoh" wajib
+           menempel di sini juga — peringatan di bawah saja tidak cukup, karena
+           kartu ini yang pertama dibaca. -->
+      <section class="kartu kartu--brand" aria-labelledby="tenggat-judul">
+        <p><span class="lencana lencana--ondark">Contoh · belum diverifikasi</span></p>
+        <p id="tenggat-judul" class="angka-besar" style="color:var(--white);font:var(--text-h1);margin-top:var(--space-3)"><span data-isi="tenggat-sisa">39</span> hari</p>
+        <p style="font:var(--text-body-small);color:rgba(255,255,255,.92);margin-top:6px">
+          menuju <span data-isi="tenggat-tahapan">pendaftaran akun TKA</span> ditutup, <span data-isi="tenggat-tanggal">27 September 2026</span>.
+        </p>
+      </section>
+
+      <!-- Linimasa ringkas. Tahapan yang lewat ditandai, tidak dihapus. -->
+      <section class="seksi">
+        <h2 style="font:var(--text-h3)">Tahapan berikutnya</h2>
+
+        <!-- PRD F1: tidak menampilkan tanggal apa pun yang belum diverifikasi
+             dari laman resmi. Tanggal di bawah berasal dari mockup, BUKAN dari
+             laman resmi, jadi peringatan ini wajib ikut tampil dan wajib
+             terbaca LEBIH DULU daripada tanggalnya.
+
+             Hapus blok ini hanya kalau data/linimasa.json sudah berganti
+             status menjadi terverifikasi dan tiap butir sudah punya
+             diperiksa_pada yang benar-benar diisi. -->
+        <div class="peringatan" role="note">
+          <span class="peringatan__ikon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></svg>
+          </span>
+          <div class="peringatan__isi">
+            <p class="peringatan__judul">Belum diverifikasi</p>
+            <p>
+              Tanggal di bawah masih contoh untuk kerangka dan belum dicek ke
+              laman resmi SNPMB. Jangan dipakai untuk mengambil keputusan —
+              cek langsung ke <a href="https://snpmb.bppp.kemdikbud.go.id/" rel="noopener noreferrer" target="_blank">laman resmi SNPMB</a>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Keadaan galat pemuatan data (salinan teks §6). Mulai hidden;
+             app.js hanya mengubah atributnya kalau data/linimasa.json gagal
+             dimuat — misalnya saat halaman dibuka lewat file://. Tanggal
+             contoh di bawah tetap tampil apa adanya, lengkap dengan
+             penandanya, jadi tidak ada yang berubah jadi lebih meyakinkan
+             daripada yang sebenarnya. -->
+        <div class="peringatan" role="note" hidden data-keadaan="galat">
+          <span class="peringatan__ikon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></svg>
+          </span>
+          <div class="peringatan__isi">
+            <p>Sedang tidak tersambung. Yang sudah pernah dibuka masih bisa dilihat.</p>
+          </div>
+        </div>
+
+        <!-- Layar kosong (salinan teks §6). Mulai hidden; app.js membukanya
+             hanya kalau data/linimasa.json berhasil dimuat TAPI isinya
+             benar-benar kosong (bukan gagal muat — itu keadaan "galat" di
+             atas). Sebelumnya tidak ada blok ini sama sekali, jadi kalau
+             datanya kosong, markup contoh di bawah tampil seolah itu data
+             sungguhan. -->
+        <div class="peringatan" role="note" hidden data-keadaan="kosong">
+          <span class="peringatan__ikon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></svg>
+          </span>
+          <div class="peringatan__isi">
+            <p>Bagian ini masih kami siapkan. Kalau kamu punya bahannya, kirim ke kami.</p>
+          </div>
+        </div>
+
+        <div class="kartu">
+          <!-- Wadah butir linimasa. Butir pertama adalah contoh hidup sekaligus
+               cetakan yang diklon app.js dari data/linimasa.json. data-status
+               dan data-verifikasi pada tiap butir hasil render DITURUNKAN dari
+               data (tanggal dan diperiksa_pada), bukan diwarisi dari klon. -->
+          <ol class="linimasa" data-daftar="linimasa">
+            <!-- data-verifikasi="belum" meredupkan tanggalnya dan bikin miring,
+                 supaya beda dari tanggal resmi terlihat sekilas. Baris sumber
+                 TIDAK boleh menulis "Sumber: Laman resmi SNPMB" selama tanggalnya
+                 belum benar-benar diambil dari sana — itu klaim yang tidak benar. -->
+            <!-- Tiap butir membawa DUA baris sumber (belum/resmi), bukan
+                 satu baris tetap: app.js (pasangBeranda()) memilih salah
+                 satu sesuai verifikasi[i], per butir. Sebelumnya hanya ada
+                 satu baris per butir dengan kata-kata yang kebetulan beda
+                 antar butir (tidak berarti apa-apa) — begitu app.js mengklon
+                 SEMUA butir dari prototipe butir pertama saja, kata-kata
+                 unik butir 2-5 ikut hilang tertimpa milik butir pertama.
+                 Sekarang isinya konsisten sejak di markup, jadi tidak ada
+                 lagi yang tertimpa waktu diklon. -->
+            <li data-status="done" data-verifikasi="belum">
+              <div class="linimasa__rel"><span class="linimasa__titik"></span><span class="linimasa__garis"></span></div>
+              <div class="linimasa__teks">
+                <p class="linimasa__tanggal" data-isi="tanggal">Juli 2026</p>
+                <p class="linimasa__judul" data-isi="judul">Sosialisasi jalur TKA/SNBP/SNBT di sekolah</p>
+                <p class="sumber" data-sumber-isi="belum">Contoh · belum dicek ke SNPMB</p>
+                <p class="sumber" data-sumber-isi="resmi" hidden>Diperbarui dari laman resmi SNPMB · dicek <span data-isi="sumber-tanggal">—</span></p>
+              </div>
+            </li>
+            <li data-status="soon" data-verifikasi="belum">
+              <div class="linimasa__rel"><span class="linimasa__titik"></span><span class="linimasa__garis"></span></div>
+              <div class="linimasa__teks">
+                <p class="linimasa__tanggal">Tutup 27 September 2026</p>
+                <p class="linimasa__judul">Pendaftaran akun TKA</p>
+                <p class="sumber" data-sumber-isi="belum">Contoh · belum dicek ke SNPMB</p>
+                <p class="sumber" data-sumber-isi="resmi" hidden>Diperbarui dari laman resmi SNPMB · dicek <span data-isi="sumber-tanggal">—</span></p>
+              </div>
+            </li>
+            <li data-status="idle" data-verifikasi="belum">
+              <div class="linimasa__rel"><span class="linimasa__titik"></span><span class="linimasa__garis"></span></div>
+              <div class="linimasa__teks">
+                <p class="linimasa__tanggal">Oktober – November 2026</p>
+                <p class="linimasa__judul">Pelaksanaan TKA</p>
+                <p class="sumber" data-sumber-isi="belum">Contoh · belum dicek ke SNPMB</p>
+                <p class="sumber" data-sumber-isi="resmi" hidden>Diperbarui dari laman resmi SNPMB · dicek <span data-isi="sumber-tanggal">—</span></p>
+              </div>
+            </li>
+            <li data-status="idle" data-verifikasi="belum">
+              <div class="linimasa__rel"><span class="linimasa__titik"></span><span class="linimasa__garis"></span></div>
+              <div class="linimasa__teks">
+                <p class="linimasa__tanggal">Desember 2026</p>
+                <p class="linimasa__judul">Pengisian PDSS oleh sekolah</p>
+                <p class="sumber" data-sumber-isi="belum">Contoh · belum dicek ke SNPMB</p>
+                <p class="sumber" data-sumber-isi="resmi" hidden>Diperbarui dari laman resmi SNPMB · dicek <span data-isi="sumber-tanggal">—</span></p>
+              </div>
+            </li>
+            <li data-status="idle" data-verifikasi="belum">
+              <div class="linimasa__rel"><span class="linimasa__titik"></span></div>
+              <div class="linimasa__teks">
+                <p class="linimasa__tanggal">4 – 18 Februari 2027</p>
+                <p class="linimasa__judul">Pendaftaran SNBP</p>
+                <p class="sumber" data-sumber-isi="belum">Contoh · belum dicek ke SNPMB</p>
+                <p class="sumber" data-sumber-isi="resmi" hidden>Diperbarui dari laman resmi SNPMB · dicek <span data-isi="sumber-tanggal">—</span></p>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+      </section>
+
+      <!-- Level-In (FL4) — kartu saran latihan harian. SDD-LevelIn.md §6.4,
+           §7.5. Diletakkan di bawah blok tenggat/linimasa F1 (F1 tetap paling
+           menonjol, AC FL4), sebelum pintu "Latihan & Arsip Belajar" di bawah
+           ini — kartu ini pintu BARU yang sudah dipersempit ke satu
+           mapel/alasan; pintu lama di bawah tetap ada untuk menjelajah bebas
+           tanpa saran (SDD §7.5: "perlu diperjelas supaya tidak terbaca
+           sebagai dua pintu yang membingungkan").
+
+           Mulai [hidden]: assets/levelin.js yang membuka dan memilih SATU
+           dari lima varian §6.1f (data-jenis) begitu data sesi tersedia.
+           Tidak ada ikon nav baru — ini satu-satunya pintu tambahan (AC FL4).
+
+           Kontrak untuk levelin.js:
+             - buka kartu:            hilangkan [hidden] di .levelin-cta-card
+             - pilih varian:          set data-jenis="saran|kalibrasi_selaras|
+                                       belum_cukup_data|pengguna_baru|arsip_kosong"
+             - tampilkan SATU dari lima <p data-jenis-isi="...">, sembunyikan
+               sisanya (kelimanya sudah tertulis lengkap di HTML, bukan
+               dikarang JS — lihat docs/salinan-teks-lanjut.md §4.8)
+             - varian "saran" perlu isi <span data-isi="cta-saran-mapel">
+             - tampilkan tombol yang sesuai (data-jenis-tombol="mulai" untuk
+               4 varian pertama, "arsip" untuk arsip_kosong), sembunyikan yang lain -->
+      <div class="levelin-cta-card" data-jenis="" hidden>
+        <h3>Latihan Hari Ini</h3>
+        <p data-jenis-isi="saran" hidden><span data-isi="cta-saran-mapel">Matematika</span> kelihatannya masih perlu dilatih lagi — beberapa jawabanmu yakin, tapi meleset.</p>
+        <p data-jenis-isi="kalibrasi_selaras" hidden>Waktunya latihan lagi. Kartu-kartumu sudah menunggu.</p>
+        <p data-jenis-isi="belum_cukup_data" hidden>Belum cukup data buat menyimpulkan polamu. Latihan sedikit lagi biar kelihatan.</p>
+        <p data-jenis-isi="pengguna_baru" hidden>Belum pernah latihan di sini. Mulai dari beberapa kartu dulu.</p>
+        <p data-jenis-isi="arsip_kosong" hidden>Arsip belajarmu masih kosong. Isi dulu satu kartu sebelum mulai latihan.</p>
+        <a class="btn btn--penuh" href="latihan.html" data-jenis-tombol="mulai">Mulai</a>
+        <a class="btn btn--penuh" href="arsip-tambah.html" hidden data-jenis-tombol="arsip">Buka Arsip Belajar</a>
+      </div>
+
+      <!-- Pintu ke Arsip Belajar — bukan tab, dijangkau dari sini. -->
+      <a class="kartu kartu--soft" href="arsip.html">
+        <span class="baris">
+          <span class="baris__ikon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6c-2-1.3-5-1.8-8-1v13c3-.8 6-.3 8 1 2-1.3 5-1.8 8-1V5c-3-.8-6-.3-8 1Z"/><path d="M12 6v13"/></svg>
+          </span>
+          <span class="baris__isi">
+            <span class="baris__judul">Latihan &amp; Arsip Belajar</span>
+            <span class="baris__ket">Yang kamu simpan hari ini, kepakai nanti.</span>
+          </span>
+          <span class="baris__panah">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+          </span>
+        </span>
+      </a>
+
+      <!-- SATU-SATUNYA jalan ke alumni.html. Halaman itu sengaja tidak
+           mendapat ikon di navigasi bawah — nav dikunci empat ikon. -->
+      <a class="kartu kartu--outline" href="alumni.html">
+        <span class="baris">
+          <span class="baris__ikon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg>
+          </span>
+          <span class="baris__isi">
+            <span class="baris__judul">Cerita Alumni SMK</span>
+            <span class="baris__ket">Mereka sudah lewat jalan ini.</span>
+          </span>
+          <span class="baris__panah">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+          </span>
+        </span>
+      </a>
+
+    </div>
+  </main>
+
+  <!-- ================= NAVIGASI BAWAH — empat ikon, tidak pernah lebih =================
+       Beranda · Khusus SMK · Pilih Mapel · Checklist.
+       alumni.html, arsip*.html, latihan*.html dan bank-soal.html memakai nav
+       yang sama tetapi menandai Beranda sebagai tab aktif, karena semuanya
+       dijangkau dari cabang Beranda. -->
+  <nav class="tabbar" aria-label="Navigasi utama">
+    <a href="beranda.html" aria-current="page">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></span>
+      Beranda
+    </a>
+    <a href="khusus-smk.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9 12 4l10 5-10 5-10-5Z"/><path d="M6 11.5V16c0 1.1 2.7 2 6 2s6-.9 6-2v-4.5"/></svg></span>
+      Khusus SMK
+    </a>
+    <a href="pilih-mapel.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg></span>
+      Pilih Mapel
+    </a>
+    <a href="checklist.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg></span>
+      Checklist
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>

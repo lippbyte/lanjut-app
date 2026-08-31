@@ -1,0 +1,101 @@
+---
+title: Class Diagram — LANJUT (EDILAKSO GROUP)
+config:
+  class:
+    useMaxWidth: false
+---
+classDiagram
+    direction TB
+
+    class Pengguna {
+        +int id
+        +String nama
+        +String kelas
+        +String prodi_impian
+        +Date dibuat_pada
+        +daftarPeriksaSaya()
+        +arsipSaya()
+    }
+
+    class TahapanSeleksi {
+        +int id
+        +String jalur
+        +String nama_tahapan
+        +Date tanggal_mulai
+        +Date tanggal_selesai
+        +String sumber
+        +Date diperiksa_pada
+    }
+
+    class InfoKhususSMK {
+        +int id
+        +String judul
+        +String isi
+        +String sumber
+        +Date diperiksa_pada
+    }
+
+    class Prodi {
+        +int id
+        +String nama_prodi
+        +String rumpun
+    }
+
+    class MataPelajaran {
+        +int id
+        +String nama_mapel
+        +boolean tersedia_di_smk
+    }
+
+    class ProdiMapel {
+        +int prodi_id
+        +int mapel_id
+        +String tingkat_kepentingan
+    }
+
+    class CeritaAlumni {
+        +int id
+        +String nama_alumni
+        +String asal_smk
+        +String prodi_diterima
+        +String jalur_masuk
+        +String isi_cerita
+        +String sumber
+        +boolean izin_tayang
+        +Date diperiksa_pada
+    }
+
+    class ItemDaftarPeriksa {
+        +int id
+        +int pengguna_id
+        +String deskripsi
+        +boolean selesai
+        +Date ditandai_pada
+    }
+
+    class KartuArsip {
+        +int id
+        +int pengguna_id
+        +String kategori_mapel
+        +String judul
+        +String isi
+        +String jawaban
+        +String sumber
+        +String pemilik
+    }
+
+    class Admin {
+        +int id
+        +String nama
+        +String peran
+        +kelolaKonten()
+        +verifikasiSumber()
+    }
+
+    Pengguna "1" --> "0..*" ItemDaftarPeriksa : memiliki
+    Pengguna "1" --> "0..*" KartuArsip : memiliki
+    Prodi "1" --> "0..*" ProdiMapel : terhubung
+    MataPelajaran "1" --> "0..*" ProdiMapel : terhubung
+    Admin "1" --> "0..*" TahapanSeleksi : mengelola
+    Admin "1" --> "0..*" InfoKhususSMK : mengelola
+    Admin "1" --> "0..*" CeritaAlumni : memverifikasi

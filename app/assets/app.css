@@ -92,7 +92,10 @@ a:hover{color:var(--text-link-hover)}
   justify-self:end;width:32px;height:32px;border-radius:var(--radius-pill);
   background:var(--blue-100);color:var(--blue-600);
   display:flex;align-items:center;justify-content:center;border:0;cursor:pointer;
+  transition:background var(--dur-base) var(--ease-standard),
+             transform var(--dur-fast) var(--ease-standard);
 }
+.appbar__profil:active{transform:scale(var(--press-scale))}
 
 /* Baris judul halaman — hanya di layar dalam, bukan di empat tab utama. */
 .pagebar{
@@ -159,6 +162,7 @@ a:hover{color:var(--text-link-hover)}
   border-radius:var(--radius-pill);background:transparent;
   transition:background var(--dur-base) var(--ease-standard);
 }
+.tabbar a:active{opacity:.8}
 .tabbar a[aria-current="page"]{color:var(--blue-600);font-weight:var(--fw-semibold)}
 .tabbar a[aria-current="page"] span{background:var(--blue-100)}
 
@@ -199,12 +203,15 @@ a:hover{color:var(--text-link-hover)}
   transition:background var(--dur-base) var(--ease-standard);
 }
 .icon-btn:hover{background:var(--blue-100)}
+.icon-btn:active{transform:scale(var(--press-scale))}
 
 .tautan-kembali{
   align-self:flex-start;display:inline-flex;align-items:center;gap:6px;
   background:none;border:0;padding:var(--space-1) 0;cursor:pointer;
   color:var(--blue-600);font:var(--text-body-small);text-decoration:none;
+  transition:opacity var(--dur-fast) var(--ease-standard);
 }
+.tautan-kembali:active{opacity:.8}
 
 /* -------------------------------------------------------------------------
    7. KARTU
@@ -222,10 +229,17 @@ a:hover{color:var(--text-link-hover)}
 .kartu--brand h2,.kartu--brand h3{color:var(--white)}
 .kartu--rapat{padding:var(--space-3)}
 
+/* Dua metrik berdampingan (F10 Eksplorasi Tujuan, SDD §F.2 baris 2).
+   Grid 1fr/1fr (bukan lebar tetap) supaya tidak pernah meluap di 360px
+   (SDD §F.1, R8) — angka memakai --text-h2 di markup, bukan .angka-besar
+   48px, supaya nomor 4 digit + label tetap muat berdampingan. */
+.metrik-duo{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}
+
 /* Kartu yang bisa diklik naik 2px dan naik satu tingkat bayangan. */
 a.kartu,button.kartu{display:block;width:100%;text-align:left;cursor:pointer;
   font:var(--text-body-default);color:inherit;text-decoration:none}
 a.kartu:hover,button.kartu:hover{box-shadow:var(--shadow-2);transform:translateY(-2px)}
+a.kartu:active,button.kartu:active{transform:scale(var(--press-scale))}
 a.kartu--brand:hover,button.kartu--brand:hover{color:var(--white)}
 
 /* Baris kartu: teks kiri, panah kanan. */
@@ -260,6 +274,7 @@ a.kartu--brand:hover,button.kartu--brand:hover{color:var(--white)}
              border-color var(--dur-base) var(--ease-standard);
 }
 .keping:hover{background:var(--blue-100)}
+.keping:active{transform:scale(var(--press-scale))}
 .keping[aria-pressed="true"]{background:var(--blue-400);border-color:var(--blue-400);color:var(--white)}
 .keping-grup{display:flex;flex-wrap:wrap;gap:var(--space-2)}
 
@@ -340,6 +355,7 @@ a.kartu--brand:hover,button.kartu--brand:hover{color:var(--white)}
   background:transparent;color:var(--ink-500);
   transition:background var(--dur-base) var(--ease-standard);
 }
+.segmen button:active{opacity:.8}
 .segmen button[aria-selected="true"]{background:var(--white);color:var(--blue-600);
   font-weight:var(--fw-semibold);box-shadow:var(--shadow-1)}
 

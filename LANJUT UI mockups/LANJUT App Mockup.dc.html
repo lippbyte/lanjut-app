@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/lanjut-design-system-e1bf291f-8320-43d9-bc01-3623cd429142/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/lanjut-design-system-e1bf291f-8320-43d9-bc01-3623cd429142/tokens/colors.css">
+<link rel="stylesheet" href="_ds/lanjut-design-system-e1bf291f-8320-43d9-bc01-3623cd429142/tokens/typography.css">
+<link rel="stylesheet" href="_ds/lanjut-design-system-e1bf291f-8320-43d9-bc01-3623cd429142/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/lanjut-design-system-e1bf291f-8320-43d9-bc01-3623cd429142/tokens/radius.css">
+<link rel="stylesheet" href="_ds/lanjut-design-system-e1bf291f-8320-43d9-bc01-3623cd429142/tokens/elevation.css">
+<link rel="stylesheet" href="_ds/lanjut-design-system-e1bf291f-8320-43d9-bc01-3623cd429142/tokens/motion.css">
+<link rel="stylesheet" href="_ds/lanjut-design-system-e1bf291f-8320-43d9-bc01-3623cd429142/tokens/base.css">
+<link rel="stylesheet" href="_ds/lanjut-design-system-e1bf291f-8320-43d9-bc01-3623cd429142/styles.css">
+<script src="_ds/lanjut-design-system-e1bf291f-8320-43d9-bc01-3623cd429142/_ds_bundle.js"></script>
+<style>
+html,body{margin:0;background:var(--ink-050)}
+a{color:var(--text-link);text-decoration-color:var(--border-brand)}
+a:hover{color:var(--text-link-hover)}
+.lj-phone{scrollbar-width:none}
+.lj-phone::-webkit-scrollbar{width:0;height:0}
+@keyframes lj-pulse{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes lj-fadeup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--ink-050);padding:24px;font-family:var(--font-core);box-sizing:border-box;overflow-y:auto">
+<div style="width:390px;height:760px;flex-shrink:0;background:var(--white);border-radius:38px;box-shadow:var(--shadow-4);overflow:hidden;display:flex;flex-direction:column;position:relative">
+
+<sc-if value="{{ isSplash }}" hint-placeholder-val="{{ true }}">
+<div onClick="{{ skipSplash }}" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-6);background:var(--gradient-cover);cursor:pointer">
+<img src="assets/mascot/mascot-white.png" alt="" style="width:150px;height:150px;object-fit:contain;animation:lj-fadeup var(--dur-slow) var(--ease-out-soft)">
+<img src="assets/logo/lanjut-wordmark-standalone.png" alt="Lanjut" style="height:40px;object-fit:contain">
+<div style="display:flex;gap:8px;margin-top:var(--space-4)">
+<span style="width:8px;height:8px;border-radius:50%;background:var(--white);animation:lj-pulse 1.2s ease-in-out infinite"></span>
+<span style="width:8px;height:8px;border-radius:50%;background:var(--white);animation:lj-pulse 1.2s ease-in-out infinite .2s"></span>
+<span style="width:8px;height:8px;border-radius:50%;background:var(--white);animation:lj-pulse 1.2s ease-in-out infinite .4s"></span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isOnboarding }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+
+<sc-if value="{{ obShowSlide }}" hint-placeholder-val="{{ true }}">
+<div style="flex:1;display:flex;flex-direction:column;background:var(--gradient-cover);color:var(--white);padding:28px var(--gutter-screen) var(--space-6);box-sizing:border-box">
+<div style="display:flex;justify-content:flex-end">
+<button onClick="{{ finishOnboarding }}" style="background:none;border:0;color:rgba(255,255,255,.9);font:var(--text-body-small);font-family:var(--font-core);cursor:pointer;padding:8px">Lewati</button>
+</div>
+<div style="flex:1;display:flex;align-items:center;justify-content:center">
+<img src="assets/mascot/mascot-white.png" alt="" style="width:140px;height:140px;object-fit:contain">
+</div>
+<div style="display:flex;flex-direction:column;gap:var(--space-3);animation:lj-fadeup var(--dur-slow) var(--ease-out-soft)">
+<h1 style="font:var(--text-h2);margin:0">{{ obSlide.title }}</h1>
+<p style="font:var(--text-body-default);color:rgba(255,255,255,.9);margin:0">{{ obSlide.body }}</p>
+<sc-if value="{{ obSlide.hasList }}" hint-placeholder-val="{{ false }}">
+<ul style="margin:8px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font:var(--text-body-default);color:rgba(255,255,255,.94)">
+<sc-for list="{{ obSlide.list }}" as="li" hint-placeholder-count="4">
+<li>{{ li }}</li>
+</sc-for>
+</ul>
+</sc-if>
+</div>
+<div style="display:flex;gap:6px;margin:var(--space-5) 0 var(--space-4)">
+<sc-for list="{{ obDots }}" as="d" hint-placeholder-count="4">
+<span style="height:6px;border-radius:3px;flex:{{ d.flex }};background:{{ d.bg }};transition:flex var(--dur-base) var(--ease-standard)"></span>
+</sc-for>
+</div>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="secondary" size="lg" full-width="{{ true }}" onClick="{{ obNext }}" hint-size="100%,52px">{{ obButtonLabel }}</x-import>
+</div>
+</sc-if>
+
+<sc-if value="{{ obShowQuestions }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;display:flex;flex-direction:column;padding:var(--space-8) var(--gutter-screen) var(--space-6);gap:var(--space-6);overflow-y:auto;box-sizing:border-box">
+<div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-3);text-align:center">
+<img src="assets/mascot/mascot-blue.png" alt="" style="width:64px;height:64px;object-fit:contain">
+<h1 style="font:var(--text-h3);margin:0">Profil kamu di Lanjut</h1>
+<p style="font:var(--text-body-small);color:var(--text-muted);margin:0;max-width:280px">Biar kami bisa menyaring yang perlu kamu lihat saja.</p>
+</div>
+
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Field" label="Kamu kelas berapa?" hint-size="100%,auto">
+<div style="display:flex;gap:var(--space-2)">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Chip" selected="{{ kelas10Sel }}" onClick="{{ pickKelas10 }}" hint-size="auto,44px">10</x-import>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Chip" selected="{{ kelas11Sel }}" onClick="{{ pickKelas11 }}" hint-size="auto,44px">11</x-import>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Chip" selected="{{ kelas12Sel }}" onClick="{{ pickKelas12 }}" hint-size="auto,44px">12</x-import>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Field" label="Sudah ada bayangan prodi?" hint="Boleh dijawab &quot;belum&quot;" hint-size="100%,auto">
+<div style="display:flex;flex-direction:column;gap:var(--space-4)">
+<sc-for list="{{ rumpunGroups }}" as="g" hint-placeholder-count="3">
+<div>
+<div style="font:var(--text-caption);color:var(--text-subtle);text-transform:uppercase;letter-spacing:var(--ls-label);margin-bottom:var(--space-2)">{{ g.name }}</div>
+<div style="display:flex;flex-wrap:wrap;gap:var(--space-2)">
+<sc-for list="{{ g.items }}" as="pr" hint-placeholder-count="3">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Chip" selected="{{ pr.obSelected }}" onClick="{{ pr.obPick }}" hint-size="auto,44px">{{ pr.name }}</x-import>
+</sc-for>
+</div>
+</div>
+</sc-for>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="{{ belumVariant }}" size="sm" onClick="{{ pickBelum }}" hint-size="auto,40px">Belum, aku belum tahu</x-import>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="primary" size="lg" full-width="{{ true }}" onClick="{{ finishOnboarding }}" hint-size="100%,52px">Mulai sekarang</x-import>
+</div>
+</sc-if>
+
+</div>
+</sc-if>
+
+<sc-if value="{{ isApp }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:40px 1fr 40px;align-items:center;gap:8px;padding:12px var(--gutter-screen);background:var(--white);border-bottom:1px solid var(--border-hairline);flex-shrink:0">
+<img src="assets/mascot/mascot-tile-primary.png" alt="Lanjut" style="width:32px;height:32px;border-radius:22.5%;display:block">
+<div style="display:flex;justify-content:center"><img src="assets/logo/lanjut-wordmark-badge.png" alt="Lanjut" style="height:24px;display:block"></div>
+<div style="justify-self:end;width:32px;height:32px;border-radius:50%;background:var(--blue-100);color:var(--blue-600);display:flex;align-items:center;justify-content:center">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"></path></svg>
+</div>
+</div>
+
+<sc-if value="{{ showPageHeader }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:var(--space-2);padding:6px var(--gutter-screen);background:var(--white);border-bottom:1px solid var(--border-hairline);flex-shrink:0">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.IconButton" label="Kembali" onClick="{{ back }}" hint-size="44px,44px">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"></path></svg>
+</x-import>
+<h2 style="font:var(--text-title);margin:0">{{ pageHeaderTitle }}</h2>
+</div>
+</sc-if>
+
+<div class="lj-phone" style="flex:1;overflow-y:auto;overscroll-behavior:contain">
+
+<sc-if value="{{ isBeranda }}" hint-placeholder-val="{{ true }}">
+<div style="padding:var(--gutter-screen);display:flex;flex-direction:column;gap:var(--space-5)">
+<p style="font:var(--text-title);color:var(--ink-900);margin:0">Tahu harus ngapain hari ini.</p>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="brand" elevation="{{ 2 }}" hint-size="100%,120px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<div style="font:var(--text-h1);color:var(--white)">{{ tenggatDays }} hari</div>
+<p style="font:var(--text-body-small);color:rgba(255,255,255,.92);margin:0">{{ tenggatLabel }}</p>
+</div>
+</x-import>
+
+<div>
+<h2 style="font:var(--text-h3);margin:0 0 var(--space-3)">Tahapan berikutnya</h2>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" hint-size="100%,auto">
+<sc-for list="{{ timelineSteps }}" as="step" hint-placeholder-count="5">
+<div style="display:grid;grid-template-columns:20px 1fr;gap:var(--space-4);opacity:{{ step.opacity }}">
+<div style="display:flex;flex-direction:column;align-items:center">
+<span style="width:14px;height:14px;border-radius:50%;margin-top:5px;flex-shrink:0;background:{{ step.dotBg }};border:2px solid {{ step.dotBorder }}"></span>
+<sc-if value="{{ step.showLine }}" hint-placeholder-val="{{ true }}"><span style="flex:1;width:2px;background:var(--border-soft);margin-top:6px;border-radius:1px"></span></sc-if>
+</div>
+<div style="padding-bottom:{{ step.pad }}">
+<div style="font:var(--text-caption);color:var(--text-muted)">{{ step.date }}</div>
+<div style="font:var(--text-title);font-weight:var(--fw-semibold);margin-top:2px;text-decoration:{{ step.decoration }}">{{ step.title }}</div>
+<div style="font:var(--text-caption);color:var(--text-subtle);margin-top:4px">{{ step.source }}</div>
+</div>
+</div>
+</sc-for>
+</x-import>
+</div>
+
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="soft" interactive="{{ true }}" onClick="{{ openArsipFromBeranda }}" hint-size="100%,84px">
+<div style="display:flex;align-items:center;gap:var(--space-3)">
+<span style="color:var(--blue-600);flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-2-1.3-5-1.8-8-1v13c3-.8 6-.3 8 1 2-1.3 5-1.8 8-1V5c-3-.8-6-.3-8 1Z"></path><path d="M12 6v13"></path></svg></span>
+<div style="flex:1">
+<div style="font:var(--text-title);font-weight:var(--fw-semibold)">Latihan &amp; Arsip Belajar</div>
+<p style="font:var(--text-body-small);color:var(--ink-700);margin:2px 0 0">Yang kamu simpan hari ini, kepakai nanti.</p>
+</div>
+<span style="color:var(--ink-500);flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="outline" interactive="{{ true }}" onClick="{{ openAlumniFromBeranda }}" hint-size="100%,84px">
+<div style="display:flex;align-items:center;gap:var(--space-3)">
+<span style="color:var(--blue-600);flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"></path></svg></span>
+<div style="flex:1">
+<div style="font:var(--text-title);font-weight:var(--fw-semibold)">Cerita Alumni SMK</div>
+<p style="font:var(--text-body-small);color:var(--ink-700);margin:2px 0 0">Mereka sudah lewat jalan ini.</p>
+</div>
+<span style="color:var(--ink-500);flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
+</div>
+</x-import>
+</div>
+</sc-if>
+
+<sc-if value="{{ isKhususSmk }}" hint-placeholder-val="{{ false }}">
+<div style="padding:var(--gutter-screen);display:flex;flex-direction:column;gap:var(--space-4)">
+<h1 style="font:var(--text-h3);margin:0">Khusus SMK</h1>
+<p style="font:var(--text-body-small);color:var(--text-muted);margin:0">Hal-hal yang memang beda buat kita.</p>
+<p style="font:var(--text-body-default);color:var(--ink-700);margin:0">Sebagian aturan seleksi menganggap semua pendaftar berasal dari SMA. Halaman ini merangkum bagian yang tidak berlaku sama untuk kita — dan apa yang bisa dilakukan.</p>
+<sc-for list="{{ khususItems }}" as="item" hint-placeholder-count="6">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="plain" interactive="{{ true }}" onClick="{{ item.toggle }}" hint-size="100%,auto">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:var(--space-3)">
+<div style="font:var(--text-title);font-weight:var(--fw-semibold)">{{ item.title }}</div>
+<sc-if value="{{ item.expanded }}" hint-placeholder-val="{{ false }}"><span style="color:var(--blue-600);flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg></span></sc-if>
+<sc-if value="{{ item.collapsed }}" hint-placeholder-val="{{ true }}"><span style="color:var(--ink-500);flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span></sc-if>
+</div>
+<sc-if value="{{ item.expanded }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:var(--space-4);display:flex;flex-direction:column;gap:var(--space-3)">
+<div style="background:var(--status-attention-bg);border-radius:var(--radius-md);padding:var(--space-3)">
+<div style="font:var(--text-caption);font-weight:var(--fw-medium);color:var(--blue-600);text-transform:uppercase;letter-spacing:var(--ls-label);margin-bottom:4px">Apa yang berbeda</div>
+<p style="font:var(--text-body-small);color:var(--ink-700);margin:0">{{ item.beda }}</p>
+</div>
+<div style="background:var(--status-ok-bg);border-radius:var(--radius-md);padding:var(--space-3)">
+<div style="font:var(--text-caption);font-weight:var(--fw-medium);color:#2F6B5C;text-transform:uppercase;letter-spacing:var(--ls-label);margin-bottom:4px">Apa yang bisa dilakukan</div>
+<p style="font:var(--text-body-small);color:var(--ink-700);margin:0">{{ item.bisa }}</p>
+</div>
+<div style="font:var(--text-caption);color:var(--text-subtle)">{{ item.source }}</div>
+</div>
+</sc-if>
+</x-import>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ isPilihMapel }}" hint-placeholder-val="{{ false }}">
+<div style="padding:var(--gutter-screen);display:flex;flex-direction:column;gap:var(--space-4)">
+<h1 style="font:var(--text-h3);margin:0">Penolong Pilih Mapel</h1>
+
+<sc-if value="{{ mapelStepA }}" hint-placeholder-val="{{ true }}">
+<p style="font:var(--text-body-default);color:var(--ink-700);margin:0">Sudah tahu prodi tujuan?</p>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="outline" interactive="{{ true }}" onClick="{{ mapelChooseKnown }}" hint-size="100%,80px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3)">
+<div><div style="font:var(--text-title);font-weight:var(--fw-semibold)">Ya, sudah tahu</div><p style="font:var(--text-body-small);color:var(--ink-700);margin:2px 0 0">Langsung pilih dari daftar prodi.</p></div>
+<span style="color:var(--ink-500);flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
+</div>
+</x-import>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="soft" interactive="{{ true }}" onClick="{{ mapelExplore }}" hint-size="100%,80px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3)">
+<div><div style="font:var(--text-title);font-weight:var(--fw-semibold)">Belum, bantu aku eksplorasi</div><p style="font:var(--text-body-small);color:var(--ink-700);margin:2px 0 0">Mulai dari minat dan rumpun ilmu.</p></div>
+<span style="color:var(--ink-500);flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span>
+</div>
+</x-import>
+</sc-if>
+
+<sc-if value="{{ mapelStepB }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ mapelBackToA }}" style="align-self:flex-start;display:flex;align-items:center;gap:6px;background:none;border:0;color:var(--blue-600);font:var(--text-body-small);font-family:var(--font-core);cursor:pointer;padding:4px 0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"></path></svg>Kembali</button>
+<p style="font:var(--text-body-default);color:var(--ink-700);margin:0">Pilih rumpun ilmu yang paling menarik buatmu.</p>
+<div style="display:flex;flex-direction:column;gap:var(--space-2)">
+<sc-for list="{{ rumpunGroups }}" as="g" hint-placeholder-count="3">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="plain" interactive="{{ true }}" onClick="{{ g.onSelect }}" hint-size="100%,60px">
+<div style="display:flex;justify-content:space-between;align-items:center"><div style="font:var(--text-title);font-weight:var(--fw-medium)">{{ g.name }}</div><span style="color:var(--ink-500)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span></div>
+</x-import>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ mapelStepC }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ mapelBackToA }}" style="align-self:flex-start;display:flex;align-items:center;gap:6px;background:none;border:0;color:var(--blue-600);font:var(--text-body-small);font-family:var(--font-core);cursor:pointer;padding:4px 0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"></path></svg>Kembali</button>
+<p style="font:var(--text-body-default);color:var(--ink-700);margin:0">{{ mapelStepCSubtitle }}</p>
+<sc-for list="{{ prodiGroupsToShow }}" as="grp" hint-placeholder-count="3">
+<div>
+<h3 style="font:var(--text-body-small);font-weight:var(--fw-semibold);color:var(--text-muted);text-transform:uppercase;letter-spacing:var(--ls-label);margin:0 0 var(--space-2)">{{ grp.rumpunName }}</h3>
+<div style="display:flex;flex-direction:column;gap:var(--space-2);margin-bottom:var(--space-4)">
+<sc-for list="{{ grp.items }}" as="pr" hint-placeholder-count="3">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="plain" interactive="{{ true }}" onClick="{{ pr.onSelect }}" hint-size="100%,52px">
+<div style="display:flex;justify-content:space-between;align-items:center"><div style="font:var(--text-body-default)">{{ pr.name }}</div><span style="color:var(--ink-500)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span></div>
+</x-import>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</sc-if>
+
+<sc-if value="{{ mapelStepD }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<h2 style="font:var(--text-h3);margin:0">{{ resultProdiName }}</h2>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="ghost" size="sm" onClick="{{ ubahProdi }}" hint-size="auto,36px">Ubah prodi</x-import>
+</div>
+<div style="display:flex;flex-direction:column;gap:var(--space-2)">
+<sc-for list="{{ resultMapelList }}" as="m" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3);background:var(--white);border:1px solid var(--border-hairline);border-radius:var(--radius-md)">
+<sc-if value="{{ m.ok }}" hint-placeholder-val="{{ true }}"><span style="color:var(--status-ok);flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="m8 12.5 2.5 2.5 5-6"></path></svg></span></sc-if>
+<sc-if value="{{ m.notOk }}" hint-placeholder-val="{{ false }}"><span style="color:var(--blue-600);flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 2.5 18a1 1 0 0 0 .9 1.5h17.2a1 1 0 0 0 .9-1.5L13.7 3.9a1 1 0 0 0-1.7 0Z"></path><path d="M12 9v4"></path><path d="M12 16.5h.01"></path></svg></span></sc-if>
+<div style="flex:1;font:var(--text-body-default)">{{ m.name }}</div>
+<div style="font:var(--text-caption);color:{{ m.labelColor }}">{{ m.label }}</div>
+</div>
+</sc-for>
+</div>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="brand" hint-size="100%,auto">
+<div style="font:var(--text-caption);font-weight:var(--fw-medium);letter-spacing:var(--ls-label);text-transform:uppercase;opacity:.85;color:var(--white)">Saran mapel pilihan TKA</div>
+<div style="font:var(--text-h3);color:var(--white);margin-top:6px">{{ resultSaranText }}</div>
+</x-import>
+<p style="font:var(--text-caption);color:var(--text-subtle);margin:0">Ini rangkuman, bukan keputusan resmi. Cek laman SNPMB.</p>
+<div style="display:flex;flex-direction:column;gap:var(--space-3)">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="primary" size="lg" full-width="{{ true }}" onClick="{{ simpanChecklist }}" hint-size="100%,52px">Simpan ke Daftar Periksa</x-import>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="ghost" size="lg" full-width="{{ true }}" onClick="{{ lewatiMapel }}" hint-size="100%,52px">Lewati</x-import>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isChecklist }}" hint-placeholder-val="{{ false }}">
+<div style="padding:var(--gutter-screen);display:flex;flex-direction:column;gap:var(--space-5)">
+<div>
+<h1 style="font:var(--text-h3);margin:0 0 4px">Daftar Periksa</h1>
+<p style="font:var(--text-body-small);color:var(--text-muted);margin:0 0 var(--space-3)">Satu per satu, tidak perlu sekaligus.</p>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.ProgressBar" value="{{ checklistDone }}" max="{{ checklistTotal }}" hint-size="100%,20px"></x-import>
+<p style="font:var(--text-body-default);color:var(--ink-700);margin:var(--space-3) 0 0">{{ checklistHeaderText }}</p>
+</div>
+<sc-for list="{{ checklistCategories }}" as="cat" hint-placeholder-count="3">
+<div>
+<h3 style="font:var(--text-body-small);font-weight:var(--fw-semibold);color:var(--text-muted);text-transform:uppercase;letter-spacing:var(--ls-label);margin:0 0 var(--space-3)">{{ cat.name }}</h3>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" hint-size="100%,auto">
+<div style="display:flex;flex-direction:column;gap:2px">
+<sc-for list="{{ cat.items }}" as="it" hint-placeholder-count="4">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Checkbox" checked="{{ it.checked }}" onChange="{{ it.toggle }}" label="{{ it.label }}" hint-size="100%,44px"></x-import>
+</sc-for>
+</div>
+</x-import>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAlumni }}" hint-placeholder-val="{{ false }}">
+<div style="padding:var(--gutter-screen);display:flex;flex-direction:column;gap:var(--space-4)">
+<p style="font:var(--text-body-small);color:var(--text-muted);margin:0">Mereka sudah lewat jalan ini.</p>
+<sc-if value="{{ alumniFilled }}" hint-placeholder-val="{{ false }}">
+<sc-for list="{{ alumniStories }}" as="story" hint-placeholder-count="2">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="plain" hint-size="100%,auto">
+<div style="display:flex;flex-direction:column;gap:var(--space-3)">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-2)">
+<div>
+<div style="font:var(--text-title);font-weight:var(--fw-semibold)">{{ story.smk }}</div>
+<div style="font:var(--text-body-small);color:var(--blue-600);font-weight:var(--fw-medium);margin-top:2px">&#8594; {{ story.ptn }}</div>
+</div>
+<span style="flex-shrink:0;font:var(--text-caption);font-weight:var(--fw-medium);color:var(--ink-700);background:var(--ink-100);padding:4px 8px;border-radius:var(--radius-pill);white-space:nowrap">CONTOH</span>
+</div>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Badge" tone="brand" hint-size="auto,24px">{{ story.jalur }}</x-import>
+<p style="font:var(--text-body-small);color:var(--ink-700);margin:0"><strong>Hambatan:</strong> {{ story.hambatan }}</p>
+<p style="font:var(--text-body-small);color:var(--ink-700);margin:0"><strong>Yang dilakukan:</strong> {{ story.dilakukan }}</p>
+<div style="margin-top:4px;padding-top:var(--space-3);border-top:1px solid var(--border-hairline);font:var(--text-body-small);color:var(--text-muted)">Kamu juga akan punya cerita seperti ini. Simpan langkahmu di Daftar Periksa.</div>
+<div style="font:var(--text-caption);color:var(--text-subtle)">belum diverifikasi</div>
+</div>
+</x-import>
+</sc-for>
+</sc-if>
+<sc-if value="{{ alumniEmpty }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--space-3);padding:var(--space-10) var(--space-4)">
+<img src="assets/mascot/mascot-blue.png" alt="" style="width:96px;height:96px;object-fit:contain;opacity:.9">
+<h3 style="font:var(--text-h3);margin:0">Cerita pertama sedang kami kumpulkan.</h3>
+<p style="font:var(--text-body-small);color:var(--text-muted);max-width:280px;margin:0">Kenal alumni SMK yang tembus PTN?</p>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="secondary" hint-size="auto,44px">Hubungkan kami</x-import>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isArsip }}" hint-placeholder-val="{{ false }}">
+<div style="padding:var(--gutter-screen);display:flex;flex-direction:column;gap:var(--space-5)">
+<p style="font:var(--text-body-small);color:var(--text-muted);margin:0">Yang kamu simpan hari ini, kepakai nanti.</p>
+<sc-for list="{{ arsipCategories }}" as="cat" hint-placeholder-count="2">
+<div>
+<h3 style="font:var(--text-body-small);font-weight:var(--fw-semibold);color:var(--text-muted);text-transform:uppercase;letter-spacing:var(--ls-label);margin:0 0 var(--space-2)">{{ cat.name }}</h3>
+<div style="display:flex;flex-direction:column;gap:var(--space-2)">
+<sc-for list="{{ cat.items }}" as="m" hint-placeholder-count="4">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="plain" interactive="{{ true }}" onClick="{{ m.onOpen }}" hint-size="100%,60px">
+<div style="display:flex;justify-content:space-between;align-items:center"><div style="font:var(--text-body-default);font-weight:var(--fw-medium)">{{ m.name }}</div><div style="display:flex;align-items:center;gap:var(--space-2)"><span style="font:var(--text-caption);color:var(--text-muted)">{{ m.count }} kartu</span><span style="color:var(--ink-500)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"></path></svg></span></div></div>
+</x-import>
+</sc-for>
+</div>
+</div>
+</sc-for>
+<div style="display:flex;flex-direction:column;gap:var(--space-3)">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="outline" full-width="{{ true }}" onClick="{{ openTambahKartu }}" hint-size="100%,52px">+ Tambah Kartu Baru</x-import>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="primary" full-width="{{ true }}" onClick="{{ openSesiLatihan }}" hint-size="100%,52px">Mulai Latihan Harian</x-import>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="ghost" full-width="{{ true }}" onClick="{{ openBankSoal }}" hint-size="100%,44px">Cari referensi dari Bank Soal Mitra</x-import>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isDetailMapel }}" hint-placeholder-val="{{ false }}">
+<div style="padding:var(--gutter-screen);display:flex;flex-direction:column;gap:var(--space-4)">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.SegmentedControl" options="{{ detailTabOptions }}" value="{{ detailTab }}" onChange="{{ onDetailTabChange }}" style="width:100%;display:grid;grid-template-columns:1fr 1fr 1fr" hint-size="100%,48px"></x-import>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3)">
+<sc-for list="{{ detailCards }}" as="c" hint-placeholder-count="6">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="plain" hint-size="100%,112px">
+<div style="display:flex;flex-direction:column;gap:var(--space-2);height:100%">
+<sc-if value="{{ c.official }}" hint-placeholder-val="{{ true }}"><span style="align-self:flex-start;font:var(--text-caption);font-weight:var(--fw-medium);color:var(--blue-600);background:var(--blue-100);padding:3px 8px;border-radius:var(--radius-pill)">Resmi</span></sc-if>
+<sc-if value="{{ c.notOfficial }}" hint-placeholder-val="{{ false }}"><span style="align-self:flex-start;font:var(--text-caption);font-weight:var(--fw-medium);color:var(--ink-500);background:var(--ink-100);padding:3px 8px;border-radius:var(--radius-pill)">Buatan sendiri</span></sc-if>
+<div style="font:var(--text-body-small);font-weight:var(--fw-medium);flex:1">{{ c.title }}</div>
+<div style="font:var(--text-caption);color:var(--text-subtle)">{{ c.typeLabel }}</div>
+</div>
+</x-import>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isTambahKartu }}" hint-placeholder-val="{{ false }}">
+<div style="padding:var(--gutter-screen);display:flex;flex-direction:column;gap:var(--space-5)">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Field" label="Kategori" hint-size="100%,auto"><x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Select" options="{{ tambahKategoriOptions }}" value="{{ tambahKategori }}" onChange="{{ onTambahKategoriChange }}" hint-size="100%,48px"></x-import></x-import>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Field" label="Judul" hint-size="100%,auto"><x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Input" placeholder="mis. Turunan Fungsi Aljabar" hint-size="100%,48px"></x-import></x-import>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Field" label="{{ tambahContentLabel }}" hint-size="100%,auto"><textarea placeholder="Tulis di sini..." style="width:100%;min-height:100px;font:var(--text-body-default);font-family:var(--font-core);color:var(--ink-900);padding:13px 16px;background:var(--white);border-radius:var(--radius-md);border:1px solid var(--border-soft);outline:none;resize:vertical;box-sizing:border-box"></textarea></x-import>
+<sc-if value="{{ isKategoriSoal }}" hint-placeholder-val="{{ false }}">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Field" label="Isi bila berbentuk soal" hint="Jawaban atau pembahasan singkat" hint-size="100%,auto"><textarea placeholder="Jawaban..." style="width:100%;min-height:80px;font:var(--text-body-default);font-family:var(--font-core);color:var(--ink-900);padding:13px 16px;background:var(--white);border-radius:var(--radius-md);border:1px solid var(--border-soft);outline:none;resize:vertical;box-sizing:border-box"></textarea></x-import>
+</sc-if>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="primary" size="lg" full-width="{{ true }}" onClick="{{ simpanKartu }}" hint-size="100%,52px">Simpan</x-import>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSesiLatihan }}" hint-placeholder-val="{{ false }}">
+<div style="padding:var(--gutter-screen);display:flex;flex-direction:column;gap:var(--space-5)">
+<p style="font:var(--text-body-small);color:var(--text-muted);margin:0;text-align:center">15 menit cukup.</p>
+<div style="font:var(--text-body-small);color:var(--text-muted);text-align:center">{{ latihanIndexLabel }}</div>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="plain" elevation="{{ 2 }}" style="min-height:200px;display:flex;flex-direction:column;justify-content:center;gap:var(--space-4)" hint-size="100%,200px">
+<div style="font:var(--text-caption);color:var(--blue-600);font-weight:var(--fw-medium);text-transform:uppercase;letter-spacing:var(--ls-label)">{{ latihanCurrentMapel }}</div>
+<div style="font:var(--text-h3);line-height:1.35;margin:0">{{ latihanCurrentSoal }}</div>
+<sc-if value="{{ latihanRevealed }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:var(--space-2);padding-top:var(--space-3);border-top:1px solid var(--border-hairline);font:var(--text-body-default);color:var(--status-ok)">{{ latihanCurrentJawaban }}</div>
+</sc-if>
+</x-import>
+<sc-if value="{{ latihanNotRevealed }}" hint-placeholder-val="{{ true }}">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="primary" full-width="{{ true }}" size="lg" onClick="{{ revealJawaban }}" hint-size="100%,52px">Lihat jawaban</x-import>
+</sc-if>
+<sc-if value="{{ latihanRevealed }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:var(--space-3)">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="outline" full-width="{{ true }}" onClick="{{ answerWrong }}" hint-size="50%,48px">Salah</x-import>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="primary" full-width="{{ true }}" onClick="{{ answerRight }}" hint-size="50%,48px">Benar</x-import>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isLatihanSelesai }}" hint-placeholder-val="{{ false }}">
+<div style="padding:var(--gutter-screen);display:flex;flex-direction:column;gap:var(--space-4);align-items:center;text-align:center">
+<img src="assets/mascot/mascot-blue.png" alt="" style="width:72px;height:72px;object-fit:contain">
+<div style="font:var(--fw-semibold) 48px/1.1 var(--font-core);color:var(--ink-900)">{{ latihanTotalCards }}</div>
+<p style="font:var(--text-body-default);color:var(--ink-700);margin:0">{{ latihanSelesaiHeadline }}</p>
+<div style="width:100%;display:flex;flex-direction:column;gap:var(--space-2);text-align:left">
+<sc-for list="{{ perMapelList }}" as="pm" hint-placeholder-count="2">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="soft" hint-size="100%,auto">
+<div style="display:flex;justify-content:space-between;align-items:center"><div style="font:var(--text-body-default);font-weight:var(--fw-medium)">{{ pm.name }}</div><div style="font:var(--text-body-small);color:var(--text-muted)">{{ pm.fraction }}</div></div>
+</x-import>
+</sc-for>
+</div>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="primary" full-width="{{ true }}" size="lg" onClick="{{ kembaliKeArsip }}" hint-size="100%,52px">Kembali ke Arsip Belajar</x-import>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBankSoal }}" hint-placeholder-val="{{ false }}">
+<div style="padding:var(--gutter-screen);display:flex;flex-direction:column;gap:var(--space-4)">
+<p style="font:var(--text-body-small);color:var(--text-muted);margin:0">Soal dari mitra, terbuka untuk semua.</p>
+<sc-if value="{{ bankSoalFilled }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:var(--space-3)">
+<sc-for list="{{ bankSoalPartners }}" as="p" hint-placeholder-count="2">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Card" tone="plain" hint-size="100%,110px">
+<div style="display:flex;flex-direction:column;gap:var(--space-2)">
+<div style="display:inline-flex;align-items:center;gap:6px;font:var(--text-caption);font-weight:var(--fw-medium);color:var(--blue-600);background:var(--blue-100);padding:4px 10px;border-radius:var(--radius-pill);align-self:flex-start"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"></rect><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>Disediakan oleh {{ p.name }}</div>
+<div style="font:var(--text-title);font-weight:var(--fw-semibold)">{{ p.mapelCount }}</div>
+</div>
+</x-import>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ bankSoalEmpty }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:var(--space-3);padding:var(--space-10) var(--space-4)">
+<img src="assets/mascot/mascot-blue.png" alt="" style="width:96px;height:96px;object-fit:contain;opacity:.9">
+<h3 style="font:var(--text-h3);margin:0">Belum ada mitra yang bergabung.</h3>
+<p style="font:var(--text-body-small);color:var(--text-muted);max-width:280px;margin:0">Sementara ini, latihan bisa dijalankan dari Arsip Belajar kamu sendiri.</p>
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" variant="secondary" onClick="{{ backToArsip }}" hint-size="auto,44px">Buka Arsip Belajar</x-import>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(4,1fr);background:var(--white);border-top:1px solid var(--border-hairline);padding:8px 8px 12px;flex-shrink:0">
+<button onClick="{{ goBeranda }}" style="display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:transparent;cursor:pointer;padding:6px 0;min-height:48px;font:var(--text-caption);font-family:var(--font-core);color:{{ navBerandaColor }}">
+<span style="display:flex;align-items:center;justify-content:center;width:44px;height:28px;border-radius:var(--radius-pill);background:{{ navBerandaBg }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V20h13V9.5"></path></svg></span>
+Beranda
+</button>
+<button onClick="{{ goKhususSmk }}" style="display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:transparent;cursor:pointer;padding:6px 0;min-height:48px;font:var(--text-caption);font-family:var(--font-core);color:{{ navKhususColor }}">
+<span style="display:flex;align-items:center;justify-content:center;width:44px;height:28px;border-radius:var(--radius-pill);background:{{ navKhususBg }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9 12 4l10 5-10 5-10-5Z"></path><path d="M6 11.5V16c0 1.1 2.7 2 6 2s6-.9 6-2v-4.5"></path></svg></span>
+Khusus SMK
+</button>
+<button onClick="{{ goPilihMapel }}" style="display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:transparent;cursor:pointer;padding:6px 0;min-height:48px;font:var(--text-caption);font-family:var(--font-core);color:{{ navMapelColor }}">
+<span style="display:flex;align-items:center;justify-content:center;width:44px;height:28px;border-radius:var(--radius-pill);background:{{ navMapelBg }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="4"></circle></svg></span>
+Pilih Mapel
+</button>
+<button onClick="{{ goChecklist }}" style="display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:transparent;cursor:pointer;padding:6px 0;min-height:48px;font:var(--text-caption);font-family:var(--font-core);color:{{ navChecklistColor }}">
+<span style="display:flex;align-items:center;justify-content:center;width:44px;height:28px;border-radius:var(--radius-pill);background:{{ navChecklistBg }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"></rect><path d="m8 12.5 2.5 2.5L16 9.5"></path></svg></span>
+Checklist
+</button>
+</div>
+
+<sc-if value="{{ savedToast }}" hint-placeholder-val="{{ false }}">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Dialog" open="{{ true }}" title="Tersimpan ke Daftar Periksa" description="Kamu bisa lihat progresnya di tab Checklist." onClose="{{ closeSavedToast }}" hint-size="100%,auto">
+<x-import component-from-global-scope="LanjutDesignSystem_e1bf29.Button" full-width="{{ true }}" onClick="{{ closeSavedToast }}" hint-size="100%,48px">Mengerti</x-import>
+</x-import>
+</sc-if>
+
+</sc-if>
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;skipOnboarding&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Perilaku&quot;},&quot;mapelProfileHasProdi&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Perilaku&quot;},&quot;alumniHasStories&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Konten demo&quot;},&quot;bankSoalHasPartners&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Konten demo&quot;}}">
+const RUMPUN = [
+  { id: 'teknologi', name: 'Teknologi & Rekayasa' },
+  { id: 'kesehatan', name: 'Kesehatan' },
+  { id: 'ekonomi', name: 'Ekonomi & Bisnis' },
+];
+
+const PRODI = [
+  { id: 'teknik-informatika', name: 'Teknik Informatika', rumpunId: 'teknologi' },
+  { id: 'sistem-informasi', name: 'Sistem Informasi', rumpunId: 'teknologi' },
+  { id: 'teknik-elektro', name: 'Teknik Elektro', rumpunId: 'teknologi' },
+  { id: 'keperawatan', name: 'Keperawatan', rumpunId: 'kesehatan' },
+  { id: 'farmasi', name: 'Farmasi', rumpunId: 'kesehatan' },
+  { id: 'kesehatan-masyarakat', name: 'Kesehatan Masyarakat', rumpunId: 'kesehatan' },
+  { id: 'akuntansi', name: 'Akuntansi', rumpunId: 'ekonomi' },
+  { id: 'manajemen', name: 'Manajemen', rumpunId: 'ekonomi' },
+];
+
+const RESULT = {
+  'teknik-informatika': { mapel: [['Matematika', true], ['Informatika', true], ['Fisika', true], ['Kimia', false]], saran: ['Matematika', 'Informatika'] },
+  'sistem-informasi': { mapel: [['Matematika', true], ['Informatika', true], ['Bahasa Inggris', true], ['Ekonomi', false]], saran: ['Matematika', 'Informatika'] },
+  'teknik-elektro': { mapel: [['Matematika', true], ['Fisika', true], ['Informatika', true], ['Kimia', false]], saran: ['Matematika', 'Fisika'] },
+  'keperawatan': { mapel: [['Biologi', false], ['Kimia', false], ['Matematika', true], ['Bahasa Inggris', true]], saran: ['Biologi', 'Kimia'] },
+  'farmasi': { mapel: [['Kimia', false], ['Biologi', false], ['Matematika', true], ['Bahasa Inggris', true]], saran: ['Kimia', 'Biologi'] },
+  'kesehatan-masyarakat': { mapel: [['Biologi', false], ['Matematika', true], ['Sosiologi', false], ['Bahasa Inggris', true]], saran: ['Biologi', 'Matematika'] },
+  'akuntansi': { mapel: [['Ekonomi', false], ['Matematika', true], ['Bahasa Inggris', true], ['Sosiologi', false]], saran: ['Ekonomi', 'Matematika'] },
+  'manajemen': { mapel: [['Ekonomi', false], ['Matematika', true], ['Bahasa Inggris', true], ['Sosiologi', false]], saran: ['Ekonomi', 'Matematika'] },
+};
+
+const TIMELINE = [
+  { title: 'Sosialisasi jalur TKA/SNBP/SNBT di sekolah', date: 'Juli 2026', status: 'done', faded: true, source: 'Sumber: Panduan BK sekolah · diperiksa 3 Agustus 2026' },
+  { title: 'Pendaftaran akun TKA', date: 'Tutup 27 September 2026', status: 'soon', faded: false, source: 'Sumber: Laman resmi SNPMB · diperiksa 6 Agustus 2026' },
+  { title: 'Pelaksanaan TKA', date: 'Oktober – November 2026', status: 'idle', faded: false, source: 'Sumber: Laman resmi SNPMB · diperiksa 6 Agustus 2026' },
+  { title: 'Pengisian PDSS oleh sekolah', date: 'Desember 2026', status: 'idle', faded: false, source: 'Sumber: Laman resmi SNPMB · diperiksa 6 Agustus 2026' },
+  { title: 'Pendaftaran SNBP', date: '4 – 18 Februari 2027', status: 'idle', faded: false, source: 'Sumber: Laman resmi SNPMB · diperiksa 6 Agustus 2026' },
+];
+
+const KHUSUS_SMK = [
+  { id: 'nilai-rapor', title: 'Nilai rapor mapel pendukung SNBP', beda: 'PDSS menilai rata-rata rapor pada mapel pendukung program studi, tapi sejumlah mapel itu tidak ada di struktur kurikulum SMK.', bisa: 'Cek pengganti mapel yang diakui di halaman ini, atau tanyakan ke BK sebelum PDSS diisi.', source: 'Sumber: Panduan BK SMKN 4 Bandung · diperiksa 3 Agustus 2026' },
+  { id: 'portofolio', title: 'Portofolio dan sertifikat kompetensi keahlian', beda: 'SMK punya Uji Kompetensi Keahlian (UKK) dan sertifikat industri dari PKL yang tidak dimiliki lulusan SMA.', bisa: 'Lampirkan sertifikat UKK dan PKL sebagai nilai tambah di jalur seleksi mandiri kampus.', source: 'Sumber: Direktorat SMK, Kemendikdasmen · diperiksa 30 Juli 2026' },
+  { id: 'kuota-eligible', title: 'Kuota siswa eligible SNBP', beda: 'Jumlah siswa yang eligible SNBP dihitung dari akreditasi dan jumlah siswa per sekolah, bukan per siswa.', bisa: 'Tanyakan ke BK kuota eligible SNBP sekolahmu di awal semester, sebelum menyusun rencana pilihan.', source: 'Sumber: Laman resmi SNPMB · diperiksa 6 Agustus 2026' },
+  { id: 'jalur-vokasi', title: 'Jalur vokasi Politeknik (D3/D4)', beda: 'Lulusan SMK punya opsi tambahan lewat jalur vokasi yang menghitung nilai mapel produktif kejuruan secara langsung.', bisa: 'Bandingkan pilihan D4 Politeknik dengan S1 sebelum menentukan urutan pilihan SNBP.', source: 'Sumber: Laman resmi SNPMB · diperiksa 6 Agustus 2026' },
+  { id: 'mapel-tka-tidak-ada', title: 'Mapel pilihan TKA yang tidak diajarkan di SMK', beda: 'Sosiologi, Geografi, dan Antropologi umumnya tidak ada di struktur kurikulum SMK.', bisa: 'Pilih dua mapel pilihan TKA dari yang benar-benar diajarkan di sekolahmu lewat Penolong Pilih Mapel.', source: 'Sumber: Laman resmi SNPMB · diperiksa 6 Agustus 2026' },
+  { id: 'jadwal-pkl', title: 'Jadwal PKL berdekatan dengan pendaftaran', beda: 'Praktik Kerja Lapangan kelas 12 kadang berjalan bersamaan dengan periode pendaftaran SNBP dan UTBK.', bisa: 'Koordinasikan jadwal PKL dengan panitia sekolah supaya tidak bentrok dengan jadwal ujian atau pendaftaran.', source: 'Sumber: Panduan BK SMKN 4 Bandung · diperiksa 3 Agustus 2026' },
+];
+
+const CHECKLIST_CATEGORIES = [
+  { id: 'berkas', name: 'Berkas Pendaftaran', items: [
+    { id: 'ktp', label: 'KTP' }, { id: 'kk', label: 'KK' }, { id: 'rapor', label: 'Rapor semua semester' }, { id: 'skl', label: 'SKL / ijazah sementara' }, { id: 'foto', label: 'Pas foto formal' },
+  ] },
+  { id: 'pendaftaran', name: 'Pendaftaran', items: [
+    { id: 'akun-snpmb', label: 'Buat akun SNPMB' }, { id: 'pdss', label: 'Isi PDSS lewat sekolah' }, { id: 'mapel-tka', label: 'Pilih 2 mapel pilihan TKA' }, { id: 'akun-tka', label: 'Daftar akun TKA' },
+  ] },
+  { id: 'pembiayaan', name: 'Jalur Pembiayaan', items: [
+    { id: 'kip-syarat', label: 'Cek syarat KIP Kuliah' }, { id: 'kip-berkas', label: 'Siapkan berkas KIP Kuliah' }, { id: 'ukt', label: 'Cek info keringanan UKT di kampus tujuan' },
+  ] },
+];
+
+const ARSIP = [
+  { name: 'Mapel Wajib TKA', items: [ ['matematika', 'Matematika', 12], ['bahasa-indonesia', 'Bahasa Indonesia', 8], ['bahasa-inggris', 'Bahasa Inggris', 10] ] },
+  { name: 'Mapel Pilihan', items: [ ['fisika', 'Fisika', 6], ['kimia', 'Kimia', 4], ['biologi', 'Biologi', 5], ['ekonomi', 'Ekonomi', 7], ['informatika', 'Informatika', 9] ] },
+];
+
+const DETAIL_CARDS = [
+  { id: 1, title: 'Barisan dan Deret', type: 'Catatan', official: true },
+  { id: 2, title: 'Turunan Fungsi Aljabar', type: 'Catatan', official: true },
+  { id: 3, title: 'Soal SPLDV gabungan', type: 'Soal', official: false },
+  { id: 4, title: 'Peluang Kejadian Majemuk', type: 'Catatan', official: true },
+  { id: 5, title: 'Limit Fungsi Trigonometri', type: 'Soal', official: true },
+  { id: 6, title: 'Ringkasan rumus integral', type: 'Catatan', official: false },
+];
+
+const BANK_SOAL_PARTNERS = [
+  { name: 'Zenius Education', mapelCount: 'Matematika, Fisika, Kimia' },
+  { name: 'Ruangguru', mapelCount: 'Semua mapel TKA' },
+];
+
+const ALUMNI_STORIES = [
+  { smk: 'SMKN 4 Bandung · RPL', ptn: 'Telkom University · Informatika', jalur: 'Jalur SNBP', hambatan: 'Nilai mapel pendukung sempat di bawah rata-rata karena sekolah tidak mengajarkan Fisika secara mendalam.', dilakukan: 'Belajar mandiri dari modul daring dan ikut bimbingan online tiga kali seminggu selama satu semester.' },
+  { smk: 'SMKN 1 Cimahi · Akuntansi', ptn: 'Universitas Padjadjaran · Akuntansi', jalur: 'Jalur SNBT (UTBK)', hambatan: 'Belum pernah ikut try out UTBK karena biayanya dianggap mahal.', dilakukan: 'Ikut try out gratis dari komunitas alumni dan latihan soal dari Arsip Belajar tiap malam.' },
+];
+
+const SESI_CARDS = [
+  { mapel: 'Matematika', soal: 'Turunan dari f(x) = 3x² + 5x adalah...', jawaban: "f'(x) = 6x + 5" },
+  { mapel: 'Matematika', soal: 'Nilai dari log₂ 8 adalah...', jawaban: '3' },
+  { mapel: 'Matematika', soal: 'Jumlah 5 suku pertama deret 2, 4, 6, 8, ... adalah...', jawaban: '30' },
+  { mapel: 'Matematika', soal: 'Akar-akar dari x² - 5x + 6 = 0 adalah...', jawaban: 'x = 2 atau x = 3' },
+  { mapel: 'Matematika', soal: 'Nilai sin 30° adalah...', jawaban: '1/2' },
+  { mapel: 'Matematika', soal: 'Median dari data 3, 7, 5, 9, 4 adalah...', jawaban: '5' },
+  { mapel: 'Bahasa Inggris', soal: 'Choose the correct form: She ___ to school every day.', jawaban: 'goes' },
+  { mapel: 'Bahasa Inggris', soal: "Synonym of 'huge' is...", jawaban: 'enormous' },
+  { mapel: 'Bahasa Inggris', soal: "Past tense of 'write' is...", jawaban: 'wrote' },
+  { mapel: 'Bahasa Inggris', soal: 'Fill in: I have lived here ___ 2019.', jawaban: 'since' },
+  { mapel: 'Bahasa Inggris', soal: "Opposite of 'increase' is...", jawaban: 'decrease' },
+  { mapel: 'Bahasa Inggris', soal: 'Choose correct: They ___ finished the project yet.', jawaban: "haven't" },
+];
+
+class Component extends DCLogic {
+  state = {
+    screen: 'splash', stack: [],
+    obIndex: 0, obKelas: '12', prodiId: null,
+    mapelStep: 'a', mapelRumpunId: null,
+    checklist: { ktp: true, kk: true, 'akun-snpmb': true },
+    khususExpandedId: 'nilai-rapor',
+    arsipSelectedMapelId: 'matematika', detailTab: 'Semua',
+    tambahKategori: 'Catatan',
+    latihanIndex: 0, latihanRevealed: false, latihanResults: [],
+    savedToast: false,
+  };
+
+  componentDidMount() {
+    const initial = {};
+    if (this.props.skipOnboarding) initial.screen = 'beranda';
+    if (this.props.mapelProfileHasProdi) initial.prodiId = 'teknik-informatika';
+    if (Object.keys(initial).length) this.setState(initial);
+    if (!this.props.skipOnboarding) {
+      this._splashTimer = setTimeout(() => {
+        this.setState((s) => (s.screen === 'splash' ? { screen: 'onboarding' } : null));
+      }, 1600);
+    }
+  }
+  componentWillUnmount() { clearTimeout(this._splashTimer); }
+
+  skipSplash = () => { clearTimeout(this._splashTimer); this.setState({ screen: 'onboarding' }); };
+
+  obNext = () => this.setState((s) => (s.obIndex < 3 ? { obIndex: s.obIndex + 1 } : { obIndex: 4 }));
+  pickKelas10 = () => this.setState({ obKelas: '10' });
+  pickKelas11 = () => this.setState({ obKelas: '11' });
+  pickKelas12 = () => this.setState({ obKelas: '12' });
+  pickObProdi = (id) => this.setState({ prodiId: id });
+  pickBelum = () => this.setState({ prodiId: 'belum' });
+  finishOnboarding = () => this.setState({ screen: 'beranda', stack: [], obIndex: 0 });
+
+  goTab = (id) => {
+    if (id === 'pilih_mapel') {
+      const hasProdi = this.state.prodiId && this.state.prodiId !== 'belum';
+      this.setState({ screen: 'pilih_mapel', stack: [], mapelStep: hasProdi ? 'd' : 'a' });
+    } else {
+      this.setState({ screen: id, stack: [] });
+    }
+  };
+  goBeranda = () => this.goTab('beranda');
+  goKhususSmk = () => this.goTab('khusus_smk');
+  goPilihMapel = () => this.goTab('pilih_mapel');
+  goChecklist = () => this.goTab('checklist');
+
+  push = (id) => this.setState((s) => ({ screen: id, stack: [...s.stack, s.screen] }));
+  back = () => this.setState((s) => {
+    if (!s.stack.length) return { screen: 'beranda', stack: [] };
+    const st = s.stack.slice();
+    const prev = st.pop();
+    return { screen: prev, stack: st };
+  });
+
+  openArsipFromBeranda = () => this.push('arsip');
+  openAlumniFromBeranda = () => this.push('alumni');
+  openTambahKartu = () => this.push('tambah_kartu');
+  openSesiLatihan = () => { this.setState({ latihanIndex: 0, latihanRevealed: false, latihanResults: [] }); this.push('sesi_latihan'); };
+  openBankSoal = () => this.push('bank_soal');
+  backToArsip = () => this.setState({ screen: 'arsip', stack: [] });
+
+  mapelChooseKnown = () => this.setState({ mapelStep: 'c' });
+  mapelExplore = () => this.setState({ mapelStep: 'b', mapelRumpunId: null });
+  mapelBackToA = () => this.setState({ mapelStep: 'a' });
+  pickRumpun = (id) => this.setState({ mapelRumpunId: id, mapelStep: 'c' });
+  pickProdiForMapel = (id) => this.setState({ prodiId: id, mapelStep: 'd' });
+  ubahProdi = () => this.setState({ mapelStep: 'c', mapelRumpunId: null });
+  simpanChecklist = () => this.setState((s) => ({ checklist: { ...s.checklist, ['prodi-' + s.prodiId]: true }, savedToast: true }));
+  closeSavedToast = () => this.setState({ savedToast: false });
+  lewatiMapel = () => this.goTab('beranda');
+
+  toggleChecklistItem = (id) => this.setState((s) => ({ checklist: { ...s.checklist, [id]: !s.checklist[id] } }));
+  toggleKhusus = (id) => this.setState((s) => ({ khususExpandedId: s.khususExpandedId === id ? null : id }));
+
+  selectMapel = (id) => { this.setState({ arsipSelectedMapelId: id, detailTab: 'Semua' }); this.push('detail_mapel'); };
+  onDetailTabChange = (v) => this.setState({ detailTab: v });
+
+  onTambahKategoriChange = (e) => this.setState({ tambahKategori: e.target.value });
+  simpanKartu = () => this.back();
+
+  revealJawaban = () => this.setState({ latihanRevealed: true });
+  answerCard = (correct) => this.setState((s) => {
+    const results = [...s.latihanResults, { mapel: SESI_CARDS[s.latihanIndex].mapel, correct }];
+    const nextIndex = s.latihanIndex + 1;
+    if (nextIndex >= SESI_CARDS.length) return { latihanResults: results, screen: 'latihan_selesai' };
+    return { latihanResults: results, latihanIndex: nextIndex, latihanRevealed: false };
+  });
+  answerWrong = () => this.answerCard(false);
+  answerRight = () => this.answerCard(true);
+  kembaliKeArsip = () => this.setState({ screen: 'arsip', stack: [] });
+
+  renderVals() {
+    const s = this.state;
+    const p = this.props;
+    const screen = s.screen;
+    const subScreens = ['alumni', 'arsip', 'detail_mapel', 'tambah_kartu', 'sesi_latihan', 'latihan_selesai', 'bank_soal'];
+    const tabMap = { beranda: 'beranda', khusus_smk: 'khusus_smk', pilih_mapel: 'pilih_mapel', checklist: 'checklist' };
+    subScreens.forEach((k) => { tabMap[k] = 'beranda'; });
+    const activeTab = tabMap[screen] || 'beranda';
+    const navColor = (id) => (activeTab === id ? 'var(--blue-600)' : 'var(--ink-500)');
+    const navBg = (id) => (activeTab === id ? 'var(--blue-100)' : 'transparent');
+
+    const pageHeaderTitles = {
+      alumni: 'Cerita Alumni SMK', arsip: 'Arsip Belajar',
+      detail_mapel: (PRODI.find(() => false), (ARSIP.flatMap((c) => c.items).find((i) => i[0] === s.arsipSelectedMapelId) || [null, 'Mapel'])[1]),
+      tambah_kartu: 'Tambah Kartu Baru', sesi_latihan: 'Latihan Hari Ini',
+      latihan_selesai: 'Latihan Selesai', bank_soal: 'Bank Soal',
+    };
+
+    const obSlides = [
+      { title: 'Anak SMK juga bisa kuliah.', body: 'Ini caranya, dari awal.', hasList: false, list: [] },
+      { title: 'Penjelasan yang ada dibuat untuk anak SMA.', body: 'Mapel pendukungnya beda, jadwalnya beda, saranya beda. Kami susun ulang untuk kamu.', hasList: false, list: [] },
+      { title: 'Yang bisa kamu pakai di sini', body: '', hasList: true, list: [
+        'Linimasa: apa yang jatuh tempo, dan kapan',
+        'Khusus SMK: hal yang berbeda buat kita',
+        'Cerita alumni: mereka sudah lewat jalan ini',
+        'Latihan harian: 15 menit, bukan semalam suntuk',
+      ] },
+      { title: 'Mulai dari mana kamu sekarang.', body: 'Belum tahu mau ke mana pun tidak apa-apa. Nanti kita cari sama-sama.', hasList: false, list: [] },
+    ];
+    const obIdx = Math.min(s.obIndex, 3);
+    const obDots = obSlides.map((_, i) => ({ flex: i === s.obIndex ? '2' : '1', bg: i === s.obIndex ? 'var(--white)' : 'rgba(255,255,255,.4)' }));
+
+    const rumpunGroups = RUMPUN.map((r) => ({
+      id: r.id, name: r.name,
+      onSelect: () => this.pickRumpun(r.id),
+      items: PRODI.filter((pr) => pr.rumpunId === r.id).map((pr) => ({
+        id: pr.id, name: pr.name,
+        onSelect: () => this.pickProdiForMapel(pr.id),
+        obSelected: s.prodiId === pr.id,
+        obPick: () => this.pickObProdi(pr.id),
+      })),
+    }));
+
+    const prodiGroupsToShow = (s.mapelRumpunId ? rumpunGroups.filter((g) => g.id === s.mapelRumpunId) : rumpunGroups)
+      .map((g) => ({ rumpunName: g.name, items: g.items }));
+
+    let resultProdiName = '', resultMapelList = [], resultSaranText = '';
+    if (s.prodiId && s.prodiId !== 'belum' && RESULT[s.prodiId]) {
+      resultProdiName = (PRODI.find((pr) => pr.id === s.prodiId) || {}).name || '';
+      const r = RESULT[s.prodiId];
+      resultMapelList = r.mapel.map(([name, ok]) => ({ name, ok, notOk: !ok, label: ok ? 'Tersedia di SMK' : 'Cek alternatif', labelColor: ok ? 'var(--status-ok)' : 'var(--blue-600)' }));
+      resultSaranText = r.saran.join(' & ');
+    }
+
+    const timelineSteps = TIMELINE.map((t, i) => ({
+      title: t.title, date: t.date, source: t.source,
+      opacity: t.faded ? '0.55' : '1',
+      decoration: t.faded ? 'line-through' : 'none',
+      dotBg: t.status === 'idle' ? 'var(--white)' : (t.status === 'done' ? 'var(--status-ok)' : 'var(--blue-400)'),
+      dotBorder: t.status === 'done' ? 'var(--status-ok)' : (t.status === 'soon' ? 'var(--blue-400)' : 'var(--ink-300)'),
+      showLine: i < TIMELINE.length - 1,
+      pad: i < TIMELINE.length - 1 ? 'var(--space-6)' : '0',
+    }));
+
+    const khususItems = KHUSUS_SMK.map((it) => ({
+      ...it, expanded: s.khususExpandedId === it.id, collapsed: s.khususExpandedId !== it.id,
+      toggle: () => this.toggleKhusus(it.id),
+    }));
+
+    const doneIds = ['ktp', 'kk', 'rapor', 'skl', 'foto', 'akun-snpmb', 'pdss', 'mapel-tka', 'akun-tka', 'kip-syarat', 'kip-berkas', 'ukt'];
+    const checklistCategories = CHECKLIST_CATEGORIES.map((cat) => ({
+      id: cat.id, name: cat.name,
+      items: cat.items.map((it) => ({ id: it.id, label: it.label, checked: !!s.checklist[it.id], toggle: () => this.toggleChecklistItem(it.id) })),
+    }));
+    const checklistTotal = doneIds.length;
+    const checklistDone = doneIds.filter((id) => s.checklist[id]).length;
+    let checklistHeaderText;
+    if (checklistDone === 0) checklistHeaderText = 'Belum ada yang dicentang — itu wajar kalau baru mulai. Ambil satu yang paling gampang dulu.';
+    else if (checklistDone === checklistTotal) checklistHeaderText = 'Bagian persiapannya beres. Sisanya tinggal latihan.';
+    else checklistHeaderText = checklistDone + ' dari ' + checklistTotal + ' beres. Jalan terus.';
+
+    const arsipCategories = ARSIP.map((cat) => ({
+      name: cat.name,
+      items: cat.items.map(([id, name, count]) => ({ id, name, count, onOpen: () => this.selectMapel(id) })),
+    }));
+
+    const detailCards = DETAIL_CARDS
+      .filter((c) => s.detailTab === 'Semua' || c.type === s.detailTab)
+      .map((c) => ({ title: c.title, official: c.official, notOfficial: !c.official, typeLabel: c.type }));
+
+    const alumniFilled = !!p.alumniHasStories;
+    const bankSoalFilled = !!p.bankSoalHasPartners;
+
+    const card = SESI_CARDS[s.latihanIndex] || SESI_CARDS[0];
+    const totalCorrect = s.latihanResults.filter((r) => r.correct).length;
+    const mathResults = s.latihanResults.filter((r) => r.mapel === 'Matematika');
+    const engResults = s.latihanResults.filter((r) => r.mapel === 'Bahasa Inggris');
+
+    return {
+      isSplash: screen === 'splash',
+      isOnboarding: screen === 'onboarding',
+      isApp: screen !== 'splash' && screen !== 'onboarding',
+      skipSplash: this.skipSplash,
+
+      obShowSlide: screen === 'onboarding' && s.obIndex < 4,
+      obShowQuestions: screen === 'onboarding' && s.obIndex >= 4,
+      obSlide: obSlides[obIdx],
+      obDots, obButtonLabel: s.obIndex < 3 ? 'Lanjut' : 'Mulai', obNext: this.obNext,
+      finishOnboarding: this.finishOnboarding,
+      kelas10Sel: s.obKelas === '10', kelas11Sel: s.obKelas === '11', kelas12Sel: s.obKelas === '12',
+      pickKelas10: this.pickKelas10, pickKelas11: this.pickKelas11, pickKelas12: this.pickKelas12,
+      pickBelum: this.pickBelum, belumVariant: s.prodiId === 'belum' ? 'secondary' : 'outline',
+      rumpunGroups,
+
+      showPageHeader: subScreens.includes(screen),
+      pageHeaderTitle: pageHeaderTitles[screen] || '',
+      back: this.back,
+
+      isBeranda: screen === 'beranda', isKhususSmk: screen === 'khusus_smk',
+      isPilihMapel: screen === 'pilih_mapel', isChecklist: screen === 'checklist',
+      isAlumni: screen === 'alumni', isArsip: screen === 'arsip',
+      isDetailMapel: screen === 'detail_mapel', isTambahKartu: screen === 'tambah_kartu',
+      isSesiLatihan: screen === 'sesi_latihan', isLatihanSelesai: screen === 'latihan_selesai',
+      isBankSoal: screen === 'bank_soal',
+
+      tenggatDays: '39', tenggatLabel: 'menuju pendaftaran akun TKA ditutup, 27 September 2026.',
+      timelineSteps,
+      openArsipFromBeranda: this.openArsipFromBeranda, openAlumniFromBeranda: this.openAlumniFromBeranda,
+
+      khususItems,
+
+      mapelStepA: s.mapelStep === 'a', mapelStepB: s.mapelStep === 'b', mapelStepC: s.mapelStep === 'c', mapelStepD: s.mapelStep === 'd',
+      mapelChooseKnown: this.mapelChooseKnown, mapelExplore: this.mapelExplore, mapelBackToA: this.mapelBackToA,
+      mapelStepCSubtitle: s.mapelRumpunId ? 'Prodi di rumpun ini' : 'Semua program studi',
+      prodiGroupsToShow,
+      resultProdiName, resultMapelList, resultSaranText,
+      ubahProdi: this.ubahProdi, simpanChecklist: this.simpanChecklist, lewatiMapel: this.lewatiMapel,
+
+      checklistCategories, checklistTotal, checklistDone, checklistHeaderText,
+
+      alumniFilled, alumniEmpty: !alumniFilled, alumniStories: ALUMNI_STORIES,
+
+      arsipCategories, openTambahKartu: this.openTambahKartu, openSesiLatihan: this.openSesiLatihan, openBankSoal: this.openBankSoal,
+
+      detailTabOptions: ['Semua', 'Catatan', 'Soal'], detailTab: s.detailTab, onDetailTabChange: this.onDetailTabChange,
+      detailCards,
+
+      tambahKategoriOptions: ['Catatan', 'Soal'], tambahKategori: s.tambahKategori, onTambahKategoriChange: this.onTambahKategoriChange,
+      isKategoriSoal: s.tambahKategori === 'Soal', tambahContentLabel: s.tambahKategori === 'Soal' ? 'Soal' : 'Catatan',
+      simpanKartu: this.simpanKartu,
+
+      latihanIndexLabel: 'Kartu ' + (s.latihanIndex + 1) + ' dari ' + SESI_CARDS.length,
+      latihanCurrentMapel: card.mapel, latihanCurrentSoal: card.soal, latihanCurrentJawaban: card.jawaban,
+      latihanRevealed: s.latihanRevealed, latihanNotRevealed: !s.latihanRevealed,
+      revealJawaban: this.revealJawaban, answerWrong: this.answerWrong, answerRight: this.answerRight,
+
+      latihanTotalCards: s.latihanResults.length,
+      latihanSelesaiHeadline: 'Beres. ' + totalCorrect + ' benar dari ' + s.latihanResults.length + '. Yang salah akan muncul lagi lusa.',
+      perMapelList: [
+        { name: 'Matematika', fraction: mathResults.filter((r) => r.correct).length + '/' + mathResults.length },
+        { name: 'Bahasa Inggris', fraction: engResults.filter((r) => r.correct).length + '/' + engResults.length },
+      ],
+      kembaliKeArsip: this.kembaliKeArsip,
+
+      bankSoalFilled, bankSoalEmpty: !bankSoalFilled, bankSoalPartners: BANK_SOAL_PARTNERS, backToArsip: this.backToArsip,
+
+      navBerandaColor: navColor('beranda'), navBerandaBg: navBg('beranda'),
+      navKhususColor: navColor('khusus_smk'), navKhususBg: navBg('khusus_smk'),
+      navMapelColor: navColor('pilih_mapel'), navMapelBg: navBg('pilih_mapel'),
+      navChecklistColor: navColor('checklist'), navChecklistBg: navBg('checklist'),
+      goBeranda: this.goBeranda, goKhususSmk: this.goKhususSmk, goPilihMapel: this.goPilihMapel, goChecklist: this.goChecklist,
+
+      savedToast: s.savedToast, closeSavedToast: this.closeSavedToast,
+    };
+  }
+}
+</script>
+</body>
+</html>

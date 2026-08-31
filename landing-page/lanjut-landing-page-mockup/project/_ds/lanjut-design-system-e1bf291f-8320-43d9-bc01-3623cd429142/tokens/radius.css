@@ -1,0 +1,9 @@
+:root{
+  --radius-xs:8px;
+  --radius-sm:12px;
+  --radius-md:16px;   /* default card / input */
+  --radius-lg:24px;   /* feature card, sheet */
+  --radius-xl:32px;   /* cover panel, app tile */
+  --radius-pill:999px;
+  --radius-tile:22.5%; /* squircle-ish app icon, matches mascot tiles */
+}

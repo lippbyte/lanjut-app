@@ -177,3 +177,74 @@ curl -s https://<domain-anda>/api/v1/sehat
   versi panel Rumahweb yang aktif saat deploy, lihat catatan di langkah 5.
 - CI/CD otomatis (deploy dari git push) — deployment ini diasumsikan
   manual (upload/`git pull` + restart lewat cPanel).
+
+---
+
+## Update 2026-08-31 — Topologi final: landing page pindah ke `/tentang`
+
+Keputusan topologi hosting final (lihat
+`docs/keputusan-topologi-hosting.md`): **`app/` tetap di Application
+root/`public_html/` sesuai Skenario A di atas — TIDAK ADA perubahan
+konfigurasi untuk `app/` maupun `server/` akibat perubahan ini.** Semua
+langkah 1–5 di atas tetap berlaku apa adanya.
+
+Yang berubah hanya **penempatan `landing-page/`**: folder ini (statis
+HTML/CSS/JS, tanpa proses Node/build terpisah, sama seperti `app/`) perlu
+diunggah ke subfolder `public_html/tentang/`, sehingga bisa diakses di
+`https://edilakso.my.id/tentang`.
+
+### Cara upload `landing-page/`
+
+1. Lewat cPanel **File Manager** atau klien FTP/SFTP (mis. FileZilla):
+   masuk ke `public_html/`, buat folder baru bernama `tentang`.
+2. Unggah seluruh isi folder `landing-page/` (bukan foldernya sendiri,
+   isinya langsung) ke `public_html/tentang/`.
+3. Tidak ada konfigurasi tambahan — folder ini murni statis, tidak
+   menyentuh proses Node.js Selector atau `.htaccess` proxy `/api/v1`
+   yang sudah dijelaskan di langkah 5 bagian atas.
+
+### Urutan kerja yang disarankan
+
+1. **Pastikan DNS `edilakso.my.id` sudah resolve dulu** sebelum lanjut ke
+   langkah berikutnya (lihat bagian "Status DNS" di bawah — per
+   2026-08-31 domain ini **belum resolve**, NXDOMAIN).
+2. Upload `app/` ke Application root/`public_html/` (langkah 4 bagian
+   atas) — kalau belum dilakukan.
+3. Upload `landing-page/` ke `public_html/tentang/` (lihat langkah di
+   atas).
+4. **Tes klik manual** (harus dilakukan manusia dengan akses hosting,
+   tidak bisa diotomasi dari repo kode ini):
+   - Buka `https://edilakso.my.id/tentang` di browser, pastikan landing
+     page tampil (bukan 404).
+   - Klik tombol "Mulai Sekarang" (atau tombol serupa) di landing page,
+     pastikan mendarat di `https://edilakso.my.id/` dan aplikasi
+     `app/` berjalan normal (Splash → Onboarding/Beranda) — bukan 404
+     atau halaman kosong.
+
+### Status DNS (dicek dari sandbox, 2026-08-31)
+
+Hasil mentah pengecekan DNS untuk `edilakso.my.id` — lihat laporan agen
+yang mengerjakan task ini untuk detail lengkap dan output mentah. Ringkas:
+domain **NXDOMAIN (belum resolve)** per tanggal pengecekan. Sandbox yang
+digunakan terbukti punya akses internet nyata (domain lain berhasil
+di-resolve), jadi hasil NXDOMAIN ini bukan karena sandbox tidak ada
+jaringan — ini status DNS domain yang sesungguhnya per saat itu. Perlu
+dicek ulang manual mendekati waktu deploy sungguhan, karena status ini
+bisa berubah kapan saja setelah dua item verifikasi manual di bawah
+diselesaikan.
+
+### Dua hal yang WAJIB diverifikasi manual oleh manusia (tidak bisa dicek dari sandbox/repo ini)
+
+1. **Apakah domain `edilakso.my.id` sudah ditambahkan & di-assign ke akun
+   cPanel yang benar.** Cara cek: login ke panel Rumahweb → menu
+   **Domains** (atau **Zone Editor**) → pastikan `edilakso.my.id`
+   terdaftar dan mengarah ke akun cPanel yang dipakai untuk deployment
+   ini.
+2. **Apakah nameserver domain `.my.id` sudah diarahkan ke Rumahweb.**
+   Cara cek: login ke panel registrar tempat domain `.my.id` didaftarkan
+   (bukan panel Rumahweb), cek pengaturan nameserver, pastikan mengarah
+   ke nameserver Rumahweb (biasanya format `ns1.rumahweb.com`/
+   `ns2.rumahweb.com` atau sejenis — konfirmasi nilai persis ke
+   support Rumahweb). Kalau baru diubah, propagasi DNS bisa makan waktu
+   hingga 24-48 jam — cek ulang dengan `nslookup edilakso.my.id` atau
+   situs seperti whatsmydns.net dari beberapa lokasi.

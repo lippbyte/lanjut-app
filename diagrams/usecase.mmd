@@ -1,0 +1,60 @@
+---
+title: Use Case Diagram — LANJUT (EDILAKSO GROUP)
+config:
+  flowchart:
+    nodeSpacing: 20
+    rankSpacing: 80
+    curve: basis
+    useMaxWidth: false
+---
+%% Mermaid tidak punya use-case diagram native, jadi dipetakan ke flowchart:
+%%   stadium ([ ]) = aktor,  lingkaran (( )) = use case,  subgraph = boundary sistem
+%%   garis polos (---) = asosiasi,  garis putus (-.->) = include / extend
+flowchart LR
+
+    %% ── Aktor: di luar boundary ─────────────────────────────────────────
+    SISWA(["Siswa SMK<br/>(Pengguna)"])
+    ADMIN(["Admin Tim<br/>(EDILAKSO GROUP)"])
+    MITRA(["Mitra Bimbel<br/>(P1)"])
+
+    %% ── Boundary sistem ─────────────────────────────────────────────────
+    subgraph SISTEM["Sistem LANJUT"]
+        UC1(("Lihat Linimasa<br/>TKA/SNBP/SNBT"))
+        UC2(("Lihat Info<br/>Khusus SMK"))
+        UC3(("Gunakan Penolong<br/>Pilih Mapel"))
+        UC4(("Baca Cerita<br/>Alumni"))
+        UC5(("Kelola Daftar<br/>Periksa"))
+        UC6(("Isi Onboarding<br/>Profil Awal"))
+        UC7(("Kelola Konten<br/>Resmi"))
+        UC8(("Verifikasi Sumber<br/>& Tanggal Cek"))
+        UC9(("Kelola Cerita<br/>Alumni"))
+        UC10(("Kelola Bank<br/>Soal Mitra"))
+    end
+
+    %% ── Asosiasi aktor → use case ───────────────────────────────────────
+    SISWA --- UC1
+    SISWA --- UC2
+    SISWA --- UC3
+    SISWA --- UC4
+    SISWA --- UC5
+    SISWA --- UC6
+
+    ADMIN --- UC7
+    ADMIN --- UC9
+
+    MITRA --- UC10
+
+    %% ── include: semua konten wajib lewat verifikasi sumber ─────────────
+    UC7 -. include .-> UC8
+    UC9 -. include .-> UC8
+    UC10 -. include .-> UC8
+
+    %% ── extend: hasil Penolong Pilih Mapel dapat diperluas info SMK ─────
+    UC3 -. extend .-> UC2
+
+    %% ── Gaya ────────────────────────────────────────────────────────────
+    classDef aktor fill:#95BDD7,stroke:#456A8C,stroke-width:2px,color:#1A1A1A;
+    classDef usecase fill:#B4E1EB,stroke:#78A4CB,stroke-width:1.5px,color:#1A1A1A;
+    class SISWA,ADMIN,MITRA aktor;
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10 usecase;
+    style SISTEM fill:#FFFFFF,stroke:#78A4CB,stroke-width:2px,color:#1A1A1A;

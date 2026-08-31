@@ -1,0 +1,13 @@
+{
+  "theme": "base",
+  "themeVariables": {
+    "primaryColor": "#B4E1EB",
+    "primaryTextColor": "#1A1A1A",
+    "primaryBorderColor": "#78A4CB",
+    "lineColor": "#78A4CB",
+    "secondaryColor": "#95BDD7",
+    "tertiaryColor": "#FFFFFF",
+    "fontFamily": "Poppins, Arial, sans-serif",
+    "fontSize": "14px"
+  }
+}

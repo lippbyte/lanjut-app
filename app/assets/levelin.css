@@ -1,0 +1,188 @@
+/* =========================================================================
+   LEVELIN.CSS — komponen Level-In (confidence gap tracker), FL1–FL6
+   =========================================================================
+   Referensi: docs/SDD-LevelIn.md §7. Semua nilai memanggil token dari
+   tokens.css — tidak ada warna atau ukuran baru diperkenalkan di sini
+   (SDD §7.1: "warna/ukuran hanya lewat var(--token)").
+
+   Berkas ini HANYA styling. Logika (tampil/sembunyi, isi teks dinamis,
+   perhitungan) ada di assets/levelin.js — dikerjakan terpisah, lihat
+   kontrak data-* di app/beranda.html, app/latihan.html,
+   app/latihan-selesai.html.
+
+   Lima komponen, mengikuti urutan SDD §7.2–§7.6:
+     1. .levelin-confidence-*   — pemilih keyakinan (§7.2, FL1)
+     2. .levelin-gap-strip      — strip pembanding gap (§7.3, FL2)
+     3. .levelin-summary-block  — ringkasan kalibrasi akhir sesi (§7.4, FL6)
+     4. .levelin-cta-card       — kartu CTA "Latihan Hari Ini" (§7.5, FL4)
+     5. .levelin-status-badge   — penanda status kalibrasi per mapel (§7.6,
+                                  opsional — lihat catatan di bagian 5)
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   1. PEMILIH KEYAKINAN — latihan.html, sebelum jawaban dibuka (§7.2, FL1)
+   -------------------------------------------------------------------------
+   Lima chip diskrit dalam satu baris — final: bukan slider. Pada 360px,
+   lebar isi kartu ± 280px; lima chip + empat sela 8px menyisakan ± 49px per
+   chip: cukup untuk angka, tidak cukup untuk label kata di dalam chip.
+   Karena itu arti tingkat terpilih ditulis sebagai baris terpisah di bawah
+   (.levelin-confidence-arti), bukan di dalam chip.
+   ------------------------------------------------------------------------- */
+.levelin-confidence-section{
+  display:flex;flex-direction:column;gap:var(--space-2);
+  padding:var(--space-3);
+  background:var(--surface-soft);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius-md);
+}
+.levelin-confidence-tanya{
+  font:var(--text-body-small);font-weight:var(--fw-medium);color:var(--ink-700);
+}
+
+.levelin-confidence-chips{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-2);
+}
+.levelin-confidence-chip{
+  min-height:var(--sentuh);min-width:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-core);font:var(--text-body-default);font-weight:var(--fw-medium);
+  color:var(--ink-700);background:var(--white);
+  border:1px solid var(--border-soft);border-radius:var(--radius-md);
+  cursor:pointer;padding:0;
+  transition:background var(--dur-base) var(--ease-standard),
+             border-color var(--dur-base) var(--ease-standard),
+             color var(--dur-base) var(--ease-standard);
+}
+.levelin-confidence-chip:hover{background:var(--blue-100)}
+.levelin-confidence-chip:active{transform:scale(var(--press-scale))}
+/* Penanda terpilih TIDAK hanya warna: bobot huruf ikut naik (SDD §7.2 —
+   satu-satunya palet yang ada adalah tiga tingkat biru). */
+.levelin-confidence-chip[aria-pressed="true"]{
+  background:var(--blue-400);border-color:var(--blue-400);color:var(--white);
+  font-weight:var(--fw-bold);
+}
+
+/* Baris arti tingkat terpilih — satu wadah, lima kalimat siap pakai di HTML
+   (tidak dikarang JavaScript). Hanya satu yang [hidden]=false pada satu
+   waktu; wadah punya aria-live supaya pembaca layar ikut mendengar. */
+.levelin-confidence-arti{
+  min-height:1.3em; /* mencegah lompatan tata letak saat kalimat berganti */
+  font:var(--text-caption);color:var(--text-muted);
+}
+.levelin-confidence-arti p{font:inherit;color:inherit;margin:0}
+
+/* Petunjuk saat "Lihat jawaban" ditekan sebelum memilih keyakinan (§7.2:
+   tombol tertahan WAJIB menjelaskan kenapa, bukan `disabled` polos). */
+.levelin-confidence-hint{
+  font:var(--text-caption);color:var(--blue-600);margin:0;
+}
+
+/* Tombol "Lihat jawaban" dalam keadaan tertahan: dibedakan lewat opasitas +
+   kursor, TETAP di urutan fokus (memakai aria-disabled, bukan [disabled]). */
+.btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed}
+
+@media (max-width:359px){
+  .levelin-confidence-chip{font-size:var(--fs-body-sm)}
+}
+
+/* -------------------------------------------------------------------------
+   2. STRIP PEMBANDING GAP — latihan.html & latihan-selesai.html (§7.3, FL2)
+   -------------------------------------------------------------------------
+   Nada netral untuk KEEMPAT varian (overconfident, underconfident, selaras,
+   netral) — tidak ada warna beda per varian, karena varian overconfident
+   paling rawan terbaca sebagai teguran (SDD §7.1, §7.3). Muncul otomatis,
+   tanpa ketukan tambahan; tidak boleh mendorong kartu soal keluar layar di
+   360px, karena itu padding dan margin dijaga tetap dalam skala spacing.
+   ------------------------------------------------------------------------- */
+.levelin-gap-strip{
+  display:flex;gap:var(--space-3);align-items:flex-start;
+  width:100%;text-align:left;
+  background:var(--status-attention-bg);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius-md);
+  padding:var(--space-3);
+}
+.levelin-gap-strip__ikon{color:var(--blue-600);flex-shrink:0;display:flex;margin-top:2px}
+.levelin-gap-strip__isi{flex:1;min-width:0}
+.levelin-gap-strip__isi p{font:var(--text-body-small);color:var(--ink-700);margin:0}
+
+/* -------------------------------------------------------------------------
+   3. RINGKASAN KALIBRASI AKHIR SESI — latihan-selesai.html (§7.4, FL6)
+   -------------------------------------------------------------------------
+   FL6 final: gratis untuk semua pengguna (SDD §10.1). Varian yang WAJIB
+   dirender di v1 hanya "penuh" dan "kosong". Varian "locked" DIPERTAHANKAN
+   di sini sebagai catatan rancangan untuk opsi masa depan (§7.4) — kelasnya
+   sudah siap tapi TIDAK dirender oleh HTML manapun di rilis ini.
+
+   Blok ini berdampingan dengan skor benar/salah yang sudah ada, bukan
+   menggantikannya — karena itu tidak diberi shadow/kartu yang lebih berat
+   daripada kartu skor di sekitarnya.
+   ------------------------------------------------------------------------- */
+.levelin-summary-block{
+  width:100%;text-align:left;
+  display:flex;flex-direction:column;gap:var(--space-2);
+  background:var(--surface-card);
+  border:1px solid var(--border-hairline);
+  border-radius:var(--radius-lg);
+  padding:var(--card-padding);
+  box-shadow:var(--shadow-1);
+}
+.levelin-summary-block h3{font:var(--text-h3)}
+.levelin-summary-block p{font:var(--text-body-small);color:var(--ink-700)}
+
+/* Varian keadaan kosong (sesi tidak ditemukan) — wajib punya tampilan
+   ditulis, bukan angka contoh (DoD §15). Nada lebih redup daripada varian
+   penuh supaya tidak terbaca sebagai hasil sungguhan. */
+.levelin-summary-block[data-varian="kosong"]{
+  background:var(--surface-soft);border-color:var(--border-soft);box-shadow:none;
+}
+
+/* Opsi masa depan, TIDAK dipakai HTML manapun di v1 — lihat catatan di atas. */
+.levelin-summary-block[data-varian="locked"]{
+  background:var(--surface-soft);border-color:var(--border-soft);box-shadow:none;
+}
+
+/* -------------------------------------------------------------------------
+   4. KARTU CTA "LATIHAN HARI INI" — beranda.html (§7.5, FL4)
+   -------------------------------------------------------------------------
+   Sengaja TIDAK memakai kelas .kartu--brand (gradasi) supaya tidak menyaingi
+   bobot visual kartu tenggat F1 (AC FL4: F1 tetap paling menonjol). Bentuk
+   mengikuti .kartu biasa: latar putih, garis tipis, bayangan ringan.
+   ------------------------------------------------------------------------- */
+.levelin-cta-card{
+  width:100%;text-align:left;
+  display:flex;flex-direction:column;gap:var(--space-2);
+  background:var(--surface-card);
+  border:1px solid var(--border-hairline);
+  border-radius:var(--radius-lg);
+  padding:var(--card-padding);
+  box-shadow:var(--shadow-1);
+}
+.levelin-cta-card h3{font:var(--text-title)}
+.levelin-cta-card p{font:var(--text-body-small);color:var(--ink-700)}
+.levelin-cta-card .btn{margin-top:var(--space-1)}
+
+/* -------------------------------------------------------------------------
+   5. PENANDA STATUS KALIBRASI PER MAPEL — arsip.html (§7.6, opsional)
+   -------------------------------------------------------------------------
+   Kebutuhan ini melekat pada keputusan §10.2 no. 3 yang MASIH TERBUKA.
+   Kelasnya disiapkan di sini supaya siap dipakai begitu keputusan diambil,
+   tetapi TIDAK DIRENDER oleh arsip.html saat ini (lihat komentar di berkas
+   itu). Tiga keadaan wajib, termasuk "belum cukup data" yang tidak boleh
+   disamakan dengan gap nol (AC FL3).
+   ------------------------------------------------------------------------- */
+.levelin-status-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font:var(--text-caption);font-weight:var(--fw-medium);
+  padding:4px 10px;border-radius:var(--radius-pill);
+  white-space:nowrap;
+}
+.levelin-status-badge::before{
+  content:"";width:7px;height:7px;border-radius:var(--radius-pill);flex-shrink:0;
+}
+.levelin-status-badge--belum-data{background:var(--status-idle-bg);color:var(--ink-500)}
+.levelin-status-badge--belum-data::before{background:var(--status-idle)}
+.levelin-status-badge--selaras{background:var(--status-ok-bg);color:var(--status-ok-fg)}
+.levelin-status-badge--selaras::before{background:var(--status-ok)}
+.levelin-status-badge--overconfident{background:var(--status-attention-bg);color:var(--blue-600)}
+.levelin-status-badge--overconfident::before{background:var(--status-attention)}

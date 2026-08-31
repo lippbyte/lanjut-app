@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Latihan Selesai · LANJUT</title>
+<meta name="theme-color" content="#456A8C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="assets/img/mascot-tile-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/levelin.css">
+<script src="assets/app.js" defer></script>
+<script src="assets/levelin.js" defer></script>
+</head>
+
+<body data-peran="latihan-selesai">
+<a class="lewati" href="#isi">Lewati ke konten</a>
+
+<div class="app">
+
+  <header class="appbar">
+    <img class="appbar__mark" src="assets/img/mascot-tile-primary.png" alt="" width="32" height="32">
+    <p class="appbar__wordmark"><img src="assets/img/lanjut-wordmark-badge.png" alt="LANJUT"></p>
+    <a class="appbar__profil" href="onboarding.html" aria-label="Profil kamu">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>
+    </a>
+  </header>
+
+  <div class="pagebar">
+    <a class="icon-btn" href="arsip.html" aria-label="Kembali"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></a>
+    <h1>Latihan Selesai</h1>
+  </div>
+
+  <main class="layar" id="isi">
+    <div class="layar__isi layar__isi--tengah">
+
+      <img src="assets/img/mascot-blue.png" alt="" width="72" height="72">
+
+      <p class="angka-besar">12</p>
+
+      <!-- Salinan teks §4.7: "Beres. 9 benar dari 12. Yang salah akan muncul
+           lagi lusa." Menyebut kapan kartu salah kembali, bukan menegur. -->
+      <p style="color:var(--ink-700)">Beres. 9 benar dari 12. Yang salah akan muncul lagi lusa.</p>
+
+      <!-- Level-In (FL2) — strip pembanding untuk KARTU TERAKHIR sesi. SDD-
+           LevelIn.md §6.2 secara eksplisit menaruh strip kartu terakhir di
+           sini (bukan di latihan.html) karena tidak ada "kartu berikutnya"
+           lagi untuk menampungnya. Struktur & kontrak sama persis dengan
+           .levelin-gap-strip di latihan.html — lihat komentar di sana.
+           Mulai [hidden]; hanya dibuka levelin.js kalau sesi punya kartu
+           sama sekali (AC FL2: tidak ada strip kosong). -->
+      <div class="levelin-gap-strip" data-varian="" hidden aria-live="polite">
+        <span class="levelin-gap-strip__ikon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><path d="M2 15h4v5H4a2 2 0 0 1-2-2v-3Zm20 0h-4v5h2a2 2 0 0 0 2-2v-3Z"/></svg>
+        </span>
+        <div class="levelin-gap-strip__isi">
+          <p data-varian-isi="overconfident" hidden>Kamu pilih yakin <span data-isi="gap-oc-tingkat">4</span>/5, tapi jawabannya meleset. Ini bagian dari pola kamu di <span data-isi="gap-oc-mapel">Matematika</span> — coba pelan-pelan lagi di sini.</p>
+          <p data-varian-isi="underconfident" hidden>Kamu pilih ragu <span data-isi="gap-uc-tingkat">2</span>/5, ternyata jawabannya benar. Kamu bisa lebih dari yang kamu kira.</p>
+          <p data-varian-isi="selaras" hidden>Perkiraanmu pas — <span data-isi="gap-sl-tingkat">5</span>/5 dan hasilnya sesuai.</p>
+          <p data-varian-isi="netral" hidden>Keyakinanmu ada di tengah. Tetap dihitung, lanjut ke kartu berikutnya.</p>
+        </div>
+      </div>
+
+      <!-- Rincian per mapel. PRD F7 menegaskan ukuran keberhasilannya bukan
+           panjang beruntun, melainkan kartu yang pindah dari "sering salah"
+           ke "dikuasai" — jadi tidak ada penghitung hari beruntun di sini. -->
+      <div class="tumpuk penuh" style="text-align:left">
+        <div class="kartu kartu--soft kartu--rapat">
+          <p class="baris-nilai">
+            <span style="font-weight:var(--fw-medium)">Matematika</span>
+            <span class="muted" style="font:var(--text-body-small)">5/6</span>
+          </p>
+        </div>
+        <div class="kartu kartu--soft kartu--rapat">
+          <p class="baris-nilai">
+            <span style="font-weight:var(--fw-medium)">Bahasa Inggris</span>
+            <span class="muted" style="font:var(--text-body-small)">4/6</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Level-In (FL6) — ringkasan kalibrasi akhir sesi. SDD-LevelIn.md
+           §6.3, §7.4. FL6 FINAL: gratis untuk semua pengguna (§10.1) — jadi
+           HANYA dua varian di bawah yang wajib dirender di v1: "penuh" dan
+           "kosong". Berdampingan dengan skor & rincian per mapel di atas,
+           BUKAN menggantikannya (AC FL6). Tanpa penghitung hari beruntun.
+
+           Kontrak untuk levelin.js:
+             - ada sesi (sessionStorage terisi): hilangkan [hidden] di blok
+               data-varian="penuh", isi dua <span data-isi="..."> dengan
+               ANGKA (bukan kalimat baru — lihat aturan render di app.js)
+             - sessionStorage kosong/hilang: hilangkan [hidden] di blok
+               data-varian="kosong" SAJA, sembunyikan yang "penuh" -->
+      <div class="levelin-summary-block" data-varian="penuh" hidden>
+        <h3>Ringkasan Kalibrasi</h3>
+        <p>Yakin tapi meleset: <span data-isi="ringkasan-overconfident">0</span> soal. Ternyata bisa: <span data-isi="ringkasan-underconfident">0</span> soal.</p>
+      </div>
+
+      <div class="levelin-summary-block" data-varian="kosong" hidden>
+        <p>Sesi latihan ini sudah tidak ada datanya. Mulai sesi baru dari Arsip Belajar.</p>
+        <a class="btn btn--secondary" href="arsip.html">Ke Arsip Belajar</a>
+      </div>
+
+      <!-- Varian "locked" — TIDAK WAJIB dan TIDAK DIRENDER di v1 (SDD §7.4:
+           FL6 sudah final gratis, jadi tidak ada pengguna yang perlu dikunci
+           dari ringkasan ini). DIHAPUS dari markup (bukan hanya di-hidden):
+           teks "Upgrade ke premium" yang tadinya di sini tidak pernah masuk
+           ke katalog resmi docs/salinan-teks-lanjut.md §4.8, dan
+           tools/test-desain.js sengaja digagalkan sampai ini ditindak (lihat
+           komentar gerbang G di test-desain.js). Menghapus lebih aman
+           daripada menambah kalimat baru ke katalog teks tanpa approval PM
+           untuk fitur yang statusnya sendiri belum wajib dibangun di v1.
+           Catatan rancangan lengkapnya tetap ada di SDD-LevelIn.md §7.4 kalau
+           kelak FL6 dipindah ke paket berbayar dan blok ini perlu dibangun
+           ulang (dengan teks yang sudah disetujui PM). -->
+
+      <a class="btn btn--lg btn--penuh" href="arsip.html" style="margin-top:var(--space-2)">
+        Kembali ke Arsip Belajar
+      </a>
+
+    </div>
+  </main>
+
+  <!-- NAVIGASI BAWAH — empat ikon, tidak pernah lebih.
+       Halaman cabang (alumni, arsip*, latihan*, bank-soal) memakai nav yang
+       sama tetapi menandai Beranda sebagai tab aktif. -->
+  <nav class="tabbar" aria-label="Navigasi utama">
+    <a href="beranda.html" aria-current="page">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg></span>
+      Beranda
+    </a>
+    <a href="khusus-smk.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9 12 4l10 5-10 5-10-5Z"/><path d="M6 11.5V16c0 1.1 2.7 2 6 2s6-.9 6-2v-4.5"/></svg></span>
+      Khusus SMK
+    </a>
+    <a href="pilih-mapel.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></svg></span>
+      Pilih Mapel
+    </a>
+    <a href="checklist.html">
+      <span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12.5 2.5 2.5L16 9.5"/></svg></span>
+      Checklist
+    </a>
+  </nav>
+
+</div>
+
+</body>
+</html>
