@@ -518,6 +518,14 @@
       });
       /* Titik langkah hanya untuk empat layar cerita, bukan layar tanya. */
       var diCerita = i < titik.length;
+      var appContainer = document.querySelector('.app');
+      if (appContainer) {
+        if (!diCerita) {
+          appContainer.setAttribute('data-mode', 'tanya');
+        } else {
+          appContainer.removeAttribute('data-mode');
+        }
+      }
       var wadahTitik = document.querySelector('.langkah-titik');
       if (wadahTitik) wadahTitik.hidden = !diCerita;
       if (tombolLanjut) {
@@ -543,16 +551,19 @@
 
     /* --- Keping kelas & prodi: satu terpilih, sisanya lepas ------------- */
     function pasangKeping(namaGrup, saatPilih) {
-      var kepingan = [].slice.call(
-        document.querySelectorAll('[data-grup="' + namaGrup + '"]')
-      );
-      kepingan.forEach(function (el) {
-        el.addEventListener('click', function () {
-          kepingan.forEach(function (lain) {
-            lain.setAttribute('aria-pressed', String(lain === el));
-          });
-          saatPilih(el.getAttribute('data-nilai'));
+      document.addEventListener('click', function (ev) {
+        var el = ev.target;
+        if (!el.classList.contains('keping') || el.getAttribute('data-grup') !== namaGrup) {
+          return;
+        }
+        /* Clear SEMUA chips di grup ini, termasuk yang di luar scope sempat di-query sebelumnya */
+        var semuaChips = document.querySelectorAll('[data-grup="' + namaGrup + '"]');
+        semuaChips.forEach(function (chip) {
+          chip.setAttribute('aria-pressed', 'false');
         });
+        /* Set hanya yang diklik jadi true */
+        el.setAttribute('aria-pressed', 'true');
+        saatPilih(el.getAttribute('data-nilai'));
       });
     }
 
@@ -2029,7 +2040,23 @@
     'akun': pasangAkun
   };
 
+  function inisialisasiStickyBar() {
+    var appbar = document.querySelector('.appbar');
+    if (!appbar) return;
+    function perbaruiScroll() {
+      var y = window.scrollY || document.documentElement.scrollTop || 0;
+      if (y > 8) {
+        appbar.classList.add('appbar--scrolled');
+      } else {
+        appbar.classList.remove('appbar--scrolled');
+      }
+    }
+    window.addEventListener('scroll', perbaruiScroll, { passive: true });
+    perbaruiScroll();
+  }
+
   function mulai() {
+    inisialisasiStickyBar();
     var peran = document.body.getAttribute('data-peran');
     var f = HALAMAN[peran];
     if (!f) return;
