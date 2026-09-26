@@ -5,7 +5,7 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import type { DataDaftar } from '../../../api/auth';
 import { useAuth } from '../../../hooks/useAuth';
 import { useProdi } from '../../../hooks/useProdi';
-import { color, radius, spacing, typography } from '../../../theme/tokens';
+import { color, font, radius, spacing, teks } from '../../../theme/tokens';
 import { AuthLayout, Field, Input, PesanGalat, TautanBawah, TombolUtama, authStyles } from './AuthUI';
 
 // Aturan disalin dari server/src/modul/auth/auth.skema.js supaya kesalahan
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     backgroundColor: color.white,
   },
   opsiAktif: { backgroundColor: color.blue400, borderColor: color.blue400 },
-  opsiTeks: { fontSize: typography.size.bodySm, color: color.ink700 },
-  opsiTeksAktif: { color: color.white, fontWeight: typography.weight.semibold },
-  catatan: { fontSize: typography.size.caption, color: color.textMuted },
+  opsiTeks: { ...teks.bodySm, color: color.ink700 },
+  opsiTeksAktif: { color: color.white, fontFamily: font.semibold },
+  catatan: { ...teks.caption, color: color.textMuted },
 });

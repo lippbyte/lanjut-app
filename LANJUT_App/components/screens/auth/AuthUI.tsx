@@ -14,7 +14,7 @@ import {
   View,
 } from 'react-native';
 
-import { color, radius, spacing, typography } from '../../../theme/tokens';
+import { color, font, radius, shadow, spacing, teks as teksToken } from '../../../theme/tokens';
 
 // Kerangka layar Masuk/Daftar — padanan `.appbar` + `.layar__isi` + `.kepala`
 // di MVP-PWA/masuk.html & daftar.html.
@@ -172,9 +172,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: spacing.s3,
     paddingHorizontal: spacing.gutter,
-    backgroundColor: 'rgba(180,225,235,0.9)',
+    backgroundColor: color.appbarBg,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(69,106,140,0.16)',
+    borderBottomColor: color.appbarBorder,
   },
   mark: { width: 32, height: 32, resizeMode: 'contain' },
   wordmark: { height: 32, width: 93, resizeMode: 'contain' },
@@ -185,32 +185,20 @@ const styles = StyleSheet.create({
     maxWidth: 420,
     alignSelf: 'center',
   },
-  judul: {
-    fontSize: typography.size.h2,
-    fontWeight: typography.weight.bold,
-    color: color.textBody,
-    marginVertical: 0,
-  },
-  pengantar: {
-    marginTop: spacing.s1,
-    fontSize: typography.size.bodySm,
-    color: color.textMuted,
-  },
+  judul: { ...teksToken.h2, color: color.textBody, marginVertical: 0 },
+  pengantar: { ...teksToken.bodySm, marginTop: spacing.s1, color: color.textMuted },
   field: { gap: spacing.s2 },
-  label: {
-    fontSize: typography.size.bodySm,
-    fontWeight: typography.weight.medium,
-    color: color.ink700,
-  },
-  muted: { color: color.textMuted, fontWeight: typography.weight.regular },
-  hint: { fontSize: typography.size.caption, color: color.textMuted },
+  label: { ...teksToken.bodySm, fontFamily: font.medium, color: color.ink700 },
+  muted: { color: color.textMuted, fontFamily: font.regular },
+  hint: { ...teksToken.caption, color: color.textMuted },
   // Sistem warna LANJUT tidak punya merah — galat pun biru tua (app.css .field__error).
-  galat: { fontSize: typography.size.caption, color: color.blue600 },
+  galat: { ...teksToken.caption, color: color.blue600 },
   input: {
     minHeight: 48,
     paddingVertical: 13,
     paddingHorizontal: spacing.s4,
-    fontSize: typography.size.body,
+    fontFamily: font.regular,
+    fontSize: 16,
     color: color.ink900,
     backgroundColor: color.white,
     borderWidth: 1,
@@ -223,7 +211,7 @@ const styles = StyleSheet.create({
     borderColor: color.blue400,
     outlineWidth: 3,
     outlineStyle: 'solid',
-    outlineColor: 'rgba(120,164,203,0.35)',
+    outlineColor: color.focusRing,
   },
   tombol: {
     flexDirection: 'row',
@@ -235,10 +223,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     borderRadius: radius.pill,
     backgroundColor: color.blue400,
+    boxShadow: shadow.s2,
   },
   tombolTekan: { backgroundColor: color.blue500, transform: [{ scale: 0.97 }] },
   tombolProses: { opacity: 0.7 },
-  tombolTeks: { color: color.white, fontSize: typography.size.lead, fontWeight: typography.weight.semibold },
-  tautanBaris: { textAlign: 'center', color: color.textBody, fontSize: typography.size.body },
-  tautan: { color: color.textLink, fontWeight: typography.weight.semibold, textDecorationLine: 'underline' },
+  tombolTeks: { fontFamily: font.semibold, fontSize: 18, lineHeight: 24, color: color.white },
+  tautanBaris: { ...teksToken.body, textAlign: 'center', color: color.textBody },
+  tautan: { fontFamily: font.semibold, color: color.textLink, textDecorationLine: 'underline' },
 });
