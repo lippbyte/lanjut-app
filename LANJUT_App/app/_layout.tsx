@@ -2,29 +2,23 @@ import React from 'react';
 import { Slot } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
-import { AppShell } from '../components/layout/AppShell';
 import { DataLayerProbe } from '../dev/DataLayerProbe';
+import { AuthProvider } from '../providers/AuthProvider';
 import { QueryProvider } from '../providers/QueryProvider';
 
 /**
- * Root layout pakai <Slot/> (bukan <Stack/>) supaya AppShell — Header+Nav
- * di atas, Footer di bawah — tetap sama di kelima rute P0; berpindah halaman
- * hanya mengganti isi <Main>, bukan memicu transisi layar ala Stack yang
- * tidak relevan untuk kerangka navigasi datar seperti ini.
- *
- * `<DataLayerProbe/>` hanya dipasang saat `__DEV__` — ia tidak merender apa
- * pun (return null), tugasnya cuma console.log data dari kedelapan hook
- * lapisan data untuk verifikasi, dan tidak relevan sama sekali di build
- * produksi.
+ * Root layout hanya memasang provider. Penjagaan rute ada di layout grup:
+ * app/(auth)/_layout.tsx (Masuk/Daftar, khusus tamu) dan app/(app)/_layout.tsx
+ * (lima layar P0 + AppShell, khusus yang sudah masuk).
  */
 export default function RootLayout() {
   return (
     <QueryProvider>
-      <AppShell>
+      <AuthProvider>
         <StatusBar style="dark" />
         {__DEV__ && <DataLayerProbe />}
         <Slot />
-      </AppShell>
+      </AuthProvider>
     </QueryProvider>
   );
 }

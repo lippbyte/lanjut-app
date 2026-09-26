@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { LinimasaScreen } from '../components/screens/LinimasaScreen';
+import { LinimasaScreen } from '../../components/screens/LinimasaScreen';
 
 // F1 — Linimasa (docs/prd-sdd-lanjut.md Bagian 6): daftar tahapan
 // TKA/SNBP/SNBT berurutan waktu dengan tenggat terdekat di posisi pertama.
