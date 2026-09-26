@@ -33,17 +33,22 @@ if (!BASE_URL) {
 // perubahan bentuk di sana ketahuan lewat error TypeScript di sini, bukan
 // gagal diam-diam saat runtime.
 type ResponsSukses<T> = { ok: true; data: T; meta?: unknown };
-type ResponsGalat = { ok: false; galat: { kode: string; pesan: string; medan?: unknown } };
+type ResponsGalat = {
+  ok: false;
+  galat: { kode: string; pesan: string; medan?: Record<string, string> };
+};
 
 export class ApiError extends Error {
   status: number;
   kode?: string;
+  medan?: Record<string, string>;
 
-  constructor(status: number, message: string, kode?: string) {
+  constructor(status: number, message: string, kode?: string, medan?: Record<string, string>) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.kode = kode;
+    this.medan = medan;
   }
 }
 
@@ -85,7 +90,7 @@ export async function apiFetch<T>(path: string, opsi: ApiFetchOpsi = {}): Promis
     // Network-level failure (server mati, salah IP, dsb) — bukan galat API
     // terstruktur, jadi dibungkus supaya tetap dikenali sebagai ApiError
     // oleh pemanggil (React Query `isError`) alih-alih TypeError mentah.
-    throw new ApiError(0, `Gagal menghubungi ${url.origin}: ${(err as Error).message}`);
+    throw new ApiError(0, `Gagal menghubungi ${url.origin}: ${(err as Error).message}`, 'JARINGAN');
   }
 
   let json: ResponsSukses<T> | ResponsGalat;
@@ -96,7 +101,7 @@ export async function apiFetch<T>(path: string, opsi: ApiFetchOpsi = {}): Promis
   }
 
   if (!json.ok) {
-    throw new ApiError(res.status, json.galat.pesan, json.galat.kode);
+    throw new ApiError(res.status, json.galat.pesan, json.galat.kode, json.galat.medan);
   }
   return json.data;
 }
