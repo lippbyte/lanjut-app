@@ -3,8 +3,10 @@
 **Status:** jalur pengembangan utama LANJUT sejak 18 Sep 2026. Expo dipilih menggantikan rencana Flutter, dan aplikasi ini adalah penerus PWA v1. `MVP-PWA/` sekarang berstatus arsip dan menjadi acuan UI; aplikasi Expo ini harus tampil sama dengannya.
 
 **Sudah jalan:**
-- Lima layar P0: Linimasa, Khusus SMK, Pilih Mapel, Cerita Alumni, Daftar Periksa. Datanya diambil dari backend lewat React Query.
-- Masuk, Daftar, Keluar, dan perlindungan rute berbasis token.
+- Lima layar P0: Beranda/Linimasa, Khusus SMK, Pilih Mapel, Cerita Alumni, Daftar Periksa. Datanya diambil dari backend lewat React Query.
+- Masuk, Daftar, Akun + Keluar, dan perlindungan rute berbasis token.
+- Centang Daftar Periksa tersimpan ke akun (`/kemajuan`), jadi ikut pindah ke HP lain.
+- Tampilan disamakan dengan `MVP-PWA/` (lihat bagian **Tampilan**).
 
 **Catatan historis:** `docs/prd-sdd-lanjut.md` Bagian 8 dulu menolak React Native untuk v1. Keputusan itu berlaku untuk rilis PWA v1, bukan untuk arah proyek saat ini.
 
@@ -39,6 +41,25 @@ npx eas-cli build --platform android --profile preview   # hasil: .apk (bukan .a
 - **Syarat di HP:** HP harus berada di WiFi yang sama dengan komputer backend, dan backend harus jalan (`cd server && npm start`). Backend sudah listen di `0.0.0.0:4000`.
 - **Penyimpanan APK:** simpan unduhan di `LANJUT_App/build/`. Folder ini diabaikan git.
 
+## Tampilan
+
+Tampilan meniru `MVP-PWA/` (port, bukan desain ulang):
+
+- **Token desain:** `theme/tokens.ts`. Warna, huruf, jarak, radius, bayangan, dan gradasi disalin dari `MVP-PWA/assets/tokens.css`. Komponen tidak menulis HEX atau ukuran huruf mentah.
+- **Huruf:** Poppins 400/500/600, sama dengan PWA. Dimuat di `app/_layout.tsx` lewat `@expo-google-fonts/poppins`.
+- **Komponen dasar:** `components/ui/` berisi padanan kelas CSS PWA: `Kartu` (`.kartu`, `--soft`, `--outline`, `--brand`), `KartuPintu`, `Lencana`, `Peringatan`, `Kosong`, `Tombol`, `Kepala`, `SeksiJudul`, `Sumber`/`Penafian`, dan `Ikon` (SVG garis yang sama dengan PWA).
+- **Navigasi:** app bar (maskot, wordmark, ikon profil), tab bar bawah empat ikon (Beranda, Khusus SMK, Pilih Mapel, Checklist), dan page bar dengan tombol kembali untuk halaman anak (Cerita Alumni, Akun). Semuanya ada di `components/layout/AppShell.tsx`.
+
+Perbedaan yang disengaja dari PWA:
+
+| Layar | Beda | Alasan |
+|---|---|---|
+| Beranda | Tahapan tanpa `diperiksa_pada` tidak ditampilkan (PWA menampilkannya dengan peringatan "Contoh"). Layar kosongnya mengarah ke laman resmi SNPMB. | PRD F1; keputusan PM 26 Sep 2026. |
+| Beranda | Tidak ada kartu "Latihan Hari Ini" dan pintu "Latihan & Arsip Belajar". | Fitur Latihan/Arsip belum ada di Expo. |
+| Pilih Mapel | Tidak ada kartu "Lihat prospek & kampus" (F10). "Simpan ke Daftar Periksa" mencentang butir `mapel-tka` di akun, tidak membuat butir baru. | F10 belum ada di Expo; backend belum mendukung butir buatan pengguna. |
+| Pilih Mapel | Rangkuman umum memakai `GET /konten/mapel/agregasi-lintas-prodi` (jumlah prodi), PWA menjumlah bobot di klien. | Endpoint backend sudah ada. |
+| Daftar Periksa | Ada keping Kelas & Jalur untuk menyaring butir. Centang disimpan ke akun. | AC F5 di PRD (PWA belum menyaring). Jalur disimpan di perangkat karena akun belum punya medan jalur. |
+
 ## Autentikasi
 
 | Hal | Nilai |
@@ -61,16 +82,17 @@ Saat aplikasi dibuka:
 
 ```
 app/
-  _layout.tsx          provider: QueryProvider + AuthProvider
+  _layout.tsx          provider (SafeArea, Query, Auth) + muat huruf Poppins
   index.tsx            → /linimasa
   (auth)/_layout.tsx   khusus yang belum masuk; sudah masuk → /linimasa
   (auth)/masuk.tsx, daftar.tsx
   (app)/_layout.tsx    khusus yang sudah masuk; belum masuk → /masuk. Membungkus AppShell
-  (app)/linimasa.tsx … lima layar P0
+  (app)/linimasa.tsx … lima layar P0, (app)/akun.tsx
 api/                   client.ts (apiFetch, ApiError), auth.ts (layanan auth), types.ts
 providers/             QueryProvider, AuthProvider (status sesi: memuat | masuk | keluar)
-hooks/                 useAuth + hook data per fitur
-components/            layout/ (AppShell, AppNavBar), screens/ (per fitur, auth/)
+hooks/                 useAuth, useKemajuan (baca + centang), hook data per fitur
+theme/tokens.ts        token desain dari MVP-PWA
+components/            ui/ (komponen dasar), layout/ (AppShell), screens/ (per fitur, auth/)
 server/                backend Express + MySQL (lihat server/README.md)
 ```
 
@@ -78,13 +100,15 @@ server/                backend Express + MySQL (lihat server/README.md)
 
 - **Perlindungan rute memakai grup Expo Router `(auth)` & `(app)` yang masing-masing punya `_layout.tsx` penjaga, bukan `RootNavigator` ala React Navigation** — proyek ini memakai routing berbasis file, jadi penjagaan diletakkan di layout grup dan URL tetap bersih (`/masuk`, `/linimasa`).
 - **Setelah login/daftar tidak ada `router.push` manual** — penjaga di `(auth)/_layout.tsx` otomatis pindah ke `/linimasa` begitu status sesi berubah jadi `masuk`, jadi hanya ada satu sumber kebenaran untuk navigasi.
-- **Kedua layout grup memakai `<Slot/>`, bukan `<Stack/>` atau `<Tabs/>`** — kelima halaman P0 setara (bukan hierarki induk-anak).
+- **Kedua layout grup memakai `<Slot/>`, bukan `<Stack/>` atau `<Tabs/>`** — tab bar & page bar digambar sendiri di `AppShell` supaya sama persis dengan PWA.
 - **`@expo/html-elements` untuk `Header`, `Nav`, `Main`, `Footer`, `Article`, `Section`, `H1`** — di web menghasilkan tag HTML semantik asli, di native menjadi `View`/`Text`.
-- **`AppNavBar` memakai `<Link asChild>`** — supaya di web jadi `<a href>` sungguhan, bukan navigasi yang hanya jalan lewat klik.
-- **`theme/tokens.ts` menyalin nilai HEX dari `MVP-PWA/assets/tokens.css`** — nilai produksi PWA v1, bukan deskripsi kualitatif `docs/design.md`.
-- **`typography.fontBody` sengaja `undefined`** — nama font UI resmi belum dikonfirmasi (`design.md` Bagian 6 poin 1).
+- **Tab bar memakai `<Link asChild>`** — supaya di web jadi `<a href>` sungguhan, bukan navigasi yang hanya jalan lewat klik.
+- **Status centang/pilihan/buka memakai atribut `aria-*`** (`aria-checked`, `aria-expanded`, `aria-current`), bukan `accessibilityState` — react-native-web tidak menerjemahkan `accessibilityState` ke atribut ARIA.
+- **`DELETE /kemajuan/:id` tidak menghapus baris**, hanya mengosongkan `selesai_pada`; klien menganggap butir tercentang hanya kalau `selesai_pada` terisi.
 
 ## Yang belum ada
 
-- Profil lokal (`useProfilLokal`) dan kemajuan lokal (`useKemajuanLokal`) di Daftar Periksa masih tersimpan per perangkat, belum disambungkan ke akun (`pengguna.kelas`, `GET /kemajuan`), meskipun login sekarang wajib.
+- Pilihan jalur di Daftar Periksa masih tersimpan per perangkat (`useProfilLokal`), karena akun belum punya medan jalur.
+- Latihan, Arsip Belajar, dan Eksplorasi Tujuan (F10).
+- Data konten (Linimasa, Khusus SMK, dll.) masih data contoh (`asal: mockup`, `diperiksa_pada: null`) dan perlu diverifikasi tim konten.
 - Lupa sandi dan ubah sandi.
