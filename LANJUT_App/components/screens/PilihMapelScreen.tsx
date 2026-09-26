@@ -1,383 +1,252 @@
 import React, { useState } from 'react';
-import { Article, H1, Section } from '@expo/html-elements';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Article, H2 } from '@expo/html-elements';
+import { useRouter } from 'expo-router';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import type { MapelUntukProdi, Prodi } from '../../api/types';
+import type { Prodi } from '../../api/types';
 import { useAgregasiMapelLintasProdi } from '../../hooks/useAgregasiMapelLintasProdi';
+import { useTandaiKemajuan } from '../../hooks/useKemajuan';
 import { useProdi } from '../../hooks/useProdi';
 import { useProdiMapel } from '../../hooks/useProdiMapel';
-import { mapelTidakTersedia, saranMapelTka, type MapelAgregat } from '../../lib/pilihMapel';
-import { color, radius, spacing, typography } from '../../theme/tokens';
-import { KeadaanGalat, KeadaanKosong } from './KeadaanBersama';
+import { useSesi } from '../../providers/AuthProvider';
+import { color, radius, spacing, teks } from '../../theme/tokens';
+import {
+  Ikon,
+  Kartu,
+  KartuPintu,
+  KeadaanGalat,
+  Kepala,
+  Kosong,
+  Memuat,
+  Penafian,
+  SeksiJudul,
+  Tombol,
+  gaya,
+} from '../ui';
 
-// Penafian F3, wajib tampil di SETIAP hasil tanpa kecuali — kata demi kata
-// docs/prd-sdd-lanjut.md Bagian 6 (F3), bukan diparafrase. Tidak ada
-// salinan terpisah untuk F3 di salinan-teks-lanjut.md (§4 hanya sampai
-// Eksplorasi Tujuan) — PRD sendiri yang mengutip kalimat ini persis, jadi
-// itu yang dipakai sebagai sumber kebenaran teksnya.
+// Penafian F3 — wajib tampil di setiap hasil (PRD Bagian 6).
 const PENAFIAN = 'Ini rangkuman, bukan keputusan resmi. Cek laman SNPMB.';
+// Butir "Pilih 2 mapel pilihan TKA" di /konten/checklist.
+const BUTIR_MAPEL_TKA = 'mapel-tka';
 
-type Pilihan = { tipe: 'prodi'; prodiId: string } | { tipe: 'belum' } | null;
+type Langkah = { nama: 'masuk' } | { nama: 'daftar' } | { nama: 'hasil'; prodiId: string | null };
+
+type BarisMapel = { id: string; nama: string; tersedia: boolean; ket?: string };
 
 /**
- * F3 — Penolong Pilih Mapel (docs/prd-sdd-lanjut.md Bagian 6 & 13). Dua
- * jalur setara: pilih satu prodi, atau "belum tahu prodi" — keduanya wajib
- * menghasilkan keluaran berguna (AC F3), bukan salah satu jadi jalan buntu.
+ * F3 — padanan MVP-PWA/pilih-mapel.html, tiga langkah:
+ *   masuk  → "Sudah tahu prodi tujuan?" (dua pintu, keduanya ke daftar)
+ *   daftar → prodi dikelompokkan per rumpun + "rangkuman umum"
+ *   hasil  → mapel pendukung + ketersediaan di SMK + saran 2 mapel TKA
+ * Kalau akun sudah punya prodi impian, langsung ke hasil (sama dengan PWA).
  */
 export function PilihMapelScreen() {
-  const [pilihan, setPilihan] = useState<Pilihan>(null);
+  const { pengguna } = useSesi();
   const prodiQuery = useProdi();
+  const daftarProdi = prodiQuery.data ?? [];
+
+  const prodiAkun = pengguna?.prodi_impian ?? null;
+  const [langkahDipilih, setLangkah] = useState<Langkah | null>(null);
+  const prodiAkunValid = prodiAkun && daftarProdi.some((p) => p.id === prodiAkun) ? prodiAkun : null;
+  const langkah: Langkah =
+    langkahDipilih ?? (prodiAkunValid ? { nama: 'hasil', prodiId: prodiAkunValid } : { nama: 'masuk' });
 
   return (
-    <Section style={styles.halaman}>
-      <H1 style={styles.judul}>Penolong Pilih Mapel</H1>
+    <View style={gaya.layarIsiRapat}>
+      <Kepala judul="Penolong Pilih Mapel" pengantar="Prodi tujuan, mapel pendukung, dan mana yang ada di SMK." />
 
       {prodiQuery.isPending ? (
-        <ActivityIndicator style={styles.muat} color={color.blue500} />
+        <Memuat />
       ) : prodiQuery.isError ? (
         <KeadaanGalat />
-      ) : !pilihan ? (
-        <PemilihProdi
-          daftarProdi={prodiQuery.data ?? []}
-          onPilihProdi={(id) => setPilihan({ tipe: 'prodi', prodiId: id })}
-          onPilihBelumTahu={() => setPilihan({ tipe: 'belum' })}
-        />
-      ) : pilihan.tipe === 'prodi' ? (
-        <HasilProdi
-          prodi={(prodiQuery.data ?? []).find((p) => p.id === pilihan.prodiId) ?? null}
-          onGanti={() => setPilihan(null)}
+      ) : langkah.nama === 'masuk' ? (
+        <LangkahMasuk onLanjut={() => setLangkah({ nama: 'daftar' })} />
+      ) : langkah.nama === 'daftar' ? (
+        <LangkahDaftar
+          daftarProdi={daftarProdi}
+          onPilih={(prodiId) => setLangkah({ nama: 'hasil', prodiId })}
         />
       ) : (
-        <HasilBelumTahu daftarProdi={prodiQuery.data ?? []} onGanti={() => setPilihan(null)} />
+        <LangkahHasil
+          prodi={langkah.prodiId ? (daftarProdi.find((p) => p.id === langkah.prodiId) ?? null) : null}
+          totalProdi={daftarProdi.length}
+          onUbah={() => setLangkah({ nama: 'daftar' })}
+        />
       )}
-    </Section>
-  );
-}
-
-// Prompt persis salinan-teks-lanjut.md §3 "Pertanyaan pembuka" — konteksnya
-// onboarding, tapi pertanyaan & opsi "belum" yang sama berlaku di sini.
-// Label tombol "Belum tahu prodi" mengutip persis frasa PRD Bagian 6 (F3).
-function PemilihProdi({
-  daftarProdi,
-  onPilihProdi,
-  onPilihBelumTahu,
-}: {
-  daftarProdi: Prodi[];
-  onPilihProdi: (id: string) => void;
-  onPilihBelumTahu: () => void;
-}) {
-  if (!daftarProdi.length) return <KeadaanKosong />;
-
-  return (
-    <>
-      <Text style={styles.prompt}>Sudah ada bayangan prodi? (Boleh dijawab &quot;belum&quot;)</Text>
-      {daftarProdi.map((p) => (
-        <Pressable key={p.id} onPress={() => onPilihProdi(p.id)} style={styles.opsiProdi}>
-          <Text style={styles.opsiProdiNama}>{p.nama}</Text>
-          <Text style={styles.opsiProdiRumpun}>{p.rumpun}</Text>
-        </Pressable>
-      ))}
-      <Pressable onPress={onPilihBelumTahu} style={styles.opsiBelumTahu}>
-        <Text style={styles.opsiBelumTahuTeks}>Belum tahu prodi</Text>
-      </Pressable>
-    </>
-  );
-}
-
-// "Kembali" — token tombol yang sudah ada di salinan-teks-lanjut.md §6
-// ("Halaman tidak ketemu. Balik ke Linimasa? [ Kembali ]"), dipakai lagi
-// di sini untuk aksi yang sama (ganti pilihan), bukan label baru.
-function BarisJudulHasil({ judul, onGanti }: { judul: string; onGanti: () => void }) {
-  return (
-    <View style={styles.barisAtas}>
-      <Text style={styles.subjudul}>{judul}</Text>
-      <Pressable onPress={onGanti}>
-        <Text style={styles.tautanKembali}>Kembali</Text>
-      </Pressable>
     </View>
   );
 }
 
-function HasilProdi({ prodi, onGanti }: { prodi: Prodi | null; onGanti: () => void }) {
-  const { data, isPending, isError } = useProdiMapel(prodi?.id);
-
+function LangkahMasuk({ onLanjut }: { onLanjut: () => void }) {
+  // Kedua pintu menuju daftar yang sama: data baru mengelompokkan prodi per
+  // rumpun, belum ada taksonomi minat terpisah (catatan yang sama di PWA).
   return (
-    <>
-      <BarisJudulHasil judul={prodi?.nama ?? ''} onGanti={onGanti} />
-
-      {isPending ? (
-        <ActivityIndicator style={styles.muat} color={color.blue500} />
-      ) : isError ? (
-        <KeadaanGalat />
-      ) : !data?.length ? (
-        <KeadaanKosong />
-      ) : (
-        <HasilMapelProdi daftar={data} />
-      )}
-    </>
+    <View style={s.tumpuk}>
+      <Text style={gaya.teksBody}>Sudah tahu prodi tujuan?</Text>
+      <KartuPintu varian="outline" judul="Ya, sudah tahu" keterangan="Langsung pilih dari daftar prodi." onPress={onLanjut} />
+      <KartuPintu varian="soft" judul="Belum, bantu aku eksplorasi" keterangan="Mulai dari rumpun ilmu." onPress={onLanjut} />
+    </View>
   );
 }
 
-// AC F3: daftar mapel pendukung + status tersedia_di_smk (semua, tidak
-// disaring), saran 2 mapel TKA urut bobot tertinggi (lib/pilihMapel.ts
-// `saranMapelTka`), dan peringatan eksplisit terpisah untuk yang tidak
-// tersedia di SMK — bukan disembunyikan atau digabung diam-diam ke daftar
-// biasa (lib/pilihMapel.ts `mapelTidakTersedia`).
-function HasilMapelProdi({ daftar }: { daftar: MapelUntukProdi[] }) {
-  const tidakTersedia = mapelTidakTersedia(daftar);
-  const saran = saranMapelTka(daftar);
+function LangkahDaftar({ daftarProdi, onPilih }: { daftarProdi: Prodi[]; onPilih: (id: string | null) => void }) {
+  const perRumpun = new Map<string, Prodi[]>();
+  for (const p of daftarProdi) {
+    if (!perRumpun.has(p.rumpun)) perRumpun.set(p.rumpun, []);
+    perRumpun.get(p.rumpun)!.push(p);
+  }
 
   return (
-    <>
-      <Section style={styles.blok}>
-        <Text style={styles.blokJudul}>Mapel pendukung</Text>
-        {daftar.map((m) => (
-          <MapelBaris key={m.id} nama={m.nama} tersediaDiSmk={m.tersedia_di_smk} />
-        ))}
-      </Section>
-
-      <PeringatanTidakTersedia daftar={tidakTersedia} />
-
-      <Section style={styles.blok}>
-        <Text style={styles.blokJudul}>Saran mapel pilihan TKA</Text>
-        {saran.map((m) => (
-          <MapelBaris key={m.id} nama={m.nama} tersediaDiSmk={m.tersedia_di_smk} />
-        ))}
-      </Section>
-
-      <Penafian />
-    </>
+    <View style={s.daftar}>
+      {[...perRumpun.entries()].map(([rumpun, anggota]) => (
+        <View key={rumpun} style={s.seksi}>
+          <SeksiJudul>{rumpun}</SeksiJudul>
+          <View style={s.tumpukRapat}>
+            {anggota.map((p) => (
+              <Pressable
+                key={p.id}
+                onPress={() => onPilih(p.id)}
+                accessibilityRole="button"
+                style={({ pressed }) => (pressed ? s.ditekan : undefined)}
+              >
+                <Kartu style={s.kartuRapat}>
+                  <View style={s.baris}>
+                    <Text style={s.barisTeks}>{p.nama}</Text>
+                    <Ikon nama="panah" ukuran={16} warna={color.ink500} />
+                  </View>
+                </Kartu>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      ))}
+      <KartuPintu
+        varian="soft"
+        judul="Masih belum tahu, tampilkan rangkuman umum"
+        keterangan="Mapel yang paling sering jadi penentu di banyak prodi."
+        onPress={() => onPilih(null)}
+      />
+    </View>
   );
 }
 
-function HasilBelumTahu({ daftarProdi, onGanti }: { daftarProdi: Prodi[]; onGanti: () => void }) {
-  const ids = daftarProdi.map((p) => p.id);
-  const { data, isPending, isError } = useAgregasiMapelLintasProdi(ids);
-
-  return (
-    <>
-      <BarisJudulHasil judul="Belum tahu prodi" onGanti={onGanti} />
-
-      {isPending ? (
-        <ActivityIndicator style={styles.muat} color={color.blue500} />
-      ) : isError ? (
-        <KeadaanGalat />
-      ) : !data?.length ? (
-        <KeadaanKosong />
-      ) : (
-        <HasilAgregasi agregat={data} totalProdi={daftarProdi.length} />
-      )}
-    </>
-  );
-}
-
-// AC F3 (jalur "belum tahu prodi"): mapel yang paling sering jadi syarat
-// lintas prodi, bukan halaman kosong yang menyuruh pengguna kembali nanti.
-// Tetap wajib punya peringatan tidak-tersedia & penafian yang sama seperti
-// jalur satu-prodi.
-function HasilAgregasi({ agregat, totalProdi }: { agregat: MapelAgregat[]; totalProdi: number }) {
-  const teratas = agregat.slice(0, 5);
-  const tidakTersedia = teratas.filter((m) => !m.tersedia_di_smk);
-
-  return (
-    <>
-      <Section style={styles.blok}>
-        <Text style={styles.blokJudul}>Mapel paling sering dibutuhkan lintas prodi</Text>
-        {teratas.map((m) => (
-          <MapelBaris
-            key={m.id}
-            nama={m.nama}
-            tersediaDiSmk={m.tersedia_di_smk}
-            keterangan={`Dibutuhkan ${m.jumlahProdi} dari ${totalProdi} prodi`}
-          />
-        ))}
-      </Section>
-
-      <PeringatanTidakTersedia daftar={tidakTersedia} />
-
-      <Penafian />
-    </>
-  );
-}
-
-function MapelBaris({
-  nama,
-  tersediaDiSmk,
-  keterangan,
+function LangkahHasil({
+  prodi,
+  totalProdi,
+  onUbah,
 }: {
-  nama: string;
-  tersediaDiSmk: boolean;
-  keterangan?: string;
+  prodi: Prodi | null;
+  totalProdi: number;
+  onUbah: () => void;
 }) {
   return (
-    <Article style={styles.mapelBaris}>
-      <Text style={styles.mapelNama}>{nama}</Text>
-      <View style={styles.mapelStatusBaris}>
-        <View style={[styles.titik, tersediaDiSmk ? styles.titikTersedia : styles.titikTidakTersedia]} />
-        <Text style={styles.mapelStatus}>{keterangan ?? (tersediaDiSmk ? 'Tersedia di SMK' : 'Tidak tersedia di SMK')}</Text>
+    <View style={s.hasil}>
+      <View style={s.barisJudul}>
+        <H2 style={s.judulHasil}>{prodi?.nama ?? 'Rangkuman umum'}</H2>
+        <Tombol label="Ubah prodi" varian="hantu" kecil onPress={onUbah} />
       </View>
-    </Article>
+      {prodi ? <HasilProdi prodiId={prodi.id} /> : <HasilUmum totalProdi={totalProdi} />}
+    </View>
   );
 }
 
-// Peringatan eksplisit — blok terpisah, warna biru redam (status-attention,
-// BUKAN merah/oranye — lihat catatan di theme/tokens.ts), tidak pernah
-// digabung diam-diam ke daftar "Mapel pendukung" di atas.
-function PeringatanTidakTersedia({ daftar }: { daftar: { id: string; nama: string }[] }) {
-  if (!daftar.length) return null;
+function HasilProdi({ prodiId }: { prodiId: string }) {
+  const { data, isPending, isError } = useProdiMapel(prodiId);
+  if (isPending) return <Memuat />;
+  if (isError) return <KeadaanGalat />;
+  // Urut bobot tertinggi dulu: dua teratas sah dijadikan saran mapel TKA.
+  const baris: BarisMapel[] = (data ?? [])
+    .slice()
+    .sort((a, b) => b.bobot - a.bobot)
+    .map((m) => ({ id: m.id, nama: m.nama, tersedia: m.tersedia_di_smk }));
+  return <IsiHasil baris={baris} />;
+}
+
+// "Belum tahu prodi" tetap wajib berguna (PRD F3): dihitung di backend lewat
+// GET /konten/mapel/agregasi-lintas-prodi.
+function HasilUmum({ totalProdi }: { totalProdi: number }) {
+  const { data, isPending, isError } = useAgregasiMapelLintasProdi();
+  if (isPending) return <Memuat />;
+  if (isError) return <KeadaanGalat />;
+  const baris: BarisMapel[] = (data ?? []).map((m) => ({
+    id: m.id,
+    nama: m.nama,
+    tersedia: m.tersedia_di_smk,
+    ket: `Dibutuhkan ${m.jumlahProdi} dari ${totalProdi} prodi`,
+  }));
+  return <IsiHasil baris={baris} />;
+}
+
+function IsiHasil({ baris }: { baris: BarisMapel[] }) {
+  const router = useRouter();
+  const tandai = useTandaiKemajuan();
+
+  if (!baris.length) {
+    return <Kosong judul="Bagian ini masih kami siapkan." teks="Kalau kamu punya bahannya, kirim ke kami." />;
+  }
+
+  const saran = baris.slice(0, 2).map((b) => b.nama).join(' & ');
+
+  const simpan = () =>
+    tandai.mutate(
+      { butirId: BUTIR_MAPEL_TKA, selesai: true },
+      { onSuccess: () => router.push('/daftar-periksa') }
+    );
+
   return (
-    <Section style={styles.peringatan}>
-      <Text style={styles.peringatanJudul}>Tidak tersedia di SMK</Text>
-      {daftar.map((m) => (
-        <Text key={m.id} style={styles.peringatanTeks}>
-          {m.nama}
-        </Text>
-      ))}
-    </Section>
+    <>
+      <View style={s.tumpukRapat}>
+        {baris.map((b) => (
+          <Article key={b.id}>
+            <Kartu style={s.kartuRapat}>
+              <View style={s.baris}>
+                <Ikon nama={b.tersedia ? 'ok' : 'waspada'} ukuran={18} warna={b.tersedia ? color.statusOk : color.blue600} />
+                <View style={s.barisIsi}>
+                  <Text style={s.barisTeks}>{b.nama}</Text>
+                  {b.ket ? <Text style={s.caption}>{b.ket}</Text> : null}
+                </View>
+                {/* Peringatan wajib F3 untuk mapel yang tidak ada di SMK — tenang, tanpa merah. */}
+                <Text style={StyleSheet.flatten([s.caption, { color: b.tersedia ? color.statusOk : color.blue600 }])}>
+                  {b.tersedia ? 'Tersedia di SMK' : 'Cek alternatif'}
+                </Text>
+              </View>
+            </Kartu>
+          </Article>
+        ))}
+      </View>
+
+      <Kartu varian="brand">
+        <Text style={s.saranLabel}>Saran mapel pilihan TKA</Text>
+        <Text style={s.saranIsi}>{saran}</Text>
+      </Kartu>
+
+      <Penafian>{PENAFIAN}</Penafian>
+
+      <View style={s.tumpuk}>
+        {tandai.isError ? <Text style={s.galat}>Belum tersimpan. Coba lagi sebentar lagi.</Text> : null}
+        <Tombol label="Simpan ke Daftar Periksa" besar penuh proses={tandai.isPending} onPress={simpan} />
+        <Tombol label="Lewati" varian="hantu" besar penuh onPress={() => router.push('/linimasa')} />
+      </View>
+    </>
   );
 }
 
-function Penafian() {
-  return (
-    <Section style={styles.penafian}>
-      <Text style={styles.penafianTeks}>{PENAFIAN}</Text>
-    </Section>
-  );
-}
-
-const styles = StyleSheet.create({
-  halaman: {
-    padding: spacing.gutter,
-    gap: spacing.s4,
-  },
-  judul: {
-    color: color.textBody,
-    fontSize: typography.size.h2,
-    fontWeight: typography.weight.semibold,
-    marginTop: 0,
-    marginBottom: 0,
-  },
-  muat: {
-    marginTop: spacing.s4,
-  },
-  prompt: {
-    color: color.textBody,
-    fontSize: typography.size.body,
-    fontWeight: typography.weight.medium,
-  },
-  opsiProdi: {
-    padding: spacing.s4,
-    borderRadius: radius.md,
-    backgroundColor: color.surfaceCard,
-    borderWidth: 1,
-    borderColor: color.borderHairline,
-    gap: spacing.s1,
-  },
-  opsiProdiNama: {
-    color: color.textBody,
-    fontSize: typography.size.title,
-    fontWeight: typography.weight.semibold,
-  },
-  opsiProdiRumpun: {
-    color: color.textMuted,
-    fontSize: typography.size.bodySm,
-  },
-  opsiBelumTahu: {
-    padding: spacing.s4,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: color.blue400,
-    borderStyle: 'dashed',
-    alignItems: 'center',
-  },
-  opsiBelumTahuTeks: {
-    color: color.blue600,
-    fontSize: typography.size.body,
-    fontWeight: typography.weight.semibold,
-  },
-  barisAtas: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  subjudul: {
-    color: color.textBody,
-    fontSize: typography.size.title,
-    fontWeight: typography.weight.semibold,
-  },
-  tautanKembali: {
-    color: color.textLink,
-    fontSize: typography.size.bodySm,
-    textDecorationLine: 'underline',
-  },
-  blok: {
-    borderRadius: radius.md,
-    backgroundColor: color.surfaceCard,
-    borderWidth: 1,
-    borderColor: color.borderHairline,
-    padding: spacing.s4,
-    gap: spacing.s3,
-  },
-  blokJudul: {
-    color: color.textBody,
-    fontSize: typography.size.bodySm,
-    fontWeight: typography.weight.bold,
-    letterSpacing: 0.5,
-  },
-  mapelBaris: {
-    gap: spacing.s1,
-  },
-  mapelNama: {
-    color: color.textBody,
-    fontSize: typography.size.body,
-    fontWeight: typography.weight.semibold,
-  },
-  mapelStatusBaris: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.s2,
-  },
-  titik: {
-    width: 10,
-    height: 10,
-    borderRadius: radius.pill,
-  },
-  titikTersedia: {
-    backgroundColor: color.statusOk,
-  },
-  titikTidakTersedia: {
-    backgroundColor: color.blue500,
-  },
-  mapelStatus: {
-    color: color.textMuted,
-    fontSize: typography.size.caption,
-  },
-  peringatan: {
-    borderRadius: radius.md,
-    backgroundColor: color.surfaceSoft,
-    borderLeftWidth: 4,
-    borderLeftColor: color.blue500,
-    padding: spacing.s4,
-    gap: spacing.s1,
-  },
-  peringatanJudul: {
-    color: color.blue600,
-    fontSize: typography.size.bodySm,
-    fontWeight: typography.weight.bold,
-  },
-  peringatanTeks: {
-    color: color.textBody,
-    fontSize: typography.size.body,
-  },
-  penafian: {
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: color.borderSoft,
-    padding: spacing.s4,
-  },
-  penafianTeks: {
-    color: color.textMuted,
-    fontSize: typography.size.bodySm,
-    fontStyle: 'italic',
-  },
+const s = StyleSheet.create({
+  tumpuk: { gap: spacing.s3 },
+  tumpukRapat: { gap: spacing.s2 },
+  daftar: { gap: spacing.s5, marginTop: spacing.s1 },
+  seksi: { gap: spacing.s3 },
+  hasil: { gap: spacing.s3, marginTop: spacing.s2 },
+  kartuRapat: { padding: spacing.s3, borderRadius: radius.md },
+  baris: { flexDirection: 'row', alignItems: 'center', gap: spacing.s3 },
+  barisIsi: { flex: 1, minWidth: 0 },
+  barisTeks: { ...teks.body, color: color.textBody, flex: 1 },
+  caption: { ...teks.caption, color: color.textMuted },
+  barisJudul: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.s3 },
+  judulHasil: { ...teks.h3, color: color.textBody, flexShrink: 1, marginVertical: 0 },
+  saranLabel: { ...teks.label, color: color.white, opacity: 0.85 },
+  saranIsi: { ...teks.h3, color: color.white, marginTop: 6 },
+  galat: { ...teks.caption, color: color.blue600, textAlign: 'center' },
+  ditekan: { opacity: 0.9, transform: [{ scale: 0.98 }] },
 });
+

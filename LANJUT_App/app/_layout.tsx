@@ -10,7 +10,6 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { LayarMemuat } from '../components/layout/LayarMemuat';
-import { DataLayerProbe } from '../dev/DataLayerProbe';
 import { AuthProvider } from '../providers/AuthProvider';
 import { QueryProvider } from '../providers/QueryProvider';
 
@@ -34,7 +33,6 @@ export default function RootLayout() {
       <QueryProvider>
         <AuthProvider>
           <StatusBar style="dark" />
-          {__DEV__ && <DataLayerProbe />}
           <Slot />
         </AuthProvider>
       </QueryProvider>

@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import * as authApi from '../api/auth';
 import type { Pengguna, Sesi } from '../api/auth';
@@ -20,6 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [status, setStatus] = useState<StatusSesi>('memuat');
   const [token, setToken] = useState<string | null>(null);
   const [pengguna, setPengguna] = useState<Pengguna | null>(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     let batal = false;
@@ -57,18 +59,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const terapkanSesi = useCallback((sesi: Sesi) => {
+    // Data milik akun (mis. kemajuan) tidak boleh terbawa ke akun lain.
+    queryClient.removeQueries({ queryKey: ['kemajuan'] });
     setToken(sesi.token);
     setPengguna(sesi.pengguna);
     setStatus('masuk');
-  }, []);
+  }, [queryClient]);
 
   const keluar = useCallback(async () => {
     if (token) await authApi.keluar(token);
     else await authApi.hapusSesiLokal();
+    queryClient.removeQueries({ queryKey: ['kemajuan'] });
     setToken(null);
     setPengguna(null);
     setStatus('keluar');
-  }, [token]);
+  }, [token, queryClient]);
 
   const nilai = useMemo(
     () => ({ status, token, pengguna, terapkanSesi, keluar }),

@@ -82,7 +82,7 @@ export function KartuPintu({
   varian = 'soft',
   onPress,
 }: {
-  ikon: NamaIkon;
+  ikon?: NamaIkon;
   judul: string;
   keterangan: string;
   varian?: Exclude<VarianKartu, 'brand'>;
@@ -96,7 +96,7 @@ export function KartuPintu({
     >
       <Kartu varian={varian}>
         <View style={s.baris}>
-          <Ikon nama={ikon} />
+          {ikon ? <Ikon nama={ikon} /> : null}
           <View style={s.barisIsi}>
             <Text style={s.barisJudul}>{judul}</Text>
             <Text style={s.barisKet}>{keterangan}</Text>
@@ -169,13 +169,15 @@ export function Tombol({
   onPress,
   varian = 'utama',
   besar = false,
+  kecil = false,
   penuh = false,
   proses = false,
 }: {
   label: string;
   onPress: () => void;
-  varian?: 'utama' | 'sekunder' | 'garis';
+  varian?: 'utama' | 'sekunder' | 'garis' | 'hantu';
   besar?: boolean;
+  kecil?: boolean;
   penuh?: boolean;
   proses?: boolean;
 }) {
@@ -191,6 +193,7 @@ export function Tombol({
           { backgroundColor: pressed ? v.bgTekan : v.bg, borderColor: v.garis },
           varian === 'utama' && { boxShadow: shadow.s2 },
           besar && s.tombolBesar,
+          kecil && s.tombolKecil,
           penuh ? s.tombolPenuh : s.tombolPas,
           pressed && s.ditekan,
           proses && s.tombolProses,
@@ -198,7 +201,7 @@ export function Tombol({
       }
     >
       {proses ? <ActivityIndicator color={v.fg} /> : null}
-      <Text style={[besar ? s.tombolTeksBesar : s.tombolTeks, { color: v.fg }]}>{label}</Text>
+      <Text style={[besar ? s.tombolTeksBesar : kecil ? s.tombolTeksKecil : s.tombolTeks, { color: v.fg }]}>{label}</Text>
     </Pressable>
   );
 }
@@ -207,6 +210,7 @@ const TOMBOL = {
   utama: { bg: color.blue400, bgTekan: color.blue500, fg: color.white, garis: 'transparent' },
   sekunder: { bg: color.blue200, bgTekan: '#A8D6E3', fg: color.blue600, garis: 'transparent' },
   garis: { bg: color.white, bgTekan: color.blue100, fg: color.blue600, garis: color.borderBrand },
+  hantu: { bg: 'transparent', bgTekan: color.blue100, fg: color.blue600, garis: 'transparent' },
 } as const;
 
 /** .sumber — baris sumber data kecil & redup. */
@@ -307,11 +311,13 @@ const s = StyleSheet.create({
     borderWidth: 1,
   },
   tombolBesar: { minHeight: 52, paddingVertical: spacing.s4, paddingHorizontal: 28 },
+  tombolKecil: { minHeight: 36, paddingVertical: spacing.s2, paddingHorizontal: spacing.s4 },
   tombolPenuh: { alignSelf: 'stretch' },
   tombolPas: { alignSelf: 'center' },
   tombolProses: { opacity: 0.7 },
   tombolTeks: { fontFamily: teks.h1.fontFamily, fontSize: 16, lineHeight: 22 },
   tombolTeksBesar: { fontFamily: teks.h1.fontFamily, fontSize: 18, lineHeight: 24 },
+  tombolTeksKecil: { fontFamily: teks.h1.fontFamily, fontSize: 14, lineHeight: 20 },
   sumber: { ...teks.caption, color: color.textSubtle },
   memuat: { marginVertical: spacing.s8 },
 });

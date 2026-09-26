@@ -6,22 +6,6 @@ import type { MapelUntukProdi } from '../api/types';
  * dites tanpa render.
  */
 
-/** "Saran 2 mapel pilihan TKA (urut bobot tertinggi)" — AC F3, tanpa
- * menyaring berdasarkan `tersedia_di_smk`: peringatan ketersediaan
- * ditampilkan terpisah, bukan dengan mendiamkan mapel berbobot tinggi. */
-export function saranMapelTka(daftar: MapelUntukProdi[], jumlah = 2): MapelUntukProdi[] {
-  return daftar
-    .slice()
-    .sort((a, b) => b.bobot - a.bobot)
-    .slice(0, jumlah);
-}
-
-/** Mapel pendukung yang TIDAK diajarkan di SMK — AC F3: wajib tampil
- * eksplisit, bukan disembunyikan atau digabung diam-diam ke daftar biasa. */
-export function mapelTidakTersedia(daftar: MapelUntukProdi[]): MapelUntukProdi[] {
-  return daftar.filter((m) => !m.tersedia_di_smk);
-}
-
 export type MapelAgregat = {
   id: string;
   nama: string;
