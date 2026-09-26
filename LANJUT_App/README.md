@@ -1,28 +1,73 @@
-# LANJUT_App — Eksplorasi Expo LANJUT (BUKAN rilis v1)
+# LANJUT_App — Aplikasi mobile LANJUT (Expo)
 
-**Status:** kerangka routing saja, tanpa logika fitur maupun koneksi API.
-**Hubungan dengan PWA (`MVP-PWA/`):** proyek **terpisah**, bukan pengganti. `docs/prd-sdd-lanjut.md` Bagian 8 secara eksplisit menolak React Native/Native Android untuk v1 — PWA di `MVP-PWA/` tetap jadi rilis utama. Folder ini adalah eksplorasi arah v2, dikonfirmasi dengan pemilik produk sebelum dikerjakan.
+**Status:** jalur pengembangan utama LANJUT sejak 18 Sep 2026. Expo dipilih menggantikan rencana Flutter, dan aplikasi ini adalah penerus PWA v1. `MVP-PWA/` sekarang berstatus arsip dan menjadi acuan UI; aplikasi Expo ini harus tampil sama dengannya.
+
+**Sudah jalan:**
+- Lima layar P0: Linimasa, Khusus SMK, Pilih Mapel, Cerita Alumni, Daftar Periksa. Datanya diambil dari backend lewat React Query.
+- Masuk, Daftar, Keluar, dan perlindungan rute berbasis token.
+
+**Catatan historis:** `docs/prd-sdd-lanjut.md` Bagian 8 dulu menolak React Native untuk v1. Keputusan itu berlaku untuk rilis PWA v1, bukan untuk arah proyek saat ini.
 
 ## Menjalankan
 
 ```bash
-cd LANJUT_App
-npm run android   # Android (butuh emulator/device + Android Studio)
-npm run web       # Web (Metro bundler bawaan Expo SDK 57)
+# 1. Backend (butuh MySQL jalan, konfigurasi di server/.env)
+cd LANJUT_App/server && npm start          # http://localhost:4000
+
+# 2. Aplikasi (terminal lain)
+cd LANJUT_App && npm run web               # http://localhost:8081
+npm run android                            # emulator/device Android
+```
+
+`npm run web` harus berjalan di port **8081**, karena hanya port ini yang diizinkan CORS di `server/.env` (`ASAL_DIIZINKAN`). Base URL API diatur di `app.config.ts`: `localhost` untuk web, `10.0.2.2` untuk emulator Android. Device fisik perlu `EXPO_PUBLIC_API_URL_DEV_ANDROID` berisi IP LAN komputer.
+
+## Autentikasi
+
+| Hal | Nilai |
+|---|---|
+| Masuk | `POST /auth/masuk` — `nama_pengguna`, `kata_sandi` |
+| Daftar | `POST /auth/daftar` — wajib: `nama_pengguna` (3–32 karakter `a-z 0-9 . _`, disimpan huruf kecil) dan `kata_sandi` (8–200 karakter, sandi umum ditolak). Opsional: `email`, `nama_tampilan` (≤60), `kelas` (`'10' \| '11' \| '12'`), `prodi_impian` (id prodi). Sumber: `server/src/modul/auth/auth.skema.js`. |
+| Hasil sukses | `{ ok: true, data: { token, kedaluwarsa_pada, pengguna } }`. Daftar mengembalikan 201 dan langsung login. |
+| Hasil gagal | `{ ok: false, galat: { kode, pesan, medan? } }`. Kuncinya **`galat`**, bukan `error`. |
+| Penyimpanan | AsyncStorage `auth_token` (token) dan `auth_pengguna` (profil). Di web tersimpan di `localStorage`. |
+
+Formulir Daftar mengikuti `MVP-PWA/daftar.html`: nama pengguna, email (boleh kosong), kata sandi, dan prodi impian ("Belum, aku belum tahu" juga jawaban yang sah dan tidak dikirim ke server). Kalimat galat disalin dari `PESAN_GALAT` di `MVP-PWA/assets/api.js`.
+
+Saat aplikasi dibuka:
+1. `AuthProvider` membaca token.
+2. Token diperiksa ke `GET /auth/saya`.
+   - Jawaban 401 → token dibuang dan pengguna kembali ke layar Masuk.
+   - Galat jaringan → pengguna tetap dianggap masuk (bisa dipakai offline).
+
+## Struktur
+
+```
+app/
+  _layout.tsx          provider: QueryProvider + AuthProvider
+  index.tsx            → /linimasa
+  (auth)/_layout.tsx   khusus tamu; sudah masuk → /linimasa
+  (auth)/masuk.tsx, daftar.tsx
+  (app)/_layout.tsx    khusus yang sudah masuk; tamu → /masuk. Membungkus AppShell
+  (app)/linimasa.tsx … lima layar P0
+api/                   client.ts (apiFetch, ApiError), auth.ts (layanan auth), types.ts
+providers/             QueryProvider, AuthProvider (status sesi: memuat | masuk | tamu)
+hooks/                 useAuth + hook data per fitur
+components/            layout/ (AppShell, AppNavBar), screens/ (per fitur, auth/)
+server/                backend Express + MySQL (lihat server/README.md)
 ```
 
 ## Keputusan struktur (satu kalimat per keputusan)
 
-- **Direktori `LANJUT_App/` sejajar `MVP-PWA/`, `LandingPage/`** (backend `server/` kini ada di dalam `LANJUT_App/server/`) — supaya proyek Expo ini bisa dihapus kapan saja tanpa menyentuh satu baris pun kode PWA v1 yang sudah lolos audit.
-- **Expo Router dengan `<Slot/>` di `app/_layout.tsx`, bukan `<Stack/>` atau `<Tabs/>`** — kelima halaman P0 setara (bukan hierarki induk-anak), jadi tidak ada alasan memakai transisi/animasi Stack yang menyiratkan urutan drill-down.
-- **`AppShell` dipisah dari `app/_layout.tsx`** — `_layout.tsx` Expo Router sebaiknya hanya berisi konfigurasi navigasi, sementara markup Header/Main/Footer lebih mudah diuji dan dibaca sebagai komponen biasa di `components/layout/`.
-- **`@expo/html-elements` dipakai untuk `Header`, `Nav`, `Main`, `Footer`, `Article`, `Section`, dan `H1`** — elemen-elemen ini merender tag HTML asli (`<header>`, `<nav>`, dst.) di web dan `View`/`Text` setara di native, jadi satu baris kode menghasilkan HTML semantik tanpa cabang kode khusus platform; `H1` ditambahkan di luar daftar instruksi karena tanpa itu tiap halaman tidak akan punya judul dokumen yang valid secara semantik.
-- **`app/index.tsx` me-redirect ke `/linimasa`, bukan berisi konten sendiri** — SDD Bagian 14 "Alur A" menyebut Linimasa sebagai nilai pertama yang wajib terlihat begitu pengguna baru masuk, jadi rute akar tidak boleh punya konten yang bersaing dengan itu.
-- **`AppNavBar` memakai `<Link asChild>` dari expo-router dibungkus `Pressable`, bukan `TouchableOpacity` + `router.push()` manual** — supaya keluaran di web tetap elemen `<a href>` sungguhan (bisa dibuka tab baru/disalin tautan), bukan navigasi JavaScript yang hanya berfungsi lewat klik.
-- **`theme/tokens.ts` menyalin nilai HEX dari `MVP-PWA/assets/tokens.css`, bukan menebak ulang dari `docs/design.md`** — `design.md` Bagian 6 sendiri menyatakan kode HEX di sana masih deskriptif/belum final, sementara `tokens.css` sudah jadi nilai produksi yang dipakai PWA v1.
-- **`typography.fontBody` sengaja `undefined`, bukan diisi "Ahoka" atau "Poppins"** — nama font UI resmi belum dikonfirmasi (`design.md` Bagian 6 poin 1), jadi React Native jatuh ke font sistem (`fontFallback: 'System'`) sampai ada keputusan tertulis.
-- **Tiap file rute (`app/<nama>.tsx`) hanya memanggil `ScreenSection` dengan `featureCode` dan `title`** — supaya pemetaan rute → nomor fitur PRD (F1–F5) terlihat langsung di kode tanpa perlu membuka dokumen lain.
+- **Perlindungan rute memakai grup Expo Router `(auth)` & `(app)` yang masing-masing punya `_layout.tsx` penjaga, bukan `RootNavigator` ala React Navigation** — proyek ini memakai routing berbasis file, jadi penjagaan diletakkan di layout grup dan URL tetap bersih (`/masuk`, `/linimasa`).
+- **Setelah login/daftar tidak ada `router.push` manual** — penjaga di `(auth)/_layout.tsx` otomatis pindah ke `/linimasa` begitu status sesi berubah jadi `masuk`, jadi hanya ada satu sumber kebenaran untuk navigasi.
+- **Kedua layout grup memakai `<Slot/>`, bukan `<Stack/>` atau `<Tabs/>`** — kelima halaman P0 setara (bukan hierarki induk-anak).
+- **`@expo/html-elements` untuk `Header`, `Nav`, `Main`, `Footer`, `Article`, `Section`, `H1`** — di web menghasilkan tag HTML semantik asli, di native menjadi `View`/`Text`.
+- **`AppNavBar` memakai `<Link asChild>`** — supaya di web jadi `<a href>` sungguhan, bukan navigasi yang hanya jalan lewat klik.
+- **`theme/tokens.ts` menyalin nilai HEX dari `MVP-PWA/assets/tokens.css`** — nilai produksi PWA v1, bukan deskripsi kualitatif `docs/design.md`.
+- **`typography.fontBody` sengaja `undefined`** — nama font UI resmi belum dikonfirmasi (`design.md` Bagian 6 poin 1).
 
-## Yang belum ada (di luar lingkup kerangka ini)
+## Yang belum ada
 
-Tidak ada state management, tidak ada `fetch`/panggilan API, tidak ada penyimpanan lokal, dan tidak ada validasi input — kelima halaman murni placeholder yang menunjukkan rute dan judul saja, menunggu keputusan lanjutan sebelum diisi logika sungguhan.
+- Klaim data tamu ke akun (`/sinkron/klaim`).
+- Profil lokal (`useProfilLokal`) dan kemajuan lokal belum disambungkan ke akun, meskipun token sekarang sudah tersedia.
+- Lupa sandi dan ubah sandi.
