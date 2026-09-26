@@ -223,6 +223,28 @@ export function Penafian({ children }: { children: React.ReactNode }) {
   return <Text style={s.sumber}>{children}</Text>;
 }
 
+/** .progress — bilah kemajuan bergradasi. */
+export function BilahProgres({ selesai, total, label }: { selesai: number; total: number; label: string }) {
+  const persen = total ? Math.round((selesai / total) * 100) : 0;
+  return (
+    <View
+      style={s.bilah}
+      role="progressbar"
+      aria-valuemin={0}
+      aria-valuemax={total}
+      aria-valuenow={selesai}
+      aria-label={label}
+    >
+      <LinearGradient
+        colors={gradient.progress.colors}
+        start={gradient.progress.start}
+        end={gradient.progress.end}
+        style={StyleSheet.flatten([s.bilahIsi, { width: `${persen}%` }])}
+      />
+    </View>
+  );
+}
+
 export function Memuat() {
   return <ActivityIndicator style={s.memuat} color={color.blue500} />;
 }
@@ -250,6 +272,8 @@ export const gaya = StyleSheet.create({
 });
 
 const s = StyleSheet.create({
+  bilah: { height: 10, backgroundColor: color.ink100, borderRadius: radius.pill, overflow: 'hidden' },
+  bilahIsi: { height: '100%', borderRadius: radius.pill },
   kepalaJudul: { ...teks.h2, color: color.textBody, marginVertical: 0 },
   kepalaPengantar: { ...teks.bodySm, color: color.textMuted, marginTop: spacing.s1 },
   seksiJudul: { ...teks.label, fontSize: 14, color: color.textMuted, marginVertical: 0 },

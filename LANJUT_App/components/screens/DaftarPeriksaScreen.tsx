@@ -1,15 +1,12 @@
 import React from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { ButirDaftarPeriksa, KategoriDaftarPeriksa } from '../../api/types';
-import { useButirDaftarPeriksa } from '../../hooks/useButirDaftarPeriksa';
-import { useKemajuan, useTandaiKemajuan } from '../../hooks/useKemajuan';
-import { useProfilLokal, useSetProfilLokal } from '../../hooks/useProfilLokal';
-import { hitungProgres, type Progres } from '../../lib/daftarPeriksa';
-import { useSesi } from '../../providers/AuthProvider';
-import { color, font, gradient, radius, spacing, teks } from '../../theme/tokens';
-import { Ikon, Kartu, KeadaanGalat, Kepala, Kosong, Memuat, SeksiJudul, Sumber, gaya } from '../ui';
+import { useTandaiKemajuan } from '../../hooks/useKemajuan';
+import { useProgresDaftarPeriksa, useSaringDaftarPeriksa } from '../../hooks/useProgresDaftarPeriksa';
+import type { Progres } from '../../lib/daftarPeriksa';
+import { color, font, radius, spacing, teks } from '../../theme/tokens';
+import { BilahProgres, Ikon, Kartu, KeadaanGalat, Kepala, Kosong, Memuat, SeksiJudul, Sumber, gaya } from '../ui';
 
 const KELAS_OPSI = ['10', '11', '12'] as const;
 const JALUR_OPSI = ['TKA', 'SNBP', 'SNBT'] as const;
@@ -26,13 +23,7 @@ const JALUR_OPSI = ['TKA', 'SNBP', 'SNBT'] as const;
  *    belum punya medan jalur.
  */
 export function DaftarPeriksaScreen() {
-  const { pengguna } = useSesi();
-  const profilQuery = useProfilLokal();
-  const { mutate: simpanProfil } = useSetProfilLokal();
-
-  const kelas = profilQuery.data?.kelas ?? pengguna?.kelas ?? null;
-  const jalur = profilQuery.data?.jalur ?? null;
-  const pilih = (ubah: { kelas?: string; jalur?: string }) => simpanProfil({ kelas, jalur, ...ubah });
+  const { kelas, jalur, pilih, isPending } = useSaringDaftarPeriksa();
 
   return (
     <View style={gaya.layarIsi}>
@@ -43,7 +34,7 @@ export function DaftarPeriksaScreen() {
         <BarisKeping label="Jalur" opsi={JALUR_OPSI} tampil={(j) => j} aktif={jalur} onPilih={(j) => pilih({ jalur: j })} />
       </Kartu>
 
-      {profilQuery.isPending ? (
+      {isPending ? (
         <Memuat />
       ) : kelas && jalur ? (
         <Checklist kelas={kelas} jalur={jalur} />
@@ -92,21 +83,16 @@ function BarisKeping<T extends string>({
 }
 
 function Checklist({ kelas, jalur }: { kelas: string; jalur: string }) {
-  const butirQuery = useButirDaftarPeriksa({ kelas, jalur });
-  const kemajuanQuery = useKemajuan();
+  const hasil = useProgresDaftarPeriksa(kelas, jalur);
   const tandai = useTandaiKemajuan();
 
-  if (butirQuery.isPending || kemajuanQuery.isPending) return <Memuat />;
-  if (butirQuery.isError || kemajuanQuery.isError) return <KeadaanGalat />;
+  if (hasil.isError) return <KeadaanGalat />;
+  if (!hasil.data) return <Memuat />;
 
-  const kategori = butirQuery.data.kategori.filter((k) => k.butir.length);
+  const { kategori, selesai, progres } = hasil.data;
   if (!kategori.length) {
     return <Kosong judul="Bagian ini masih kami siapkan." teks="Kalau kamu punya bahannya, kirim ke kami." />;
   }
-
-  // DELETE /kemajuan tidak menghapus baris, hanya mengosongkan selesai_pada.
-  const selesai = new Set(kemajuanQuery.data.filter((k) => k.selesai_pada).map((k) => k.butir_id));
-  const progres = hitungProgres(kategori, selesai);
   const adaBelumTerverifikasi = kategori.some((k) => k.butir.some((b) => !b.diperiksa_pada));
 
   return (
@@ -128,24 +114,9 @@ function Checklist({ kelas, jalur }: { kelas: string; jalur: string }) {
 
 // .progress + tiga keadaan teks kemajuan (salinan-teks-lanjut.md §4.4).
 function BilahKemajuan({ progres }: { progres: Progres }) {
-  const persen = progres.total ? Math.round((progres.selesai / progres.total) * 100) : 0;
   return (
     <View style={s.kemajuan}>
-      <View
-        style={s.bilah}
-        role="progressbar"
-        aria-valuemin={0}
-        aria-valuemax={progres.total}
-        aria-valuenow={progres.selesai}
-        aria-label="Kemajuan daftar periksa"
-      >
-        <LinearGradient
-          colors={gradient.progress.colors}
-          start={gradient.progress.start}
-          end={gradient.progress.end}
-          style={StyleSheet.flatten([s.bilahIsi, { width: `${persen}%` }])}
-        />
-      </View>
+      <BilahProgres selesai={progres.selesai} total={progres.total} label="Kemajuan daftar periksa" />
       <Text style={gaya.teksBody}>
         {progres.status === 'kosong'
           ? 'Belum ada yang dicentang — itu wajar kalau baru mulai. Ambil satu yang paling gampang dulu.'
@@ -213,8 +184,6 @@ const s = StyleSheet.create({
   kepingTeks: { ...teks.bodySm, fontFamily: font.medium, color: color.ink700 },
   kepingTeksAktif: { color: color.white },
   kemajuan: { gap: spacing.s3 },
-  bilah: { height: 10, backgroundColor: color.ink100, borderRadius: radius.pill, overflow: 'hidden' },
-  bilahIsi: { height: '100%', borderRadius: radius.pill },
   seksi: { gap: spacing.s3 },
   kartuButir: { gap: 2, paddingVertical: spacing.s2 },
   centang: { flexDirection: 'row', alignItems: 'center', gap: spacing.s3, minHeight: 44 },

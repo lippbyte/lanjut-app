@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import type { Pengguna } from '../../api/auth';
 import { useSesi } from '../../providers/AuthProvider';
 import { useProdi } from '../../hooks/useProdi';
+import { useProgresDaftarPeriksa, useSaringDaftarPeriksa } from '../../hooks/useProgresDaftarPeriksa';
 import { color, font, spacing, teks } from '../../theme/tokens';
-import { Kartu, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
+import { BilahProgres, Kartu, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
 
 // "Jalur Saya" (v1.1, LANJUT_004) di atas padanan MVP-PWA/akun.html
 // (keadaan "sudah masuk"). Keadaan tamu tidak ada di sini karena layar ini
@@ -25,6 +27,9 @@ export function AkunScreen() {
   return (
     <View style={gaya.layarIsiRapat}>
       <KartuJalur pengguna={pengguna} />
+
+      <SeksiJudul>Kemajuan</SeksiJudul>
+      <RingkasanKemajuan />
 
       <SeksiJudul>Akun</SeksiJudul>
       <Kartu>
@@ -57,6 +62,44 @@ function KartuJalur({ pengguna }: { pengguna: Pengguna }) {
   );
 }
 
+// X dari Y memakai saringan & hitungan yang sama dengan layar Daftar
+// Periksa (useProgresDaftarPeriksa), jadi angkanya selalu cocok.
+function RingkasanKemajuan() {
+  const router = useRouter();
+  const { kelas, jalur, isPending: saringMemuat } = useSaringDaftarPeriksa();
+  const hasil = useProgresDaftarPeriksa(kelas, jalur);
+  const bukaDaftarPeriksa = () => router.push('/daftar-periksa');
+
+  let isi: React.ReactNode;
+  if (saringMemuat || hasil.isPending) {
+    isi = <Memuat />;
+  } else if (!hasil.siap) {
+    isi = <Text style={gaya.teksKecil}>Pilih kelas dan jalurmu di Daftar Periksa untuk melihat kemajuanmu.</Text>;
+  } else if (hasil.isError || !hasil.data) {
+    isi = <Text style={gaya.teksKecil}>Kemajuan belum bisa dimuat. Coba lagi sebentar lagi.</Text>;
+  } else {
+    const { selesai, total } = hasil.data.progres;
+    isi = (
+      <>
+        <Text style={s.angka}>
+          {selesai} dari {total} langkah Daftar Periksa selesai
+        </Text>
+        <BilahProgres selesai={selesai} total={total} label="Kemajuan daftar periksa" />
+        <Text style={s.label}>
+          Kelas {kelas} · {jalur}
+        </Text>
+      </>
+    );
+  }
+
+  return (
+    <Kartu style={s.kemajuan}>
+      {isi}
+      <Tombol label="Buka Daftar Periksa" varian="sekunder" kecil onPress={bukaDaftarPeriksa} />
+    </Kartu>
+  );
+}
+
 /** `nilai` null → "Belum diisi" dengan gaya redup, bukan teks kosong. */
 function Baris({ label, nilai }: { label: string; nilai: string | null }) {
   return (
@@ -77,5 +120,7 @@ const s = StyleSheet.create({
   baris: { flexDirection: 'row', justifyContent: 'space-between', gap: spacing.s3 },
   label: { ...teks.caption, color: color.textMuted },
   nilai: { ...teks.bodySm, fontFamily: font.medium, color: color.textBody, flexShrink: 1, textAlign: 'right' },
-  nilaiKosong: { ...teks.bodySm, fontStyle: 'italic', color: color.textMuted, flexShrink: 1, textAlign: 'right' },
+  kemajuan: { gap: spacing.s3 },
+  angka: { ...teks.body, fontFamily: font.semibold, color: color.textBody },
+  nilaiKosong:{ ...teks.bodySm, fontStyle: 'italic', color: color.textMuted, flexShrink: 1, textAlign: 'right' },
 });

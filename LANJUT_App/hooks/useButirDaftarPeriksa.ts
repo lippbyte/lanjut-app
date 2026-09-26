@@ -17,12 +17,13 @@ type Filter = {
  * `kelas`/`jalur` masuk queryKey supaya React Query menyimpan cache
  * terpisah per kombinasi filter, bukan menimpa hasil filter sebelumnya.
  */
-export function useButirDaftarPeriksa(filter: Filter = {}) {
+export function useButirDaftarPeriksa(filter: Filter = {}, enabled = true) {
   return useQuery({
     queryKey: ['butir_daftar_periksa', filter.kelas, filter.jalur],
     queryFn: () =>
       apiFetch<DaftarPeriksaResponse>('/konten/checklist', {
         query: { kelas: filter.kelas, jalur: filter.jalur },
       }),
+    enabled,
   });
 }
