@@ -4,7 +4,7 @@ import * as authApi from '../api/auth';
 import type { Pengguna, Sesi } from '../api/auth';
 import { ApiError } from '../api/client';
 
-type StatusSesi = 'memuat' | 'masuk' | 'tamu';
+type StatusSesi = 'memuat' | 'masuk' | 'keluar';
 
 type NilaiAuth = {
   status: StatusSesi;
@@ -27,7 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const tersimpan = await authApi.bacaSesiTersimpan().catch(() => null);
       if (batal) return;
       if (!tersimpan) {
-        setStatus('tamu');
+        setStatus('keluar');
         return;
       }
       setToken(tersimpan.token);
@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await authApi.hapusSesiLokal();
           setToken(null);
           setPengguna(null);
-          setStatus('tamu');
+          setStatus('keluar');
         }
       }
     })();
@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     else await authApi.hapusSesiLokal();
     setToken(null);
     setPengguna(null);
-    setStatus('tamu');
+    setStatus('keluar');
   }, [token]);
 
   const nilai = useMemo(

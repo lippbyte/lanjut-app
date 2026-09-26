@@ -9,7 +9,7 @@ import { useSesi } from '../../providers/AuthProvider';
 export default function AppLayout() {
   const { status } = useSesi();
   if (status === 'memuat') return <LayarMemuat />;
-  if (status === 'tamu') return <Redirect href="/masuk" />;
+  if (status === 'keluar') return <Redirect href="/masuk" />;
   return (
     <AppShell>
       <Slot />

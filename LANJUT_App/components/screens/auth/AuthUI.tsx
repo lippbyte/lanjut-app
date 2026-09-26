@@ -162,16 +162,6 @@ export function TautanBawah({
 
 export const authStyles = StyleSheet.create({
   form: { gap: spacing.s5 },
-  kartuSoft: {
-    padding: spacing.s4,
-    borderRadius: radius.md,
-    backgroundColor: color.surfaceSoft,
-    borderWidth: 1,
-    borderColor: color.borderSoft,
-    color: color.ink700,
-    fontSize: typography.size.bodySm,
-    lineHeight: 20,
-  },
 });
 
 const styles = StyleSheet.create({

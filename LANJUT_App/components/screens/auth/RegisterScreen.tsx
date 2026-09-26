@@ -47,10 +47,6 @@ export function RegisterScreen() {
 
   return (
     <AuthLayout judul="Buat akun" pengantar="Simpan kemajuanmu supaya tidak hilang saat ganti HP.">
-      <Text style={authStyles.kartuSoft}>
-        Yang sudah kamu isi di perangkat ini (kelas, prodi, checklist) tetap tersimpan di sini,
-        terpisah dari akun barumu untuk saat ini.
-      </Text>
       <View style={authStyles.form}>
         <Field
           label="Nama pengguna"

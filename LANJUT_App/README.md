@@ -45,12 +45,12 @@ Saat aplikasi dibuka:
 app/
   _layout.tsx          provider: QueryProvider + AuthProvider
   index.tsx            → /linimasa
-  (auth)/_layout.tsx   khusus tamu; sudah masuk → /linimasa
+  (auth)/_layout.tsx   khusus yang belum masuk; sudah masuk → /linimasa
   (auth)/masuk.tsx, daftar.tsx
-  (app)/_layout.tsx    khusus yang sudah masuk; tamu → /masuk. Membungkus AppShell
+  (app)/_layout.tsx    khusus yang sudah masuk; belum masuk → /masuk. Membungkus AppShell
   (app)/linimasa.tsx … lima layar P0
 api/                   client.ts (apiFetch, ApiError), auth.ts (layanan auth), types.ts
-providers/             QueryProvider, AuthProvider (status sesi: memuat | masuk | tamu)
+providers/             QueryProvider, AuthProvider (status sesi: memuat | masuk | keluar)
 hooks/                 useAuth + hook data per fitur
 components/            layout/ (AppShell, AppNavBar), screens/ (per fitur, auth/)
 server/                backend Express + MySQL (lihat server/README.md)
@@ -68,6 +68,5 @@ server/                backend Express + MySQL (lihat server/README.md)
 
 ## Yang belum ada
 
-- Klaim data tamu ke akun (`/sinkron/klaim`).
-- Profil lokal (`useProfilLokal`) dan kemajuan lokal belum disambungkan ke akun, meskipun token sekarang sudah tersedia.
+- Profil lokal (`useProfilLokal`) dan kemajuan lokal (`useKemajuanLokal`) di Daftar Periksa masih tersimpan per perangkat, belum disambungkan ke akun (`pengguna.kelas`, `GET /kemajuan`), meskipun login sekarang wajib.
 - Lupa sandi dan ubah sandi.

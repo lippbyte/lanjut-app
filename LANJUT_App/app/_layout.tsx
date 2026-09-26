@@ -8,7 +8,7 @@ import { QueryProvider } from '../providers/QueryProvider';
 
 /**
  * Root layout hanya memasang provider. Penjagaan rute ada di layout grup:
- * app/(auth)/_layout.tsx (Masuk/Daftar, khusus tamu) dan app/(app)/_layout.tsx
+ * app/(auth)/_layout.tsx (Masuk/Daftar, khusus yang belum masuk) dan app/(app)/_layout.tsx
  * (lima layar P0 + AppShell, khusus yang sudah masuk).
  */
 export default function RootLayout() {
