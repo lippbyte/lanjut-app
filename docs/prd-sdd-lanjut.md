@@ -187,6 +187,7 @@ Dua siswa berlatih 30 menit sehari selama 3 bulan. Yang satu melatih topik yang 
 | **Arsip tetap kosong** | F6 mati, latihan harian tidak jalan | Kartu kurasi tim wajib ada lebih dulu |
 | **Anggota tim berangkat PKL** | Tim tersebar, tempo turun | Pekerjaan riset (F3, F4) dirancang bisa jalan tersebar |
 | **Tenggat 27 September lewat** | Nilai inti produk anjlok setelah masa pendaftaran | Rilis v1 paling lambat 3 September |
+| **Kartu "data lokal akan ditautkan ke akun" di daftar.html tidak pernah benar-benar terjadi** | Pengguna nyata dijanjikan sesuatu yang tidak ditepati sistem | Sembunyikan/ubah teks kartu segera; sambungkan /sinkron/klaim sebagai kerja terpisah |
 
 ## 11. Pertanyaan Terbuka
 
@@ -294,3 +295,5 @@ Sebuah fitur disebut selesai bila:
 | 6 Agu 2026 | F3 Penolong Pilih Mapel naik ke P0 | Ini pembeda inti; tanpa ini LANJUT hanya kumpulan informasi |
 | 6 Agu 2026 | F6 Arsip wajib berisi kartu kurasi lebih dulu | Mencegah pola "kerangka kosong yang tidak pernah diisi" |
 | 31 Agu 2026 | F10 Eksplorasi Tujuan masuk Bagian 6 sebagai lingkup **v1.1** (bukan syarat rilis awal), dan data prodi F3 disempitkan ke 18 prodi hasil riset (Opsi A) | Hasil F3 dijamin bisa dilanjutkan ke profil prodi yang lengkap, bukan berujung layar "belum tersedia". Rinciannya di `eksplorasi-tujuan-instruksi.md` dan `SDD-F10-eksplorasi-tujuan.md` |
+| 18 Sep 2026 | Rencana app mobile pindah dari Flutter ke konsolidasi Android+Web dalam satu basis kode Expo; PWA saat ini jadi MVP | Keterbatasan waktu membuat 3 basis kode terpisah (2 app + website) tidak realistis untuk tim; syarat wajib app Android tetap terpenuhi, sekaligus mengurangi beban maintenance jangka panjang |
+| 18 Sep 2026 | Dikonfirmasi: kemajuan daftar periksa 100% localStorage di PWA, /kemajuan & /sinkron/klaim belum pernah dipanggil klien manapun; app Expo mereplikasi perilaku ini apa adanya | Ditemukan lewat investigasi F5; menghindari membangun alur login yang tidak dibutuhkan untuk paritas |

@@ -65,6 +65,25 @@ router.get('/mapel', async (req, res, next) => {
   }
 });
 
+// F3 — jalur "belum tahu prodi": agregasi lintas SEMUA prodi dihitung di
+// sini lewat satu query (konten.repo.js `ambilAgregasiMapelLintasProdi`),
+// bukan diagregasi di klien dari banyak panggilan `/prodi/:id/mapel`.
+router.get('/mapel/agregasi-lintas-prodi', async (req, res, next) => {
+  try {
+    const baris = await konten.ambilAgregasiMapelLintasProdi();
+    sukses(
+      res,
+      baris.map((b) => ({
+        ...b,
+        tersedia_di_smk: !!b.tersedia_di_smk,
+        jumlah_prodi: Number(b.jumlah_prodi),
+      }))
+    );
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get('/prodi/:id/mapel', async (req, res, next) => {
   try {
     const ada = await konten.prodiAda(req.params.id);

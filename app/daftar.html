@@ -53,10 +53,17 @@
       <!-- Muncul hanya kalau ada catatan lokal (profil/checklist) yang bisa
            dibawa ke akun baru — SDD §6.3 Alur B. Klaim data tamu adalah
            pekerjaan terpisah (endpoint /api/v1/sinkron/klaim), BELUM
-           disambungkan di tiket ini; kartu ini murni informatif. -->
+           disambungkan di tiket ini; kartu ini murni informatif.
+
+           KOREKSI 18 Sep 2026 (lihat docs/prd-sdd-lanjut.md §10 Risiko):
+           kalimat lama "Menyambungkannya ke akun ini menyusul" berjanji
+           sesuatu yang tidak ditepati sistem — tidak ada pekerjaan yang
+           mengerjakannya. Diganti jadi pernyataan yang benar-benar terjadi
+           saat ini (data lokal tetap ada, tapi terpisah dari akun), bukan
+           janji. Ganti lagi kalimat ini begitu /sinkron/klaim tersambung. -->
       <p class="kartu kartu--soft" style="font:var(--text-body-small);color:var(--ink-700)">
         Yang sudah kamu isi di perangkat ini (kelas, prodi, checklist) tetap
-        tersimpan di sini. Menyambungkannya ke akun ini menyusul.
+        tersimpan di sini, terpisah dari akun barumu untuk saat ini.
       </p>
 
       <form class="tumpuk" style="gap:var(--space-5)" data-form="daftar">

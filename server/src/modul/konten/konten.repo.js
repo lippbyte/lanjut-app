@@ -57,6 +57,27 @@ async function ambilMapelUntukProdi(prodiId) {
   return baris;
 }
 
+/**
+ * F3 — jalur "belum tahu prodi": per mapel, berapa banyak prodi yang
+ * membutuhkannya (COUNT DISTINCT prodi_id lewat JOIN + GROUP BY mapel_id).
+ * SATU query, bukan diagregasi di klien lewat panggilan `/prodi/:id/mapel`
+ * berulang — lihat mobile-app/hooks/useAgregasiMapelLintasProdi.ts.
+ * INNER JOIN sengaja dipakai (bukan LEFT JOIN): mapel yang tidak menjadi
+ * syarat mapel_id di baris manapun otomatis tidak ikut, sama seperti
+ * perilaku agregasi lama yang hanya melihat mapel yang benar-benar muncul
+ * di hasil `/prodi/:id/mapel`.
+ */
+async function ambilAgregasiMapelLintasProdi() {
+  const [baris] = await pool.query(
+    `SELECT m.id, m.nama, m.tersedia_di_smk, COUNT(DISTINCT pm.prodi_id) AS jumlah_prodi
+       FROM mapel m
+       JOIN prodi_mapel pm ON pm.mapel_id = m.id
+      GROUP BY m.id, m.nama, m.tersedia_di_smk
+      ORDER BY jumlah_prodi DESC, m.nama ASC`
+  );
+  return baris;
+}
+
 async function prodiAda(prodiId) {
   const [baris] = await pool.execute('SELECT id FROM prodi WHERE id = ? LIMIT 1', [prodiId]);
   return baris.length > 0;
@@ -101,6 +122,7 @@ module.exports = {
   ambilProdi,
   ambilMapel,
   ambilMapelUntukProdi,
+  ambilAgregasiMapelLintasProdi,
   prodiAda,
   ambilCeritaAlumniTayang,
   ambilChecklist,
