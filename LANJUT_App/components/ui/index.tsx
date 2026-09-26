@@ -155,7 +155,7 @@ export function Kosong({
 }) {
   return (
     <View style={s.kosong}>
-      <Image source={require('../../assets/mascot-blue.png')} style={s.kosongMaskot} />
+      <Image source={require('../../assets/mascot-blue.png')} style={s.kosongMaskot} resizeMode="contain" />
       <Text style={s.kosongJudul}>{judul}</Text>
       {isi ? <Text style={s.kosongTeks}>{isi}</Text> : null}
       {aksi}
@@ -292,7 +292,7 @@ const s = StyleSheet.create({
     paddingVertical: spacing.s10,
     paddingHorizontal: spacing.s6,
   },
-  kosongMaskot: { width: 96, height: 96, resizeMode: 'contain', opacity: 0.9 },
+  kosongMaskot: { width: 96, height: 96, opacity: 0.9 },
   kosongJudul: { ...teks.h3, color: color.textBody, textAlign: 'center' },
   kosongTeks: { ...teks.bodySm, color: color.textMuted, textAlign: 'center', maxWidth: 320 },
   tombol: {

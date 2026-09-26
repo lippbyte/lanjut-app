@@ -33,10 +33,11 @@ export function AuthLayout({
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <Header style={styles.appbar}>
-        <Image source={require('../../../assets/mascot-blue.png')} style={styles.mark} />
+        <Image source={require('../../../assets/mascot-blue.png')} style={styles.mark} resizeMode="contain" />
         <Image
           source={require('../../../assets/lanjut-wordmark.png')}
           style={styles.wordmark}
+          resizeMode="contain"
           accessibilityLabel="LANJUT"
         />
         <View style={styles.mark} />
@@ -176,8 +177,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: color.appbarBorder,
   },
-  mark: { width: 32, height: 32, resizeMode: 'contain' },
-  wordmark: { height: 32, width: 93, resizeMode: 'contain' },
+  mark: { width: 32, height: 32 },
+  wordmark: { height: 32, width: 93 },
   isi: {
     padding: spacing.gutter,
     gap: spacing.s5,
