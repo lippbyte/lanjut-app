@@ -21,6 +21,24 @@ npm run android                            # emulator/device Android
 
 `npm run web` harus berjalan di port **8081**, karena hanya port ini yang diizinkan CORS di `server/.env` (`ASAL_DIIZINKAN`). Base URL API diatur di `app.config.ts`: `localhost` untuk web, `10.0.2.2` untuk emulator Android. Device fisik perlu `EXPO_PUBLIC_API_URL_DEV_ANDROID` berisi IP LAN komputer.
 
+## APK Android (EAS Build)
+
+APK dibangun di cloud Expo, jadi tidak butuh Android Studio atau SDK lokal.
+
+- Proyek EAS: `lippbyte/lanjut` (projectId ada di `app.config.ts`)
+- Package Android: `com.edilakso.lanjut`
+
+```bash
+cd LANJUT_App
+npx eas-cli build --platform android --profile preview   # hasil: .apk (bukan .aab)
+```
+
+- **URL API** diatur lewat `EXPO_PUBLIC_API_URL` di `eas.json` → `build.preview.env`. Saat ini isinya IP LAN komputer backend. Kalau IP komputer berubah, ganti nilai itu lalu build ulang; kode tidak perlu diubah.
+- **Kalau `EXPO_PUBLIC_API_URL` diisi,** nilainya dipakai di semua platform dan mengalahkan pemilihan otomatis (`localhost` untuk web / `10.0.2.2` untuk emulator / URL produksi).
+- **HTTP polos** (`usesCleartextTraffic`) hanya diizinkan kalau URL-nya berawalan `http://`. Build ke backend `https://` otomatis kembali aman.
+- **Syarat di HP:** HP harus berada di WiFi yang sama dengan komputer backend, dan backend harus jalan (`cd server && npm start`). Backend sudah listen di `0.0.0.0:4000`.
+- **Penyimpanan APK:** simpan unduhan di `LANJUT_App/build/`. Folder ini diabaikan git.
+
 ## Autentikasi
 
 | Hal | Nilai |
