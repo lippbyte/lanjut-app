@@ -11,14 +11,17 @@ import { Platform } from 'react-native';
  * merujuk ke perangkat itu sendiri, bukan komputer) butuh nilai berbeda.
  */
 const extra = Constants.expoConfig?.extra as
-  | { apiUrlProd?: string; apiUrlDevAndroid?: string; apiUrlDevWeb?: string }
+  | { apiUrl?: string; apiUrlProd?: string; apiUrlDevAndroid?: string; apiUrlDevWeb?: string }
   | undefined;
 
-const BASE_URL = __DEV__
-  ? Platform.OS === 'web'
-    ? extra?.apiUrlDevWeb
-    : extra?.apiUrlDevAndroid
-  : extra?.apiUrlProd;
+// `apiUrl` (EXPO_PUBLIC_API_URL) mengalahkan pemilihan otomatis di bawahnya.
+const BASE_URL =
+  extra?.apiUrl ||
+  (__DEV__
+    ? Platform.OS === 'web'
+      ? extra?.apiUrlDevWeb
+      : extra?.apiUrlDevAndroid
+    : extra?.apiUrlProd);
 
 if (!BASE_URL) {
   // Gagal cepat & jelas saat startup, daripada tiap hook diam-diam gagal

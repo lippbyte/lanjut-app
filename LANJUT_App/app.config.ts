@@ -27,19 +27,34 @@ const API_URL_DEV_WEB =
 // Bagian 11 "Nama domain final" masih pertanyaan terbuka, tidak menghambat).
 const API_URL_PROD = process.env.EXPO_PUBLIC_API_URL_PROD || 'https://api.lanjut.id/api/v1';
 
+// Satu URL yang mengalahkan ketiga kandidat di atas, di semua platform & mode.
+// Dipakai build APK preview (eas.json) supaya HP fisik menunjuk IP LAN
+// komputer backend; ganti nilainya di eas.json/env, bukan di kode.
+const API_URL_OVERRIDE = process.env.EXPO_PUBLIC_API_URL || undefined;
+
+// Build release Android memblokir http:// polos; hanya dibuka kalau build ini
+// memang diarahkan ke backend http (mis. IP LAN), bukan untuk rilis https.
+const IZINKAN_HTTP = API_URL_OVERRIDE?.startsWith('http://') ?? false;
+
 const config: ExpoConfig = {
-  name: 'LANJUT (Eksplorasi Expo)',
-  slug: 'lanjut-mobile-eksplorasi',
+  name: 'LANJUT',
+  slug: 'lanjut',
+  owner: 'lippbyte',
   scheme: 'lanjut',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
-  plugins: ['expo-router'],
+  plugins: [
+    'expo-router',
+    ['expo-build-properties', { android: { usesCleartextTraffic: IZINKAN_HTTP } }],
+  ],
   ios: {
     supportsTablet: true,
   },
   android: {
+    package: 'com.edilakso.lanjut',
+    versionCode: 1,
     adaptiveIcon: {
       backgroundColor: '#E6F4FE',
       foregroundImage: './assets/android-icon-foreground.png',
@@ -52,6 +67,8 @@ const config: ExpoConfig = {
     favicon: './assets/favicon.png',
   },
   extra: {
+    eas: { projectId: 'cbb2972d-24a7-450e-8604-6360aee3d190' },
+    apiUrl: API_URL_OVERRIDE,
     apiUrlProd: API_URL_PROD,
     apiUrlDevAndroid: API_URL_DEV_ANDROID,
     apiUrlDevWeb: API_URL_DEV_WEB,
