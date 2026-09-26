@@ -20,7 +20,7 @@ const TAB: { href: '/linimasa' | '/khusus-smk' | '/pilih-mapel' | '/daftar-perik
 // Halaman anak: dapat .pagebar (tombol kembali + judul) di bawah app bar.
 const HALAMAN_ANAK: Record<string, string> = {
   '/cerita-alumni': 'Cerita Alumni SMK',
-  '/akun': 'Akun',
+  '/akun': 'Jalur Saya',
 };
 
 function tabAktif(pathname: string) {

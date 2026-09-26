@@ -14,6 +14,7 @@ import {
   View,
 } from 'react-native';
 
+import { useProdi } from '../../../hooks/useProdi';
 import { color, font, radius, shadow, spacing, teks as teksToken } from '../../../theme/tokens';
 
 // Kerangka layar Masuk/Daftar — padanan `.appbar` + `.layar__isi` + `.kepala`
@@ -161,6 +162,41 @@ export function TautanBawah({
   );
 }
 
+/** Nilai pilihan "Belum, aku belum tahu" — tidak pernah dikirim ke server. */
+export const BELUM = 'belum';
+
+// Keping pilihan prodi (MVP-PWA/daftar.html) — dipakai Daftar & Jalur Saya.
+export function PilihProdi({ nilai, onPilih }: { nilai: string | null; onPilih: (id: string) => void }) {
+  const prodiQuery = useProdi();
+  return (
+    <View style={styles.opsiDaftar} role="radiogroup">
+      <OpsiProdi label="Belum, aku belum tahu" aktif={nilai === BELUM} onPress={() => onPilih(BELUM)} />
+      {prodiQuery.isPending ? (
+        <ActivityIndicator color={color.blue500} />
+      ) : prodiQuery.isError ? (
+        <Text style={styles.catatan}>Daftar prodi belum bisa dimuat. Kamu tetap bisa memilih “belum”.</Text>
+      ) : (
+        prodiQuery.data.map((p) => (
+          <OpsiProdi key={p.id} label={p.nama} aktif={nilai === p.id} onPress={() => onPilih(p.id)} />
+        ))
+      )}
+    </View>
+  );
+}
+
+function OpsiProdi({ label, aktif, onPress }: { label: string; aktif: boolean; onPress: () => void }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="radio"
+      aria-checked={aktif}
+      style={StyleSheet.flatten([styles.opsi, aktif && styles.opsiAktif])}
+    >
+      <Text style={StyleSheet.flatten([styles.opsiTeks, aktif && styles.opsiTeksAktif])}>{label}</Text>
+    </Pressable>
+  );
+}
+
 export const authStyles = StyleSheet.create({
   form: { gap: spacing.s5 },
 });
@@ -231,4 +267,17 @@ const styles = StyleSheet.create({
   tombolTeks: { fontFamily: font.semibold, fontSize: 18, lineHeight: 24, color: color.white },
   tautanBaris: { ...teksToken.body, textAlign: 'center', color: color.textBody },
   tautan: { fontFamily: font.semibold, color: color.textLink, textDecorationLine: 'underline' },
+  opsiDaftar: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.s2 },
+  opsi: {
+    paddingVertical: spacing.s2,
+    paddingHorizontal: spacing.s3,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: color.borderSoft,
+    backgroundColor: color.white,
+  },
+  opsiAktif: { backgroundColor: color.blue400, borderColor: color.blue400 },
+  opsiTeks: { ...teksToken.bodySm, color: color.ink700 },
+  opsiTeksAktif: { color: color.white, fontFamily: font.semibold },
+  catatan: { ...teksToken.caption, color: color.textMuted },
 });

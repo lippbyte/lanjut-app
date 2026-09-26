@@ -1,24 +1,30 @@
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import type { DataDaftar } from '../../../api/auth';
 import { useAuth } from '../../../hooks/useAuth';
-import { useProdi } from '../../../hooks/useProdi';
-import { color, font, radius, spacing, teks } from '../../../theme/tokens';
-import { AuthLayout, Field, Input, PesanGalat, TautanBawah, TombolUtama, authStyles } from './AuthUI';
+import {
+  AuthLayout,
+  BELUM,
+  Field,
+  Input,
+  PesanGalat,
+  PilihProdi,
+  TautanBawah,
+  TombolUtama,
+  authStyles,
+} from './AuthUI';
 
 // Aturan disalin dari server/src/modul/auth/auth.skema.js supaya kesalahan
 // umum tertangkap sebelum dikirim; server tetap sumber kebenaran.
 const NAMA_PENGGUNA_REGEX = /^[a-z0-9._]{3,32}$/;
-const BELUM = 'belum';
 
 // Medan & salinan teks mengikuti MVP-PWA/daftar.html: nama pengguna, email
 // (opsional), kata sandi, prodi impian (wajib, "belum" jawaban sah).
 export function RegisterScreen() {
   const router = useRouter();
   const { register, loading, error, medan } = useAuth();
-  const prodiQuery = useProdi();
 
   const [namaPengguna, setNamaPengguna] = useState('');
   const [email, setEmail] = useState('');
@@ -83,18 +89,7 @@ export function RegisterScreen() {
           />
         </Field>
         <Field label="Prodi impian" hint="Boleh dijawab “belum”." galat={galat('prodi_impian')}>
-          <View style={styles.opsiDaftar}>
-            <OpsiProdi label="Belum, aku belum tahu" aktif={prodi === BELUM} onPress={() => setProdi(BELUM)} />
-            {prodiQuery.isPending ? (
-              <ActivityIndicator color={color.blue500} />
-            ) : prodiQuery.isError ? (
-              <Text style={styles.catatan}>Daftar prodi belum bisa dimuat. Kamu tetap bisa memilih “belum”.</Text>
-            ) : (
-              prodiQuery.data.map((p) => (
-                <OpsiProdi key={p.id} label={p.nama} aktif={prodi === p.id} onPress={() => setProdi(p.id)} />
-              ))
-            )}
-          </View>
+          <PilihProdi nilai={prodi} onPilih={setProdi} />
         </Field>
         <PesanGalat teks={error} />
         <TombolUtama label="Daftar" labelProses="Mendaftarkan…" proses={loading} onPress={kirim} />
@@ -103,32 +98,3 @@ export function RegisterScreen() {
     </AuthLayout>
   );
 }
-
-function OpsiProdi({ label, aktif, onPress }: { label: string; aktif: boolean; onPress: () => void }) {
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="radio"
-      aria-checked={aktif}
-      style={StyleSheet.flatten([styles.opsi, aktif && styles.opsiAktif])}
-    >
-      <Text style={StyleSheet.flatten([styles.opsiTeks, aktif && styles.opsiTeksAktif])}>{label}</Text>
-    </Pressable>
-  );
-}
-
-const styles = StyleSheet.create({
-  opsiDaftar: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.s2 },
-  opsi: {
-    paddingVertical: spacing.s2,
-    paddingHorizontal: spacing.s3,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: color.borderSoft,
-    backgroundColor: color.white,
-  },
-  opsiAktif: { backgroundColor: color.blue400, borderColor: color.blue400 },
-  opsiTeks: { ...teks.bodySm, color: color.ink700 },
-  opsiTeksAktif: { color: color.white, fontFamily: font.semibold },
-  catatan: { ...teks.caption, color: color.textMuted },
-});
