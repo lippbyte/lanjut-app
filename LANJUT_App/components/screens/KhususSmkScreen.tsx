@@ -68,7 +68,7 @@ function ButirKartu({ butir, buka, onAlih }: { butir: ButirKhususSmk; buka: bool
         <Pressable
           onPress={onAlih}
           accessibilityRole="button"
-          accessibilityState={{ expanded: buka }}
+          aria-expanded={buka}
           style={s.ringkasan}
         >
           <Text style={s.judul}>{butir.judul}</Text>

@@ -1,365 +1,234 @@
-import React, { useState } from 'react';
-import { Article, H1, Section } from '@expo/html-elements';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import type { ButirDaftarPeriksa, DaftarPeriksaResponse } from '../../api/types';
+import type { ButirDaftarPeriksa, KategoriDaftarPeriksa } from '../../api/types';
 import { useButirDaftarPeriksa } from '../../hooks/useButirDaftarPeriksa';
-import { useKemajuanLokal, useToggleKemajuanLokal } from '../../hooks/useKemajuanLokal';
-import { useProfilLokal, useSetProfilLokal, type ProfilLokal } from '../../hooks/useProfilLokal';
-import { hitungProgres, type StatusProgres } from '../../lib/daftarPeriksa';
-import { color, radius, spacing, typography } from '../../theme/tokens';
-import { KeadaanGalat, KeadaanKosong } from './KeadaanBersama';
-
-/**
- * F5 — Daftar Periksa (docs/prd-sdd-lanjut.md Bagian 6 & 13; teks statis
- * persis docs/salinan-teks-lanjut.md §4.4 — tidak ada kalimat baru ditulis
- * di sini).
- *
- * CATATAN PENYIMPANGAN (disepakati dengan pengguna sebelum dikerjakan):
- * LANJUT_App belum punya alur login sama sekali (lihat hooks/useKemajuan.ts,
- * hooks/useProfilLokal.ts). Karena itu:
- *  - Kelas & jalur pengguna diambil dari `useProfilLokal` (AsyncStorage,
- *    device-local), BUKAN dari sesi akun seperti PWA v1.
- *  - Progres centang diambil dari `useKemajuanLokal` (AsyncStorage), BUKAN
- *    ditulis ke tabel `kemajuan` lewat `/kemajuan` (endpoint itu dijaga
- *    `wajibLogin` — tidak bisa dipanggil tanpa token sesi).
- * Penyaringan `berlaku_untuk_kelas`/`berlaku_untuk_jalur` ITU SENDIRI tetap
- * memakai mekanisme yang sudah ada (query `?kelas=&jalur=` di
- * useButirDaftarPeriksa, disaring backend lewat FIND_IN_SET) — tidak ada
- * logika penyaringan baru ditulis di sini.
- */
-export function DaftarPeriksaScreen() {
-  const profilQuery = useProfilLokal();
-  // "Kembali" dari Checklist wajib menampilkan pemilih lagi walau profil
-  // tersimpan sudah lengkap — state terpisah dari AsyncStorage ini yang
-  // menentukan itu (refetch saja tidak cukup, karena nilai tersimpannya
-  // tidak berubah).
-  const [paksaPilihUlang, setPaksaPilihUlang] = useState(false);
-
-  const profil = profilQuery.data;
-  const profilLengkap = !!profil?.kelas && !!profil?.jalur;
-
-  return (
-    <Section style={styles.halaman}>
-      <H1 style={styles.judul}>Daftar Periksa</H1>
-      <Text style={styles.pendamping}>Satu per satu, tidak perlu sekaligus.</Text>
-
-      {profilQuery.isPending ? (
-        <ActivityIndicator style={styles.muat} color={color.blue500} />
-      ) : !profilLengkap || paksaPilihUlang ? (
-        <PemilihProfil profilAwal={profil} onSelesai={() => setPaksaPilihUlang(false)} />
-      ) : (
-        <Checklist kelas={profil!.kelas!} jalur={profil!.jalur!} onGantiProfil={() => setPaksaPilihUlang(true)} />
-      )}
-    </Section>
-  );
-}
+import { useKemajuan, useTandaiKemajuan } from '../../hooks/useKemajuan';
+import { useProfilLokal, useSetProfilLokal } from '../../hooks/useProfilLokal';
+import { hitungProgres, type Progres } from '../../lib/daftarPeriksa';
+import { useSesi } from '../../providers/AuthProvider';
+import { color, font, gradient, radius, spacing, teks } from '../../theme/tokens';
+import { Ikon, Kartu, KeadaanGalat, Kepala, Kosong, Memuat, SeksiJudul, Sumber, gaya } from '../ui';
 
 const KELAS_OPSI = ['10', '11', '12'] as const;
 const JALUR_OPSI = ['TKA', 'SNBP', 'SNBT'] as const;
 
-// "Kamu kelas berapa?" — kutipan persis salinan-teks-lanjut.md §3
-// (Pertanyaan pembuka setelah onboarding), dipakai lagi di sini karena
-// pertanyaannya sama, bukan disusun ulang. Tidak ada teks resmi untuk
-// pertanyaan pemilihan jalur di salinan-teks-lanjut.md maupun
-// prd-sdd-lanjut.md — label "Jalur" di bawah adalah nama kolom
-// (berlaku_untuk_jalur), bukan kalimat baru.
-function PemilihProfil({
-  profilAwal,
-  onSelesai,
-}: {
-  profilAwal: ProfilLokal | undefined;
-  onSelesai: () => void;
-}) {
-  const [kelas, setKelas] = useState<string | null>(profilAwal?.kelas ?? null);
-  const [jalur, setJalur] = useState<string | null>(profilAwal?.jalur ?? null);
+/**
+ * F5 — padanan MVP-PWA/checklist.html: bilah kemajuan bergradasi + tiga
+ * kalimat kemajuan (§4.4), butir per kategori dengan kotak centang.
+ *
+ * Beda dari PWA, dua-duanya disengaja:
+ *  - Centang disimpan ke akun lewat /kemajuan (PWA: localStorage), jadi
+ *    ikut pindah ke HP lain.
+ *  - Butir disaring kelas & jalur (AC F5 di PRD, belum ada di PWA). Kelas
+ *    diisi dari akun kalau ada; jalur disimpan di perangkat karena akun
+ *    belum punya medan jalur.
+ */
+export function DaftarPeriksaScreen() {
+  const { pengguna } = useSesi();
+  const profilQuery = useProfilLokal();
   const { mutate: simpanProfil } = useSetProfilLokal();
 
-  // Disimpan & langsung diterapkan begitu KEDUA nilai ada — dipicu dari
-  // handler tap (bukan dari useEffect atas [kelas, jalur]), supaya
-  // membuka pemilih ini lewat "Kembali" saat profil lama sudah lengkap
-  // tidak langsung melompat balik ke Checklist sebelum pengguna menyentuh
-  // apa pun.
-  function pilihKelas(k: string) {
-    setKelas(k);
-    if (jalur) terapkan(k, jalur);
-  }
-  function pilihJalur(j: string) {
-    setJalur(j);
-    if (kelas) terapkan(kelas, j);
-  }
-  function terapkan(k: string, j: string) {
-    simpanProfil({ kelas: k, jalur: j });
-    onSelesai();
-  }
+  const kelas = profilQuery.data?.kelas ?? pengguna?.kelas ?? null;
+  const jalur = profilQuery.data?.jalur ?? null;
+  const pilih = (ubah: { kelas?: string; jalur?: string }) => simpanProfil({ kelas, jalur, ...ubah });
 
   return (
-    <>
-      <Text style={styles.prompt}>Kamu kelas berapa?</Text>
-      <View style={styles.chipBaris}>
-        {KELAS_OPSI.map((k) => (
-          <Pressable key={k} onPress={() => pilihKelas(k)} style={[styles.chip, kelas === k && styles.chipAktif]}>
-            <Text style={[styles.chipTeks, kelas === k && styles.chipTeksAktif]}>Kelas {k}</Text>
-          </Pressable>
-        ))}
-      </View>
+    <View style={gaya.layarIsi}>
+      <Kepala judul="Daftar Periksa" pengantar="Satu per satu, tidak perlu sekaligus." />
 
-      <Text style={styles.prompt}>Jalur</Text>
-      <View style={styles.chipBaris}>
-        {JALUR_OPSI.map((j) => (
-          <Pressable key={j} onPress={() => pilihJalur(j)} style={[styles.chip, jalur === j && styles.chipAktif]}>
-            <Text style={[styles.chipTeks, jalur === j && styles.chipTeksAktif]}>{j}</Text>
-          </Pressable>
-        ))}
-      </View>
-    </>
+      <Kartu varian="soft" style={s.saring}>
+        <BarisKeping label="Kelas" opsi={KELAS_OPSI} tampil={(k) => `Kelas ${k}`} aktif={kelas} onPilih={(k) => pilih({ kelas: k })} />
+        <BarisKeping label="Jalur" opsi={JALUR_OPSI} tampil={(j) => j} aktif={jalur} onPilih={(j) => pilih({ jalur: j })} />
+      </Kartu>
+
+      {profilQuery.isPending ? (
+        <Memuat />
+      ) : kelas && jalur ? (
+        <Checklist kelas={kelas} jalur={jalur} />
+      ) : (
+        <Kosong judul="Pilih kelas dan jalurmu dulu." teks="Supaya butir yang tampil memang yang perlu kamu siapkan." />
+      )}
+    </View>
   );
 }
 
-function Checklist({
-  kelas,
-  jalur,
-  onGantiProfil,
+// .keping — pilihan berbentuk pil.
+function BarisKeping<T extends string>({
+  label,
+  opsi,
+  tampil,
+  aktif,
+  onPilih,
 }: {
-  kelas: string;
-  jalur: string;
-  onGantiProfil: () => void;
+  label: string;
+  opsi: readonly T[];
+  tampil: (v: T) => string;
+  aktif: string | null;
+  onPilih: (v: T) => void;
 }) {
+  return (
+    <View style={s.barisKeping}>
+      <Text style={s.kepingLabel}>{label}</Text>
+      <View style={s.kepingDaftar} role="radiogroup">
+        {opsi.map((v) => {
+          const pilihan = aktif === v;
+          return (
+            <Pressable
+              key={v}
+              onPress={() => onPilih(v)}
+              accessibilityRole="radio"
+              aria-checked={pilihan}
+              style={StyleSheet.flatten([s.keping, pilihan && s.kepingAktif])}
+            >
+              <Text style={StyleSheet.flatten([s.kepingTeks, pilihan && s.kepingTeksAktif])}>{tampil(v)}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+function Checklist({ kelas, jalur }: { kelas: string; jalur: string }) {
   const butirQuery = useButirDaftarPeriksa({ kelas, jalur });
-  const kemajuanQuery = useKemajuanLokal();
-  const toggle = useToggleKemajuanLokal();
+  const kemajuanQuery = useKemajuan();
+  const tandai = useTandaiKemajuan();
+
+  if (butirQuery.isPending || kemajuanQuery.isPending) return <Memuat />;
+  if (butirQuery.isError || kemajuanQuery.isError) return <KeadaanGalat />;
+
+  const kategori = butirQuery.data.kategori.filter((k) => k.butir.length);
+  if (!kategori.length) {
+    return <Kosong judul="Bagian ini masih kami siapkan." teks="Kalau kamu punya bahannya, kirim ke kami." />;
+  }
+
+  // DELETE /kemajuan tidak menghapus baris, hanya mengosongkan selesai_pada.
+  const selesai = new Set(kemajuanQuery.data.filter((k) => k.selesai_pada).map((k) => k.butir_id));
+  const progres = hitungProgres(kategori, selesai);
+  const adaBelumTerverifikasi = kategori.some((k) => k.butir.some((b) => !b.diperiksa_pada));
 
   return (
     <>
-      <View style={styles.barisAtas}>
-        <Text style={styles.subjudul}>
-          Kelas {kelas} · {jalur}
-        </Text>
-        <Pressable onPress={onGantiProfil}>
-          <Text style={styles.tautanKembali}>Kembali</Text>
-        </Pressable>
-      </View>
-
-      {butirQuery.isPending || kemajuanQuery.isPending ? (
-        <ActivityIndicator style={styles.muat} color={color.blue500} />
-      ) : butirQuery.isError || kemajuanQuery.isError ? (
-        <KeadaanGalat />
-      ) : !butirQuery.data?.kategori.length ? (
-        <KeadaanKosong />
-      ) : (
-        <HasilChecklist
-          data={butirQuery.data}
-          selesaiIds={new Set(Object.keys(kemajuanQuery.data ?? {}))}
-          onToggle={(id) => toggle.mutate(id)}
+      <BilahKemajuan progres={progres} />
+      {tandai.isError ? <Text style={s.galat}>Centang terakhir belum tersimpan. Coba lagi.</Text> : null}
+      {kategori.map((k) => (
+        <SeksiKategori
+          key={k.id}
+          kategori={k}
+          selesai={selesai}
+          onAlih={(b) => tandai.mutate({ butirId: b.id, selesai: !selesai.has(b.id) })}
         />
-      )}
-    </>
-  );
-}
-
-function HasilChecklist({
-  data,
-  selesaiIds,
-  onToggle,
-}: {
-  data: DaftarPeriksaResponse;
-  selesaiIds: ReadonlySet<string>;
-  onToggle: (butirId: string) => void;
-}) {
-  const progres = hitungProgres(data.kategori, selesaiIds);
-
-  return (
-    <>
-      <ProgresBanner status={progres.status} selesai={progres.selesai} total={progres.total} />
-      {data.kategori.map((k) => (
-        <Section key={k.id} style={styles.kategoriBlok}>
-          <Text style={styles.kategoriJudul}>{k.nama}</Text>
-          {k.butir.map((b) => (
-            <ButirChecklist key={b.id} butir={b} selesai={selesaiIds.has(b.id)} onToggle={() => onToggle(b.id)} />
-          ))}
-        </Section>
       ))}
+      {adaBelumTerverifikasi ? <Sumber>Perlu dicek ke laman resmi SNPMB · belum diverifikasi</Sumber> : null}
     </>
   );
 }
 
-// Tiga state persis salinan-teks-lanjut.md §4.4 — X/Y pada state "berjalan"
-// dihitung dari data asli (lib/daftarPeriksa.ts `hitungProgres`), bukan
-// angka tetap "3 dari 11" yang tertulis di dokumen sebagai contoh.
-function ProgresBanner({
-  status,
-  selesai,
-  total,
-}: {
-  status: StatusProgres;
-  selesai: number;
-  total: number;
-}) {
+// .progress + tiga keadaan teks kemajuan (salinan-teks-lanjut.md §4.4).
+function BilahKemajuan({ progres }: { progres: Progres }) {
+  const persen = progres.total ? Math.round((progres.selesai / progres.total) * 100) : 0;
   return (
-    <Section style={styles.progres}>
-      {status === 'kosong' ? (
-        <Text style={styles.progresTeks}>
-          Belum ada yang dicentang — itu wajar kalau baru mulai. Ambil satu yang paling gampang dulu.
-        </Text>
-      ) : status === 'selesai' ? (
-        <Text style={styles.progresTeks}>Bagian persiapannya beres. Sisanya tinggal latihan.</Text>
-      ) : (
-        <Text style={styles.progresTeks}>
-          {selesai} dari {total} beres. Jalan terus.
-        </Text>
-      )}
-    </Section>
-  );
-}
-
-function ButirChecklist({
-  butir,
-  selesai,
-  onToggle,
-}: {
-  butir: ButirDaftarPeriksa;
-  selesai: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <Article style={styles.butir}>
-      <Pressable
-        onPress={onToggle}
-        style={styles.butirBaris}
-        accessibilityRole="checkbox"
-        accessibilityState={{ checked: selesai }}
+    <View style={s.kemajuan}>
+      <View
+        style={s.bilah}
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={progres.total}
+        aria-valuenow={progres.selesai}
+        aria-label="Kemajuan daftar periksa"
       >
-        <View style={[styles.kotak, selesai && styles.kotakCentang]}>
-          {selesai && <Text style={styles.centangTanda}>✓</Text>}
-        </View>
-        <Text style={[styles.butirJudul, selesai && styles.butirJudulSelesai]}>{butir.judul}</Text>
-      </Pressable>
-    </Article>
+        <LinearGradient
+          colors={gradient.progress.colors}
+          start={gradient.progress.start}
+          end={gradient.progress.end}
+          style={StyleSheet.flatten([s.bilahIsi, { width: `${persen}%` }])}
+        />
+      </View>
+      <Text style={gaya.teksBody}>
+        {progres.status === 'kosong'
+          ? 'Belum ada yang dicentang — itu wajar kalau baru mulai. Ambil satu yang paling gampang dulu.'
+          : progres.status === 'selesai'
+            ? 'Bagian persiapannya beres. Sisanya tinggal latihan.'
+            : `${progres.selesai} dari ${progres.total} beres. Jalan terus.`}
+      </Text>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  halaman: {
-    padding: spacing.gutter,
-    gap: spacing.s4,
-  },
-  judul: {
-    color: color.textBody,
-    fontSize: typography.size.h2,
-    fontWeight: typography.weight.semibold,
-    marginTop: 0,
-    marginBottom: 0,
-  },
-  pendamping: {
-    color: color.textMuted,
-    fontSize: typography.size.body,
-    marginTop: -spacing.s3,
-  },
-  muat: {
-    marginTop: spacing.s4,
-  },
-  prompt: {
-    color: color.textBody,
-    fontSize: typography.size.body,
-    fontWeight: typography.weight.medium,
-  },
-  chipBaris: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.s2,
-  },
-  chip: {
-    paddingVertical: spacing.s2,
+function SeksiKategori({
+  kategori,
+  selesai,
+  onAlih,
+}: {
+  kategori: KategoriDaftarPeriksa;
+  selesai: ReadonlySet<string>;
+  onAlih: (b: ButirDaftarPeriksa) => void;
+}) {
+  return (
+    <View style={s.seksi}>
+      <SeksiJudul>{kategori.nama}</SeksiJudul>
+      <Kartu style={s.kartuButir}>
+        {kategori.butir.map((b) => (
+          <Centang key={b.id} label={b.judul} tercentang={selesai.has(b.id)} onAlih={() => onAlih(b)} />
+        ))}
+      </Kartu>
+    </View>
+  );
+}
+
+// .centang — kotak 24px radius-xs, terisi biru saat tercentang.
+function Centang({ label, tercentang, onAlih }: { label: string; tercentang: boolean; onAlih: () => void }) {
+  return (
+    <Pressable
+      onPress={onAlih}
+      accessibilityRole="checkbox"
+      aria-checked={tercentang}
+      style={s.centang}
+    >
+      <View style={StyleSheet.flatten([s.kotak, tercentang && s.kotakAktif])}>
+        {tercentang ? <Ikon nama="centang" ukuran={16} warna={color.white} tebal={2.5} /> : null}
+      </View>
+      <Text style={s.centangLabel}>{label}</Text>
+    </Pressable>
+  );
+}
+
+const s = StyleSheet.create({
+  saring: { gap: spacing.s3, padding: spacing.s4 },
+  barisKeping: { gap: spacing.s2 },
+  kepingLabel: { ...teks.bodySm, fontFamily: font.medium, color: color.ink700 },
+  kepingDaftar: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.s2 },
+  keping: {
+    minHeight: 40,
+    justifyContent: 'center',
     paddingHorizontal: spacing.s4,
     borderRadius: radius.pill,
     borderWidth: 1,
     borderColor: color.borderSoft,
-    backgroundColor: color.surfaceCard,
+    backgroundColor: color.white,
   },
-  chipAktif: {
-    backgroundColor: color.blue500,
-    borderColor: color.blue500,
-  },
-  chipTeks: {
-    color: color.textBody,
-    fontSize: typography.size.bodySm,
-    fontWeight: typography.weight.semibold,
-  },
-  chipTeksAktif: {
-    color: color.textOnBrand,
-  },
-  barisAtas: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  subjudul: {
-    color: color.textBody,
-    fontSize: typography.size.title,
-    fontWeight: typography.weight.semibold,
-  },
-  tautanKembali: {
-    color: color.textLink,
-    fontSize: typography.size.bodySm,
-    textDecorationLine: 'underline',
-  },
-  progres: {
-    padding: spacing.s4,
-    borderRadius: radius.lg,
-    backgroundColor: color.blue600,
-  },
-  progresTeks: {
-    color: color.textOnBrand,
-    fontSize: typography.size.body,
-    lineHeight: 22,
-    fontWeight: typography.weight.medium,
-  },
-  kategoriBlok: {
-    gap: spacing.s2,
-  },
-  kategoriJudul: {
-    color: color.textMuted,
-    fontSize: typography.size.bodySm,
-    fontWeight: typography.weight.bold,
-    letterSpacing: 0.5,
-  },
-  butir: {
-    borderRadius: radius.md,
-    backgroundColor: color.surfaceCard,
-    borderWidth: 1,
-    borderColor: color.borderHairline,
-  },
-  butirBaris: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.s3,
-    padding: spacing.s4,
-  },
+  kepingAktif: { backgroundColor: color.blue400, borderColor: color.blue400 },
+  kepingTeks: { ...teks.bodySm, fontFamily: font.medium, color: color.ink700 },
+  kepingTeksAktif: { color: color.white },
+  kemajuan: { gap: spacing.s3 },
+  bilah: { height: 10, backgroundColor: color.ink100, borderRadius: radius.pill, overflow: 'hidden' },
+  bilahIsi: { height: '100%', borderRadius: radius.pill },
+  seksi: { gap: spacing.s3 },
+  kartuButir: { gap: 2, paddingVertical: spacing.s2 },
+  centang: { flexDirection: 'row', alignItems: 'center', gap: spacing.s3, minHeight: 44 },
   kotak: {
     width: 24,
     height: 24,
     borderRadius: radius.xs,
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: color.borderSoft,
+    backgroundColor: color.white,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  kotakCentang: {
-    backgroundColor: color.statusOk,
-    borderColor: color.statusOk,
-  },
-  centangTanda: {
-    color: color.textOnBrand,
-    fontSize: typography.size.bodySm,
-    fontWeight: typography.weight.bold,
-  },
-  butirJudul: {
-    flex: 1,
-    color: color.textBody,
-    fontSize: typography.size.body,
-  },
-  butirJudulSelesai: {
-    color: color.textMuted,
-    textDecorationLine: 'line-through',
-  },
+  kotakAktif: { backgroundColor: color.blue400, borderColor: color.blue400 },
+  centangLabel: { ...teks.body, color: color.textBody, flex: 1 },
+  galat: { ...teks.caption, color: color.blue600 },
 });

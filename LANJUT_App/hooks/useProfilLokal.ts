@@ -16,20 +16,8 @@ async function bacaProfilLokal(): Promise<ProfilLokal> {
   }
 }
 
-/**
- * F5 — kelas & jalur pengguna, dipakai untuk menyaring `butir_daftar_periksa`
- * (docs/prd-sdd-lanjut.md §6 F5 & §13). PWA v1 punya mekanisme sungguhan
- * untuk ini lewat sesi login (app/assets/api.js: token + `pengguna.kelas`
- * di localStorage `lanjut.auth.v1`) — TAPI LANJUT_App belum punya alur
- * login sama sekali (lihat hooks/useKemajuan.ts, sudah ditulis sebelum F5:
- * `token` sengaja parameter eksternal karena "belum ada alur login").
- *
- * Keputusan disepakati sebelum F5 dibangun: profil ini SENGAJA device-local
- * lewat AsyncStorage, bukan dari akun — bukan "cara baru" untuk kebutuhan
- * yang sudah ada, melainkan pengganti sementara untuk kebutuhan (mengetahui
- * kelas/jalur) yang sebelum ini tidak punya mekanisme sama sekali di
- * LANJUT_App. Lihat catatan yang sama di hooks/useKemajuanLokal.ts.
- */
+// F5 — kelas & jalur untuk menyaring Daftar Periksa. Disimpan di perangkat
+// karena akun belum punya medan jalur; kelas dari akun dipakai sebagai awalan.
 export function useProfilLokal() {
   return useQuery({
     queryKey: ['profil_lokal'],

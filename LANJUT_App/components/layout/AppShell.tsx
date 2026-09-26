@@ -105,7 +105,7 @@ function TabBar({ aktif }: { aktif: string }) {
         return (
           // Link asChild tidak meneruskan style berbentuk fungsi di web, jadi statis.
           <Link key={t.href} href={t.href} asChild>
-            <Pressable accessibilityRole="link" accessibilityState={{ selected: sedang }} style={s.tab}>
+            <Pressable accessibilityRole="link" aria-current={sedang ? 'page' : undefined} style={s.tab}>
               <View style={StyleSheet.flatten([s.tabIkon, sedang && s.tabIkonAktif])}>
                 <Ikon nama={t.ikon} warna={sedang ? color.blue600 : color.ink500} />
               </View>

@@ -109,7 +109,7 @@ function OpsiProdi({ label, aktif, onPress }: { label: string; aktif: boolean; o
     <Pressable
       onPress={onPress}
       accessibilityRole="radio"
-      accessibilityState={{ checked: aktif }}
+      aria-checked={aktif}
       style={StyleSheet.flatten([styles.opsi, aktif && styles.opsiAktif])}
     >
       <Text style={StyleSheet.flatten([styles.opsiTeks, aktif && styles.opsiTeksAktif])}>{label}</Text>
