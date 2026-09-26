@@ -1,0 +1,179 @@
+/* =========================================================================
+   TOKEN — LANJUT PWA
+   =========================================================================
+   BAGIAN 1 disalin PERSIS dari LandingPage/index.html (blok :root, baris
+   21–88). Jangan ubah nilainya di sini — kalau berubah, ubah di landing page
+   lebih dulu lalu salin ulang, supaya landing page dan aplikasi tidak pernah
+   berbeda warna atau ukuran.
+
+   BAGIAN 2 hanya MENAMBAH token yang dipakai layar aplikasi tetapi memang
+   tidak pernah dibutuhkan landing page (status, ink menengah, radius tile,
+   dsb). Nilainya disalin apa adanya dari sistem desain di
+   "LANJUT UI mockups/_ds/lanjut-design-system-.../tokens/*.css".
+   Blok :root Bagian 2 tidak menimpa satu pun token Bagian 1 — semuanya nama
+   baru. Satu-satunya penimpaan ada di blok prefers-reduced-motion paling
+   bawah, dan itu memang tujuannya: durasi dinolkan, bukan diganti nilai.
+   ========================================================================= */
+
+/* =========================================================================
+   BAGIAN 1 — SALINAN PERSIS DARI LANDING PAGE
+   ========================================================================= */
+:root{
+  /* Biru merek — tiga tingkat, terang ke gelap */
+  --blue-100:#E4F3F7;
+  --blue-200:#B4E1EB;   /* biru muda   — puncak gradasi */
+  --blue-300:#95BDD7;   /* biru sedang — tengah gradasi */
+  --blue-400:#78A4CB;   /* biru tua    — dasar gradasi, tombol utama */
+  --blue-500:#5E88AF;
+  --blue-600:#456A8C;
+
+  /* Netral — tidak pernah hitam murni */
+  --white:#FFFFFF;
+  --ink-900:#1A1A1A;
+  --ink-700:#3D4450;
+  --ink-100:#E6E9ED;
+  --ink-050:#F5F7F9;
+
+  /* Alias semantik */
+  --text-body:var(--ink-900);
+  --text-muted:var(--ink-700);
+  --text-on-brand:var(--white);
+  --text-link:var(--blue-600);
+  --text-link-hover:var(--blue-500);
+  --surface-card:var(--white);
+  --surface-soft:var(--blue-100);
+  --border-hairline:var(--ink-100);
+  --border-soft:#D6E5EE;
+  --border-brand:var(--blue-300);
+
+  /* Gradasi — satu bentuk saja: vertikal, terang ke gelap. Hanya dipakai hero. */
+  --gradient-cover:linear-gradient(180deg,var(--blue-200) 0%,var(--blue-300) 52%,var(--blue-400) 100%);
+
+  /* Tipografi */
+  --font-core:"Poppins",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fw-regular:400; --fw-medium:500; --fw-semibold:600;
+  --ls-label:.08em;
+
+  /* Ukuran teks — nilai dasar untuk 360px, ditimpa di tiap breakpoint */
+  --fs-h1:32px;   --lh-h1:1.14;
+  --fs-h2:24px;   --lh-h2:1.25;
+  --fs-h3:18px;   --lh-h3:1.35;
+  --fs-lead:17px;
+  --fs-body:16px; --lh-body:1.65;
+  --fs-body-sm:14px;
+  --fs-caption:13px;
+  --fs-label:12px;
+
+  /* Jarak */
+  --space-2:8px;  --space-3:12px; --space-4:16px; --space-5:20px;
+  --space-6:24px; --space-8:32px; --space-10:40px; --space-12:48px;
+  --gutter:20px;                 /* pinggiran halaman di HP */
+  --pad-bagian:48px;
+  --lebar-konten:1080px;
+
+  /* Sudut — membulat, tidak pernah kotak */
+  --radius-sm:12px; --radius-md:16px; --radius-lg:24px; --radius-pill:999px;
+
+  /* Bayangan — selalu bernada biru, bukan abu netral */
+  --shadow-1:0 1px 2px rgba(69,106,140,.08);
+  --shadow-2:0 2px 8px rgba(69,106,140,.10);
+  --shadow-3:0 6px 20px rgba(69,106,140,.12);
+
+  /* Gerak */
+  --dur-fast:120ms;
+  --ease-standard:cubic-bezier(.4,0,.2,1);
+
+  /* Sasaran sentuh minimum */
+  --sentuh:44px;
+}
+
+/* =========================================================================
+   BAGIAN 2 — TAMBAHAN UNTUK LAYAR APLIKASI
+   Nilai disalin dari _ds/tokens/*.css. Semuanya token BARU bagi berkas ini;
+   tidak ada yang menimpa Bagian 1.
+   ========================================================================= */
+:root{
+  /* Ink menengah — landing page hanya butuh 900/700/100/050 */
+  --ink-500:#6B7480;
+  --ink-300:#A7AEB8;
+
+  /* Status — tenang saja, tidak pernah merah atau oranye.
+     Mendesak diwakili biru tua, selesai hijau redam, belum mulai abu. */
+  --status-ok:#4E9C87;
+  --status-ok-bg:#E6F2EF;
+  --status-ok-fg:#2F6B5C;      /* teks di atas --status-ok-bg (dipakai StatusPill) */
+  --status-attention:#5E88AF;
+  --status-attention-bg:#E4EDF5;
+  --status-idle:#A7AEB8;
+  --status-idle-bg:#F1F3F5;
+
+  /* Alias semantik yang tidak dipunyai landing page */
+  --brand-primary:var(--blue-400);
+  --brand-secondary:var(--blue-300);
+  --brand-soft:var(--blue-200);
+  --text-subtle:var(--ink-300);
+  --surface-page:var(--ink-050);   /* latar aplikasi, bukan putih seperti landing */
+  --surface-brand:var(--blue-400);
+  --surface-inverse:var(--ink-900);
+
+  /* Gradasi tambahan — landing hanya memakai --gradient-cover */
+  --gradient-soft:linear-gradient(180deg,#FFFFFF 0%,var(--blue-100) 100%);
+  --gradient-tile:linear-gradient(160deg,var(--blue-200) 0%,var(--blue-300) 100%);
+  --scrim-bottom:linear-gradient(180deg,rgba(26,26,26,0) 0%,rgba(26,26,26,.55) 100%);
+
+  /* Tipografi — ukuran yang hanya ada di aplikasi */
+  --fs-title:20px;    --lh-title:1.35;   /* judul kartu & app bar */
+  --fs-body-lg:18px;  --lh-body-lg:1.6;
+  --lh-body-sm:1.55;
+  --lh-caption:1.45;  --ls-caption:.01em;
+  --fw-light:300;
+  --fw-bold:700;
+
+  /* Jarak — langkah yang tidak dipakai landing page */
+  --space-1:4px;
+  --space-16:64px; --space-20:80px; --space-24:96px;
+  --gutter-screen:20px;             /* pinggiran layar aplikasi (setara --gutter di HP) */
+  --stack-tight:var(--space-2);
+  --stack-default:var(--space-4);
+  --stack-section:var(--space-8);
+  --card-padding:var(--space-5);
+  --max-measure:62ch;
+
+  /* Sudut — landing hanya butuh sm/md/lg/pill */
+  --radius-xs:8px;                  /* kotak centang */
+  --radius-xl:32px;                 /* panel gradasi, bottom sheet */
+  --radius-tile:22.5%;              /* squircle ikon aplikasi */
+
+  /* Bayangan — landing hanya butuh 1/2/3 */
+  --shadow-0:none;
+  --shadow-4:0 14px 40px rgba(69,106,140,.16);
+  --shadow-inset-press:inset 0 2px 4px rgba(69,106,140,.14);
+  --focus-ring:0 0 0 3px rgba(120,164,203,.45);
+  --border-width:1px;
+
+  /* Gerak — landing hanya butuh --dur-fast dan --ease-standard */
+  --dur-base:200ms;
+  --dur-slow:320ms;
+  --dur-page:420ms;
+  --ease-out-soft:cubic-bezier(.16,.84,.44,1);
+  --ease-spring:cubic-bezier(.16,1,.3,1);
+  --ease-in:cubic-bezier(.4,0,1,1);
+  --press-scale:.97;
+
+  /* Font gabungan — dipakai supaya ukuran teks tidak ditulis manual di CSS.
+     Perhatikan: --fs-h1/h2/h3 di Bagian 1 ikut membesar di breakpoint tablet
+     dan layar lebar, jadi gabungan ini otomatis responsif juga. */
+  --text-h1:var(--fw-semibold) var(--fs-h1)/var(--lh-h1) var(--font-core);
+  --text-h2:var(--fw-semibold) var(--fs-h2)/var(--lh-h2) var(--font-core);
+  --text-h3:var(--fw-semibold) var(--fs-h3)/var(--lh-h3) var(--font-core);
+  --text-title:var(--fw-medium) var(--fs-title)/var(--lh-title) var(--font-core);
+  --text-body-lg:var(--fw-regular) var(--fs-body-lg)/var(--lh-body-lg) var(--font-core);
+  --text-body-default:var(--fw-regular) var(--fs-body)/var(--lh-body) var(--font-core);
+  --text-body-small:var(--fw-regular) var(--fs-body-sm)/var(--lh-body-sm) var(--font-core);
+  --text-caption:var(--fw-regular) var(--fs-caption)/var(--lh-caption) var(--font-core);
+}
+
+/* Semua durasi runtuh jadi 0 kalau pengguna minta gerak dikurangi. */
+@media (prefers-reduced-motion:reduce){
+  :root{--dur-fast:0ms;--dur-base:0ms;--dur-slow:0ms;--dur-page:0ms}
+}

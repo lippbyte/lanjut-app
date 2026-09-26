@@ -51,7 +51,7 @@ Laporkan yang mana dari A/B yang sebenarnya terjadi — jangan langsung
 lompat ke solusi tanpa melaporkan temuannya dulu.
 
 === 3. LINK LANDING PAGE (paling kritis, cek dulu sebelum ubah) ===
-Di folder landing-page/ (bukan app/), cari semua rujukan yang salah:
+Di folder LandingPage/ (bukan app/), cari semua rujukan yang salah:
 - Tautan yang mengarah ke "/linimasa" — seharusnya ke path aplikasi
   yang benar sesuai keputusan hosting (edilakso.my.id/lanjut/, cek
   struktur folder deploy sungguhan yang dipakai, jangan asumsi)

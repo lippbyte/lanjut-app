@@ -25,12 +25,12 @@ Laporkan status sungguhan, bukan asumsi "biasanya beres sendiri."
 1. Konfirmasi app/ tetap di Application root cPanel sesuai
    DEPLOYMENT-RUMAHWEB.md — tidak ada perubahan di sini.
 
-2. Pindahkan landing-page/ jadi subfolder yang disajikan statis di
+2. Pindahkan LandingPage/ jadi subfolder yang disajikan statis di
    /tentang (edilakso.my.id/tentang), BUKAN di root. Ini cukup naruh
-   folder landing-page/ di public_html/tentang/ — tidak butuh proses
+   folder LandingPage/ di public_html/tentang/ — tidak butuh proses
    Node terpisah, cuma HTML/CSS statis.
 
-3. 4 tombol di landing-page/index.html yang barusan diubah ke
+3. 4 tombol di LandingPage/index.html yang barusan diubah ke
    "https://edilakso.my.id/" TIDAK PERLU diubah lagi — itu sudah benar
    untuk topologi ini (root = app).
 

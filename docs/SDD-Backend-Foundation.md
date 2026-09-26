@@ -901,7 +901,7 @@ menyebutnya sekaligus sebagai pengaman HAKI. Karena itu:
 ```
 EDILAKSO-LANJUT-repo/
   app/                 PWA (tidak berubah bentuknya oleh dokumen ini)
-  landing-page/
+  LandingPage/
   docs/
   server/              BARU — seluruh backend
 ```
