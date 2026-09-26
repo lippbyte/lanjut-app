@@ -1,207 +1,94 @@
 import React from 'react';
-import { Article, H1, Section } from '@expo/html-elements';
-import { Link } from 'expo-router';
-import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Article } from '@expo/html-elements';
+import { useRouter } from 'expo-router';
+import { Linking, StyleSheet, Text, View } from 'react-native';
 
 import type { CeritaAlumni } from '../../api/types';
 import { useCeritaAlumni } from '../../hooks/useCeritaAlumni';
-import { color, radius, spacing, typography } from '../../theme/tokens';
-import { KeadaanGalat } from './KeadaanBersama';
+import { color, font, spacing, teks } from '../../theme/tokens';
+import { Kartu, KeadaanGalat, Kosong, Lencana, Memuat, Penafian, Tombol, gaya } from '../ui';
 
-// PWA v1 (app/alumni.html, layar kosong): mailto nyata yang sudah dipakai
-// production — disalin persis, bukan ditulis baru, supaya "Hubungkan kami"
-// benar-benar berfungsi alih-alih jadi tombol mati.
+// mailto yang sama dengan tombol "Hubungkan kami" di MVP-PWA/alumni.html.
 const TAUTAN_HUBUNGKAN =
   'mailto:edilaksogroup@gmail.com?subject=Cerita%20Alumni%20SMK%20untuk%20LANJUT';
 
 /**
- * F4 — Cerita Alumni SMK (docs/prd-sdd-lanjut.md Bagian 6 & 13; teks statis
- * persis docs/salinan-teks-lanjut.md §4.3 — tidak ada kalimat baru ditulis
- * di sini). Hanya cerita `tayang=true` yang pernah sampai ke sini —
- * disaring server-side (konten.repo.js `ambilCeritaAlumniTayang`), bukan
- * di klien (lihat hooks/useCeritaAlumni.ts).
+ * F4 — padanan MVP-PWA/alumni.html. Judul ada di page bar (AppShell).
+ * Hanya cerita ber-izin & `tayang` yang dikirim server (konten.repo.js
+ * `ambilCeritaAlumniTayang`), jadi layar kosong adalah keadaan yang benar
+ * selama belum ada cerita nyata.
  */
 export function CeritaAlumniScreen() {
   const { data, isPending, isError } = useCeritaAlumni();
 
   return (
-    <Section style={styles.halaman}>
-      <H1 style={styles.judul}>Cerita Alumni SMK</H1>
-      <Text style={styles.pendamping}>Mereka sudah lewat jalan ini.</Text>
+    <View style={gaya.layarIsiRapat}>
+      <Text style={s.pendamping}>Mereka sudah lewat jalan ini.</Text>
 
       {isPending ? (
-        <ActivityIndicator style={styles.muat} color={color.blue500} />
+        <Memuat />
       ) : isError ? (
         <KeadaanGalat />
       ) : !data?.length ? (
-        <KeadaanKosongAlumni />
+        <Kosong
+          judul="Cerita pertama sedang kami kumpulkan."
+          teks="Kenal alumni SMK yang tembus PTN?"
+          aksi={<Tombol label="Hubungkan kami" varian="sekunder" onPress={() => Linking.openURL(TAUTAN_HUBUNGKAN)} />}
+        />
       ) : (
-        <>
-          {data.map((cerita) => (
-            <KartuCerita key={cerita.id} cerita={cerita} />
-          ))}
-        </>
+        data.map((cerita) => <KartuCerita key={cerita.id} cerita={cerita} />)
       )}
-    </Section>
+
+      <Penafian>Cerita nyata tayang setelah ada izin tertulis dari yang bersangkutan.</Penafian>
+    </View>
   );
 }
 
-// Layar kosong F4 — teks persis salinan-teks-lanjut.md §4.3. BUKAN keadaan
-// kosong generik dari KeadaanBersama.tsx: §4.3 punya kalimat & ajakan
-// sendiri untuk keadaan ini, jadi yang generik tidak dipakai di sini.
-function KeadaanKosongAlumni() {
-  return (
-    <Article style={styles.keadaan}>
-      <Text style={styles.keadaanJudul}>Cerita pertama sedang kami kumpulkan.</Text>
-      <Text style={styles.keadaanTeks}>Kenal alumni SMK yang tembus PTN?</Text>
-      <Pressable onPress={() => Linking.openURL(TAUTAN_HUBUNGKAN)} style={styles.tombolHubungkan}>
-        <Text style={styles.tombolHubungkanTeks}>Hubungkan kami</Text>
-      </Pressable>
-    </Article>
-  );
-}
-
-// Format seragam persis PRD §13: asal SMK & jurusan, PTN & prodi, jalur,
-// hambatan, yang dilakukan — plus ajakan §4.3 di akhir tiap cerita.
 function KartuCerita({ cerita }: { cerita: CeritaAlumni }) {
+  const router = useRouter();
   return (
-    <Article style={styles.kartu}>
-      <Text style={styles.asal}>
-        {cerita.asal_smk} · {cerita.jurusan_smk}
-      </Text>
-      <Text style={styles.tujuan}>
-        → {cerita.ptn} · {cerita.prodi}
-      </Text>
-
-      <View style={styles.lencana}>
-        <Text style={styles.lencanaTeks}>Jalur {cerita.jalur}</Text>
-      </View>
-
-      <Text style={styles.baris}>
-        <Text style={styles.barisLabel}>Hambatan: </Text>
-        {cerita.hambatan}
-      </Text>
-      <Text style={styles.baris}>
-        <Text style={styles.barisLabel}>Yang dilakukan: </Text>
-        {cerita.yang_dilakukan}
-      </Text>
-
-      <View style={styles.ajakan}>
-        <Text style={styles.ajakanTeks}>Kamu juga akan punya cerita seperti ini.</Text>
-        <Link href="/daftar-periksa" asChild>
-          <Pressable>
-            <Text style={styles.ajakanTautan}>Simpan langkahmu di Daftar Periksa.</Text>
-          </Pressable>
-        </Link>
-      </View>
+    <Article>
+      <Kartu style={s.kartu}>
+        <View style={s.atas}>
+          <View style={s.atasIsi}>
+            <Text style={s.asal}>{[cerita.asal_smk, cerita.jurusan_smk].filter(Boolean).join(' · ')}</Text>
+            <Text style={s.tujuan}>→ {[cerita.ptn, cerita.prodi].filter(Boolean).join(' · ')}</Text>
+          </View>
+          {/* Lencana CONTOH ikut datanya: cerita nyata tidak membawanya. */}
+          {cerita.sumber === 'contoh' ? <Lencana varian="neutral">CONTOH</Lencana> : null}
+        </View>
+        <Lencana>Jalur {cerita.jalur}</Lencana>
+        <Text style={gaya.teksKecil}>
+          <Text style={gaya.tebal}>Hambatan: </Text>
+          {cerita.hambatan}
+        </Text>
+        <Text style={gaya.teksKecil}>
+          <Text style={gaya.tebal}>Yang dilakukan: </Text>
+          {cerita.yang_dilakukan}
+        </Text>
+        <Text style={s.ajakan}>
+          Kamu juga akan punya cerita seperti ini.{' '}
+          <Text style={gaya.tautan} onPress={() => router.push('/daftar-periksa')} accessibilityRole="link">
+            Simpan langkahmu di Daftar Periksa.
+          </Text>
+        </Text>
+      </Kartu>
     </Article>
   );
 }
 
-const styles = StyleSheet.create({
-  halaman: {
-    padding: spacing.gutter,
-    gap: spacing.s4,
-  },
-  judul: {
-    color: color.textBody,
-    fontSize: typography.size.h2,
-    fontWeight: typography.weight.semibold,
-    marginTop: 0,
-    marginBottom: 0,
-  },
-  pendamping: {
-    color: color.textMuted,
-    fontSize: typography.size.body,
-    marginTop: -spacing.s3,
-  },
-  muat: {
-    marginTop: spacing.s4,
-  },
-  keadaan: {
-    padding: spacing.s5,
-    borderRadius: radius.md,
-    backgroundColor: color.surfaceCard,
-    borderWidth: 1,
-    borderColor: color.borderHairline,
-    gap: spacing.s2,
-    alignItems: 'flex-start',
-  },
-  keadaanJudul: {
-    color: color.textBody,
-    fontSize: typography.size.title,
-    fontWeight: typography.weight.semibold,
-  },
-  keadaanTeks: {
-    color: color.textMuted,
-    fontSize: typography.size.body,
-  },
-  tombolHubungkan: {
-    marginTop: spacing.s2,
-    paddingVertical: spacing.s2,
-    paddingHorizontal: spacing.s4,
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: color.blue500,
-  },
-  tombolHubungkanTeks: {
-    color: color.blue600,
-    fontSize: typography.size.bodySm,
-    fontWeight: typography.weight.semibold,
-  },
-  kartu: {
-    borderRadius: radius.md,
-    backgroundColor: color.surfaceCard,
-    borderWidth: 1,
-    borderColor: color.borderHairline,
-    padding: spacing.s4,
-    gap: spacing.s2,
-  },
-  asal: {
-    color: color.textBody,
-    fontSize: typography.size.title,
-    fontWeight: typography.weight.semibold,
-  },
-  tujuan: {
-    color: color.blue600,
-    fontSize: typography.size.bodySm,
-    fontWeight: typography.weight.medium,
-    marginTop: -spacing.s1,
-  },
-  lencana: {
-    alignSelf: 'flex-start',
-    paddingVertical: spacing.s1,
-    paddingHorizontal: spacing.s3,
-    borderRadius: radius.pill,
-    backgroundColor: color.surfaceSoft,
-  },
-  lencanaTeks: {
-    color: color.blue600,
-    fontSize: typography.size.caption,
-    fontWeight: typography.weight.semibold,
-  },
-  baris: {
-    color: color.textMuted,
-    fontSize: typography.size.bodySm,
-    lineHeight: 20,
-  },
-  barisLabel: {
-    color: color.textBody,
-    fontWeight: typography.weight.semibold,
-  },
+const s = StyleSheet.create({
+  pendamping: { ...teks.bodySm, color: color.textMuted },
+  kartu: { gap: spacing.s3 },
+  atas: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: spacing.s3 },
+  atasIsi: { flex: 1 },
+  asal: { ...teks.title, fontFamily: font.semibold, color: color.textBody },
+  tujuan: { ...teks.bodySm, fontFamily: font.medium, color: color.blue600, marginTop: 2 },
   ajakan: {
-    marginTop: spacing.s2,
+    ...teks.bodySm,
+    color: color.textMuted,
     paddingTop: spacing.s3,
     borderTopWidth: 1,
     borderTopColor: color.borderHairline,
-  },
-  ajakanTeks: {
-    color: color.textSubtle,
-    fontSize: typography.size.caption,
-  },
-  ajakanTautan: {
-    color: color.textLink,
-    fontSize: typography.size.caption,
-    textDecorationLine: 'underline',
   },
 });
