@@ -10,8 +10,8 @@ import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { Ikon, Kartu, KeadaanGalat, Kepala, Kosong, Memuat, Sumber, gaya } from '../ui';
 
 /**
- * F2 — padanan MVP-PWA/khusus-smk.html: kartu buka-tutup (yang pertama
- * terbuka), tiap butir berpasangan "apa yang berbeda" + "apa yang bisa
+ * F2 — padanan MVP-PWA/khusus-smk.html: kartu buka-tutup (semua tertutup
+ * di awal, beda dari PWA), tiap butir berpasangan "apa yang berbeda" + "apa yang bisa
  * dilakukan". Butir tanpa pasangan lengkap disaring di lib/khususSmk.ts.
  */
 export function KhususSmkScreen() {
@@ -32,7 +32,8 @@ export function KhususSmkScreen() {
 
 function Isi({ data }: { data: ButirKhususSmk[] | undefined }) {
   const butir = butirBerpasangan(data ?? []);
-  const [terbuka, setTerbuka] = useState<Set<string>>(() => new Set(butir[0] ? [butir[0].id] : []));
+  // Semua tertutup di awal supaya seluruh judul terlihat sekaligus.
+  const [terbuka, setTerbuka] = useState<Set<string>>(() => new Set());
 
   if (!butir.length) {
     return <Kosong judul="Bagian ini masih kami siapkan." teks="Kalau kamu punya bahannya, kirim ke kami." />;

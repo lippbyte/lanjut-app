@@ -58,6 +58,7 @@ Perbedaan yang disengaja dari PWA:
 |---|---|---|
 | Beranda | Tahapan tanpa `diperiksa_pada` tidak ditampilkan (PWA menampilkannya dengan peringatan "Contoh"). Layar kosongnya mengarah ke laman resmi SNPMB. | PRD F1; keputusan PM 26 Sep 2026. |
 | Beranda | Tidak ada kartu "Latihan Hari Ini" dan pintu "Latihan & Arsip Belajar". | Fitur Latihan/Arsip belum ada di Expo. |
+| Khusus SMK | Semua kartu tertutup saat layar dibuka (PWA membuka kartu pertama). | Kartu pertama yang terbuka menutupi judul lain di layar HP; permintaan user 27 Sep 2026. |
 | Pilih Mapel | Tidak ada kartu "Lihat prospek & kampus" (F10). "Simpan ke Daftar Periksa" mencentang butir `mapel-tka` di akun, tidak membuat butir baru. | F10 belum ada di Expo; backend belum mendukung butir buatan pengguna. |
 | Pilih Mapel | Rangkuman umum memakai `GET /konten/mapel/agregasi-lintas-prodi` (jumlah prodi), PWA menjumlah bobot di klien. | Endpoint backend sudah ada. |
 | Daftar Periksa | Ada keping Kelas & Jalur untuk menyaring butir. Centang disimpan ke akun. | AC F5 di PRD (PWA belum menyaring). Jalur disimpan di perangkat karena akun belum punya medan jalur. |
