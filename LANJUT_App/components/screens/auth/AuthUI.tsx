@@ -169,22 +169,31 @@ export const BELUM = 'belum';
 export function PilihProdi({ nilai, onPilih }: { nilai: string | null; onPilih: (id: string) => void }) {
   const prodiQuery = useProdi();
   return (
-    <View style={styles.opsiDaftar} role="radiogroup">
-      <OpsiProdi label="Belum, aku belum tahu" aktif={nilai === BELUM} onPress={() => onPilih(BELUM)} />
+    <DaftarOpsi>
+      <OpsiPil label="Belum, aku belum tahu" aktif={nilai === BELUM} onPress={() => onPilih(BELUM)} />
       {prodiQuery.isPending ? (
         <ActivityIndicator color={color.blue500} />
       ) : prodiQuery.isError ? (
         <Text style={styles.catatan}>Daftar prodi belum bisa dimuat. Kamu tetap bisa memilih “belum”.</Text>
       ) : (
         prodiQuery.data.map((p) => (
-          <OpsiProdi key={p.id} label={p.nama} aktif={nilai === p.id} onPress={() => onPilih(p.id)} />
+          <OpsiPil key={p.id} label={p.nama} aktif={nilai === p.id} onPress={() => onPilih(p.id)} />
         ))
       )}
+    </DaftarOpsi>
+  );
+}
+
+/** Deretan keping pilihan tunggal (radiogroup). */
+export function DaftarOpsi({ children }: { children: React.ReactNode }) {
+  return (
+    <View style={styles.opsiDaftar} role="radiogroup">
+      {children}
     </View>
   );
 }
 
-function OpsiProdi({ label, aktif, onPress }: { label: string; aktif: boolean; onPress: () => void }) {
+export function OpsiPil({ label, aktif, onPress }: { label: string; aktif: boolean; onPress: () => void }) {
   return (
     <Pressable
       onPress={onPress}

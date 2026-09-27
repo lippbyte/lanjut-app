@@ -60,6 +60,19 @@ export async function saya(token: string): Promise<Pengguna> {
   return apiFetch<Pengguna>('/auth/saya', { token });
 }
 
+// Medan mengikuti `ubahProfilSkema` di server/src/modul/pengguna/pengguna.skema.js.
+// Medan yang tidak dikirim tidak diubah; `null` mengosongkannya.
+export type DataUbahProfil = {
+  nama_tampilan?: string;
+  kelas?: '10' | '11' | '12' | null;
+  prodi_impian?: string | null;
+};
+
+/** PATCH /pengguna/saya — mengembalikan profil terbaru (bentuk sama dengan /auth/saya). */
+export async function ubahProfil(token: string, data: DataUbahProfil): Promise<Pengguna> {
+  return apiFetch<Pengguna>('/pengguna/saya', { method: 'PATCH', body: data, token });
+}
+
 async function simpanSesi(sesi: Sesi) {
   await AsyncStorage.multiSet([
     [KUNCI_TOKEN, sesi.token],

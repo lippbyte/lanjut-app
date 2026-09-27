@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { Pengguna } from '../../api/auth';
+import { pesanUntuk, type DataUbahProfil, type Pengguna } from '../../api/auth';
+import { ApiError } from '../../api/client';
 import { useSesi } from '../../providers/AuthProvider';
 import { useProdi } from '../../hooks/useProdi';
 import { useProgresDaftarPeriksa, useSaringDaftarPeriksa } from '../../hooks/useProgresDaftarPeriksa';
+import { useUbahProfil } from '../../hooks/useUbahProfil';
 import { color, font, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Kartu, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
+import { BELUM, DaftarOpsi, Field, Input, OpsiPil, PesanGalat, PilihProdi } from './auth/AuthUI';
 
 // "Jalur Saya" (v1.1, LANJUT_004) di atas padanan MVP-PWA/akun.html
 // (keadaan "sudah masuk"). Keadaan tamu tidak ada di sini karena layar ini
@@ -26,7 +29,8 @@ export function AkunScreen() {
 
   return (
     <View style={gaya.layarIsiRapat}>
-      <KartuJalur pengguna={pengguna} />
+      {/* key: formulir yang setengah diisi tidak terbawa ke akun lain. */}
+      <KartuJalur key={pengguna.id} pengguna={pengguna} />
 
       <SeksiJudul>Kemajuan</SeksiJudul>
       <RingkasanKemajuan />
@@ -46,9 +50,12 @@ export function AkunScreen() {
 
 function KartuJalur({ pengguna }: { pengguna: Pengguna }) {
   const { data: daftarProdi } = useProdi();
+  const [ubah, setUbah] = useState(false);
   const namaProdi = pengguna.prodi_impian
     ? (daftarProdi?.find((p) => p.id === pengguna.prodi_impian)?.nama ?? pengguna.prodi_impian)
     : null;
+
+  if (ubah) return <FormJalur pengguna={pengguna} onSelesai={() => setUbah(false)} />;
 
   return (
     <Kartu>
@@ -57,6 +64,86 @@ function KartuJalur({ pengguna }: { pengguna: Pengguna }) {
       <View style={s.daftar}>
         <Baris label="Kelas" nilai={pengguna.kelas ? `Kelas ${pengguna.kelas}` : null} />
         <Baris label="Target prodi" nilai={namaProdi} />
+      </View>
+      <View style={s.aksi}>
+        <Tombol
+          label={namaProdi && pengguna.kelas ? 'Ubah' : 'Lengkapi jalurmu'}
+          varian="garis"
+          kecil
+          onPress={() => setUbah(true)}
+        />
+      </View>
+    </Kartu>
+  );
+}
+
+const KELAS_OPSI = ['10', '11', '12'] as const;
+type Kelas = (typeof KELAS_OPSI)[number];
+
+// Menyimpan ke PATCH /pengguna/saya. Validasi di sini hanya yang paling
+// jelas (nama kosong/terlalu panjang); server tetap sumber kebenaran.
+function FormJalur({ pengguna, onSelesai }: { pengguna: Pengguna; onSelesai: () => void }) {
+  const simpan = useUbahProfil();
+  const { pilih: setSaringan } = useSaringDaftarPeriksa();
+  const [nama, setNama] = useState(pengguna.nama_tampilan);
+  const [kelas, setKelas] = useState<Kelas | null>(pengguna.kelas);
+  const [prodi, setProdi] = useState<string>(pengguna.prodi_impian ?? BELUM);
+  const [galatNama, setGalatNama] = useState<string | null>(null);
+
+  const kirim = () => {
+    const namaBersih = nama.trim();
+    if (!namaBersih) return setGalatNama('Nama tampilan belum diisi.');
+    if (namaBersih.length > 60) return setGalatNama('Nama tampilan maksimal 60 karakter.');
+    setGalatNama(null);
+
+    // Hanya medan yang berubah yang dikirim.
+    const data: DataUbahProfil = {};
+    const prodiBaru = prodi === BELUM ? null : prodi;
+    if (namaBersih !== pengguna.nama_tampilan) data.nama_tampilan = namaBersih;
+    if (kelas !== pengguna.kelas) data.kelas = kelas;
+    if (prodiBaru !== pengguna.prodi_impian) data.prodi_impian = prodiBaru;
+    if (!Object.keys(data).length) return onSelesai();
+
+    simpan.mutate(data, {
+      onSuccess: () => {
+        // Kelas di perangkat mengalahkan kelas akun di Daftar Periksa, jadi
+        // ikut diganti supaya saringannya mengikuti kelas yang baru disimpan.
+        if (data.kelas) setSaringan({ kelas: data.kelas });
+        onSelesai();
+      },
+    });
+  };
+
+  const medan = simpan.error instanceof ApiError ? simpan.error.medan : undefined;
+
+  return (
+    <Kartu style={s.form}>
+      <Text style={s.eyebrow}>Ubah Jalur Saya</Text>
+      <Field label="Nama tampilan" galat={galatNama ?? medan?.nama_tampilan}>
+        <Input
+          value={nama}
+          onChangeText={(v) => {
+            setNama(v);
+            setGalatNama(null);
+          }}
+          maxLength={60}
+          autoCapitalize="words"
+        />
+      </Field>
+      <Field label="Kelas" galat={medan?.kelas}>
+        <DaftarOpsi>
+          {KELAS_OPSI.map((k) => (
+            <OpsiPil key={k} label={`Kelas ${k}`} aktif={kelas === k} onPress={() => setKelas(k)} />
+          ))}
+        </DaftarOpsi>
+      </Field>
+      <Field label="Target prodi" hint="Boleh dijawab “belum”." galat={medan?.prodi_impian}>
+        <PilihProdi nilai={prodi} onPilih={setProdi} />
+      </Field>
+      <PesanGalat teks={simpan.isError ? pesanUntuk(simpan.error) : null} />
+      <View style={s.aksiForm}>
+        <Tombol label="Batal" varian="hantu" onPress={onSelesai} />
+        <Tombol label={simpan.isPending ? 'Menyimpan…' : 'Simpan'} proses={simpan.isPending} onPress={kirim} />
       </View>
     </Kartu>
   );
@@ -121,6 +208,9 @@ const s = StyleSheet.create({
   label: { ...teks.caption, color: color.textMuted },
   nilai: { ...teks.bodySm, fontFamily: font.medium, color: color.textBody, flexShrink: 1, textAlign: 'right' },
   kemajuan: { gap: spacing.s3 },
+  aksi: { flexDirection: 'row', marginTop: spacing.s4 },
+  form: { gap: spacing.s4 },
+  aksiForm: { flexDirection: 'row', justifyContent: 'flex-end', gap: spacing.s2 },
   angka: { ...teks.body, fontFamily: font.semibold, color: color.textBody },
-  nilaiKosong:{ ...teks.bodySm, fontStyle: 'italic', color: color.textMuted, flexShrink: 1, textAlign: 'right' },
+  nilaiKosong: { ...teks.bodySm, color: color.textMuted, flexShrink: 1, textAlign: 'right' },
 });

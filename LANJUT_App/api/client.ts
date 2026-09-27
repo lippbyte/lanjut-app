@@ -56,7 +56,7 @@ export class ApiError extends Error {
 }
 
 type ApiFetchOpsi = {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
   /** Token sesi mentah — dikirim sebagai `Authorization: Bearer <token>`.
    *  Wajib diisi untuk rute yang dijaga `wajibLogin` (mis. /kemajuan) —

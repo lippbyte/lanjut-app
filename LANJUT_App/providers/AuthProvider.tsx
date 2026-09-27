@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import * as authApi from '../api/auth';
@@ -12,6 +12,7 @@ type NilaiAuth = {
   token: string | null;
   pengguna: Pengguna | null;
   terapkanSesi: (sesi: Sesi) => void;
+  perbaruiPengguna: (profil: Pengguna) => Promise<void>;
   keluar: () => Promise<void>;
 };
 
@@ -22,6 +23,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [pengguna, setPengguna] = useState<Pengguna | null>(null);
   const queryClient = useQueryClient();
+  // Dibaca oleh perbaruiPengguna, yang bisa dipanggil setelah request
+  // selesai — saat itu akun yang masuk mungkin sudah berganti.
+  const penggunaIdRef = useRef<string | null>(null);
+  penggunaIdRef.current = pengguna?.id ?? null;
 
   useEffect(() => {
     let batal = false;
@@ -66,6 +71,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setStatus('masuk');
   }, [queryClient]);
 
+  /** Profil terbaru dari server (mis. hasil PATCH /pengguna/saya). Diabaikan
+   * kalau sudah keluar atau berganti akun sejak request dikirim. */
+  const perbaruiPengguna = useCallback(async (profil: Pengguna) => {
+    if (penggunaIdRef.current !== profil.id) return;
+    setPengguna(profil);
+    await authApi.simpanPengguna(profil);
+  }, []);
+
   const keluar = useCallback(async () => {
     if (token) await authApi.keluar(token);
     else await authApi.hapusSesiLokal();
@@ -76,8 +89,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [token, queryClient]);
 
   const nilai = useMemo(
-    () => ({ status, token, pengguna, terapkanSesi, keluar }),
-    [status, token, pengguna, terapkanSesi, keluar]
+    () => ({ status, token, pengguna, terapkanSesi, perbaruiPengguna, keluar }),
+    [status, token, pengguna, terapkanSesi, perbaruiPengguna, keluar]
   );
 
   return <AuthContext.Provider value={nilai}>{children}</AuthContext.Provider>;
