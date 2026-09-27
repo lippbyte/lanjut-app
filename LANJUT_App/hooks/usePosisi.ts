@@ -1,5 +1,5 @@
 import { hitungPosisi, type Kebingungan, type Tenggat } from '../lib/cekPosisi';
-import { turunkanLinimasa } from '../lib/linimasa';
+import { tanggalMomen, turunkanLinimasa } from '../lib/linimasa';
 import { BUTIR_MAPEL_TKA } from '../lib/pilihMapel';
 import { useSesi } from '../providers/AuthProvider';
 import { useKemajuan } from './useKemajuan';
@@ -34,7 +34,7 @@ export function usePosisi(kebingungan: Kebingungan | null) {
 // turunkanLinimasa membuang tahapan yang belum terverifikasi (diperiksa_pada
 // null), jadi tanggal yang belum dicek ke laman resmi tidak pernah muncul.
 function tenggatDari(data: Parameters<typeof turunkanLinimasa>[0] | undefined): Tenggat | null {
-  const { terdekat, sisaHari } = turunkanLinimasa(data ?? []);
-  if (!terdekat || sisaHari === null || sisaHari < 0) return null;
-  return { judul: terdekat.judul, sisaHari, tanggalSelesai: terdekat.tanggal_selesai };
+  const { terdekat, sisaHari, momen } = turunkanLinimasa(data ?? []);
+  if (!terdekat || !momen || sisaHari === null || sisaHari < 0) return null;
+  return { judul: terdekat.judul, sisaHari, tanggal: tanggalMomen(terdekat, momen), momen };
 }

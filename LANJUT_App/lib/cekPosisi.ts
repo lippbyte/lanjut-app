@@ -7,7 +7,7 @@
  * menyuruh.
  */
 
-import { formatTanggalRingkas } from './linimasa';
+import { formatTanggalRingkas, type Momen } from './linimasa';
 
 export type Tahap = 'eksplorasi' | 'pemantapan' | 'persiapan' | 'menjelang';
 
@@ -22,14 +22,15 @@ export type SinyalPosisi = {
   /** Progres Daftar Periksa; null kalau kelas/jalur belum dipilih. */
   progres: { selesai: number; total: number } | null;
   /**
-   * Tahapan Linimasa terverifikasi yang paling dekat ditutup (hasil
-   * `turunkanLinimasa`). null kalau belum ada yang terverifikasi — kondisi
+   * Tenggat terdekat dari Linimasa terverifikasi (hasil `turunkanLinimasa`,
+   * sama dengan Beranda). null kalau belum ada yang terverifikasi — kondisi
    * normal, bukan galat: kalimat fokus lain tetap tampil seperti biasa.
    */
   tenggat: Tenggat | null;
 };
 
-export type Tenggat = { judul: string; sisaHari: number; tanggalSelesai: string };
+/** `tanggal` = tanggal mulai bila `momen` 'mulai', tanggal tutup bila 'selesai'. */
+export type Tenggat = { judul: string; sisaHari: number; tanggal: string; momen: Momen };
 
 export type Kebingungan = 'kampus' | 'mapel' | 'takut' | 'mulai';
 
@@ -100,13 +101,17 @@ export function hitungPosisi(sinyal: SinyalPosisi, kebingungan: Kebingungan | nu
   };
 }
 
-/** Salinan-teks §4.1: angka hari biasa + "tutup <tanggal>", bukan hitungan mundur. */
-export function kalimatTenggat({ judul, sisaHari, tanggalSelesai }: Tenggat): string {
-  const tanggal = formatTanggalRingkas(tanggalSelesai);
-  const kapan = tanggal ? ` (${tanggal})` : '';
+/**
+ * Salinan-teks §4.1: angka hari biasa + tanggal, bukan hitungan mundur.
+ * Belum dimulai → menuju tanggal mulai; sudah berjalan → menuju tutup.
+ */
+export function kalimatTenggat({ judul, sisaHari, tanggal, momen }: Tenggat): string {
+  const teksTanggal = formatTanggalRingkas(tanggal);
+  const kapan = teksTanggal ? ` (${teksTanggal})` : '';
+  const kata = momen === 'mulai' ? 'dimulai' : 'ditutup';
   return sisaHari === 0
-    ? `${judul} ditutup hari ini${kapan}.`
-    : `${judul} tinggal ${sisaHari} hari lagi sebelum ditutup${kapan}.`;
+    ? `${judul} ${kata} hari ini${kapan}.`
+    : `${judul} tinggal ${sisaHari} hari lagi sebelum ${kata}${kapan}.`;
 }
 
 type IsiTahap = Pick<Posisi, 'ringkas' | 'fokus' | 'langkah'>;

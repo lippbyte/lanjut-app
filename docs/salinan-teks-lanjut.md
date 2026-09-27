@@ -106,6 +106,8 @@ Dipakai di: beranda, notifikasi, layar kosong.
 **Kalimat pendamping:** Apa yang jatuh tempo, dan kapan.
 
 - **Tenggat terdekat:** Berikutnya: pendaftaran TKA — tutup 27 September
+- **Tenggat terdekat yang belum dimulai:** Berikutnya: pelaksanaan TKA — mulai 26 Oktober
+  *(Tahapan yang belum dimulai dihitung ke tanggal mulai; yang sudah berjalan — termasuk pada hari pertamanya — ke tanggal tutup. Berlaku sama di Beranda dan Cek Posisi Gue, LANJUT_021.)*
 - **Sesudah lewat:** Sudah lewat. Tenggat berikutnya ada di bawah.
 - **Penanda sumber:** Diperbarui dari laman resmi SNPMB · dicek 6 Agustus 2026
   *(Nama lembaga mengikuti `url_sumber` tiap tahapan, mis. "laman resmi Kemendikdasmen" untuk TKA — lihat `LANJUT_App/lib/sumber.ts`.)*

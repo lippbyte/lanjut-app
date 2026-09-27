@@ -4,11 +4,20 @@ export type StatusTahapan = 'done' | 'soon' | 'idle';
 
 export type TahapanTurunan = TahapanLinimasa & { status: StatusTahapan };
 
+/**
+ * Tanggal yang dihitung mundur untuk tenggat terdekat: 'mulai' bila
+ * tahapannya belum dimulai (mis. "Pelaksanaan TKA dimulai 26 Oktober"),
+ * 'selesai' bila sudah berjalan (mis. "Pendaftaran … ditutup 27 September").
+ */
+export type Momen = 'mulai' | 'selesai';
+
 export type LinimasaTerkini = {
   butir: TahapanTurunan[];
   terdekat: TahapanTurunan | null;
-  /** null kalau tidak ada tahapan mendatang — bukan angka negatif. */
+  /** Hari menuju `momen` tenggat terdekat. null kalau tidak ada tahapan
+   * mendatang — bukan angka negatif. */
   sisaHari: number | null;
+  momen: Momen | null;
 };
 
 function uraiTanggal(iso: string | null | undefined): number {
@@ -81,7 +90,12 @@ export function turunkanLinimasa(
     .sort((a, b) => uraiTanggal(a.tanggal_mulai) - uraiTanggal(b.tanggal_mulai))
     .map((t) => ({ ...t, status: 'idle' as StatusTahapan }));
 
+  // Data tidak membedakan "pendaftaran" dan "pelaksanaan" — keduanya rentang
+  // mulai–selesai. Yang membedakan adalah WAKTU: belum dimulai → yang
+  // penting tanggal mulainya; sudah berjalan → tanggal tutupnya. Tenggat
+  // terdekat = tahapan dengan momen berikutnya yang paling dekat.
   let terdekat: TahapanTurunan | null = null;
+  let momenTerdekat: { momen: Momen; ms: number } | null = null;
   for (const b of butir) {
     const selesai = uraiTanggal(b.tanggal_selesai);
     if (Number.isNaN(selesai)) continue;
@@ -89,13 +103,28 @@ export function turunkanLinimasa(
       b.status = 'done';
       continue;
     }
-    if (!terdekat || selesai < uraiTanggal(terdekat.tanggal_selesai)) terdekat = b;
+    const mulai = uraiTanggal(b.tanggal_mulai);
+    // Mulai HARI INI sudah dianggap berjalan → hitung ke tutup. Dengan begitu
+    // pendaftaran tetap "menuju … ditutup" sejak hari pertama, persis seperti
+    // sebelum LANJUT_021.
+    const kandidat: { momen: Momen; ms: number } =
+      !Number.isNaN(mulai) && mulai > hariIniMs ? { momen: 'mulai', ms: mulai } : { momen: 'selesai', ms: selesai };
+    if (!momenTerdekat || kandidat.ms < momenTerdekat.ms) {
+      terdekat = b;
+      momenTerdekat = kandidat;
+    }
   }
   if (terdekat) terdekat.status = 'soon';
 
   return {
     butir,
     terdekat,
-    sisaHari: terdekat ? Math.round((uraiTanggal(terdekat.tanggal_selesai) - hariIniMs) / 86400000) : null,
+    sisaHari: momenTerdekat ? Math.round((momenTerdekat.ms - hariIniMs) / 86400000) : null,
+    momen: momenTerdekat?.momen ?? null,
   };
+}
+
+/** Tanggal ISO momen tenggat (tanggal mulai atau tanggal selesai tahapan). */
+export function tanggalMomen(tahapan: TahapanLinimasa, momen: Momen): string {
+  return momen === 'mulai' ? tahapan.tanggal_mulai : tahapan.tanggal_selesai;
 }

@@ -5,7 +5,7 @@ import { Linking, StyleSheet, Text, View } from 'react-native';
 
 import type { TahapanLinimasa } from '../../api/types';
 import { useTahapanLinimasa } from '../../hooks/useTahapanLinimasa';
-import { formatRentang, formatTanggal, turunkanLinimasa, type TahapanTurunan } from '../../lib/linimasa';
+import { formatRentang, formatTanggal, tanggalMomen, turunkanLinimasa, type TahapanTurunan } from '../../lib/linimasa';
 import { lembagaSumber } from '../../lib/sumber';
 import { color, font, spacing, teks } from '../../theme/tokens';
 import {
@@ -75,17 +75,20 @@ function Isi({ data }: { data: TahapanLinimasa[] | undefined }) {
     );
   }
 
-  const adaTenggat = hasil.terdekat && hasil.sisaHari !== null && hasil.sisaHari >= 0;
+  const { terdekat, sisaHari, momen } = hasil;
+  const adaTenggat = terdekat && momen && sisaHari !== null && sisaHari >= 0;
 
   return (
     <>
-      {/* Tenggat terdekat: angka hari biasa, bukan hitungan detik (§4.1). */}
+      {/* Tenggat terdekat: angka hari biasa, bukan hitungan detik (§4.1).
+          Belum dimulai → menuju tanggal mulai; sudah berjalan → menuju tutup. */}
       <Kartu varian="brand">
         {adaTenggat ? (
           <>
-            <Text style={s.tenggatAngka}>{hasil.sisaHari} hari</Text>
+            <Text style={s.tenggatAngka}>{sisaHari} hari</Text>
             <Text style={s.tenggatTeks}>
-              menuju {hasil.terdekat!.judul} ditutup, {formatTanggal(hasil.terdekat!.tanggal_selesai)}.
+              menuju {terdekat.judul} {momen === 'mulai' ? 'dimulai' : 'ditutup'},{' '}
+              {formatTanggal(tanggalMomen(terdekat, momen))}.
             </Text>
           </>
         ) : (
