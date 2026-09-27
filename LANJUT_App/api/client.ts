@@ -14,13 +14,27 @@ const extra = Constants.expoConfig?.extra as
   | { apiUrl?: string; apiUrlProd?: string; apiUrlDevAndroid?: string; apiUrlDevWeb?: string }
   | undefined;
 
+/**
+ * Dev native (Expo Go / development build di HP): backend dianggap berjalan
+ * di komputer yang sama dengan Metro, jadi host `apiUrlDevAndroid` diganti
+ * host Metro (`hostUri`, mis. "10.141.5.75:8081"). IP LAN komputer boleh
+ * berubah tanpa build ulang maupun set env var.
+ */
+function urlDevNative(): string | undefined {
+  const bawaan = extra?.apiUrlDevAndroid;
+  const hostMetro = Constants.expoConfig?.hostUri?.split(':')[0];
+  if (!bawaan || !hostMetro) return bawaan;
+  // Bukan `new URL().hostname = …`: setter URL di React Native belum ada.
+  return bawaan.replace(/^(https?:\/\/)[^:/]+/, `$1${hostMetro}`);
+}
+
 // `apiUrl` (EXPO_PUBLIC_API_URL) mengalahkan pemilihan otomatis di bawahnya.
 const BASE_URL =
   extra?.apiUrl ||
   (__DEV__
     ? Platform.OS === 'web'
       ? extra?.apiUrlDevWeb
-      : extra?.apiUrlDevAndroid
+      : urlDevNative()
     : extra?.apiUrlProd);
 
 if (!BASE_URL) {
