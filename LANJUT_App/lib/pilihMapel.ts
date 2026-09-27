@@ -9,6 +9,22 @@ import type { MapelUntukProdi } from '../api/types';
 /** Butir "Pilih 2 mapel pilihan TKA" di /konten/checklist, dicentang oleh Pilih Mapel. */
 export const BUTIR_MAPEL_TKA = 'mapel-tka';
 
+/**
+ * Arti `prodi_mapel.bobot`, disalin apa adanya dari `_bobot` di
+ * MVP-PWA/data/prodi-mapel.json (sumber data benih) — bukan istilah baru.
+ * Dua mapel berbobot 3 itulah yang jadi saran 2 mapel pilihan TKA.
+ */
+const LABEL_BOBOT: Record<number, string> = {
+  3: 'Penentu',
+  2: 'Mendukung',
+  1: 'Menyinggung',
+};
+
+/** Label bobot, atau undefined untuk nilai di luar 1–3 (tidak ditebak). */
+export function labelBobot(bobot: number): string | undefined {
+  return LABEL_BOBOT[bobot];
+}
+
 export type MapelAgregat = {
   id: string;
   nama: string;

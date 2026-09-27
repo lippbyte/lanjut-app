@@ -6,7 +6,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { Prodi } from '../../api/types';
 import { useAgregasiMapelLintasProdi } from '../../hooks/useAgregasiMapelLintasProdi';
 import { useTandaiKemajuan } from '../../hooks/useKemajuan';
-import { BUTIR_MAPEL_TKA } from '../../lib/pilihMapel';
+import { BUTIR_MAPEL_TKA, labelBobot } from '../../lib/pilihMapel';
 import { useProdi } from '../../hooks/useProdi';
 import { useProdiMapel } from '../../hooks/useProdiMapel';
 import { useSesi } from '../../providers/AuthProvider';
@@ -154,10 +154,11 @@ function HasilProdi({ prodiId }: { prodiId: string }) {
   if (isPending) return <Memuat />;
   if (isError) return <KeadaanGalat />;
   // Urut bobot tertinggi dulu: dua teratas sah dijadikan saran mapel TKA.
+  // Bobot ikut tampil sebagai label supaya jelas kenapa dua itu yang disarankan.
   const baris: BarisMapel[] = (data ?? [])
     .slice()
     .sort((a, b) => b.bobot - a.bobot)
-    .map((m) => ({ id: m.id, nama: m.nama, tersedia: m.tersedia_di_smk }));
+    .map((m) => ({ id: m.id, nama: m.nama, tersedia: m.tersedia_di_smk, ket: labelBobot(m.bobot) }));
   return <IsiHasil baris={baris} />;
 }
 
