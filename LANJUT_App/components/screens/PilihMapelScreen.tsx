@@ -18,6 +18,7 @@ import {
   KeadaanGalat,
   Kepala,
   Kosong,
+  Lencana,
   Memuat,
   Penafian,
   SeksiJudul,
@@ -27,6 +28,8 @@ import {
 
 // Penafian F3 — wajib tampil di setiap hasil (PRD Bagian 6).
 const PENAFIAN = 'Ini rangkuman, bukan keputusan resmi. Cek laman SNPMB.';
+// Istilah yang sama dengan baris "Target prodi" di Jalur Saya.
+const LABEL_TARGET = 'Target prodi';
 
 type Langkah = { nama: 'masuk' } | { nama: 'daftar' } | { nama: 'hasil'; prodiId: string | null };
 
@@ -63,12 +66,14 @@ export function PilihMapelScreen() {
       ) : langkah.nama === 'daftar' ? (
         <LangkahDaftar
           daftarProdi={daftarProdi}
+          prodiTarget={prodiAkunValid}
           onPilih={(prodiId) => setLangkah({ nama: 'hasil', prodiId })}
         />
       ) : (
         <LangkahHasil
           prodi={langkah.prodiId ? (daftarProdi.find((p) => p.id === langkah.prodiId) ?? null) : null}
           totalProdi={daftarProdi.length}
+          prodiTarget={prodiAkunValid}
           onUbah={() => setLangkah({ nama: 'daftar' })}
         />
       )}
@@ -88,7 +93,16 @@ function LangkahMasuk({ onLanjut }: { onLanjut: () => void }) {
   );
 }
 
-function LangkahDaftar({ daftarProdi, onPilih }: { daftarProdi: Prodi[]; onPilih: (id: string | null) => void }) {
+function LangkahDaftar({
+  daftarProdi,
+  prodiTarget,
+  onPilih,
+}: {
+  daftarProdi: Prodi[];
+  /** prodi_impian akun (Jalur Saya) — ditandai supaya mudah ditemukan lagi. */
+  prodiTarget: string | null;
+  onPilih: (id: string | null) => void;
+}) {
   const perRumpun = new Map<string, Prodi[]>();
   for (const p of daftarProdi) {
     if (!perRumpun.has(p.rumpun)) perRumpun.set(p.rumpun, []);
@@ -111,6 +125,7 @@ function LangkahDaftar({ daftarProdi, onPilih }: { daftarProdi: Prodi[]; onPilih
                 <Kartu style={s.kartuRapat}>
                   <View style={s.baris}>
                     <Text style={s.barisTeks}>{p.nama}</Text>
+                    {p.id === prodiTarget ? <Lencana>{LABEL_TARGET}</Lencana> : null}
                     <Ikon nama="panah" ukuran={16} warna={color.ink500} />
                   </View>
                 </Kartu>
@@ -132,10 +147,12 @@ function LangkahDaftar({ daftarProdi, onPilih }: { daftarProdi: Prodi[]; onPilih
 function LangkahHasil({
   prodi,
   totalProdi,
+  prodiTarget,
   onUbah,
 }: {
   prodi: Prodi | null;
   totalProdi: number;
+  prodiTarget: string | null;
   onUbah: () => void;
 }) {
   return (
@@ -144,6 +161,7 @@ function LangkahHasil({
         <H2 style={s.judulHasil}>{prodi?.nama ?? 'Rangkuman umum'}</H2>
         <Tombol label="Ubah prodi" varian="hantu" kecil onPress={onUbah} />
       </View>
+      {prodi && prodi.id === prodiTarget ? <Lencana>{LABEL_TARGET}</Lencana> : null}
       {prodi ? <HasilProdi prodiId={prodi.id} /> : <HasilUmum totalProdi={totalProdi} />}
     </View>
   );
