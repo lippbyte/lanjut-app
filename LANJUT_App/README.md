@@ -6,6 +6,7 @@
 - Lima layar P0: Beranda/Linimasa, Khusus SMK, Pilih Mapel, Cerita Alumni, Daftar Periksa. Datanya diambil dari backend lewat React Query.
 - Masuk, Daftar, Akun + Keluar, dan perlindungan rute berbasis token.
 - Centang Daftar Periksa tersimpan ke akun (`/kemajuan`), jadi ikut pindah ke HP lain.
+- **Jalur Saya** (v1.1, di layar Akun `/akun`): nama tampilan, kelas, target prodi, dan ringkasan "X dari Y langkah Daftar Periksa selesai". Nama, kelas, dan prodi bisa diubah; disimpan ke akun lewat `PATCH /pengguna/saya`.
 - Tampilan disamakan dengan `MVP-PWA/` (lihat bagian **Tampilan**).
 
 **Catatan historis:** `docs/prd-sdd-lanjut.md` Bagian 8 dulu menolak React Native untuk v1. Keputusan itu berlaku untuk rilis PWA v1, bukan untuk arah proyek saat ini.
@@ -48,7 +49,7 @@ Tampilan meniru `MVP-PWA/` (port, bukan desain ulang):
 - **Token desain:** `theme/tokens.ts`. Warna, huruf, jarak, radius, bayangan, dan gradasi disalin dari `MVP-PWA/assets/tokens.css`. Komponen tidak menulis HEX atau ukuran huruf mentah.
 - **Huruf:** Poppins 400/500/600, sama dengan PWA. Dimuat di `app/_layout.tsx` lewat `@expo-google-fonts/poppins`.
 - **Komponen dasar:** `components/ui/` berisi padanan kelas CSS PWA: `Kartu` (`.kartu`, `--soft`, `--outline`, `--brand`), `KartuPintu`, `Lencana`, `Peringatan`, `Kosong`, `Tombol`, `Kepala`, `SeksiJudul`, `Sumber`/`Penafian`, dan `Ikon` (SVG garis yang sama dengan PWA).
-- **Navigasi:** app bar (maskot, wordmark, ikon profil), tab bar bawah empat ikon (Beranda, Khusus SMK, Pilih Mapel, Checklist), dan page bar dengan tombol kembali untuk halaman anak (Cerita Alumni, Akun). Semuanya ada di `components/layout/AppShell.tsx`.
+- **Navigasi:** app bar (maskot, wordmark, ikon profil), tab bar bawah empat ikon (Beranda, Khusus SMK, Pilih Mapel, Checklist), dan page bar dengan tombol kembali untuk halaman anak (Cerita Alumni, Jalur Saya). Semuanya ada di `components/layout/AppShell.tsx`.
 
 Perbedaan yang disengaja dari PWA:
 
@@ -104,6 +105,8 @@ server/                backend Express + MySQL (lihat server/README.md)
 - **`@expo/html-elements` untuk `Header`, `Nav`, `Main`, `Footer`, `Article`, `Section`, `H1`** — di web menghasilkan tag HTML semantik asli, di native menjadi `View`/`Text`.
 - **Tab bar memakai `<Link asChild>`** — supaya di web jadi `<a href>` sungguhan, bukan navigasi yang hanya jalan lewat klik.
 - **Status centang/pilihan/buka memakai atribut `aria-*`** (`aria-checked`, `aria-expanded`, `aria-current`), bukan `accessibilityState` — react-native-web tidak menerjemahkan `accessibilityState` ke atribut ARIA.
+- **Ringkasan kemajuan di Jalur Saya memakai `hooks/useProgresDaftarPeriksa`, hook yang sama dengan layar Daftar Periksa** — saringan kelas/jalur dan hitungan X/Y hanya ada di satu tempat, jadi angkanya selalu cocok.
+- **Pilihan kelas/jalur di perangkat disimpan per akun** (`lanjut.profil.lokal.v1:<id pengguna>`) — HP yang dipakai bergantian tidak membawa saringan akun lain.
 - **`DELETE /kemajuan/:id` tidak menghapus baris**, hanya mengosongkan `selesai_pada`; klien menganggap butir tercentang hanya kalau `selesai_pada` terisi.
 
 ## Yang belum ada
