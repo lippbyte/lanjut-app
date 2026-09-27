@@ -1,4 +1,4 @@
-// Benih: membaca app/data/*.json → INSERT ... ON DUPLICATE KEY UPDATE.
+// Benih: membaca MVP-PWA/data/*.json → INSERT ... ON DUPLICATE KEY UPDATE.
 // docs/SDD-Backend-Foundation.md §3.6. Berkas JSON TIDAK disalin ke SQL —
 // dibaca langsung dari sumbernya, dan itu tetap menjadi satu-satunya tempat
 // konten diedit selama Panel Admin belum ada.
@@ -24,7 +24,9 @@ const fs = require('fs');
 const path = require('path');
 const pool = require('../koneksi');
 
-const DIR_DATA = path.join(__dirname, '..', '..', '..', '..', 'app', 'data');
+// server/src/db/benih → naik 5 tingkat ke akar repo. Data konten tinggal di
+// MVP-PWA/data sejak restrukturisasi repo (78cfbad); sebelumnya app/data.
+const DIR_DATA = path.join(__dirname, '..', '..', '..', '..', '..', 'MVP-PWA', 'data');
 
 function bacaJson(namaBerkas) {
   const isi = fs.readFileSync(path.join(DIR_DATA, namaBerkas), 'utf8');

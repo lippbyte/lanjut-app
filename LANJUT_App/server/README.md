@@ -55,7 +55,7 @@ kosong — pesan galatnya menyebutkan variabel mana yang kurang.
 
 ```bash
 npm run migrasi   # menjalankan server/src/db/migrasi/001..006 yang belum jalan
-npm run benih     # mengisi konten dari app/data/*.json (idempoten, aman diulang)
+npm run benih     # mengisi konten dari MVP-PWA/data/*.json (idempoten, aman diulang)
 ```
 
 Migrasi dicatat di tabel `_migrasi` — hanya berkas yang belum pernah
@@ -63,7 +63,7 @@ dijalankan yang dieksekusi. Migrasi **tidak pernah** disunting setelah
 dijalankan di server tayang; perbaikan selalu berkas baru bernomor lebih
 tinggi (§3.6).
 
-Benih membaca `app/data/*.json` langsung (tidak menyalin isinya ke SQL) dan
+Benih membaca `MVP-PWA/data/*.json` langsung (tidak menyalin isinya ke SQL) dan
 memakai `INSERT ... ON DUPLICATE KEY UPDATE` — aman dijalankan berkali-kali.
 
 ## 3. Menjalankan server
@@ -155,7 +155,7 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
 ### Penyimpangan kecil dari SDD (dengan alasan)
 
 1. **Tabel `kategori_checklist` ditambahkan** (migrasi 002), di luar daftar
-   tabel eksplisit §3.4. `app/data/checklist.json` mengelompokkan butir
+   tabel eksplisit §3.4. `MVP-PWA/data/checklist.json` mengelompokkan butir
    checklist ke dalam kategori tampilan ("Berkas Pendaftaran", dst.), dan
    catatan di berkas JSON itu sendiri menyarankan "kalau nanti masuk basis
    data, kategori sebaiknya jadi tabel sendiri, bukan teks bebas." §3.4 SDD
