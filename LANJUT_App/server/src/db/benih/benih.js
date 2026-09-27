@@ -15,6 +15,17 @@
 //      tidak berpengaruh ke baris yang sudah ada — pakai skrip verifikasi.
 //      Kartu (benihArsipKartu) tidak termasuk: bukan konten yang diverifikasi
 //      lewat skrip itu.
+//   4. ...KECUALI isinya berubah (LANJUT_020). Tanda verifikasi berlaku untuk
+//      isi yang dicek, jadi bila ada SATU SAJA kolom non-verifikasi dari JSON
+//      yang berbeda dengan baris di basis data, kedua kolom itu di-reset ke
+//      'belum_diverifikasi' / NULL dan konten harus dicek & ditandai ulang.
+//      Isi sama persis → tanda dibiarkan (aturan 3). Caranya: dua penugasan
+//      verifikasi ditaruh PALING DEPAN di ON DUPLICATE KEY UPDATE — MySQL
+//      menilai penugasan dari kiri ke kanan, jadi di sana kolom konten masih
+//      bernilai LAMA dan bisa dibandingkan dengan VALUES() (`<=>` aman untuk
+//      NULL). Semua kolom konten ikut dibandingkan, termasuk urutan/metadata:
+//      reset yang tidak perlu hanya berarti cek ulang, sedangkan reset yang
+//      terlewat berarti tanggal salah tampil sebagai "sudah dicek".
 //
 // CATATAN PEMETAAN NAMA MEDAN (bukan perubahan nilai):
 // - `cerita-alumni.json` item punya field bernama `sumber` berisi "contoh" —
@@ -41,8 +52,8 @@ function bacaJson(namaBerkas) {
   return JSON.parse(isi);
 }
 
-async function benihLinimasa() {
-  const berkas = bacaJson('linimasa.json');
+/** `berkas` bisa diganti (dipakai test dengan berkas fixture); bawaan linimasa.json. */
+async function benihLinimasa(berkas = bacaJson('linimasa.json')) {
   for (const item of berkas.data) {
     await pool.execute(
       `INSERT INTO tahapan_linimasa
@@ -50,6 +61,14 @@ async function benihLinimasa() {
           sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
+         status_verifikasi = IF(judul <=> VALUES(judul) AND tanggal_mulai <=> VALUES(tanggal_mulai) AND tanggal_selesai <=> VALUES(tanggal_selesai) AND
+            jalur <=> VALUES(jalur) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
+            asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
+            status_verifikasi, 'belum_diverifikasi'),
+         diperiksa_pada = IF(judul <=> VALUES(judul) AND tanggal_mulai <=> VALUES(tanggal_mulai) AND tanggal_selesai <=> VALUES(tanggal_selesai) AND
+            jalur <=> VALUES(jalur) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
+            asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
+            diperiksa_pada, NULL),
          judul=VALUES(judul), tanggal_mulai=VALUES(tanggal_mulai),
          tanggal_selesai=VALUES(tanggal_selesai), jalur=VALUES(jalur),
          sumber=VALUES(sumber), pemilik=VALUES(pemilik),
@@ -83,6 +102,14 @@ async function benihKhususSmk() {
           sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
+         status_verifikasi = IF(judul <=> VALUES(judul) AND apa_yang_beda <=> VALUES(apa_yang_beda) AND apa_yang_bisa_dilakukan <=> VALUES(apa_yang_bisa_dilakukan) AND
+            urutan <=> VALUES(urutan) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
+            asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
+            status_verifikasi, 'belum_diverifikasi'),
+         diperiksa_pada = IF(judul <=> VALUES(judul) AND apa_yang_beda <=> VALUES(apa_yang_beda) AND apa_yang_bisa_dilakukan <=> VALUES(apa_yang_bisa_dilakukan) AND
+            urutan <=> VALUES(urutan) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
+            asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
+            diperiksa_pada, NULL),
          judul=VALUES(judul), apa_yang_beda=VALUES(apa_yang_beda),
          apa_yang_bisa_dilakukan=VALUES(apa_yang_bisa_dilakukan), urutan=VALUES(urutan),
          sumber=VALUES(sumber), pemilik=VALUES(pemilik),
@@ -113,6 +140,12 @@ async function benihProdi() {
          (id, nama, rumpun, sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
+         status_verifikasi = IF(nama <=> VALUES(nama) AND rumpun <=> VALUES(rumpun) AND sumber <=> VALUES(sumber) AND
+            pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
+            status_verifikasi, 'belum_diverifikasi'),
+         diperiksa_pada = IF(nama <=> VALUES(nama) AND rumpun <=> VALUES(rumpun) AND sumber <=> VALUES(sumber) AND
+            pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
+            diperiksa_pada, NULL),
          nama=VALUES(nama), rumpun=VALUES(rumpun), sumber=VALUES(sumber),
          pemilik=VALUES(pemilik), asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
       [
@@ -139,6 +172,12 @@ async function benihMapel() {
          (id, nama, tersedia_di_smk, sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
+         status_verifikasi = IF(nama <=> VALUES(nama) AND tersedia_di_smk <=> VALUES(tersedia_di_smk) AND sumber <=> VALUES(sumber) AND
+            pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
+            status_verifikasi, 'belum_diverifikasi'),
+         diperiksa_pada = IF(nama <=> VALUES(nama) AND tersedia_di_smk <=> VALUES(tersedia_di_smk) AND sumber <=> VALUES(sumber) AND
+            pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
+            diperiksa_pada, NULL),
          nama=VALUES(nama), tersedia_di_smk=VALUES(tersedia_di_smk), sumber=VALUES(sumber),
          pemilik=VALUES(pemilik), asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
       [
@@ -179,6 +218,18 @@ async function benihCeritaAlumni() {
           izin_tayang, tayang, sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
+         status_verifikasi = IF(nama <=> VALUES(nama) AND asal_smk <=> VALUES(asal_smk) AND jurusan_smk <=> VALUES(jurusan_smk) AND
+            ptn <=> VALUES(ptn) AND prodi <=> VALUES(prodi) AND jalur <=> VALUES(jalur) AND
+            hambatan <=> VALUES(hambatan) AND yang_dilakukan <=> VALUES(yang_dilakukan) AND izin_tayang <=> VALUES(izin_tayang) AND
+            tayang <=> VALUES(tayang) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
+            asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
+            status_verifikasi, 'belum_diverifikasi'),
+         diperiksa_pada = IF(nama <=> VALUES(nama) AND asal_smk <=> VALUES(asal_smk) AND jurusan_smk <=> VALUES(jurusan_smk) AND
+            ptn <=> VALUES(ptn) AND prodi <=> VALUES(prodi) AND jalur <=> VALUES(jalur) AND
+            hambatan <=> VALUES(hambatan) AND yang_dilakukan <=> VALUES(yang_dilakukan) AND izin_tayang <=> VALUES(izin_tayang) AND
+            tayang <=> VALUES(tayang) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
+            asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber),
+            diperiksa_pada, NULL),
          nama=VALUES(nama), asal_smk=VALUES(asal_smk), jurusan_smk=VALUES(jurusan_smk),
          ptn=VALUES(ptn), prodi=VALUES(prodi), jalur=VALUES(jalur), hambatan=VALUES(hambatan),
          yang_dilakukan=VALUES(yang_dilakukan), izin_tayang=VALUES(izin_tayang),
@@ -257,6 +308,16 @@ async function benihChecklist(berkas = bacaJson('checklist.json')) {
             kategori_id, sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
+           status_verifikasi = IF(judul <=> VALUES(judul) AND urutan <=> VALUES(urutan) AND berlaku_untuk_kelas <=> VALUES(berlaku_untuk_kelas) AND
+              berlaku_untuk_jalur <=> VALUES(berlaku_untuk_jalur) AND berlaku_untuk_rumpun <=> VALUES(berlaku_untuk_rumpun) AND kategori_id <=> VALUES(kategori_id) AND
+              sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND
+              url_sumber <=> VALUES(url_sumber),
+              status_verifikasi, 'belum_diverifikasi'),
+           diperiksa_pada = IF(judul <=> VALUES(judul) AND urutan <=> VALUES(urutan) AND berlaku_untuk_kelas <=> VALUES(berlaku_untuk_kelas) AND
+              berlaku_untuk_jalur <=> VALUES(berlaku_untuk_jalur) AND berlaku_untuk_rumpun <=> VALUES(berlaku_untuk_rumpun) AND kategori_id <=> VALUES(kategori_id) AND
+              sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND
+              url_sumber <=> VALUES(url_sumber),
+              diperiksa_pada, NULL),
            judul=VALUES(judul), urutan=VALUES(urutan),
            berlaku_untuk_kelas=VALUES(berlaku_untuk_kelas),
            berlaku_untuk_jalur=VALUES(berlaku_untuk_jalur),
@@ -338,4 +399,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { jalankanBenih, benihChecklist };
+module.exports = { jalankanBenih, benihLinimasa, benihChecklist };
