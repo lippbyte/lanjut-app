@@ -38,3 +38,7 @@ desktop.ini
 # Temporary / scratch audit scripts
 MVP-PWA/scratch_*
 scratch/
+
+# APK hasil unduhan EAS. Harus di .gitignore root: EAS Build hanya membaca
+# berkas ini saat mengemas proyek, jadi LANJUT_App/.gitignore tidak cukup.
+LANJUT_App/build/
