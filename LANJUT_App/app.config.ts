@@ -45,6 +45,9 @@ const config: ExpoConfig = {
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
+  // Ikon status bar gelap sejak aplikasi dibuka (sebelum JS jalan); di
+  // runtime dijaga <StatusBar style="dark"> di app/_layout.tsx.
+  androidStatusBar: { barStyle: 'dark-content' },
   plugins: [
     'expo-router',
     ['expo-build-properties', { android: { usesCleartextTraffic: IZINKAN_HTTP } }],

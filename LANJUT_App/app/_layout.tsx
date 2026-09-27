@@ -25,14 +25,25 @@ export default function RootLayout() {
     Poppins_600SemiBold,
   });
 
+  // Ikon status bar gelap sejak render pertama (termasuk saat memuat huruf),
+  // supaya jam & baterai terbaca di atas app bar yang berwarna terang.
+  const statusBar = <StatusBar style="dark" />;
+
   // Galat muat huruf tidak boleh mengunci aplikasi — jatuh ke huruf sistem.
-  if (!hurufSiap && !galatHuruf) return <LayarMemuat />;
+  if (!hurufSiap && !galatHuruf) {
+    return (
+      <>
+        {statusBar}
+        <LayarMemuat />
+      </>
+    );
+  }
 
   return (
     <SafeAreaProvider>
       <QueryProvider>
         <AuthProvider>
-          <StatusBar style="dark" />
+          {statusBar}
           <Slot />
         </AuthProvider>
       </QueryProvider>
