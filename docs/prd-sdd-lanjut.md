@@ -5,7 +5,7 @@
 **Status:** v1 — sumber kebenaran tunggal
 **Tanggal:** 6 Agustus 2026
 
-> **Aturan pakai dokumen ini.** Seluruh slide, kode, dan dokumen lain mengambil angka, nama fitur, dan definisi dari sini. Kalau ada perbedaan antara dokumen ini dan slide mana pun, **dokumen ini yang benar**. Setiap perubahan dicatat di Bagian 12.
+> **Aturan pakai dokumen ini.** Seluruh slide, kode, dan dokumen lain mengambil angka, nama fitur, dan definisi dari sini. Kalau ada perbedaan antara dokumen ini dan slide mana pun, **dokumen ini yang benar**. Setiap perubahan dicatat di ~~Bagian 12~~ Bagian 16 (Catatan Perubahan). *(Diperbaiki 27 Sep 2026: rujukan bagian keliru sejak dokumen dibuat.)*
 
 ---
 
@@ -41,7 +41,7 @@ Catatan: T4 sengaja ditulis rendah. Yang bernilai bagi penilai bukan besarnya pe
 | Prediksi kelulusan atau skor SNBT | Tidak ada data untuk memvalidasi; salah prediksi merusak kepercayaan permanen |
 | Melayani siswa SMA | Segmen itu sudah dilayani banyak pihak; melayaninya menghapus pembeda LANJUT |
 | Media sosial / forum antar pengguna | Butuh moderasi yang tidak sanggup ditangani tim, dan risiko konten |
-| Aplikasi native Android/iOS di v1 | Lihat Bagian 8 — memperlambat perolehan pengguna |
+| ~~Aplikasi native Android/iOS di v1~~ | ~~Lihat Bagian 8 — memperlambat perolehan pengguna~~ → **Diperbarui 27 Sep 2026:** tidak berlaku lagi sejak keputusan 18 Sep 2026. App Android (dan web) kini dibangun dengan Expo di `LANJUT_App/` sebagai jalur utama; iOS belum dibangun. Lihat Bagian 8 dan 16. |
 | Konten mitra dicampur ke halaman resmi | Menghapus posisi netral LANJUT, yang merupakan keunggulan utamanya |
 
 ## 4. Pengguna & Jobs-to-be-Done
@@ -153,7 +153,9 @@ Dua siswa berlatih 30 menit sehari selama 3 bulan. Yang satu melatih topik yang 
 
 ## 8. Keputusan Teknologi
 
-**Keputusan: web-first (PWA), mobile-first, satu basis kode.**
+> **Diperbarui 27 Sep 2026 — keputusan di bagian ini sudah tidak berlaku.** Sejak 18 Sep 2026 (lihat Bagian 16), app dibangun dengan **Expo (React Native)** untuk Android + Web dalam satu basis kode di `LANJUT_App/`. PWA (`MVP-PWA/`) menjadi MVP berstatus arsip dan acuan tampilan. APK Android dibangun lewat EAS (commit c908e84, `LANJUT_App/README.md`). Teks di bawah dipertahankan sebagai catatan keputusan 6 Agustus 2026.
+
+~~**Keputusan: web-first (PWA), mobile-first, satu basis kode.**~~
 
 | Pertimbangan | Alasan |
 |---|---|
@@ -162,7 +164,7 @@ Dua siswa berlatih 30 menit sehari selama 3 bulan. Yang satu melatih topik yang 
 | Nilai lintas mapel | Satu produk sekaligus memenuhi penilaian Pemrograman Web, Basis Data, dan UI/UX Mobile |
 | Waktu tim | 4 minggu tidak cukup untuk membangun native sekaligus mengisi konten |
 
-**Konsekuensi yang diterima:** notifikasi dorong terbatas, dan tidak ada ikon di Play Store. Keduanya dapat ditambahkan setelah ada pengguna. **Ditolak:** React Native dan Native Android untuk v1 — bukan karena lebih buruk, tetapi karena memperlambat hal yang paling menentukan penilaian, yaitu perolehan pengguna nyata.
+**Konsekuensi yang diterima:** notifikasi dorong terbatas, dan tidak ada ikon di Play Store. Keduanya dapat ditambahkan setelah ada pengguna. ~~**Ditolak:** React Native dan Native Android untuk v1 — bukan karena lebih buruk, tetapi karena memperlambat hal yang paling menentukan penilaian, yaitu perolehan pengguna nyata.~~ → **Diperbarui 27 Sep 2026:** React Native (lewat Expo) justru dipilih pada 18 Sep 2026; lihat catatan di awal bagian ini.
 
 ## 9. Ukuran Keberhasilan
 
@@ -187,7 +189,7 @@ Dua siswa berlatih 30 menit sehari selama 3 bulan. Yang satu melatih topik yang 
 | **Arsip tetap kosong** | F6 mati, latihan harian tidak jalan | Kartu kurasi tim wajib ada lebih dulu |
 | **Anggota tim berangkat PKL** | Tim tersebar, tempo turun | Pekerjaan riset (F3, F4) dirancang bisa jalan tersebar |
 | **Tenggat 27 September lewat** | Nilai inti produk anjlok setelah masa pendaftaran | Rilis v1 paling lambat 3 September |
-| **Kartu "data lokal akan ditautkan ke akun" di daftar.html tidak pernah benar-benar terjadi** | Pengguna nyata dijanjikan sesuatu yang tidak ditepati sistem | Sembunyikan/ubah teks kartu segera; sambungkan /sinkron/klaim sebagai kerja terpisah |
+| **Kartu "data lokal akan ditautkan ke akun" di daftar.html tidak pernah benar-benar terjadi** | Pengguna nyata dijanjikan sesuatu yang tidak ditepati sistem | Sembunyikan/ubah teks kartu segera; sambungkan /sinkron/klaim sebagai kerja terpisah → **Status 27 Sep 2026:** teks kartu di `MVP-PWA/daftar.html` sudah diganti menjadi pernyataan (data lokal tetap di perangkat, terpisah dari akun), bukan janji (commit 12f01ff). `/sinkron/klaim` masih belum dipanggil klien mana pun. |
 
 ## 11. Pertanyaan Terbuka
 
@@ -229,6 +231,11 @@ Dua siswa berlatih 30 menit sehari selama 3 bulan. Yang satu melatih topik yang 
           │  Isi konten & cerita│
           └─────────────────────┘
 ```
+
+> **Diperbarui 27 Sep 2026.** Diagram di atas adalah rancangan 6 Agustus; kondisi sekarang:
+> - **Klien:** ~~PWA~~ → klien utama adalah app **Expo** (`LANJUT_App/`, Android + Web). PWA (`MVP-PWA/`) berstatus arsip.
+> - **Kemajuan daftar periksa:** ~~penyimpanan lokal~~ → di app Expo, centang ditulis ke akun lewat `/kemajuan` (commit 0341ff6, 26 Sep 2026). PWA arsip masih menyimpannya di localStorage.
+> - **Panel admin tim:** belum dibangun. Konten diisi lewat `MVP-PWA/data/*.json` + `npm run benih`, dan tanda sudah-dicek lewat `npm run verifikasi-konten` (LANJUT_008, LANJUT_010).
 
 **Prinsip yang mengikat:** setiap potongan konten wajib punya kolom `sumber` (resmi/pengguna/mitra), `pemilik`, dan `diperiksa_pada` **sejak versi pertama**, meskipun v1 hanya memakai kelas "resmi". Menambahkannya belakangan berarti menulis ulang model data pada Oktober — persis saat tim menghadapi TKA.
 
@@ -276,6 +283,8 @@ Panel admin → Tambah tahapan/butir/cerita
 → Wajib isi url_sumber & diperiksa_pada → Tayang
 ```
 
+> **Status 27 Sep 2026:** panel admin belum ada; lihat catatan di bawah diagram Bagian 12 untuk cara mengisi konten saat ini.
+
 ## 15. Definisi Selesai (Definition of Done)
 
 Sebuah fitur disebut selesai bila:
@@ -291,9 +300,10 @@ Sebuah fitur disebut selesai bila:
 | Tanggal | Perubahan | Alasan |
 |---|---|---|
 | 6 Agu 2026 | Dokumen dibuat | — |
-| 6 Agu 2026 | Tumpukan teknologi: PWA, bukan React Native | Perolehan pengguna lebih menentukan penilaian daripada keunggulan native |
+| 6 Agu 2026 | Tumpukan teknologi: PWA, bukan React Native → *digantikan entri 18 Sep 2026 (Expo), lihat di bawah* | Perolehan pengguna lebih menentukan penilaian daripada keunggulan native |
 | 6 Agu 2026 | F3 Penolong Pilih Mapel naik ke P0 | Ini pembeda inti; tanpa ini LANJUT hanya kumpulan informasi |
 | 6 Agu 2026 | F6 Arsip wajib berisi kartu kurasi lebih dulu | Mencegah pola "kerangka kosong yang tidak pernah diisi" |
 | 31 Agu 2026 | F10 Eksplorasi Tujuan masuk Bagian 6 sebagai lingkup **v1.1** (bukan syarat rilis awal), dan data prodi F3 disempitkan ke 18 prodi hasil riset (Opsi A) | Hasil F3 dijamin bisa dilanjutkan ke profil prodi yang lengkap, bukan berujung layar "belum tersedia". Rinciannya di `eksplorasi-tujuan-instruksi.md` dan `SDD-F10-eksplorasi-tujuan.md` |
 | 18 Sep 2026 | Rencana app mobile pindah dari Flutter ke konsolidasi Android+Web dalam satu basis kode Expo; PWA saat ini jadi MVP | Keterbatasan waktu membuat 3 basis kode terpisah (2 app + website) tidak realistis untuk tim; syarat wajib app Android tetap terpenuhi, sekaligus mengurangi beban maintenance jangka panjang |
-| 18 Sep 2026 | Dikonfirmasi: kemajuan daftar periksa 100% localStorage di PWA, /kemajuan & /sinkron/klaim belum pernah dipanggil klien manapun; app Expo mereplikasi perilaku ini apa adanya | Ditemukan lewat investigasi F5; menghindari membangun alur login yang tidak dibutuhkan untuk paritas |
+| 18 Sep 2026 | Dikonfirmasi: kemajuan daftar periksa 100% localStorage di PWA, ~~/kemajuan &~~ /sinkron/klaim belum pernah dipanggil klien manapun; ~~app Expo mereplikasi perilaku ini apa adanya~~ → **Diperbarui 27 Sep 2026:** app Expo kini punya login dan menyimpan centang ke akun lewat `/kemajuan` (commit 0341ff6, 26 Sep). Bagian PWA masih benar (tetap localStorage), dan `/sinkron/klaim` masih belum dipanggil klien mana pun | Ditemukan lewat investigasi F5; menghindari membangun alur login yang tidak dibutuhkan untuk paritas |
+| 27 Sep 2026 | Koreksi bagian yang usang: §3 non-goal app native, §8 keputusan teknologi, §10 risiko kartu daftar.html, §12 arsitektur (klien, penyimpanan kemajuan, panel admin), §14 Alur C, entri 6 Agu dan 18 Sep di atas, serta rujukan "Bagian 12" di aturan pakai. Teks lama dicoret, tidak dihapus | Keputusan Expo 18 Sep dan penyimpanan kemajuan ke akun (26 Sep) membuat beberapa pernyataan status keliru (LANJUT_015) |
