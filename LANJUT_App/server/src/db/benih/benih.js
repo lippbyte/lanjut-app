@@ -205,8 +205,39 @@ async function benihCeritaAlumni() {
   console.log(`[benih] cerita_alumni: ${berkas.data.length} baris`);
 }
 
-async function benihChecklist() {
-  const berkas = bacaJson('checklist.json');
+/**
+ * `berlaku_untuk_rumpun` (opsional, migrasi 006): array nama rumpun persis
+ * seperti `rumpun` di prodi.json, mis. ["Kesehatan"]. Tidak ada / array
+ * kosong → NULL = berlaku untuk semua rumpun (perilaku sebelum kolom ini).
+ * Nama yang tidak dikenal DITOLAK: salah ketik akan membuat butir tidak
+ * pernah tampil ke siapa pun tanpa ada yang sadar.
+ */
+function rumpunButir(butir, rumpunSah) {
+  const daftar = butir.berlaku_untuk_rumpun;
+  if (daftar === undefined || daftar === null) return null;
+  if (!Array.isArray(daftar)) {
+    throw new Error(`butir "${butir.id}": berlaku_untuk_rumpun harus array, mis. ["Kesehatan"].`);
+  }
+  if (daftar.length === 0) return null;
+  for (const r of daftar) {
+    if (!rumpunSah.has(r)) {
+      throw new Error(
+        `butir "${butir.id}": rumpun "${r}" tidak dikenal. Pilihan: ${[...rumpunSah].join(' | ')}`
+      );
+    }
+  }
+  return daftar.join(',');
+}
+
+/** `berkas` bisa diganti (dipakai test dengan berkas contoh); bawaan checklist.json. */
+async function benihChecklist(berkas = bacaJson('checklist.json')) {
+  const rumpunSah = new Set(bacaJson('prodi.json').data.map((p) => p.rumpun));
+  // Validasi seluruh berkas dulu supaya salah ketik tidak meninggalkan benih setengah jadi.
+  const rumpunPerButir = new Map();
+  for (const kategori of berkas.kategori) {
+    for (const butir of kategori.butir) rumpunPerButir.set(butir.id, rumpunButir(butir, rumpunSah));
+  }
+
   let totalButir = 0;
   for (const kategori of berkas.kategori) {
     await pool.execute(
@@ -219,13 +250,14 @@ async function benihChecklist() {
       totalButir += 1;
       await pool.execute(
         `INSERT INTO butir_daftar_periksa
-           (id, judul, urutan, berlaku_untuk_kelas, berlaku_untuk_jalur, kategori_id,
-            sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           (id, judul, urutan, berlaku_untuk_kelas, berlaku_untuk_jalur, berlaku_untuk_rumpun,
+            kategori_id, sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON DUPLICATE KEY UPDATE
            judul=VALUES(judul), urutan=VALUES(urutan),
            berlaku_untuk_kelas=VALUES(berlaku_untuk_kelas),
-           berlaku_untuk_jalur=VALUES(berlaku_untuk_jalur), kategori_id=VALUES(kategori_id),
+           berlaku_untuk_jalur=VALUES(berlaku_untuk_jalur),
+           berlaku_untuk_rumpun=VALUES(berlaku_untuk_rumpun), kategori_id=VALUES(kategori_id),
            sumber=VALUES(sumber), pemilik=VALUES(pemilik),
            status_verifikasi=VALUES(status_verifikasi), asal=VALUES(asal),
            url_sumber=VALUES(url_sumber), diperiksa_pada=VALUES(diperiksa_pada)`,
@@ -235,6 +267,7 @@ async function benihChecklist() {
           butir.urutan,
           butir.berlaku_untuk_kelas.join(','),
           butir.berlaku_untuk_jalur.join(','),
+          rumpunPerButir.get(butir.id),
           kategori.id,
           berkas.sumber,
           berkas.pemilik,
@@ -303,4 +336,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { jalankanBenih };
+module.exports = { jalankanBenih, benihChecklist };

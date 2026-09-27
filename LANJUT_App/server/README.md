@@ -229,5 +229,20 @@ curl -s "http://localhost:3000/api/v1/konten/checklist?kelas=12&jalur=SNBP&rumpu
   bertambah oleh butir rumpun lain.
 - Tiap butir di respons kini punya `berlaku_untuk_rumpun`: `null` (umum) atau
   array rumpun.
-- Butir khusus rumpun belum ada; mengisinya kerja tim konten. `npm run benih`
-  belum membaca kolom ini.
+- Butir khusus rumpun belum ada; mengisinya kerja tim konten, lewat
+  `MVP-PWA/data/checklist.json` + `npm run benih` (lihat di bawah).
+
+**Menambah butir khusus rumpun (tim konten).** Di `MVP-PWA/data/checklist.json`,
+beri butir medan opsional `berlaku_untuk_rumpun` berisi array nama rumpun,
+ditulis **persis** seperti `rumpun` di `prodi.json`:
+
+```json
+{ "id": "surat-sehat", "judul": "…", "urutan": 12,
+  "berlaku_untuk_kelas": ["12"], "berlaku_untuk_jalur": ["SNBP", "SNBT"],
+  "berlaku_untuk_rumpun": ["Kesehatan"] }
+```
+
+Lalu jalankan `npm run benih`. Butir tanpa medan ini (atau array kosong) tetap
+berlaku untuk semua rumpun. Nama rumpun yang tidak dikenal membuat benih
+berhenti dengan pesan galat berisi daftar pilihan yang sah, sebelum ada data
+checklist yang ditulis. Contoh lengkap: `tests/contoh/checklist-contoh-rumpun.json`.
