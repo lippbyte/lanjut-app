@@ -787,10 +787,11 @@ depan tenggat yang mau dilihat siswa.~~
 
 > **Diperbarui 27 Sep 2026:** berlaku untuk MVP-PWA saja. Untuk LANJUT_App,
 > `401` justru mengembalikan ke layar Masuk (perilaku yang disengaja, bukan
-> bug). Persisnya: `401` saat pemeriksaan sesi ketika app dibuka
-> (`GET /auth/saya` di `AuthProvider`) menghapus sesi dan membuka layar Masuk.
-> `401` dari permintaan lain di tengah pemakaian saat ini tampil sebagai
-> keadaan galat di layar itu, belum otomatis keluar.
+> bug), **kapan pun** — saat app dibuka maupun di tengah pemakaian — dengan
+> pesan penjelasan "Sesi kamu sudah berakhir. Masuk lagi untuk melanjutkan."
+> Ditangani terpusat di `apiFetch` (`api/client.ts`) + `AuthProvider`: hanya
+> untuk request bertoken dengan kode `TIDAK_MASUK`/`SESI_KEDALUWARSA`.
+> `401 KREDENSIAL_SALAH` (sandi salah) tetap galat biasa (LANJUT_018).
 
 ### 6.6 Alur E — Keadaan tepi
 
@@ -806,7 +807,7 @@ depan tenggat yang mau dilihat siswa.~~
 > **Diperbarui 27 Sep 2026:** baris yang berujung "turun ke mode tamu"
 > (server mati, token kedaluwarsa, `localStorage` mati) hanya berlaku untuk
 > MVP-PWA. Di LANJUT_App tidak ada mode tamu: server mati → keadaan galat;
-> sesi tidak sah saat app dibuka → layar Masuk (lihat §6.5).
+> sesi tidak sah kapan pun → layar Masuk dengan pesan (lihat §6.5).
 
 ---
 
