@@ -1,25 +1,40 @@
-import { hitungPosisi, type Kebingungan } from '../lib/cekPosisi';
+import { hitungPosisi, type Kebingungan, type Tenggat } from '../lib/cekPosisi';
+import { turunkanLinimasa } from '../lib/linimasa';
 import { BUTIR_MAPEL_TKA } from '../lib/pilihMapel';
 import { useSesi } from '../providers/AuthProvider';
 import { useKemajuan } from './useKemajuan';
 import { useProgresDaftarPeriksa, useSaringDaftarPeriksa } from './useProgresDaftarPeriksa';
+import { useTahapanLinimasa } from './useTahapanLinimasa';
 
 /**
  * Cek Posisi Gue — menggabungkan sinyal yang app sudah punya: prodi impian
- * dari akun, centang `mapel-tka`, dan progres Daftar Periksa (hitungan yang
- * sama dengan Jalur Saya). Galat pemuatan tidak menghentikan hasil: sinyal
- * yang gagal dianggap belum ada, jadi user baru tetap dapat tahap awal.
+ * dari akun, centang `mapel-tka`, progres Daftar Periksa (hitungan yang
+ * sama dengan Jalur Saya), dan tenggat Linimasa terdekat (tenggat yang sama
+ * dengan Beranda). Galat pemuatan tidak menghentikan hasil: sinyal yang
+ * gagal dianggap belum ada, jadi user baru tetap dapat tahap awal.
  */
 export function usePosisi(kebingungan: Kebingungan | null) {
   const { pengguna } = useSesi();
   const { kelas, jalur, isPending: saringMemuat } = useSaringDaftarPeriksa();
   const hasil = useProgresDaftarPeriksa(kelas, jalur);
   const kemajuanQuery = useKemajuan();
+  const linimasaQuery = useTahapanLinimasa();
 
-  const isPending = saringMemuat || hasil.isPending || kemajuanQuery.isPending;
+  const isPending = saringMemuat || hasil.isPending || kemajuanQuery.isPending || linimasaQuery.isPending;
   const mapelTkaSelesai = !!kemajuanQuery.data?.some((k) => k.butir_id === BUTIR_MAPEL_TKA && k.selesai_pada);
   const progres = hasil.data ? hasil.data.progres : null;
 
-  const posisi = hitungPosisi({ adaProdi: !!pengguna?.prodi_impian, mapelTkaSelesai, progres }, kebingungan);
+  const posisi = hitungPosisi(
+    { adaProdi: !!pengguna?.prodi_impian, mapelTkaSelesai, progres, tenggat: tenggatDari(linimasaQuery.data) },
+    kebingungan
+  );
   return { isPending, posisi };
+}
+
+// turunkanLinimasa membuang tahapan yang belum terverifikasi (diperiksa_pada
+// null), jadi tanggal yang belum dicek ke laman resmi tidak pernah muncul.
+function tenggatDari(data: Parameters<typeof turunkanLinimasa>[0] | undefined): Tenggat | null {
+  const { terdekat, sisaHari } = turunkanLinimasa(data ?? []);
+  if (!terdekat || sisaHari === null || sisaHari < 0) return null;
+  return { judul: terdekat.judul, sisaHari, tanggalSelesai: terdekat.tanggal_selesai };
 }
