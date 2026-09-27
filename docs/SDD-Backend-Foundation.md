@@ -5,6 +5,8 @@
 **Status:** **Draf SDD — dua keputusan PM memblokir dimulainya implementasi** (§11.1: B1 jadwal/P0, B2 hosting & biaya)
 **Tanggal:** 22 Agustus 2026
 
+> **Diperbarui 27 Sep 2026:** prinsip **B-K2** (§1.2) dan bagian yang diturunkan darinya (§6.1, §6.3, §6.4, §7.3, RB2, RB8, §11.3, §12) tidak berlaku untuk LANJUT_App (Expo), yang didesain online-first. Teks lama dicoret dan diberi catatan di tempatnya, tidak dihapus (LANJUT_016).
+
 > **Aturan pakai dokumen ini.** Dokumen ini merancang **cara membangun** lapisan
 > server yang sudah digambarkan di §12 `docs/prd-sdd-lanjut.md`. Ia **tidak**
 > menambah, mengurangi, atau menafsir ulang requirement produk. Urutan
@@ -63,7 +65,7 @@ Yang benar-benar **baru** dari keputusan PM/user kali ini ada dua:
 | # | Keputusan | Alasan |
 |---|---|---|
 | B-K1 | **Klien tetap berfungsi penuh tanpa server.** Backend bersifat **aditif**: ia menambah sinkronisasi & multi-perangkat, tidak menjadi syarat agar aplikasi jalan. Mode tamu (tanpa akun) tetap menjadi mode bawaan. | Ini yang menjaga agar keputusan backend tidak menyandera P0. Kalau server mati, macet, atau belum siap, F1–F5 tetap tayang seperti sekarang. Sekaligus menjaga T5 (≥50 pengguna nyata sebelum 23 Oktober): memaksa daftar akun di layar pertama adalah cara tercepat kehilangan pengguna yang justru sedang dihitung untuk penilaian. |
-| B-K2 | **`localStorage` tetap sumber kebenaran untuk penulisan; server adalah cadangan & penyatu perangkat.** Klien menulis lokal dulu, lalu mengirim ke server. | Menghindari kelas bug paling mahal di aplikasi seperti ini: layar yang menunggu jaringan. Siswa memakai HP dengan koneksi tidak menentu; sesi latihan tidak boleh berhenti karena satu permintaan gagal. |
+| B-K2 | ~~**`localStorage` tetap sumber kebenaran untuk penulisan; server adalah cadangan & penyatu perangkat.** Klien menulis lokal dulu, lalu mengirim ke server.~~ → **Diperbarui 27 Sep 2026:** tidak berlaku untuk LANJUT_App (Expo). App menulis langsung ke server dengan optimistic UI + rollback, didesain online-first (app mewajibkan login). B-K2 masih relevan **hanya** untuk MVP-PWA yang tetap memakai localStorage, dan di sana pun baru separuh: PWA menulis ke localStorage, tetapi tidak pernah mengirim kemajuan atau latihan ke server (PWA hanya memanggil auth, profil, dan `/konten/prodi`). **Keputusan:** LANJUT_App tidak akan disesuaikan ke B-K2; kalau offline support dibutuhkan di masa depan, perlu desain baru, bukan revert ke prinsip ini (LANJUT_016). | Menghindari kelas bug paling mahal di aplikasi seperti ini: layar yang menunggu jaringan. Siswa memakai HP dengan koneksi tidak menentu; sesi latihan tidak boleh berhenti karena satu permintaan gagal. |
 | B-K3 | **Catatan pribadi bersifat append-only dan ber-`id` buatan klien.** `riwayat_latihan`, `sesi_latihan`, dan `kemajuan` disinkronkan secara idempoten berdasarkan `id`/kunci gabungan. | Aturan ini sudah dikunci `SDD-LevelIn.md` §4.3 no. 1. Karena catatannya adalah fakta yang tidak pernah diubah, penyatuan dua perangkat menjadi operasi gabungan (*union*) yang bebas konflik — bukan negosiasi versi. |
 | B-K4 | **Otorisasi berbasis kepemilikan, diperiksa di lapisan repositori, bukan di rute.** Setiap query data pribadi **wajib** membawa `pengguna_id` di klausa `WHERE`, bukan mengandalkan pemeriksaan terpisah setelah baris terambil. | Cara paling umum kartu pribadi bocor adalah `SELECT ... WHERE id = ?` lalu lupa membandingkan pemiliknya. Dengan `WHERE id = ? AND pemilik_id = ?`, kelalaian itu menghasilkan "tidak ditemukan", bukan kebocoran. |
 | B-K5 | **SQL ditulis eksplisit dan hanya hidup di berkas `*.repo.js`.** Tidak ada ORM yang menyembunyikan skema (§2.2). | Dua alasan sekaligus: skema di §3 dokumen ini adalah yang dipresentasikan untuk penilaian **Basis Data** (§8 dokumen induk menyebut nilai lintas mapel), dan tim pemula lebih aman memperbaiki SQL yang bisa dibaca daripada menebak SQL yang dihasilkan pustaka. |
@@ -668,6 +670,12 @@ aplikasi terasa cepat atau menggantung**:
 Kegagalan jaringan **tidak pernah** menjadi layar galat di alur normal. Yang
 ditampilkan hanyalah penanda status sinkron yang tenang (§7.2).
 
+> **Diperbarui 27 Sep 2026:** urutan di atas turunan B-K2 dan hanya berlaku
+> untuk MVP-PWA. LANJUT_App (Expo) membaca dan menulis langsung ke API: saat
+> memuat tampil penanda memuat, dan bila gagal tampil keadaan galat ("Sedang
+> tidak tersambung…"). Centang ditulis optimistis lalu dibatalkan bila server
+> menolak. Ini keputusan final online-first (LANJUT_016), bukan utang teknis.
+
 ### 6.2 Alur A — Pengguna baru tanpa akun (mode tamu, bawaan)
 
 ```
@@ -710,6 +718,12 @@ Tiga hal yang dikunci di alur ini:
 3. **Idempoten.** Klaim yang diulang (koneksi putus di tengah) tidak
    menggandakan apa pun — dijamin `id` buatan klien.
 
+> **Diperbarui 27 Sep 2026:** alur klaim ini bergantung pada data yang ditulis
+> lokal lebih dulu (B-K2). Tidak berlaku untuk LANJUT_App: tidak ada mode tamu
+> dan tidak ada data lokal untuk diklaim, karena semua data langsung ditulis
+> ke akun. Di MVP-PWA, `POST /sinkron/klaim` juga belum pernah dipanggil
+> (lihat komentar di `MVP-PWA/daftar.html`). Endpoint-nya tetap ada di server.
+
 ### 6.4 Alur C — Sinkronisasi berjalan & penyatuan dua perangkat
 
 Tiga jenis data, tiga aturan penyatuan yang berbeda — dan perbedaan ini
@@ -726,6 +740,13 @@ disengaja:
 setelah sesi latihan selesai. **Bukan** setiap kartu dijawab — itu akan
 mengubah sesi latihan menjadi rentetan permintaan jaringan dan melanggar
 B-K2.
+
+> **Diperbarui 27 Sep 2026:** jadwal sinkronisasi di atas hanya relevan untuk
+> klien yang menulis lokal lebih dulu (B-K2, MVP-PWA), dan belum ada klien
+> yang memanggil `/sinkron`. LANJUT_App menulis tiap perubahan langsung ke
+> endpoint-nya (mis. `PUT`/`DELETE /kemajuan/:butirId` per centang), jadi
+> tidak ada data lokal yang perlu disatukan. Aturan penyatuan di tabel tetap
+> berlaku sebagai perilaku server untuk `/sinkron`.
 
 ### 6.5 Alur D — Permintaan terautentikasi (setiap kali)
 
@@ -805,8 +826,11 @@ mengubah keputusan navigasi mana pun.
 
 ### 7.3 Yang **tidak** dibutuhkan dari desain
 
-- Tidak ada layar pemuatan penuh (*full-page loader*). Data selalu tersedia dari
-  `localStorage` lebih dulu (B-K2), jadi tidak pernah ada layar yang menunggu.
+- ~~Tidak ada layar pemuatan penuh (*full-page loader*). Data selalu tersedia dari
+  `localStorage` lebih dulu (B-K2), jadi tidak pernah ada layar yang menunggu.~~
+  → **Diperbarui 27 Sep 2026:** hanya berlaku untuk MVP-PWA. LANJUT_App
+  menampilkan penanda memuat saat data diambil dari API (online-first,
+  LANJUT_016).
 - Tidak ada dinding login (*login wall*) di mana pun.
 - Tidak ada layar verifikasi surel — surel opsional dan tidak diverifikasi (§5.2).
 - Tidak ada tampilan "sesi/perangkat aktif" di v1; kolomnya sudah ada bila kelak
@@ -1009,13 +1033,13 @@ server/
 | # | Risiko | Dampak | Mitigasi |
 |---|---|---|---|
 | **RB1** | **Pekerjaan backend menggeser rilis P0 3 September.** Lihat analisis lengkap §11.2 — ini risiko terpenting di dokumen ini. | P0 (F1–F5) tidak tayang tepat waktu → risiko "Tenggat 27 September lewat" di §10 dokumen induk terwujud → nilai inti produk anjlok. | Rancangan ini dibuat agar backend **bisa** dikerjakan tanpa menyentuh `app/` sampai tahap B8 (B-K1, §9.3). Tetapi **keputusan apakah dikerjakan sekarang atau setelah 3 September adalah keputusan PM (B1), bukan keputusan teknis.** SDD ini tidak mengambilnya. |
-| **RB2** | **Biaya & operasi hosting.** `rancangan-arsip-latihan-banksoal.md` §3.2 menulis **Hosting Rp 0** — asumsi itu hanya berlaku untuk berkas statis. | Angka BEP & ROI di Business Plan berubah; atau layanan gratis dengan "tidur otomatis" membuat permintaan pertama menunggu puluhan detik dan Alur B (≤15 detik, §14) gagal. | Diangkat sebagai keputusan PM **B2** (§11.1). Bahan pertimbangan disiapkan di §11.3. Mitigasi teknis bila memakai paket gratis: klien selalu merender dari `localStorage` lebih dulu (B-K2), sehingga server yang lambat bangun tidak pernah terlihat sebagai layar menunggu. |
+| **RB2** | **Biaya & operasi hosting.** `rancangan-arsip-latihan-banksoal.md` §3.2 menulis **Hosting Rp 0** — asumsi itu hanya berlaku untuk berkas statis. | Angka BEP & ROI di Business Plan berubah; atau layanan gratis dengan "tidur otomatis" membuat permintaan pertama menunggu puluhan detik dan Alur B (≤15 detik, §14) gagal. | Diangkat sebagai keputusan PM **B2** (§11.1). Bahan pertimbangan disiapkan di §11.3. ~~Mitigasi teknis bila memakai paket gratis: klien selalu merender dari `localStorage` lebih dulu (B-K2), sehingga server yang lambat bangun tidak pernah terlihat sebagai layar menunggu.~~ → **Diperbarui 27 Sep 2026:** hanya berlaku untuk MVP-PWA. Di LANJUT_App (online-first, LANJUT_016) server yang lambat bangun **terlihat** sebagai penanda memuat, jadi paket hosting yang "tidur otomatis" langsung terasa oleh pengguna. |
 | **RB3** | **Akun menaikkan gesekan dan menekan T5** (≥50 pengguna nyata sebelum 23 Oktober) dan T1/T2. | Syarat penilaian KIK justru terancam oleh fitur yang dimaksudkan memperkuatnya. | B-K1: akun **opsional**, mode tamu adalah bawaan, tidak ada dinding login (§6.2, §7.3). Ajakan membuat akun ditempatkan **setelah** pengguna merasakan nilai, bukan sebelum. Perlu konfirmasi PM (B5). |
 | **RB4** | **Menyimpan data pribadi siswa (sebagian di bawah umur) di server** menciptakan kewajiban yang tidak ada saat semuanya di `localStorage`: kebijakan privasi, dasar pemrosesan, persetujuan, hak hapus (UU PDP). | Risiko hukum & reputasi; juga pertanyaan penguji yang wajar dan sulit dijawab bila belum dipikirkan. | Minimalkan data sejak rancangan: **tanpa** nama asli wajib, **tanpa** nomor HP, **tanpa** asal sekolah pada akun, surel opsional. Perlu: halaman kebijakan privasi singkat + endpoint hapus akun. **Butuh keputusan PM (B6)** soal siapa penanggung jawab data dan apakah perlu persetujuan wali. |
 | **RB5** | **Fungsi keputusan Level-In menyimpang antara klien dan server.** | Angka kalibrasi berbeda antara Beranda dan hasil API, tanpa satu pun galat muncul. | `keputusan.js` server adalah salinan lapisan 2 `assets/levelin.js`, dan **kedua sisi diuji dengan berkas kasus uji yang sama** (§9.4). Aturan `SDD-LevelIn.md` §4.3 no. 2 dipertahankan: server tidak pernah menerima nilai turunan dari klien. |
 | **RB6** | **Kesalahan SQL klasik oleh tim pemula**: injeksi lewat penyambungan string, atau lupa menyaring pemilik. | Kebocoran kartu pribadi — melanggar janji privasi `rancangan-arsip-latihan-banksoal.md` §2.1 yang sekaligus menjadi pengaman HAKI. | B-K4 + tiga aturan §2.2, dijaga otomatis oleh `periksa-sql.js` (§9.4) dan uji otorisasi eksplisit (`kartu-otorisasi.test.js`). Pemeriksaan otomatis dipilih justru **karena** timnya pemula: disiplin yang bergantung pada ingatan akan gagal. |
 | **RB7** | **Dua sumber kebenaran** (`localStorage` vs server) menghasilkan data yang berbeda di dua perangkat. | Pengguna melihat kemajuan/riwayat yang berbeda dan berhenti percaya. | Aturan penyatuan per jenis data ditulis eksplisit di §6.4, dan mayoritas data dibuat **append-only** sehingga bebas konflik secara struktural (B-K3) — bukan diselesaikan dengan "yang terakhir menang" untuk semuanya. |
-| **RB8** | **Server mati membuat seluruh aplikasi mati** — kelas kegagalan yang **tidak ada** sebelum backend. | Aplikasi yang tadinya selalu bisa dibuka menjadi bisa "tumbang". | B-K1 + B-K2: klien merender dari `localStorage`/`data/*.json` lebih dulu; kegagalan API senyap; `401` menurunkan ke mode tamu, bukan ke layar terkunci (§6.5). |
+| **RB8** | **Server mati membuat seluruh aplikasi mati** — kelas kegagalan yang **tidak ada** sebelum backend. | Aplikasi yang tadinya selalu bisa dibuka menjadi bisa "tumbang". | B-K1 + B-K2: klien merender dari `localStorage`/`data/*.json` lebih dulu; kegagalan API senyap; `401` menurunkan ke mode tamu, bukan ke layar terkunci (§6.5). → **Diperbarui 27 Sep 2026:** mitigasi bagian B-K2 hanya berlaku untuk MVP-PWA. Untuk LANJUT_App (online-first, LANJUT_016) risiko ini **diterima**: server mati berarti data tidak termuat dan layar menampilkan keadaan galat. |
 | **RB9** | **Rahasia (`.env`, sandi basis data) ter-commit ke git.** | Basis data bisa diakses siapa pun yang melihat repositori. | `.gitignore` sejak commit pertama `server/`; `.env.example` tanpa nilai; aturan §8.5 bahwa rahasia yang pernah ter-commit dianggap bocor dan **diganti**. |
 | **RB10** | **Basis data tanpa cadangan.** | Data pengguna yang hanya ada di server bisa hilang permanen — lebih buruk daripada keadaan `localStorage` sekarang. | Cadangan terjadwal wajib **sebelum** pengguna nyata masuk (§8.5), dan `localStorage` sengaja **tidak** dikosongkan setelah sinkronisasi (§6.3) sehingga perangkat tetap memegang salinan. |
 | **RB11** | **Beban dukungan lupa kata sandi** karena tidak ada pemulihan mandiri (§5.5). | Siswa terkunci dari akunnya; tim mengerjakan setel ulang manual. | Realistis pada 50–150 pengguna, **tidak** di atas itu. Diangkat sebagai keputusan PM **B4**. Mitigasi tambahan: mode tamu tetap jalan, jadi terkunci dari akun **tidak** berarti terkunci dari aplikasi. |
@@ -1080,7 +1104,7 @@ server/
 
 | Yang perlu diputuskan | Catatan |
 |---|---|
-| Node + MySQL yang menyala terus vs paket gratis "tidur otomatis" | Paket gratis membuat permintaan pertama menunggu puluhan detik. Dengan B-K2 (render dari `localStorage` dulu) itu **tidak terlihat** oleh pengguna pada F1–F5, tetapi **terasa** saat masuk/daftar. |
+| Node + MySQL yang menyala terus vs paket gratis "tidur otomatis" | Paket gratis membuat permintaan pertama menunggu puluhan detik. Dengan B-K2 (render dari `localStorage` dulu) itu **tidak terlihat** oleh pengguna pada F1–F5, tetapi **terasa** saat masuk/daftar. → **Diperbarui 27 Sep 2026:** hanya berlaku untuk MVP-PWA. Di LANJUT_App (online-first) penundaan itu terasa di **semua** layar, jadi ini alasan kuat memilih server yang menyala terus. |
 | Satu asal atau dua asal | Bila Express sekaligus menyajikan `app/` sebagai berkas statis, urusan CORS hilang dan kuki `HttpOnly` menjadi mungkin (§5.3) — lebih aman **dan** lebih sederhana. Ini disarankan secara teknis bila hostingnya memungkinkan. |
 | HTTPS & domain | Wajib (§8.5). Domain sudah dianggarkan Rp 150.000/tahun (§3.2 dokumen rancangan). |
 | Cadangan basis data | Wajib sebelum pengguna nyata masuk (RB10). Perlu dipastikan paket yang dipilih menyediakannya atau tim menjadwalkannya sendiri. |
@@ -1109,7 +1133,7 @@ server/
 | `prd-sdd-lanjut.md` §12 (wajib `sumber`, `pemilik`, `diperiksa_pada` sejak versi pertama) | §3.4 (metadata sumber di semua tabel konten) |
 | `prd-sdd-lanjut.md` §13 (model data) | §3.4, §3.5 — dipetakan tanpa mengubah bentuk |
 | `prd-sdd-lanjut.md` §13 (`prodi ↔ mapel` many-to-many) | `prodi_mapel`, §3.4 & §3.7 |
-| `prd-sdd-lanjut.md` §14 Alur B (≤15 detik) | B-K2, §6.1, §5.3 (umur sesi) |
+| `prd-sdd-lanjut.md` §14 Alur B (≤15 detik) | ~~B-K2, §6.1,~~ §5.3 (umur sesi) → **Diperbarui 27 Sep 2026:** B-K2 dan §6.1 hanya berlaku untuk MVP-PWA. Di LANJUT_App, target ≤15 detik bergantung pada kecepatan API (online-first, LANJUT_016). |
 | `prd-sdd-lanjut.md` §15 (DoD) | §4.2 (kode galat → salinan teks), §7.1–§7.2 |
 | `rancangan-arsip-latihan-banksoal.md` §1 (tiga kelas kepercayaan) | `kartu.sumber`, `kartu.pemilik_id`, `kartu.penyedia` — §3.4 |
 | `rancangan-arsip-latihan-banksoal.md` §2.1 (arsip privat, pengaman HAKI) | §8.4 (otorisasi kepemilikan, `404` bukan `403`) |
