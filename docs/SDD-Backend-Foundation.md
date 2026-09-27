@@ -5,7 +5,9 @@
 **Status:** **Draf SDD — dua keputusan PM memblokir dimulainya implementasi** (§11.1: B1 jadwal/P0, B2 hosting & biaya)
 **Tanggal:** 22 Agustus 2026
 
-> **Diperbarui 27 Sep 2026:** prinsip **B-K2** (§1.2) dan bagian yang diturunkan darinya (§6.1, §6.3, §6.4, §7.3, RB2, RB8, §11.3, §12) tidak berlaku untuk LANJUT_App (Expo), yang didesain online-first. Teks lama dicoret dan diberi catatan di tempatnya, tidak dihapus (LANJUT_016).
+> **Diperbarui 27 Sep 2026:** prinsip berikut dan bagian yang diturunkan darinya tidak berlaku untuk LANJUT_App (Expo). Keduanya masih berlaku untuk MVP-PWA. Teks lama dicoret dan diberi catatan di tempatnya, tidak dihapus.
+> - **B-K1** (§1.2) — mode tamu & akun opsional; LANJUT_App mewajibkan login. Turunan: §4.4, §6.2, §6.5, §6.6, §7.3, RB3, RB8, B5 (LANJUT_017).
+> - **B-K2** (§1.2) — `localStorage` sebagai sumber kebenaran; LANJUT_App online-first. Turunan: §6.1, §6.3, §6.4, §7.3, RB2, RB8, §11.3, §12 (LANJUT_016).
 
 > **Aturan pakai dokumen ini.** Dokumen ini merancang **cara membangun** lapisan
 > server yang sudah digambarkan di §12 `docs/prd-sdd-lanjut.md`. Ia **tidak**
@@ -64,7 +66,7 @@ Yang benar-benar **baru** dari keputusan PM/user kali ini ada dua:
 
 | # | Keputusan | Alasan |
 |---|---|---|
-| B-K1 | **Klien tetap berfungsi penuh tanpa server.** Backend bersifat **aditif**: ia menambah sinkronisasi & multi-perangkat, tidak menjadi syarat agar aplikasi jalan. Mode tamu (tanpa akun) tetap menjadi mode bawaan. | Ini yang menjaga agar keputusan backend tidak menyandera P0. Kalau server mati, macet, atau belum siap, F1–F5 tetap tayang seperti sekarang. Sekaligus menjaga T5 (≥50 pengguna nyata sebelum 23 Oktober): memaksa daftar akun di layar pertama adalah cara tercepat kehilangan pengguna yang justru sedang dihitung untuk penilaian. |
+| B-K1 | ~~**Klien tetap berfungsi penuh tanpa server.** Backend bersifat **aditif**: ia menambah sinkronisasi & multi-perangkat, tidak menjadi syarat agar aplikasi jalan. Mode tamu (tanpa akun) tetap menjadi mode bawaan.~~ → **Diperbarui 27 Sep 2026:** tidak berlaku untuk LANJUT_App (Expo). Login diwajibkan (keputusan produk, mode tamu dihapus). B-K1 masih relevan untuk MVP-PWA yang tidak mewajibkan akun (PWA tetap punya mode tamu). Lihat juga B-K2 (LANJUT_016, LANJUT_017). | Ini yang menjaga agar keputusan backend tidak menyandera P0. Kalau server mati, macet, atau belum siap, F1–F5 tetap tayang seperti sekarang. Sekaligus menjaga T5 (≥50 pengguna nyata sebelum 23 Oktober): memaksa daftar akun di layar pertama adalah cara tercepat kehilangan pengguna yang justru sedang dihitung untuk penilaian. |
 | B-K2 | ~~**`localStorage` tetap sumber kebenaran untuk penulisan; server adalah cadangan & penyatu perangkat.** Klien menulis lokal dulu, lalu mengirim ke server.~~ → **Diperbarui 27 Sep 2026:** tidak berlaku untuk LANJUT_App (Expo). App menulis langsung ke server dengan optimistic UI + rollback, didesain online-first (app mewajibkan login). B-K2 masih relevan **hanya** untuk MVP-PWA yang tetap memakai localStorage, dan di sana pun baru separuh: PWA menulis ke localStorage, tetapi tidak pernah mengirim kemajuan atau latihan ke server (PWA hanya memanggil auth, profil, dan `/konten/prodi`). **Keputusan:** LANJUT_App tidak akan disesuaikan ke B-K2; kalau offline support dibutuhkan di masa depan, perlu desain baru, bukan revert ke prinsip ini (LANJUT_016). | Menghindari kelas bug paling mahal di aplikasi seperti ini: layar yang menunggu jaringan. Siswa memakai HP dengan koneksi tidak menentu; sesi latihan tidak boleh berhenti karena satu permintaan gagal. |
 | B-K3 | **Catatan pribadi bersifat append-only dan ber-`id` buatan klien.** `riwayat_latihan`, `sesi_latihan`, dan `kemajuan` disinkronkan secara idempoten berdasarkan `id`/kunci gabungan. | Aturan ini sudah dikunci `SDD-LevelIn.md` §4.3 no. 1. Karena catatannya adalah fakta yang tidak pernah diubah, penyatuan dua perangkat menjadi operasi gabungan (*union*) yang bebas konflik — bukan negosiasi versi. |
 | B-K4 | **Otorisasi berbasis kepemilikan, diperiksa di lapisan repositori, bukan di rute.** Setiap query data pribadi **wajib** membawa `pengguna_id` di klausa `WHERE`, bukan mengandalkan pemeriksaan terpisah setelah baris terambil. | Cara paling umum kartu pribadi bocor adalah `SELECT ... WHERE id = ?` lalu lupa membandingkan pemiliknya. Dengan `WHERE id = ? AND pemilik_id = ?`, kelalaian itu menghasilkan "tidak ditemukan", bukan kebocoran. |
@@ -486,6 +488,11 @@ berhak · `404` tidak ditemukan · `409` bentrok · `429` terlalu sering ·
 Tidak butuh login — sesuai B-K1, aplikasi harus tetap berguna bagi pengunjung
 tanpa akun.
 
+> **Diperbarui 27 Sep 2026:** endpoint konten di server tetap publik. Tetapi di
+> LANJUT_App semua layar (termasuk yang memakai endpoint ini) baru bisa dibuka
+> setelah masuk, karena login diwajibkan (B-K1 tidak berlaku untuk Expo).
+> Pengunjung tanpa akun hanya dilayani MVP-PWA.
+
 | Metode & jalur | Guna |
 |---|---|
 | `GET /api/v1/konten/linimasa` | F1. Diurutkan `tanggal_mulai ASC`; server ikut mengirim `diperiksa_pada` dan `status_verifikasi` supaya klien bisa menampilkan peringatan wajib. |
@@ -688,6 +695,11 @@ Tidak ada layar login yang menghalangi. Ajakan membuat akun muncul sebagai satu
 baris tenang di halaman Akun dan (opsional) setelah sesi latihan pertama —
 **bukan** sebagai pintu masuk.
 
+> **Diperbarui 27 Sep 2026:** alur tamu ini hanya berlaku untuk MVP-PWA. Di
+> LANJUT_App tidak ada mode tamu: pengguna baru langsung diarahkan ke layar
+> Masuk/Daftar, dan layar lain baru terbuka setelah masuk (keputusan produk,
+> B-K1 tidak berlaku untuk Expo).
+
 ### 6.3 Alur B — Tamu membuat akun & mengklaim datanya (sekali seumur akun)
 
 ```
@@ -767,11 +779,18 @@ Permintaan masuk
        jejak tumpukan ke klien, selalu mencatatnya di log server)
 ```
 
-**Perilaku klien saat `401`:** **jangan** paksa ke layar login. Klien menghapus
+~~**Perilaku klien saat `401`:** **jangan** paksa ke layar login. Klien menghapus
 token, kembali ke **mode tamu**, dan aplikasi tetap jalan penuh dari
 `localStorage`. Ajakan masuk kembali muncul di halaman Akun. Ini penerapan
 langsung B-K1: sesi kedaluwarsa tidak boleh berubah menjadi pintu terkunci di
-depan tenggat yang mau dilihat siswa.
+depan tenggat yang mau dilihat siswa.~~
+
+> **Diperbarui 27 Sep 2026:** berlaku untuk MVP-PWA saja. Untuk LANJUT_App,
+> `401` justru mengembalikan ke layar Masuk (perilaku yang disengaja, bukan
+> bug). Persisnya: `401` saat pemeriksaan sesi ketika app dibuka
+> (`GET /auth/saya` di `AuthProvider`) menghapus sesi dan membuka layar Masuk.
+> `401` dari permintaan lain di tengah pemakaian saat ini tampil sebagai
+> keadaan galat di layar itu, belum otomatis keluar.
 
 ### 6.6 Alur E — Keadaan tepi
 
@@ -783,6 +802,11 @@ depan tenggat yang mau dilihat siswa.
 | Kartu dihapus lalu perangkat lain menyinkronkan | Hapus lunak menyebar; kartu tidak hidup lagi. Riwayat latihannya tetap ada (`kartu_id` → NULL, `mapel_id` sudah disalin). |
 | `localStorage` mati (mode penyamaran) | Tanpa akun: seperti `SDD-LevelIn.md` §6.6, semua jatuh ke keadaan kosong yang berguna. Dengan akun: token tidak bisa disimpan → pengguna tetap di mode tamu untuk sesi itu. |
 | Jam perangkat salah | Server **selalu** menentukan waktu untuk `dibuat_pada`/`dijawab_pada` bila selisihnya lebih dari 24 jam dari jam server. Tanpa aturan ini, satu HP berjam salah bisa mengacak urutan riwayat. |
+
+> **Diperbarui 27 Sep 2026:** baris yang berujung "turun ke mode tamu"
+> (server mati, token kedaluwarsa, `localStorage` mati) hanya berlaku untuk
+> MVP-PWA. Di LANJUT_App tidak ada mode tamu: server mati → keadaan galat;
+> sesi tidak sah saat app dibuka → layar Masuk (lihat §6.5).
 
 ---
 
@@ -831,7 +855,9 @@ mengubah keputusan navigasi mana pun.
   → **Diperbarui 27 Sep 2026:** hanya berlaku untuk MVP-PWA. LANJUT_App
   menampilkan penanda memuat saat data diambil dari API (online-first,
   LANJUT_016).
-- Tidak ada dinding login (*login wall*) di mana pun.
+- ~~Tidak ada dinding login (*login wall*) di mana pun.~~ → **Diperbarui 27 Sep
+  2026:** hanya berlaku untuk MVP-PWA. LANJUT_App sengaja mewajibkan login
+  (B-K1 tidak berlaku untuk Expo).
 - Tidak ada layar verifikasi surel — surel opsional dan tidak diverifikasi (§5.2).
 - Tidak ada tampilan "sesi/perangkat aktif" di v1; kolomnya sudah ada bila kelak
   dibutuhkan.
@@ -1034,12 +1060,12 @@ server/
 |---|---|---|---|
 | **RB1** | **Pekerjaan backend menggeser rilis P0 3 September.** Lihat analisis lengkap §11.2 — ini risiko terpenting di dokumen ini. | P0 (F1–F5) tidak tayang tepat waktu → risiko "Tenggat 27 September lewat" di §10 dokumen induk terwujud → nilai inti produk anjlok. | Rancangan ini dibuat agar backend **bisa** dikerjakan tanpa menyentuh `app/` sampai tahap B8 (B-K1, §9.3). Tetapi **keputusan apakah dikerjakan sekarang atau setelah 3 September adalah keputusan PM (B1), bukan keputusan teknis.** SDD ini tidak mengambilnya. |
 | **RB2** | **Biaya & operasi hosting.** `rancangan-arsip-latihan-banksoal.md` §3.2 menulis **Hosting Rp 0** — asumsi itu hanya berlaku untuk berkas statis. | Angka BEP & ROI di Business Plan berubah; atau layanan gratis dengan "tidur otomatis" membuat permintaan pertama menunggu puluhan detik dan Alur B (≤15 detik, §14) gagal. | Diangkat sebagai keputusan PM **B2** (§11.1). Bahan pertimbangan disiapkan di §11.3. ~~Mitigasi teknis bila memakai paket gratis: klien selalu merender dari `localStorage` lebih dulu (B-K2), sehingga server yang lambat bangun tidak pernah terlihat sebagai layar menunggu.~~ → **Diperbarui 27 Sep 2026:** hanya berlaku untuk MVP-PWA. Di LANJUT_App (online-first, LANJUT_016) server yang lambat bangun **terlihat** sebagai penanda memuat, jadi paket hosting yang "tidur otomatis" langsung terasa oleh pengguna. |
-| **RB3** | **Akun menaikkan gesekan dan menekan T5** (≥50 pengguna nyata sebelum 23 Oktober) dan T1/T2. | Syarat penilaian KIK justru terancam oleh fitur yang dimaksudkan memperkuatnya. | B-K1: akun **opsional**, mode tamu adalah bawaan, tidak ada dinding login (§6.2, §7.3). Ajakan membuat akun ditempatkan **setelah** pengguna merasakan nilai, bukan sebelum. Perlu konfirmasi PM (B5). |
+| **RB3** | **Akun menaikkan gesekan dan menekan T5** (≥50 pengguna nyata sebelum 23 Oktober) dan T1/T2. | Syarat penilaian KIK justru terancam oleh fitur yang dimaksudkan memperkuatnya. | B-K1: akun **opsional**, mode tamu adalah bawaan, tidak ada dinding login (§6.2, §7.3). Ajakan membuat akun ditempatkan **setelah** pengguna merasakan nilai, bukan sebelum. Perlu konfirmasi PM (B5). → **Diperbarui 27 Sep 2026:** mitigasi ini hanya berlaku untuk MVP-PWA. Untuk LANJUT_App risiko gesekan akun **diterima** sebagai trade-off produk: login wajib, mode tamu dihapus. |
 | **RB4** | **Menyimpan data pribadi siswa (sebagian di bawah umur) di server** menciptakan kewajiban yang tidak ada saat semuanya di `localStorage`: kebijakan privasi, dasar pemrosesan, persetujuan, hak hapus (UU PDP). | Risiko hukum & reputasi; juga pertanyaan penguji yang wajar dan sulit dijawab bila belum dipikirkan. | Minimalkan data sejak rancangan: **tanpa** nama asli wajib, **tanpa** nomor HP, **tanpa** asal sekolah pada akun, surel opsional. Perlu: halaman kebijakan privasi singkat + endpoint hapus akun. **Butuh keputusan PM (B6)** soal siapa penanggung jawab data dan apakah perlu persetujuan wali. |
 | **RB5** | **Fungsi keputusan Level-In menyimpang antara klien dan server.** | Angka kalibrasi berbeda antara Beranda dan hasil API, tanpa satu pun galat muncul. | `keputusan.js` server adalah salinan lapisan 2 `assets/levelin.js`, dan **kedua sisi diuji dengan berkas kasus uji yang sama** (§9.4). Aturan `SDD-LevelIn.md` §4.3 no. 2 dipertahankan: server tidak pernah menerima nilai turunan dari klien. |
 | **RB6** | **Kesalahan SQL klasik oleh tim pemula**: injeksi lewat penyambungan string, atau lupa menyaring pemilik. | Kebocoran kartu pribadi — melanggar janji privasi `rancangan-arsip-latihan-banksoal.md` §2.1 yang sekaligus menjadi pengaman HAKI. | B-K4 + tiga aturan §2.2, dijaga otomatis oleh `periksa-sql.js` (§9.4) dan uji otorisasi eksplisit (`kartu-otorisasi.test.js`). Pemeriksaan otomatis dipilih justru **karena** timnya pemula: disiplin yang bergantung pada ingatan akan gagal. |
 | **RB7** | **Dua sumber kebenaran** (`localStorage` vs server) menghasilkan data yang berbeda di dua perangkat. | Pengguna melihat kemajuan/riwayat yang berbeda dan berhenti percaya. | Aturan penyatuan per jenis data ditulis eksplisit di §6.4, dan mayoritas data dibuat **append-only** sehingga bebas konflik secara struktural (B-K3) — bukan diselesaikan dengan "yang terakhir menang" untuk semuanya. |
-| **RB8** | **Server mati membuat seluruh aplikasi mati** — kelas kegagalan yang **tidak ada** sebelum backend. | Aplikasi yang tadinya selalu bisa dibuka menjadi bisa "tumbang". | B-K1 + B-K2: klien merender dari `localStorage`/`data/*.json` lebih dulu; kegagalan API senyap; `401` menurunkan ke mode tamu, bukan ke layar terkunci (§6.5). → **Diperbarui 27 Sep 2026:** mitigasi bagian B-K2 hanya berlaku untuk MVP-PWA. Untuk LANJUT_App (online-first, LANJUT_016) risiko ini **diterima**: server mati berarti data tidak termuat dan layar menampilkan keadaan galat. |
+| **RB8** | **Server mati membuat seluruh aplikasi mati** — kelas kegagalan yang **tidak ada** sebelum backend. | Aplikasi yang tadinya selalu bisa dibuka menjadi bisa "tumbang". | B-K1 + B-K2: klien merender dari `localStorage`/`data/*.json` lebih dulu; kegagalan API senyap; `401` menurunkan ke mode tamu, bukan ke layar terkunci (§6.5). → **Diperbarui 27 Sep 2026:** mitigasi bagian B-K1 dan B-K2 hanya berlaku untuk MVP-PWA. Untuk LANJUT_App (online-first, login wajib; LANJUT_016, LANJUT_017) risiko ini **diterima**: server mati berarti data tidak termuat dan layar menampilkan keadaan galat, tanpa jatuh ke mode tamu. |
 | **RB9** | **Rahasia (`.env`, sandi basis data) ter-commit ke git.** | Basis data bisa diakses siapa pun yang melihat repositori. | `.gitignore` sejak commit pertama `server/`; `.env.example` tanpa nilai; aturan §8.5 bahwa rahasia yang pernah ter-commit dianggap bocor dan **diganti**. |
 | **RB10** | **Basis data tanpa cadangan.** | Data pengguna yang hanya ada di server bisa hilang permanen — lebih buruk daripada keadaan `localStorage` sekarang. | Cadangan terjadwal wajib **sebelum** pengguna nyata masuk (§8.5), dan `localStorage` sengaja **tidak** dikosongkan setelah sinkronisasi (§6.3) sehingga perangkat tetap memegang salinan. |
 | **RB11** | **Beban dukungan lupa kata sandi** karena tidak ada pemulihan mandiri (§5.5). | Siswa terkunci dari akunnya; tim mengerjakan setel ulang manual. | Realistis pada 50–150 pengguna, **tidak** di atas itu. Diangkat sebagai keputusan PM **B4**. Mitigasi tambahan: mode tamu tetap jalan, jadi terkunci dari akun **tidak** berarti terkunci dari aplikasi. |
@@ -1116,7 +1142,7 @@ server/
 |---|---|---|
 | **B3** | Identitas login: username saja, atau surel wajib? | **Username + surel opsional** (§5.2). Berdampak ke B4. |
 | **B4** | Lupa sandi mandiri lewat surel — dijadwalkan kapan? | **Tidak di v1**; setel ulang oleh tim dengan jejak audit (§5.5). Perlu ditinjau ulang bila pengguna melewati ± 150. |
-| **B5** | Akun wajib atau opsional? | **Opsional; mode tamu adalah bawaan** (B-K1). Butuh konfirmasi karena mengubah alur onboarding dan berdampak pada T5 (RB3). |
+| **B5** | Akun wajib atau opsional? | ~~**Opsional; mode tamu adalah bawaan** (B-K1). Butuh konfirmasi karena mengubah alur onboarding dan berdampak pada T5 (RB3).~~ → **Diperbarui 27 Sep 2026 — sudah diputuskan:** LANJUT_App mewajibkan akun (mode tamu dihapus). MVP-PWA tetap opsional dengan mode tamu. |
 | **B6** | Kebijakan privasi & data siswa di bawah umur: siapa penanggung jawab, perlukah persetujuan wali? | Rancangan sudah meminimalkan data (RB4). Keputusan kebijakan bukan keputusan teknis. |
 | **B7** | Panel Admin (§12 dokumen induk) masuk fondasi ini atau menyusul? | **Menyusul.** Sampai itu, konten diisi lewat `app/data/*.json` + benih (§3.6), dan gerbang aturan data yang sudah ada tetap menjaganya. |
 | **B8** | Umur sesi login (usul 90 hari, bergulir)? | 90 hari — agar Alur B (≤15 detik) tidak berubah menjadi "buka-login-lihat". |
