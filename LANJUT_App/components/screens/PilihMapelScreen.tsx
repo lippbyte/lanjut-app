@@ -31,7 +31,11 @@ const PENAFIAN = 'Ini rangkuman, bukan keputusan resmi. Cek laman SNPMB.';
 // Istilah yang sama dengan baris "Target prodi" di Jalur Saya.
 const LABEL_TARGET = 'Target prodi';
 
-type Langkah = { nama: 'masuk' } | { nama: 'daftar' } | { nama: 'hasil'; prodiId: string | null };
+// `belumTahu`: datang dari pintu "Belum, bantu aku eksplorasi".
+type Langkah =
+  | { nama: 'masuk' }
+  | { nama: 'daftar'; belumTahu: boolean }
+  | { nama: 'hasil'; prodiId: string | null };
 
 type BarisMapel = { id: string; nama: string; tersedia: boolean; ket?: string };
 
@@ -62,11 +66,12 @@ export function PilihMapelScreen() {
       ) : prodiQuery.isError ? (
         <KeadaanGalat />
       ) : langkah.nama === 'masuk' ? (
-        <LangkahMasuk onLanjut={() => setLangkah({ nama: 'daftar' })} />
+        <LangkahMasuk onLanjut={(belumTahu) => setLangkah({ nama: 'daftar', belumTahu })} />
       ) : langkah.nama === 'daftar' ? (
         <LangkahDaftar
           daftarProdi={daftarProdi}
           prodiTarget={prodiAkunValid}
+          belumTahu={langkah.belumTahu}
           onPilih={(prodiId) => setLangkah({ nama: 'hasil', prodiId })}
         />
       ) : (
@@ -74,21 +79,32 @@ export function PilihMapelScreen() {
           prodi={langkah.prodiId ? (daftarProdi.find((p) => p.id === langkah.prodiId) ?? null) : null}
           totalProdi={daftarProdi.length}
           prodiTarget={prodiAkunValid}
-          onUbah={() => setLangkah({ nama: 'daftar' })}
+          onUbah={() => setLangkah({ nama: 'daftar', belumTahu: false })}
         />
       )}
     </View>
   );
 }
 
-function LangkahMasuk({ onLanjut }: { onLanjut: () => void }) {
+function LangkahMasuk({ onLanjut }: { onLanjut: (belumTahu: boolean) => void }) {
   // Kedua pintu menuju daftar yang sama: data baru mengelompokkan prodi per
   // rumpun, belum ada taksonomi minat terpisah (catatan yang sama di PWA).
+  // Bedanya hanya letak kartu rangkuman umum (lihat LangkahDaftar).
   return (
     <View style={s.tumpuk}>
       <Text style={gaya.teksBody}>Sudah tahu prodi tujuan?</Text>
-      <KartuPintu varian="outline" judul="Ya, sudah tahu" keterangan="Langsung pilih dari daftar prodi." onPress={onLanjut} />
-      <KartuPintu varian="soft" judul="Belum, bantu aku eksplorasi" keterangan="Mulai dari rumpun ilmu." onPress={onLanjut} />
+      <KartuPintu
+        varian="outline"
+        judul="Ya, sudah tahu"
+        keterangan="Langsung pilih dari daftar prodi."
+        onPress={() => onLanjut(false)}
+      />
+      <KartuPintu
+        varian="soft"
+        judul="Belum, bantu aku eksplorasi"
+        keterangan="Mulai dari rumpun ilmu."
+        onPress={() => onLanjut(true)}
+      />
     </View>
   );
 }
@@ -96,11 +112,14 @@ function LangkahMasuk({ onLanjut }: { onLanjut: () => void }) {
 function LangkahDaftar({
   daftarProdi,
   prodiTarget,
+  belumTahu,
   onPilih,
 }: {
   daftarProdi: Prodi[];
   /** prodi_impian akun (Jalur Saya) — ditandai supaya mudah ditemukan lagi. */
   prodiTarget: string | null;
+  /** Rangkuman umum ditaruh paling atas, bukan di bawah semua prodi. */
+  belumTahu: boolean;
   onPilih: (id: string | null) => void;
 }) {
   const perRumpun = new Map<string, Prodi[]>();
@@ -109,8 +128,18 @@ function LangkahDaftar({
     perRumpun.get(p.rumpun)!.push(p);
   }
 
+  const rangkuman = (
+    <KartuPintu
+      varian="soft"
+      judul="Masih belum tahu, tampilkan rangkuman umum"
+      keterangan="Mapel yang paling sering jadi penentu di banyak prodi."
+      onPress={() => onPilih(null)}
+    />
+  );
+
   return (
     <View style={s.daftar}>
+      {belumTahu ? rangkuman : null}
       {[...perRumpun.entries()].map(([rumpun, anggota]) => (
         <View key={rumpun} style={s.seksi}>
           <SeksiJudul>{rumpun}</SeksiJudul>
@@ -134,12 +163,7 @@ function LangkahDaftar({
           </View>
         </View>
       ))}
-      <KartuPintu
-        varian="soft"
-        judul="Masih belum tahu, tampilkan rangkuman umum"
-        keterangan="Mapel yang paling sering jadi penentu di banyak prodi."
-        onPress={() => onPilih(null)}
-      />
+      {belumTahu ? null : rangkuman}
     </View>
   );
 }
