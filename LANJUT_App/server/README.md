@@ -54,7 +54,7 @@ kosong — pesan galatnya menyebutkan variabel mana yang kurang.
 ## 2. Migrasi & benih
 
 ```bash
-npm run migrasi   # menjalankan server/src/db/migrasi/001..005 yang belum jalan
+npm run migrasi   # menjalankan server/src/db/migrasi/001..006 yang belum jalan
 npm run benih     # mengisi konten dari app/data/*.json (idempoten, aman diulang)
 ```
 
@@ -213,4 +213,21 @@ curl -s http://localhost:3000/api/v1/auth/saya -H "Authorization: Bearer <token>
 # Konten publik, tanpa login:
 curl -s http://localhost:3000/api/v1/konten/linimasa
 curl -s http://localhost:3000/api/v1/konten/checklist?kelas=12&jalur=SNBP
+curl -s "http://localhost:3000/api/v1/konten/checklist?kelas=12&jalur=SNBP&rumpun=Teknologi%20%26%20Rekayasa"
 ```
+
+### Filter rumpun di checklist (migrasi 006, LANJUT_007)
+
+- Kolom `butir_daftar_periksa.berlaku_untuk_rumpun`: daftar rumpun dipisah
+  koma, nilainya sama persis dengan `prodi.rumpun` (mis. `Teknologi & Rekayasa`).
+  `NULL` = butir umum, berlaku untuk semua rumpun.
+- `GET /konten/checklist?rumpun=` mengembalikan butir umum **ditambah** butir
+  khusus rumpun itu. Rumpun yang tidak cocok butir mana pun → hanya butir umum.
+- **Beda dari `kelas`/`jalur`:** tanpa `rumpun`, butir khusus rumpun **tidak**
+  ikut (bukan "semua"). Klien lama yang belum mengirim `rumpun` tetap mendapat
+  hasil persis seperti sebelum kolom ini ada, dan hitungan X/Y-nya tidak
+  bertambah oleh butir rumpun lain.
+- Tiap butir di respons kini punya `berlaku_untuk_rumpun`: `null` (umum) atau
+  array rumpun.
+- Butir khusus rumpun belum ada; mengisinya kerja tim konten. `npm run benih`
+  belum membaca kolom ini.

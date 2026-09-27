@@ -97,21 +97,28 @@ async function ambilCeritaAlumniTayang() {
 }
 
 /**
- * F5 — checklist, dikelompokkan per kategori, dapat disaring ?kelas=&jalur=.
+ * F5 — checklist, dikelompokkan per kategori, dapat disaring ?kelas=&jalur=&rumpun=.
  * SQL statis: filter opsional ditulis `(? IS NULL OR FIND_IN_SET(...) > 0)`,
  * bukan merakit klausa WHERE secara dinamis (§2.2 aturan 2).
+ *
+ * Rumpun (LANJUT_007) beda dari kelas/jalur: butir umum (rumpun NULL) selalu
+ * ikut, butir khusus rumpun HANYA ikut kalau rumpunnya dikirim dan cocok.
+ * Tanpa `rumpun`, hasilnya persis seperti sebelum kolom ini ada — klien lama
+ * tidak tiba-tiba mendapat butir rumpun lain yang ikut menambah hitungan X/Y.
  */
-async function ambilChecklist({ kelas, jalur }) {
+async function ambilChecklist({ kelas, jalur, rumpun }) {
   const [baris] = await pool.execute(
     `SELECT b.id, b.judul, b.urutan, b.berlaku_untuk_kelas, b.berlaku_untuk_jalur,
+            b.berlaku_untuk_rumpun,
             b.sumber, b.pemilik, b.status_verifikasi, b.asal, b.url_sumber, b.diperiksa_pada,
             k.id AS kategori_id, k.nama AS kategori_nama, k.urutan AS kategori_urutan
        FROM butir_daftar_periksa b
        JOIN kategori_checklist k ON k.id = b.kategori_id
       WHERE (? IS NULL OR FIND_IN_SET(?, b.berlaku_untuk_kelas) > 0)
         AND (? IS NULL OR FIND_IN_SET(?, b.berlaku_untuk_jalur) > 0)
+        AND (b.berlaku_untuk_rumpun IS NULL OR FIND_IN_SET(?, b.berlaku_untuk_rumpun) > 0)
       ORDER BY k.urutan ASC, b.urutan ASC`,
-    [kelas || null, kelas || null, jalur || null, jalur || null]
+    [kelas || null, kelas || null, jalur || null, jalur || null, rumpun || null]
   );
   return baris;
 }

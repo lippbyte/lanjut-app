@@ -112,6 +112,8 @@ router.get('/checklist', async (req, res, next) => {
     const baris = await konten.ambilChecklist({
       kelas: req.query.kelas,
       jalur: req.query.jalur,
+      // `?rumpun=a&rumpun=b` jadi array di Express — abaikan, jangan 500.
+      rumpun: typeof req.query.rumpun === 'string' ? req.query.rumpun : null,
     });
 
     // Kelompokkan per kategori — bentuk yang sama seperti app/data/checklist.json.
@@ -131,6 +133,8 @@ router.get('/checklist', async (req, res, next) => {
         urutan: b.urutan,
         berlaku_untuk_kelas: b.berlaku_untuk_kelas.split(','),
         berlaku_untuk_jalur: b.berlaku_untuk_jalur.split(','),
+        // null = butir umum (semua rumpun); array = butir khusus rumpun itu.
+        berlaku_untuk_rumpun: b.berlaku_untuk_rumpun ? b.berlaku_untuk_rumpun.split(',') : null,
         sumber: b.sumber,
         pemilik: b.pemilik,
         status_verifikasi: b.status_verifikasi,
