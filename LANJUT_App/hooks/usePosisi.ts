@@ -15,12 +15,12 @@ import { useTahapanLinimasa } from './useTahapanLinimasa';
  */
 export function usePosisi(kebingungan: Kebingungan | null) {
   const { pengguna } = useSesi();
-  const { kelas, jalur, isPending: saringMemuat } = useSaringDaftarPeriksa();
-  const hasil = useProgresDaftarPeriksa(kelas, jalur);
+  const saring = useSaringDaftarPeriksa();
+  const hasil = useProgresDaftarPeriksa(saring);
   const kemajuanQuery = useKemajuan();
   const linimasaQuery = useTahapanLinimasa();
 
-  const isPending = saringMemuat || hasil.isPending || kemajuanQuery.isPending || linimasaQuery.isPending;
+  const isPending = saring.isPending || hasil.isPending || kemajuanQuery.isPending || linimasaQuery.isPending;
   const mapelTkaSelesai = !!kemajuanQuery.data?.some((k) => k.butir_id === BUTIR_MAPEL_TKA && k.selesai_pada);
   const progres = hasil.data ? hasil.data.progres : null;
 

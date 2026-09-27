@@ -160,8 +160,9 @@ function FormJalur({ pengguna, onSelesai }: { pengguna: Pengguna; onSelesai: () 
 // Periksa (useProgresDaftarPeriksa), jadi angkanya selalu cocok.
 function RingkasanKemajuan() {
   const router = useRouter();
-  const { kelas, jalur, isPending: saringMemuat } = useSaringDaftarPeriksa();
-  const hasil = useProgresDaftarPeriksa(kelas, jalur);
+  const saring = useSaringDaftarPeriksa();
+  const { kelas, jalur, isPending: saringMemuat } = saring;
+  const hasil = useProgresDaftarPeriksa(saring);
   const bukaDaftarPeriksa = () => router.push('/daftar-periksa');
 
   let isi: React.ReactNode;

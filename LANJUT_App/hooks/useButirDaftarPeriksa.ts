@@ -6,6 +6,8 @@ import type { DaftarPeriksaResponse } from '../api/types';
 type Filter = {
   kelas?: string;
   jalur?: string;
+  /** Rumpun prodi siswa (LANJUT_007). Tanpa rumpun → hanya butir umum. */
+  rumpun?: string;
 };
 
 /**
@@ -19,10 +21,10 @@ type Filter = {
  */
 export function useButirDaftarPeriksa(filter: Filter = {}, enabled = true) {
   return useQuery({
-    queryKey: ['butir_daftar_periksa', filter.kelas, filter.jalur],
+    queryKey: ['butir_daftar_periksa', filter.kelas, filter.jalur, filter.rumpun],
     queryFn: () =>
       apiFetch<DaftarPeriksaResponse>('/konten/checklist', {
-        query: { kelas: filter.kelas, jalur: filter.jalur },
+        query: { kelas: filter.kelas, jalur: filter.jalur, rumpun: filter.rumpun },
       }),
     enabled,
   });

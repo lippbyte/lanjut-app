@@ -2,32 +2,56 @@ import { hitungProgres } from '../lib/daftarPeriksa';
 import { useSesi } from '../providers/AuthProvider';
 import { useButirDaftarPeriksa } from './useButirDaftarPeriksa';
 import { useKemajuan } from './useKemajuan';
+import { useProdi } from './useProdi';
 import { useProfilLokal, useSetProfilLokal } from './useProfilLokal';
 
+export type SaringanDaftarPeriksa = {
+  kelas: string | null;
+  jalur: string | null;
+  rumpun: string | null;
+  /** Saringan belum lengkap (profil lokal / daftar prodi masih dimuat). */
+  isPending?: boolean;
+};
+
 /**
- * Kelas & jalur yang menyaring Daftar Periksa. Kelas pilihan di perangkat
- * mengalahkan kelas akun; jalur hanya ada di perangkat. Dipakai layar Daftar
- * Periksa dan ringkasan di Jalur Saya supaya keduanya menyaring sama persis.
+ * Kelas, jalur, dan rumpun yang menyaring Daftar Periksa. Kelas pilihan di
+ * perangkat mengalahkan kelas akun; jalur hanya ada di perangkat; rumpun
+ * diturunkan dari target prodi akun (`prodi.rumpun` di /konten/prodi, sama
+ * seperti Pilih Mapel). Dipakai Daftar Periksa, Jalur Saya, dan Cek Posisi
+ * supaya ketiganya menyaring sama persis.
  */
 export function useSaringDaftarPeriksa() {
   const { pengguna } = useSesi();
   const profilQuery = useProfilLokal();
   const { mutate: simpanProfil } = useSetProfilLokal();
+  const prodiQuery = useProdi();
 
   const kelas = profilQuery.data?.kelas ?? pengguna?.kelas ?? null;
   const jalur = profilQuery.data?.jalur ?? null;
   const pilih = (ubah: { kelas?: string | null; jalur?: string | null }) => simpanProfil({ kelas, jalur, ...ubah });
 
-  return { kelas, jalur, pilih, isPending: profilQuery.isPending };
+  // Tanpa target prodi, atau prodi tak ditemukan / /konten/prodi gagal →
+  // tanpa rumpun = hanya butir umum, sama seperti sebelum rumpun ada.
+  const prodiImpian = pengguna?.prodi_impian ?? null;
+  const rumpun = prodiImpian ? (prodiQuery.data?.find((p) => p.id === prodiImpian)?.rumpun ?? null) : null;
+  // Tunggu daftar prodi kalau rumpun bergantung padanya, supaya butir tidak
+  // diambil dua kali (tanpa lalu dengan rumpun) dan angka X/Y tidak berkedip.
+  const rumpunMemuat = !!prodiImpian && prodiQuery.isPending;
+
+  return { kelas, jalur, rumpun, pilih, isPending: profilQuery.isPending || rumpunMemuat };
 }
 
 /**
  * Butir tersaring + centang akun + X/Y — satu-satunya tempat ketiganya
- * digabung. Tanpa kelas/jalur, query butir tidak dijalankan.
+ * digabung. Tanpa kelas/jalur, atau selama saringan masih dimuat, query
+ * butir tidak dijalankan. Terima hasil useSaringDaftarPeriksa() apa adanya.
  */
-export function useProgresDaftarPeriksa(kelas: string | null, jalur: string | null) {
-  const siap = !!kelas && !!jalur;
-  const butirQuery = useButirDaftarPeriksa({ kelas: kelas ?? undefined, jalur: jalur ?? undefined }, siap);
+export function useProgresDaftarPeriksa({ kelas, jalur, rumpun, isPending: saringMemuat }: SaringanDaftarPeriksa) {
+  const siap = !!kelas && !!jalur && !saringMemuat;
+  const butirQuery = useButirDaftarPeriksa(
+    { kelas: kelas ?? undefined, jalur: jalur ?? undefined, rumpun: rumpun ?? undefined },
+    siap
+  );
   const kemajuanQuery = useKemajuan();
 
   const isPending = siap && (butirQuery.isPending || kemajuanQuery.isPending);

@@ -3,7 +3,11 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { ButirDaftarPeriksa, KategoriDaftarPeriksa } from '../../api/types';
 import { useTandaiKemajuan } from '../../hooks/useKemajuan';
-import { useProgresDaftarPeriksa, useSaringDaftarPeriksa } from '../../hooks/useProgresDaftarPeriksa';
+import {
+  type SaringanDaftarPeriksa,
+  useProgresDaftarPeriksa,
+  useSaringDaftarPeriksa,
+} from '../../hooks/useProgresDaftarPeriksa';
 import type { Progres } from '../../lib/daftarPeriksa';
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Ikon, Kartu, KeadaanGalat, Kepala, Kosong, Memuat, SeksiJudul, Sumber, gaya } from '../ui';
@@ -20,10 +24,12 @@ const JALUR_OPSI = ['TKA', 'SNBP', 'SNBT'] as const;
  *    ikut pindah ke HP lain.
  *  - Butir disaring kelas & jalur (AC F5 di PRD, belum ada di PWA). Kelas
  *    diisi dari akun kalau ada; jalur disimpan di perangkat karena akun
- *    belum punya medan jalur.
+ *    belum punya medan jalur. Rumpun target prodi ikut dikirim, jadi butir
+ *    khusus rumpun itu tampil (LANJUT_013).
  */
 export function DaftarPeriksaScreen() {
-  const { kelas, jalur, pilih, isPending } = useSaringDaftarPeriksa();
+  const saring = useSaringDaftarPeriksa();
+  const { kelas, jalur, pilih, isPending } = saring;
 
   return (
     <View style={gaya.layarIsi}>
@@ -37,7 +43,7 @@ export function DaftarPeriksaScreen() {
       {isPending ? (
         <Memuat />
       ) : kelas && jalur ? (
-        <Checklist kelas={kelas} jalur={jalur} />
+        <Checklist saring={saring} />
       ) : (
         <Kosong judul="Pilih kelas dan jalurmu dulu." teks="Supaya butir yang tampil memang yang perlu kamu siapkan." />
       )}
@@ -82,8 +88,8 @@ function BarisKeping<T extends string>({
   );
 }
 
-function Checklist({ kelas, jalur }: { kelas: string; jalur: string }) {
-  const hasil = useProgresDaftarPeriksa(kelas, jalur);
+function Checklist({ saring }: { saring: SaringanDaftarPeriksa }) {
+  const hasil = useProgresDaftarPeriksa(saring);
   const tandai = useTandaiKemajuan();
 
   if (hasil.isError) return <KeadaanGalat />;
