@@ -1626,8 +1626,9 @@
           var lencana = el.querySelector('.lencana');
           if (lencana) {
             if (k.sumber === 'buatan_sendiri') {
-              lencana.className = 'lencana lencana--neutral';
-              lencana.textContent = 'Buatan sendiri';
+              lencana.className = 'lencana lencana--neutral lencana--panjang';
+              /* Salinan teks §4.5 — penanda tetap kartu pengguna, apa adanya. */
+              lencana.textContent = 'Diunggah pengguna — belum diverifikasi tim';
             } else {
               lencana.className = 'lencana lencana--resmi';
               lencana.textContent = 'Resmi';

@@ -344,6 +344,9 @@ a.kartu--brand:hover,button.kartu--brand:hover{color:var(--white)}
 .lencana--solid{background:var(--blue-400);color:var(--white)}
 .lencana--ondark{background:rgba(255,255,255,.22);color:var(--white)}
 .lencana--resmi{background:var(--blue-100);color:var(--blue-600)}
+/* Lencana berkalimat panjang (penanda kartu pengguna, salinan teks §4.5) di
+   kolom kisi-2 yang sempit bisa 3–4 baris; sudut pil membuatnya lonjong. */
+.lencana--panjang{border-radius:var(--radius-xs);line-height:1.35}
 
 .keping{
   display:inline-flex;align-items:center;gap:var(--space-2);
