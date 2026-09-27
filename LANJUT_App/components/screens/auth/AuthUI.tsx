@@ -13,6 +13,7 @@ import {
   type TextInputProps,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useProdi } from '../../../hooks/useProdi';
 import { color, font, radius, shadow, spacing, teks as teksToken } from '../../../theme/tokens';
@@ -28,12 +29,15 @@ export function AuthLayout({
   pengantar: string;
   children: React.ReactNode;
 }) {
+  // Sama dengan AppBar di AppShell: tanpa inset atas, status bar HP menimpa
+  // maskot & wordmark.
+  const { top } = useSafeAreaInsets();
   return (
     <KeyboardAvoidingView
       style={styles.flex}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <Header style={styles.appbar}>
+      <Header style={StyleSheet.flatten([styles.appbar, { paddingTop: spacing.s3 + top }])}>
         <Image source={require('../../../assets/mascot-blue.png')} style={styles.mark} resizeMode="contain" />
         <Image
           source={require('../../../assets/lanjut-wordmark.png')}
@@ -216,11 +220,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: spacing.s3,
+    paddingBottom: spacing.s3,
     paddingHorizontal: spacing.gutter,
     backgroundColor: color.appbarBg,
     borderBottomWidth: 1,
     borderBottomColor: color.appbarBorder,
+    boxShadow: shadow.appbar,
+    zIndex: 2,
   },
   mark: { width: 32, height: 32 },
   wordmark: { height: 32, width: 93 },
