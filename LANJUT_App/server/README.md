@@ -66,11 +66,17 @@ tinggi (§3.6).
 Benih membaca `MVP-PWA/data/*.json` langsung (tidak menyalin isinya ke SQL) dan
 memakai `INSERT ... ON DUPLICATE KEY UPDATE` — aman dijalankan berkali-kali.
 
-> **Perhatian:** benih ikut menimpa `status_verifikasi` dan `diperiksa_pada`
-> dengan nilai di berkas JSON. Tanda "sudah dicek" yang dibuat lewat
-> `npm run verifikasi-konten` (bagian 2a) akan **hilang** kalau benih
-> dijalankan lagi. Setelah menjalankan benih, tandai ulang konten yang sudah
-> dicek.
+**Benih aman dijalankan ulang kapan saja — tanda "sudah dicek" tidak hilang**
+(diperbaiki di LANJUT_011). `status_verifikasi` dan `diperiksa_pada` hanya
+diisi dari JSON saat baris **baru** dimasukkan (biasanya "belum diverifikasi").
+Untuk baris yang sudah ada, benih memperbarui kolom konten lain (judul,
+tanggal, teks, dan seterusnya) tapi tidak menyentuh dua kolom itu, jadi tanda
+yang dibuat lewat `npm run verifikasi-konten` (bagian 2a) tetap ada.
+
+Akibatnya, mengubah `status_verifikasi`/`diperiksa_pada` di berkas JSON
+**tidak** berpengaruh ke baris yang sudah ada. Untuk menandai atau
+membatalkan tanda, selalu pakai `npm run verifikasi-konten`. Pengecualian:
+kartu Latihan (`arsip.json`) masih diperbarui penuh oleh benih.
 
 ## 2a. Menandai konten sudah dicek (untuk tim konten)
 

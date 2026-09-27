@@ -7,6 +7,14 @@
 //   1. Metadata dibawa APA ADANYA — termasuk `status_verifikasi:
 //      'belum_diverifikasi'` dan `diperiksa_pada: NULL`. Tidak "dirapikan".
 //   2. Idempoten — bisa dijalankan berkali-kali dengan aman.
+//   3. `status_verifikasi` & `diperiksa_pada` HANYA diisi saat baris baru
+//      di-INSERT (LANJUT_011). Untuk baris yang sudah ada, keduanya sengaja
+//      tidak ada di ON DUPLICATE KEY UPDATE: nilainya milik tim konten, yang
+//      menandainya lewat `npm run verifikasi-konten`, dan benih ulang tidak
+//      boleh menghapus kerja itu. Akibatnya, mengubah kedua nilai itu di JSON
+//      tidak berpengaruh ke baris yang sudah ada — pakai skrip verifikasi.
+//      Kartu (benihArsipKartu) tidak termasuk: bukan konten yang diverifikasi
+//      lewat skrip itu.
 //
 // CATATAN PEMETAAN NAMA MEDAN (bukan perubahan nilai):
 // - `cerita-alumni.json` item punya field bernama `sumber` berisi "contoh" —
@@ -45,8 +53,7 @@ async function benihLinimasa() {
          judul=VALUES(judul), tanggal_mulai=VALUES(tanggal_mulai),
          tanggal_selesai=VALUES(tanggal_selesai), jalur=VALUES(jalur),
          sumber=VALUES(sumber), pemilik=VALUES(pemilik),
-         status_verifikasi=VALUES(status_verifikasi), asal=VALUES(asal),
-         url_sumber=VALUES(url_sumber), diperiksa_pada=VALUES(diperiksa_pada)`,
+         asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
       [
         item.id,
         item.judul,
@@ -79,8 +86,7 @@ async function benihKhususSmk() {
          judul=VALUES(judul), apa_yang_beda=VALUES(apa_yang_beda),
          apa_yang_bisa_dilakukan=VALUES(apa_yang_bisa_dilakukan), urutan=VALUES(urutan),
          sumber=VALUES(sumber), pemilik=VALUES(pemilik),
-         status_verifikasi=VALUES(status_verifikasi), asal=VALUES(asal),
-         url_sumber=VALUES(url_sumber), diperiksa_pada=VALUES(diperiksa_pada)`,
+         asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
       [
         item.id,
         item.judul,
@@ -108,8 +114,7 @@ async function benihProdi() {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
          nama=VALUES(nama), rumpun=VALUES(rumpun), sumber=VALUES(sumber),
-         pemilik=VALUES(pemilik), status_verifikasi=VALUES(status_verifikasi),
-         asal=VALUES(asal), url_sumber=VALUES(url_sumber), diperiksa_pada=VALUES(diperiksa_pada)`,
+         pemilik=VALUES(pemilik), asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
       [
         item.id,
         item.nama,
@@ -135,8 +140,7 @@ async function benihMapel() {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE
          nama=VALUES(nama), tersedia_di_smk=VALUES(tersedia_di_smk), sumber=VALUES(sumber),
-         pemilik=VALUES(pemilik), status_verifikasi=VALUES(status_verifikasi),
-         asal=VALUES(asal), url_sumber=VALUES(url_sumber), diperiksa_pada=VALUES(diperiksa_pada)`,
+         pemilik=VALUES(pemilik), asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
       [
         item.id,
         item.nama,
@@ -179,8 +183,7 @@ async function benihCeritaAlumni() {
          ptn=VALUES(ptn), prodi=VALUES(prodi), jalur=VALUES(jalur), hambatan=VALUES(hambatan),
          yang_dilakukan=VALUES(yang_dilakukan), izin_tayang=VALUES(izin_tayang),
          tayang=VALUES(tayang), sumber=VALUES(sumber), pemilik=VALUES(pemilik),
-         status_verifikasi=VALUES(status_verifikasi), asal=VALUES(asal),
-         url_sumber=VALUES(url_sumber), diperiksa_pada=VALUES(diperiksa_pada)`,
+         asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
       [
         item.id,
         item.nama,
@@ -259,8 +262,7 @@ async function benihChecklist(berkas = bacaJson('checklist.json')) {
            berlaku_untuk_jalur=VALUES(berlaku_untuk_jalur),
            berlaku_untuk_rumpun=VALUES(berlaku_untuk_rumpun), kategori_id=VALUES(kategori_id),
            sumber=VALUES(sumber), pemilik=VALUES(pemilik),
-           status_verifikasi=VALUES(status_verifikasi), asal=VALUES(asal),
-           url_sumber=VALUES(url_sumber), diperiksa_pada=VALUES(diperiksa_pada)`,
+           asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
         [
           butir.id,
           butir.judul,
