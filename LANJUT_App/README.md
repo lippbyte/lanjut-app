@@ -7,6 +7,7 @@
 - Masuk, Daftar, Akun + Keluar, dan perlindungan rute berbasis token.
 - Centang Daftar Periksa tersimpan ke akun (`/kemajuan`), jadi ikut pindah ke HP lain.
 - **Jalur Saya** (v1.1, di layar Akun `/akun`): nama tampilan, kelas, target prodi, dan ringkasan "X dari Y langkah Daftar Periksa selesai". Nama, kelas, dan prodi bisa diubah; disimpan ke akun lewat `PATCH /pengguna/saya`.
+- **Cek Posisi Gue** (v1.1, `/cek-posisi`, pintu dari Beranda dan Jalur Saya): tahap siswa (Eksplorasi → Pemantapan Awal → Persiapan Aktif → Menjelang Pendaftaran), fokus sekarang, dan tombol langkah berikutnya. Tahap dihitung rule-based di `lib/cekPosisi.ts` dari data yang sudah ada — prodi impian, centang `mapel-tka`, dan persen Daftar Periksa — tanpa kuis. Satu pertanyaan opsional ("apa yang paling bikin bingung") hanya menambah kalimat fokus dan tidak disimpan.
 - Tampilan disamakan dengan `MVP-PWA/` (lihat bagian **Tampilan**).
 
 **Catatan historis:** `docs/prd-sdd-lanjut.md` Bagian 8 dulu menolak React Native untuk v1. Keputusan itu berlaku untuk rilis PWA v1, bukan untuk arah proyek saat ini.
