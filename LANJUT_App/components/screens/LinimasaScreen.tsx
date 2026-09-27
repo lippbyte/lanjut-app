@@ -6,6 +6,7 @@ import { Linking, StyleSheet, Text, View } from 'react-native';
 import type { TahapanLinimasa } from '../../api/types';
 import { useTahapanLinimasa } from '../../hooks/useTahapanLinimasa';
 import { formatRentang, formatTanggal, turunkanLinimasa, type TahapanTurunan } from '../../lib/linimasa';
+import { lembagaSumber } from '../../lib/sumber';
 import { color, font, spacing, teks } from '../../theme/tokens';
 import {
   Kartu,
@@ -124,7 +125,7 @@ function ButirLinimasa({ butir, terakhir }: { butir: TahapanTurunan; terakhir: b
         <Text style={s.tanggal}>{formatRentang(butir.tanggal_mulai, butir.tanggal_selesai)}</Text>
         <Text style={StyleSheet.flatten([s.judul, lewat && s.judulLewat])}>{butir.judul}</Text>
         <Sumber>
-          Diperbarui dari laman resmi SNPMB · dicek {formatTanggal(butir.diperiksa_pada)}
+          Diperbarui dari {lembagaSumber(butir.url_sumber)} · dicek {formatTanggal(butir.diperiksa_pada)}
         </Sumber>
       </View>
     </Article>

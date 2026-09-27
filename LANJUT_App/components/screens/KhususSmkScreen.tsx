@@ -6,6 +6,7 @@ import type { ButirKhususSmk } from '../../api/types';
 import { useButirKhususSmk } from '../../hooks/useButirKhususSmk';
 import { butirBerpasangan } from '../../lib/khususSmk';
 import { formatTanggal } from '../../lib/linimasa';
+import { lembagaSumber } from '../../lib/sumber';
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { Ikon, Kartu, KeadaanGalat, Kepala, Kosong, Memuat, Sumber, gaya } from '../ui';
 
@@ -54,11 +55,6 @@ function Isi({ data }: { data: ButirKhususSmk[] | undefined }) {
       ))}
     </View>
   );
-}
-
-// Lembaga sumber ditentukan dari domain url_sumber, seperti app.js PWA.
-function lembagaSumber(url: string) {
-  return url.includes('vokasi.kemdikbud.go.id') ? 'Direktorat SMK, Kemendikdasmen' : 'laman resmi SNPMB';
 }
 
 function ButirKartu({ butir, buka, onAlih }: { butir: ButirKhususSmk; buka: boolean; onAlih: () => void }) {

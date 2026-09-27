@@ -108,6 +108,7 @@ Dipakai di: beranda, notifikasi, layar kosong.
 - **Tenggat terdekat:** Berikutnya: pendaftaran TKA — tutup 27 September
 - **Sesudah lewat:** Sudah lewat. Tenggat berikutnya ada di bawah.
 - **Penanda sumber:** Diperbarui dari laman resmi SNPMB · dicek 6 Agustus 2026
+  *(Nama lembaga mengikuti `url_sumber` tiap tahapan, mis. "laman resmi Kemendikdasmen" untuk TKA — lihat `LANJUT_App/lib/sumber.ts`.)*
 
 > **Catatan:** hitungan mundur ditampilkan sebagai angka biasa, bukan hitungan detik yang berdetak. Tenggat perlu diketahui, bukan dijadikan tekanan.
 
