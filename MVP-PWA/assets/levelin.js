@@ -799,6 +799,7 @@
       }
 
       var ringkas = ringkasSesi(sesi.jawaban);
+      pasangSkorSesi(sesi.jawaban, ringkas);
 
       /* Isi slot jumlah. */
       var slotOC = blokPenuh.querySelector('[data-isi="ringkasan-overconfident"]');
@@ -811,6 +812,71 @@
 
     } catch (e) {
       console.error('pasangRingkasanSesi:', e);
+    }
+  }
+
+  /* Skor sesi di latihan-selesai.html (salinan teks §4.7): "Beres. X benar
+     dari Y." + rincian benar/jumlah per mapel, semuanya dari jawaban sesi
+     yang sungguhan. Hanya dipanggil kalau sesi punya jawaban — tanpa itu
+     semua [data-skor] tetap [hidden], jadi tidak pernah ada angka karangan.
+     Nama mapel dari data/mapel.json lewat LANJUT.muatData (pola yang sama
+     dengan pasangSaranBeranda); kalau gagal dimuat, id mapel dipakai. */
+  function pasangSkorSesi(jawaban, ringkas) {
+    try {
+      [].forEach.call(document.querySelectorAll('[data-isi="skor-total"]'), function (el) {
+        el.textContent = String(ringkas.total);
+      });
+      [].forEach.call(document.querySelectorAll('[data-isi="skor-benar"]'), function (el) {
+        el.textContent = String(ringkas.benar);
+      });
+
+      /* Urutan mapel = urutan pertama kali muncul di sesi. Jawaban tanpa
+         mapel_id tetap dihitung di skor total, tapi tidak punya baris. */
+      var urutan = [];
+      var perMapel = {};
+      jawaban.forEach(function (j) {
+        if (!j || !j.mapel_id) return;
+        if (!perMapel[j.mapel_id]) {
+          perMapel[j.mapel_id] = { benar: 0, jumlah: 0 };
+          urutan.push(j.mapel_id);
+        }
+        perMapel[j.mapel_id].jumlah += 1;
+        if (j.benar) perMapel[j.mapel_id].benar += 1;
+      });
+
+      var wadah = document.querySelector('[data-daftar="skor-mapel"]');
+      var proto = wadah && wadah.querySelector('[data-proto="skor-mapel"]');
+
+      function render(namaMapel) {
+        if (wadah && proto && urutan.length) {
+          var baris = urutan.map(function (id) {
+            var el = proto.cloneNode(true);
+            el.removeAttribute('data-proto');
+            var slotNama = el.querySelector('[data-isi="mapel-nama"]');
+            var slotSkor = el.querySelector('[data-isi="mapel-skor"]');
+            if (slotNama) slotNama.textContent = (namaMapel && namaMapel[id]) || id;
+            if (slotSkor) slotSkor.textContent = perMapel[id].benar + '/' + perMapel[id].jumlah;
+            return el;
+          });
+          while (wadah.firstChild) wadah.removeChild(wadah.firstChild);
+          baris.forEach(function (el) { wadah.appendChild(el); });
+        } else if (wadah) {
+          wadah.removeAttribute('data-skor'); // tidak ada baris -> tetap tersembunyi
+        }
+        [].forEach.call(document.querySelectorAll('[data-skor]'), function (el) { el.hidden = false; });
+      }
+
+      if (urutan.length && global.LANJUT && typeof global.LANJUT.muatData === 'function') {
+        global.LANJUT.muatData('mapel').then(function (berkas) {
+          var nama = {};
+          larikData(berkas).forEach(function (m) { if (m && m.id) nama[m.id] = m.nama || m.id; });
+          render(nama);
+        }, function () { render({}); });
+      } else {
+        render({});
+      }
+    } catch (e) {
+      console.error('pasangSkorSesi:', e);
     }
   }
 

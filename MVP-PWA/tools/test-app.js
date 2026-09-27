@@ -453,7 +453,19 @@ async function main() {
       ['.levelin-summary-block[data-varian="kosong"]', /levelin-summary-block" data-varian="kosong"/],
       ['[data-isi="ringkasan-overconfident"]', /data-isi="ringkasan-overconfident"/],
       ['[data-isi="ringkasan-underconfident"]', /data-isi="ringkasan-underconfident"/],
+      /* Skor sesi (LANJUT_014) — slot yang diisi pasangSkorSesi(). */
+      ['[data-isi="skor-total"]', /data-isi="skor-total"/],
+      ['[data-isi="skor-benar"]', /data-isi="skor-benar"/],
+      ['[data-daftar="skor-mapel"]', /data-daftar="skor-mapel"/],
+      ['[data-proto="skor-mapel"]', /data-proto="skor-mapel"/],
     ].forEach(([nama, re]) => cek('latihan-selesai.html punya ' + nama, re.test(selesai)));
+
+    /* Skor contoh dulu tertulis tetap di markup ("12", "9 benar dari 12",
+       "5/6") dan tampil apa pun hasil sesinya. Di luar komentar, angka skor
+       hanya boleh datang dari levelin.js. */
+    const selesaiTanpaKomentar = selesai.replace(/<!--[\s\S]*?-->/g, '');
+    cek('latihan-selesai.html tidak menulis skor tetap ("N benar dari M")',
+        !/\d+\s+benar dari\s+\d+/.test(selesaiTanpaKomentar));
 
     /* beranda.html — kartu CTA "Latihan Hari Ini" (FL4), hook yang dicari
        pasangSaranBeranda()/renderSaranBeranda(). */

@@ -43,11 +43,17 @@
 
       <img src="assets/img/mascot-blue.png" alt="" width="72" height="72">
 
-      <p class="angka-besar">12</p>
+      <!-- Skor sesi. Semua [data-skor] mulai [hidden] dan slotnya kosong:
+           levelin.js (pasangSkorSesi) mengisinya dari jawaban sesi yang
+           sungguhan di sessionStorage, lalu membukanya. Tanpa sesi, skor
+           tidak pernah tampil — dulu angka contoh "12" / "9 benar dari 12"
+           tertulis tetap di sini dan tampil apa pun hasilnya. -->
+      <p class="angka-besar" data-skor data-isi="skor-total" hidden></p>
 
       <!-- Salinan teks §4.7: "Beres. 9 benar dari 12. Yang salah akan muncul
-           lagi lusa." Menyebut kapan kartu salah kembali, bukan menegur. -->
-      <p style="color:var(--ink-700)">Beres. 9 benar dari 12. Yang salah akan muncul lagi lusa.</p>
+           lagi lusa." — kalimatnya apa adanya, hanya dua angkanya yang diisi
+           dari sesi. Menyebut kapan kartu salah kembali, bukan menegur. -->
+      <p style="color:var(--ink-700)" data-skor hidden>Beres. <span data-isi="skor-benar"></span> benar dari <span data-isi="skor-total"></span>. Yang salah akan muncul lagi lusa.</p>
 
       <!-- Level-In (FL2) — strip pembanding untuk KARTU TERAKHIR sesi. SDD-
            LevelIn.md §6.2 secara eksplisit menaruh strip kartu terakhir di
@@ -70,18 +76,14 @@
 
       <!-- Rincian per mapel. PRD F7 menegaskan ukuran keberhasilannya bukan
            panjang beruntun, melainkan kartu yang pindah dari "sering salah"
-           ke "dikuasai" — jadi tidak ada penghitung hari beruntun di sini. -->
-      <div class="tumpuk penuh" style="text-align:left">
-        <div class="kartu kartu--soft kartu--rapat">
+           ke "dikuasai" — jadi tidak ada penghitung hari beruntun di sini.
+           Satu baris per mapel yang dijawab di sesi ini, dibangun levelin.js
+           dari [data-proto="skor-mapel"] (benar/jumlah dari jawaban asli). -->
+      <div class="tumpuk penuh" style="text-align:left" data-skor data-daftar="skor-mapel" hidden>
+        <div class="kartu kartu--soft kartu--rapat" data-proto="skor-mapel">
           <p class="baris-nilai">
-            <span style="font-weight:var(--fw-medium)">Matematika</span>
-            <span class="muted" style="font:var(--text-body-small)">5/6</span>
-          </p>
-        </div>
-        <div class="kartu kartu--soft kartu--rapat">
-          <p class="baris-nilai">
-            <span style="font-weight:var(--fw-medium)">Bahasa Inggris</span>
-            <span class="muted" style="font:var(--text-body-small)">4/6</span>
+            <span style="font-weight:var(--fw-medium)" data-isi="mapel-nama"></span>
+            <span class="muted" style="font:var(--text-body-small)" data-isi="mapel-skor"></span>
           </p>
         </div>
       </div>
