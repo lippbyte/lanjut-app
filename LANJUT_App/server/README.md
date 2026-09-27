@@ -66,6 +66,99 @@ tinggi (§3.6).
 Benih membaca `MVP-PWA/data/*.json` langsung (tidak menyalin isinya ke SQL) dan
 memakai `INSERT ... ON DUPLICATE KEY UPDATE` — aman dijalankan berkali-kali.
 
+> **Perhatian:** benih ikut menimpa `status_verifikasi` dan `diperiksa_pada`
+> dengan nilai di berkas JSON. Tanda "sudah dicek" yang dibuat lewat
+> `npm run verifikasi-konten` (bagian 2a) akan **hilang** kalau benih
+> dijalankan lagi. Setelah menjalankan benih, tandai ulang konten yang sudah
+> dicek.
+
+## 2a. Menandai konten sudah dicek (untuk tim konten)
+
+Konten di aplikasi (jadwal Linimasa, Khusus SMK, dan lainnya) baru dianggap
+"sudah dicek" setelah ditandai. Contoh: jadwal di Beranda **tidak tampil sama
+sekali** sampai jadwal itu ditandai sudah dicek ke laman resmi SNPMB.
+
+Alat ini **hanya mengubah tanda "sudah dicek"** dan tanggal pengecekannya.
+Isi konten (judul, tanggal, teks) tidak bisa berubah, dan tidak ada yang
+terhapus. Memutuskan konten mana yang benar tetap tugas tim konten: tandai
+hanya konten yang sudah kamu cocokkan dengan sumber resminya.
+
+### Sebelum mulai (sekali saja)
+
+Minta orang teknis memastikan komputermu sudah bisa menjalankan server
+(bagian 1 di atas: Node.js terpasang, `npm install` sudah dijalankan, dan
+berkas `.env` sudah diisi). Tanyakan juga: `.env` itu terhubung ke basis data
+**mana** — basis data uji atau basis data yang dipakai aplikasi sungguhan.
+Alat ini mengubah basis data yang tertulis di `.env`.
+
+### Langkah demi langkah
+
+1. **Buka terminal.** Di Windows: tekan tombol Windows, ketik `PowerShell`,
+   tekan Enter. Di Mac: buka aplikasi **Terminal**.
+2. **Masuk ke folder server.** Ketik `cd`, spasi, lalu seret folder
+   `LANJUT_App/server` ke jendela terminal, lalu tekan Enter. Contoh hasilnya:
+   ```
+   cd "D:\EDILAKSO-LANJUT-repo\LANJUT_App\server"
+   ```
+3. **Lihat apa saja yang belum dicek:**
+   ```
+   npm run verifikasi-konten -- --list
+   ```
+   Hasilnya dikelompokkan per jenis konten. Kolom pertama adalah **ID**, yang
+   dipakai di langkah berikutnya:
+   ```
+   == Linimasa (Beranda)  (--jenis=linimasa)  5 belum terverifikasi
+      daftar-akun-tka              Pendaftaran akun TKA  [asal: mockup]
+      daftar-snbp                  Pendaftaran SNBP  [asal: mockup]
+      ...
+   ```
+   Hanya ingin melihat satu jenis? Tambahkan `--jenis=`, misalnya
+   `npm run verifikasi-konten -- --list --jenis=linimasa`.
+4. **Tandai yang sudah kamu cek.** Isi jenis, ID, dan namamu:
+   ```
+   npm run verifikasi-konten -- --jenis=linimasa --id=daftar-snbp --oleh="Nama Kamu"
+   ```
+   Kalau berhasil, muncul baris seperti ini:
+   ```
+   [verifikasi] linimasa/daftar-snbp "Pendaftaran SNBP" → TERVERIFIKASI (dicek 2026-09-27)
+   ```
+   Jadwal itu langsung tampil di Beranda aplikasi (muat ulang aplikasinya).
+
+### Pilihan lain
+
+| Kebutuhan | Tambahkan | Contoh |
+|---|---|---|
+| Menandai beberapa sekaligus | pisahkan ID dengan koma, tanpa spasi | `--id=daftar-snbp,pdss` |
+| Tanggal cek bukan hari ini | `--tanggal=TAHUN-BULAN-TANGGAL` | `--tanggal=2026-09-25` |
+| Salah tandai, mau dibatalkan | `--batal` | `npm run verifikasi-konten -- --jenis=linimasa --id=daftar-snbp --batal` |
+
+Jenis yang tersedia: `linimasa`, `khusus-smk`, `checklist`, `prodi`, `mapel`,
+`cerita-alumni`.
+
+### Kalau muncul pesan galat
+
+- **"ID tidak ditemukan"** — ada ID yang salah ketik. **Tidak ada yang
+  diubah**, termasuk ID lain yang benar di perintah yang sama. Salin ID dari
+  hasil `--list`, lalu ulangi.
+- **"Jenis ... tidak dikenal"** / **"Argumen ... tidak dikenal"** — periksa
+  ejaan; pesan galatnya menyebutkan pilihan yang benar.
+- **"Tanggal ... tidak valid"** — tulis tanggal dengan format `2026-09-27`.
+- **Galat lain soal koneksi / basis data** — server basis data belum jalan
+  atau `.env` belum benar. Hubungi orang teknis.
+
+### Catatan untuk orang teknis
+
+- Skrip: `src/db/verifikasi/verifikasi-konten.js`. Yang diubah hanya
+  `status_verifikasi` (`terverifikasi` / `belum_diverifikasi`) dan
+  `diperiksa_pada` (DATE; bawaannya tanggal hari ini menurut UTC). Semua ID
+  diperiksa dalam satu transaksi.
+- `pemilik` **tidak** diubah: artinya kelas kurator (`tim` / nama mitra), bukan
+  nama verifikator. Nama dari `--oleh` hanya dicatat ke
+  `verifikasi-konten.log` di folder ini (diabaikan git, jadi hanya ada di
+  komputer yang menjalankan skrip). Belum ada kolom basis data untuk
+  menyimpan siapa verifikatornya.
+- `kartu` sengaja tidak termasuk: tabel itu berisi kartu buatan pengguna.
+
 ## 3. Menjalankan server
 
 ```bash
