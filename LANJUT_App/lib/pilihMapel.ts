@@ -6,6 +6,9 @@ import type { MapelUntukProdi } from '../api/types';
  * dites tanpa render.
  */
 
+/** Butir "Pilih 2 mapel pilihan TKA" di /konten/checklist, dicentang oleh Pilih Mapel. */
+export const BUTIR_MAPEL_TKA = 'mapel-tka';
+
 export type MapelAgregat = {
   id: string;
   nama: string;

@@ -6,6 +6,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { Prodi } from '../../api/types';
 import { useAgregasiMapelLintasProdi } from '../../hooks/useAgregasiMapelLintasProdi';
 import { useTandaiKemajuan } from '../../hooks/useKemajuan';
+import { BUTIR_MAPEL_TKA } from '../../lib/pilihMapel';
 import { useProdi } from '../../hooks/useProdi';
 import { useProdiMapel } from '../../hooks/useProdiMapel';
 import { useSesi } from '../../providers/AuthProvider';
@@ -26,8 +27,6 @@ import {
 
 // Penafian F3 — wajib tampil di setiap hasil (PRD Bagian 6).
 const PENAFIAN = 'Ini rangkuman, bukan keputusan resmi. Cek laman SNPMB.';
-// Butir "Pilih 2 mapel pilihan TKA" di /konten/checklist.
-const BUTIR_MAPEL_TKA = 'mapel-tka';
 
 type Langkah = { nama: 'masuk' } | { nama: 'daftar' } | { nama: 'hasil'; prodiId: string | null };
 
