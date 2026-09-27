@@ -37,6 +37,14 @@ export function LinimasaScreen() {
 
       {isPending ? <Memuat /> : isError ? <KeadaanGalat /> : <Isi data={data} />}
 
+      {/* v1.1 — tidak ada di PWA. Di bawah tenggat supaya tenggat tetap pertama. */}
+      <KartuPintu
+        ikon="posisi"
+        judul="Cek Posisi Gue"
+        keterangan="Lihat kamu lagi di tahap mana dan langkah yang cocok berikutnya."
+        onPress={() => router.push('/cek-posisi')}
+      />
+
       {/* Satu-satunya jalan ke Cerita Alumni — bukan tab (sama dengan PWA). */}
       <KartuPintu
         ikon="alumni"

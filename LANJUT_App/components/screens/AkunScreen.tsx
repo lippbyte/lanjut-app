@@ -9,7 +9,7 @@ import { useProdi } from '../../hooks/useProdi';
 import { useProgresDaftarPeriksa, useSaringDaftarPeriksa } from '../../hooks/useProgresDaftarPeriksa';
 import { useUbahProfil } from '../../hooks/useUbahProfil';
 import { color, font, spacing, teks } from '../../theme/tokens';
-import { BilahProgres, Kartu, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
+import { BilahProgres, Kartu, KartuPintu, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
 import { BELUM, DaftarOpsi, Field, Input, OpsiPil, PesanGalat, PilihProdi } from './auth/AuthUI';
 
 // "Jalur Saya" (v1.1, LANJUT_004) di atas padanan MVP-PWA/akun.html
@@ -18,6 +18,7 @@ import { BELUM, DaftarOpsi, Field, Input, OpsiPil, PesanGalat, PilihProdi } from
 // AuthProvider — hasil GET /auth/saya milik akun yang sedang masuk.
 export function AkunScreen() {
   const { pengguna, keluar } = useSesi();
+  const router = useRouter();
   const [proses, setProses] = useState(false);
 
   const onKeluar = async () => {
@@ -31,6 +32,12 @@ export function AkunScreen() {
     <View style={gaya.layarIsiRapat}>
       {/* key: formulir yang setengah diisi tidak terbawa ke akun lain. */}
       <KartuJalur key={pengguna.id} pengguna={pengguna} />
+      <KartuPintu
+        ikon="posisi"
+        judul="Cek Posisi Gue"
+        keterangan="Tahap kamu sekarang, dihitung dari jalur dan kemajuanmu."
+        onPress={() => router.push('/cek-posisi')}
+      />
 
       <SeksiJudul>Kemajuan</SeksiJudul>
       <RingkasanKemajuan />

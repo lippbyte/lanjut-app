@@ -45,6 +45,13 @@ const IKON = {
       <Path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6" />
     </>
   ),
+  // Pin peta untuk Cek Posisi Gue (tidak ada di PWA, gaya garis yang sama).
+  posisi: (
+    <>
+      <Path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" />
+      <Circle cx="12" cy="9.5" r="2.5" />
+    </>
+  ),
   centang: <Path d="m5 12.5 4.5 4.5L19 7.5" />,
   ok: (
     <>

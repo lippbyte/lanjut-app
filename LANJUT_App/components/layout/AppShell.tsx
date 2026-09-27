@@ -21,6 +21,7 @@ const TAB: { href: '/linimasa' | '/khusus-smk' | '/pilih-mapel' | '/daftar-perik
 const HALAMAN_ANAK: Record<string, string> = {
   '/cerita-alumni': 'Cerita Alumni SMK',
   '/akun': 'Jalur Saya',
+  '/cek-posisi': 'Cek Posisi Gue',
 };
 
 function tabAktif(pathname: string) {
