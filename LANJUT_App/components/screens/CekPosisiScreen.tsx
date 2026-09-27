@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { usePosisi } from '../../hooks/usePosisi';
-import { NAMA_TAHAP, type Tahap } from '../../lib/cekPosisi';
+import { KEBINGUNGAN, NAMA_TAHAP, type Kebingungan, type Tahap } from '../../lib/cekPosisi';
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
-import { BilahProgres, Ikon, Kartu, Lencana, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
+import { BilahProgres, Ikon, Kartu, Kepala, Lencana, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
+import { DaftarOpsi, OpsiPil } from './auth/AuthUI';
 
 const URUTAN: Tahap[] = ['eksplorasi', 'pemantapan', 'persiapan', 'menjelang'];
 // Satu kata per tahap supaya muat di kolom peta tanpa terpotong di tengah kata.
@@ -22,8 +23,37 @@ const LABEL_PETA: Record<Tahap, string> = {
  * jadi tidak ada kuis yang menanyakan ulang hal yang app sudah tahu.
  */
 export function CekPosisiScreen() {
+  // undefined = belum dijawab; null = dilewati. Tidak disimpan ke server
+  // (belum ada endpoint preferensi) — hanya mempersonalkan tampilan saat ini.
+  const [jawaban, setJawaban] = useState<Kebingungan | null | undefined>(undefined);
+
+  if (jawaban === undefined) return <Pertanyaan onJawab={setJawaban} />;
+  return <Hasil kebingungan={jawaban} onUlang={() => setJawaban(undefined)} />;
+}
+
+/** Satu pertanyaan ringan sebelum hasil. Tidak mengubah tahap, hanya kalimat fokus. */
+function Pertanyaan({ onJawab }: { onJawab: (k: Kebingungan | null) => void }) {
+  const [pilihan, setPilihan] = useState<Kebingungan | null>(null);
+  return (
+    <View style={gaya.layarIsiRapat}>
+      <Kepala
+        judul="Apa yang paling bikin kamu bingung sekarang?"
+        pengantar="Opsional. Jawabanmu cuma dipakai untuk menyesuaikan saran di halaman berikutnya."
+      />
+      <DaftarOpsi>
+        {KEBINGUNGAN.map((k) => (
+          <OpsiPil key={k.id} label={k.label} aktif={pilihan === k.id} onPress={() => setPilihan(k.id)} />
+        ))}
+      </DaftarOpsi>
+      <Tombol label="Lihat posisiku" besar penuh onPress={() => onJawab(pilihan)} />
+      <Tombol label="Lewati" varian="hantu" onPress={() => onJawab(null)} />
+    </View>
+  );
+}
+
+function Hasil({ kebingungan, onUlang }: { kebingungan: Kebingungan | null; onUlang: () => void }) {
   const router = useRouter();
-  const { isPending, posisi } = usePosisi(null);
+  const { isPending, posisi } = usePosisi(kebingungan);
 
   if (isPending) return <Memuat />;
 
@@ -76,6 +106,7 @@ export function CekPosisiScreen() {
 
       <SeksiJudul>Langkah Berikutnya</SeksiJudul>
       <Tombol label={posisi.langkah.label} besar penuh onPress={() => router.push(posisi.langkah.tujuan)} />
+      <Tombol label="Ganti jawaban kebingungan" varian="hantu" kecil onPress={onUlang} />
 
       <Penafian>
         Posisi ini dihitung dari target prodi di Jalur Saya dan kemajuan Daftar Periksa. Ini cuma gambaran, keputusannya
@@ -93,7 +124,8 @@ const s = StyleSheet.create({
   titik: { width: '100%', height: 6, borderRadius: radius.pill, backgroundColor: color.ink100 },
   titikLewat: { backgroundColor: color.blue200 },
   titikKini: { backgroundColor: color.blue400 },
-  petaLabel: { ...teks.caption, color: color.textMuted, textAlign: 'center' },
+  // 11px: "Pemantapan" tebal harus muat di seperempat kolom 360px.
+  petaLabel: { ...teks.caption, fontSize: 11, lineHeight: 16, color: color.textMuted, textAlign: 'center' },
   petaLabelKini: { color: color.blue600, fontFamily: font.semibold },
   fokus: { gap: spacing.s3 },
   fokusBaris: { flexDirection: 'row', gap: spacing.s3, alignItems: 'flex-start' },
