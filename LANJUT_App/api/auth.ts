@@ -111,6 +111,9 @@ const PESAN_GALAT: Record<string, string> = {
   JARINGAN: 'Tidak bisa menghubungi server. Periksa koneksimu.',
 };
 
+/** Ditampilkan di layar Masuk setelah sesi ditolak server (401) kapan pun. */
+export const PESAN_SESI_BERAKHIR = PESAN_GALAT.SESI_KEDALUWARSA;
+
 export function pesanUntuk(err: unknown): string {
   const kode = err instanceof ApiError ? err.kode : undefined;
   return (kode && PESAN_GALAT[kode]) || PESAN_GALAT.GALAT_SERVER;

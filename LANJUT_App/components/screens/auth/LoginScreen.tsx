@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
+import { PESAN_SESI_BERAKHIR } from '../../../api/auth';
 import { useAuth } from '../../../hooks/useAuth';
+import { useSesi } from '../../../providers/AuthProvider';
+import { Peringatan } from '../../ui';
 import { AuthLayout, Field, Input, PesanGalat, TautanBawah, TombolUtama, authStyles } from './AuthUI';
 
 // Salinan teks disamakan dengan MVP-PWA/masuk.html. Setelah sukses tidak ada
@@ -11,6 +14,7 @@ import { AuthLayout, Field, Input, PesanGalat, TautanBawah, TombolUtama, authSty
 export function LoginScreen() {
   const router = useRouter();
   const { login, loading, error, medan } = useAuth();
+  const { alasanKeluar } = useSesi();
   const [namaPengguna, setNamaPengguna] = useState('');
   const [kataSandi, setKataSandi] = useState('');
   const [galatLokal, setGalatLokal] = useState<string | null>(null);
@@ -27,6 +31,9 @@ export function LoginScreen() {
   return (
     <AuthLayout judul="Masuk" pengantar="Lanjutkan dengan akun yang sudah kamu buat.">
       <View style={authStyles.form}>
+        {/* Sesi ditolak server di tengah pemakaian atau saat app dibuka —
+            jelaskan kenapa tiba-tiba di sini (LANJUT_018). */}
+        {alasanKeluar === 'sesi_berakhir' ? <Peringatan>{PESAN_SESI_BERAKHIR}</Peringatan> : null}
         <Field label="Nama pengguna" galat={medan.nama_pengguna}>
           <Input
             value={namaPengguna}

@@ -3,14 +3,18 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import * as authApi from '../api/auth';
 import type { Pengguna, Sesi } from '../api/auth';
-import { ApiError } from '../api/client';
+import { ApiError, saatSesiBerakhir } from '../api/client';
 
 type StatusSesi = 'memuat' | 'masuk' | 'keluar';
+
+/** Kenapa status jadi 'keluar' — layar Masuk menjelaskannya ke pengguna. */
+export type AlasanKeluar = 'sesi_berakhir' | null;
 
 type NilaiAuth = {
   status: StatusSesi;
   token: string | null;
   pengguna: Pengguna | null;
+  alasanKeluar: AlasanKeluar;
   terapkanSesi: (sesi: Sesi) => void;
   perbaruiPengguna: (profil: Pengguna) => Promise<void>;
   keluar: () => Promise<void>;
@@ -22,11 +26,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [status, setStatus] = useState<StatusSesi>('memuat');
   const [token, setToken] = useState<string | null>(null);
   const [pengguna, setPengguna] = useState<Pengguna | null>(null);
+  const [alasanKeluar, setAlasanKeluar] = useState<AlasanKeluar>(null);
   const queryClient = useQueryClient();
+  // Token yang sedang dipakai, dibaca sinkron oleh pendengar 401 (jawaban
+  // bisa datang sebelum render berikutnya). Diisi langsung di setiap
+  // pergantian sesi, tidak menunggu render.
+  const tokenRef = useRef<string | null>(null);
+  // 401 dari POST /auth/keluar saat pengguna sendiri menekan Keluar bukan
+  // "sesi berakhir" — jangan tampilkan pesan itu.
+  const sedangKeluarRef = useRef(false);
   // Dibaca oleh perbaruiPengguna, yang bisa dipanggil setelah request
   // selesai — saat itu akun yang masuk mungkin sudah berganti.
   const penggunaIdRef = useRef<string | null>(null);
   penggunaIdRef.current = pengguna?.id ?? null;
+
+  /**
+   * Sesi ditolak server (401 TIDAK_MASUK / SESI_KEDALUWARSA), kapan pun —
+   * saat app dibuka maupun di tengah pemakaian. Hapus token & data akun;
+   * status 'keluar' membuat penjaga (app)/_layout.tsx membuka /masuk.
+   */
+  const akhiriSesi = useCallback(async () => {
+    if (!tokenRef.current) return; // sudah ditangani (banyak request gagal sekaligus)
+    tokenRef.current = null;
+    await authApi.hapusSesiLokal();
+    queryClient.removeQueries({ queryKey: ['kemajuan'] });
+    setToken(null);
+    setPengguna(null);
+    setAlasanKeluar('sesi_berakhir');
+    setStatus('keluar');
+  }, [queryClient]);
+
+  // Didaftarkan sebelum pemeriksaan sesi awal di bawah (efek berjalan urut).
+  useEffect(
+    () =>
+      saatSesiBerakhir((tokenDitolak) => {
+        // Jawaban untuk sesi lama (sudah keluar / ganti akun) diabaikan.
+        if (sedangKeluarRef.current || tokenDitolak !== tokenRef.current) return;
+        void akhiriSesi();
+      }),
+    [akhiriSesi]
+  );
 
   useEffect(() => {
     let batal = false;
@@ -37,6 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setStatus('keluar');
         return;
       }
+      tokenRef.current = tersimpan.token;
       setToken(tersimpan.token);
       setPengguna(tersimpan.pengguna);
       setStatus('masuk');
@@ -50,24 +90,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await authApi.simpanPengguna(profil);
       } catch (err) {
         if (batal) return;
-        if (err instanceof ApiError && err.status === 401) {
-          await authApi.hapusSesiLokal();
-          setToken(null);
-          setPengguna(null);
-          setStatus('keluar');
-        }
+        // Biasanya sudah ditangani pendengar 401; ini jaring pengaman untuk
+        // 401 dengan kode lain. akhiriSesi aman dipanggil dua kali.
+        if (err instanceof ApiError && err.status === 401) await akhiriSesi();
       }
     })();
     return () => {
       batal = true;
     };
-  }, []);
+  }, [akhiriSesi]);
 
   const terapkanSesi = useCallback((sesi: Sesi) => {
     // Data milik akun (mis. kemajuan) tidak boleh terbawa ke akun lain.
     queryClient.removeQueries({ queryKey: ['kemajuan'] });
+    tokenRef.current = sesi.token;
     setToken(sesi.token);
     setPengguna(sesi.pengguna);
+    setAlasanKeluar(null);
     setStatus('masuk');
   }, [queryClient]);
 
@@ -80,17 +119,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const keluar = useCallback(async () => {
-    if (token) await authApi.keluar(token);
-    else await authApi.hapusSesiLokal();
+    sedangKeluarRef.current = true;
+    try {
+      if (token) await authApi.keluar(token);
+      else await authApi.hapusSesiLokal();
+    } finally {
+      sedangKeluarRef.current = false;
+    }
+    tokenRef.current = null;
     queryClient.removeQueries({ queryKey: ['kemajuan'] });
     setToken(null);
     setPengguna(null);
+    setAlasanKeluar(null);
     setStatus('keluar');
   }, [token, queryClient]);
 
   const nilai = useMemo(
-    () => ({ status, token, pengguna, terapkanSesi, perbaruiPengguna, keluar }),
-    [status, token, pengguna, terapkanSesi, perbaruiPengguna, keluar]
+    () => ({ status, token, pengguna, alasanKeluar, terapkanSesi, perbaruiPengguna, keluar }),
+    [status, token, pengguna, alasanKeluar, terapkanSesi, perbaruiPengguna, keluar]
   );
 
   return <AuthContext.Provider value={nilai}>{children}</AuthContext.Provider>;

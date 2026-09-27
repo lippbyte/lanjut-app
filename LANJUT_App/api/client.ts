@@ -69,6 +69,28 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Kode 401 yang berarti "sesi tidak sah" (wajibLogin di server). BUKAN
+ * `KREDENSIAL_SALAH`, yang juga 401 tapi berarti sandi salah (mis. sandi lama
+ * di ubah-sandi) — itu harus tetap tampil sebagai galat biasa, bukan keluar.
+ */
+const KODE_SESI_TIDAK_SAH = new Set(['TIDAK_MASUK', 'SESI_KEDALUWARSA']);
+
+let pendengarSesiBerakhir: ((token: string) => void) | null = null;
+
+/**
+ * Satu pendengar (AuthProvider) untuk 401 sesi dari request mana pun yang
+ * membawa token — satu tempat terpusat, bukan tiap layar. Menerima token
+ * yang ditolak supaya pendengar bisa mengabaikan jawaban untuk sesi lama.
+ * Mengembalikan fungsi pelepas.
+ */
+export function saatSesiBerakhir(pendengar: (token: string) => void): () => void {
+  pendengarSesiBerakhir = pendengar;
+  return () => {
+    if (pendengarSesiBerakhir === pendengar) pendengarSesiBerakhir = null;
+  };
+}
+
 type ApiFetchOpsi = {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
@@ -118,6 +140,10 @@ export async function apiFetch<T>(path: string, opsi: ApiFetchOpsi = {}): Promis
   }
 
   if (!json.ok) {
+    if (res.status === 401 && opsi.token && KODE_SESI_TIDAK_SAH.has(json.galat.kode)) {
+      pendengarSesiBerakhir?.(opsi.token);
+    }
+    // Tetap dilempar: pemanggil (React Query dsb.) berhenti seperti biasa.
     throw new ApiError(res.status, json.galat.pesan, json.galat.kode, json.galat.medan);
   }
   return json.data;
