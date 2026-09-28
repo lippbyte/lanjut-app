@@ -137,8 +137,10 @@ function ButirLinimasa({ butir, terakhir }: { butir: TahapanTurunan; terakhir: b
 
 const s = StyleSheet.create({
   k1: { ...teks.title, color: color.textBody, marginVertical: 0 },
-  tenggatAngka: { ...teks.h1, color: color.white },
-  tenggatTeks: { ...teks.bodySm, color: color.onDarkText, marginTop: 6 },
+  // Teks gelap di kartu gradasi biru muda (LANJUT_027): putih hanya 1,3–2,0:1 di
+  // blue200→blue300. textBody 8,7:1, textMuted 4,9:1 di ujung terburuk gradasi.
+  tenggatAngka: { ...teks.h1, color: color.textBody },
+  tenggatTeks: { ...teks.bodySm, color: color.textMuted, marginTop: 6 },
   seksi: { gap: spacing.s3 },
   butir: { flexDirection: 'row', gap: spacing.s4 },
   butirLewat: { opacity: 0.55 },

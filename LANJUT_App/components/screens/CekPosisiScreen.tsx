@@ -63,7 +63,8 @@ function Hasil({ kebingungan, onUlang }: { kebingungan: Kebingungan | null; onUl
     <View style={gaya.layarIsiRapat}>
       <SeksiJudul>Posisi Kamu</SeksiJudul>
       <Kartu varian="brand">
-        <Lencana varian="ondark">
+        {/* "resmi" (blue600 di blue100, 5,0:1), bukan "ondark" (putih di putih 22%, 1,3:1). */}
+        <Lencana varian="resmi">
           Tahap {ke + 1} dari {URUTAN.length}
         </Lencana>
         <Text style={s.tahap}>{posisi.nama}</Text>
@@ -117,8 +118,10 @@ function Hasil({ kebingungan, onUlang }: { kebingungan: Kebingungan | null; onUl
 }
 
 const s = StyleSheet.create({
-  tahap: { ...teks.h2, color: color.white, marginTop: spacing.s3 },
-  ringkas: { ...teks.bodySm, color: color.onDarkText, marginTop: spacing.s1 },
+  // Teks gelap di kartu gradasi biru muda (LANJUT_027): putih hanya 1,3–2,0:1 di
+  // blue200→blue300. textBody 8,7:1, textMuted 4,9:1 di ujung terburuk gradasi.
+  tahap: { ...teks.h2, color: color.textBody, marginTop: spacing.s3 },
+  ringkas: { ...teks.bodySm, color: color.textMuted, marginTop: spacing.s1 },
   peta: { flexDirection: 'row', gap: spacing.s2 },
   petaButir: { flex: 1, alignItems: 'center', gap: spacing.s1 },
   titik: { width: '100%', height: 6, borderRadius: radius.pill, backgroundColor: color.ink100 },

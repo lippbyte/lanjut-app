@@ -286,8 +286,11 @@ const s = StyleSheet.create({
   caption: { ...teks.caption, color: color.textMuted },
   barisJudul: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.s3 },
   judulHasil: { ...teks.h3, color: color.textBody, flexShrink: 1, marginVertical: 0 },
-  saranLabel: { ...teks.label, color: color.white, opacity: 0.85 },
-  saranIsi: { ...teks.h3, color: color.white, marginTop: 6 },
+  // Teks gelap di kartu gradasi biru muda (LANJUT_027): putih hanya 1,3–2,0:1 di
+  // blue200→blue300. textBody 8,7:1, textMuted 4,9:1 di ujung terburuk gradasi.
+  // Tanpa opacity: textMuted × 0,85 turun ke 3,8:1.
+  saranLabel: { ...teks.label, color: color.textMuted },
+  saranIsi: { ...teks.h3, color: color.textBody, marginTop: 6 },
   galat: { ...teks.caption, color: color.blue600, textAlign: 'center' },
   ditekan: { opacity: 0.9, transform: [{ scale: 0.98 }] },
 });
