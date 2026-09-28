@@ -4,6 +4,9 @@
   "private": true,
   "description": "Fondasi backend LANJUT — Express + MySQL, sesuai docs/SDD-Backend-Foundation.md",
   "main": "src/index.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "start": "node src/index.js",
     "migrasi": "node src/db/jalankan-migrasi.js",
