@@ -94,12 +94,12 @@ Di cPanel → **Setup Node.js App**:
    `server/` di-upload (mis. `lanjut-backend`), **Application startup file**
    = `src/index.js`.
 
-   > **Penting (LANJUT_022):** `npm run benih` membaca data dari
-   > `../../MVP-PWA/data/` relatif terhadap folder `server/`. Kalau yang
-   > di-upload hanya isi folder `server/`, benih gagal ("no such file or
-   > directory"). Upload dengan struktur repo utuh (mis. `git clone` lalu
-   > Application root = `…/LANJUT_App/server`), atau jalankan benih dari
-   > komputer lain yang tersambung ke basis data Rumahweb.
+   > **Penting:** `npm run benih` butuh folder data konten. Kalau yang
+   > di-upload hanya folder `server/`, salin juga folder `MVP-PWA/data` ke
+   > `server/data-konten` dan isi `LOKASI_DATA_KONTEN=data-konten` di `.env`
+   > — langkah lengkapnya di `README.md` §6, "Data konten untuk
+   > `npm run benih`". Tanpa itu benih berhenti dengan pesan yang menyebut
+   > folder yang dicari.
 2. **Application mode**: Production.
 3. Masuk ke terminal aplikasi (tombol "Enter to virtual environment" di
    cPanel) lalu jalankan:

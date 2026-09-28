@@ -262,6 +262,7 @@ sama dengan `.env.example`:
 | `ASAL_DIIZINKAN` | **ya** | `https://edilakso.my.id` | Asal web yang boleh memanggil API, dipisah koma, **tidak pernah** `*` |
 | `SESI_UMUR_HARI` | tidak (bawaan `90`) | `90` | Umur sesi login (hari, bergulir) |
 | `JUMLAH_PROXY` | tidak (bawaan `0`) | `1` | Jumlah reverse proxy di depan server — lihat di bawah |
+| `LOKASI_DATA_KONTEN` | tidak (bawaan `../../MVP-PWA/data`) | `data-konten` | Folder berisi berkas `*.json` konten untuk `npm run benih` — lihat di bawah |
 
 Koneksi basis data memakai **lima variabel terpisah** (`DB_HOST`, `DB_PORT`,
 `DB_USER`, `DB_PASSWORD`, `DB_NAME`), bukan satu URL koneksi. Hosting yang
@@ -301,7 +302,8 @@ cp .env.production.example .env
 # 3. Buat semua tabel (hanya menjalankan migrasi yang belum pernah jalan)
 npm run migrasi
 
-# 4. Isi konten dari MVP-PWA/data/*.json (aman diulang)
+# 4. Isi konten dari berkas *.json (aman diulang). Kalau yang diunggah hanya
+#    folder server/, siapkan dulu folder data-konten — lihat di bawah.
 npm run benih
 
 # 5. (Opsional) Tandai konten yang sudah dicek ke sumber resmi — tanda ini
@@ -317,14 +319,46 @@ Catatan:
 
 - Jalankan semua perintah **dari folder `server/`**: berkas `.env` dibaca
   dari folder tempat perintah dijalankan.
-- **`npm run benih` membaca `../../MVP-PWA/data/`** (di luar folder
-  `server/`). Kalau yang diunggah ke server hanya folder `server/`, benih
-  gagal dengan "no such file or directory". Pastikan struktur folder repo
-  ikut terbawa (mis. `git clone` seluruh repo, lalu arahkan aplikasi ke
-  `LANJUT_App/server`), atau jalankan benih dari komputer lain yang
-  tersambung ke basis data server.
 - Menandai verifikasi (langkah 5) hanya untuk konten yang benar-benar sudah
   dicocokkan dengan sumber resminya — lihat bagian 2a.
+
+### Data konten untuk `npm run benih` (`LOKASI_DATA_KONTEN`)
+
+Isi aplikasi (jadwal Linimasa, daftar prodi, Daftar Periksa, dan lainnya)
+berasal dari berkas-berkas `.json` di folder **`MVP-PWA/data`** di repo.
+`npm run benih` menyalin isi berkas-berkas itu ke basis data.
+
+- **Kalau seluruh repo ada di server** (mis. hasil `git clone`): tidak perlu
+  apa-apa. Benih otomatis membaca `MVP-PWA/data` seperti di laptop.
+- **Kalau yang diunggah hanya folder `server/`** (misalnya lewat cPanel), ikuti
+  langkah berikut:
+
+1. Di komputer, buka folder repo lalu masuk ke **`MVP-PWA`**. Klik kanan
+   folder **`data`** → *Compress / Kirim ke → Folder terkompresi (zip)*.
+2. Unggah berkas zip itu ke folder `server/` di hosting (di cPanel: *File
+   Manager* → masuk ke folder aplikasi → *Upload*).
+3. Ekstrak zip-nya di sana (di cPanel: klik kanan berkas zip → *Extract*),
+   lalu **ganti nama** folder hasil ekstrak dari `data` menjadi
+   **`data-konten`**. Pastikan berkas seperti `prodi.json` dan
+   `linimasa.json` langsung berada di dalam `server/data-konten/` — bukan di
+   `server/data-konten/data/`.
+4. Tambahkan baris ini ke berkas `.env` di folder `server/` (atau ke
+   pengaturan *environment variable* di hosting):
+   ```
+   LOKASI_DATA_KONTEN=data-konten
+   ```
+5. Jalankan `npm run benih`. Baris pertama hasilnya menyebut folder yang
+   dipakai, mis. `[benih] data konten: /home/akun/lanjut/server/data-konten`.
+
+Kalau foldernya salah atau belum lengkap, benih **berhenti sebelum menulis
+apa pun** dan menyebut folder yang dicari serta berkas yang kurang. Isi
+`LOKASI_DATA_KONTEN` boleh path lengkap (mis. `/home/akun/data-konten`)
+atau path relatif terhadap folder `server/` (mis. `data-konten`).
+
+**Setiap kali isi berkas JSON diubah** (mis. tanggal Linimasa diperbarui),
+ulangi langkah 1–3 untuk menimpa folder `data-konten` di server, lalu
+jalankan `npm run benih` lagi. Ingat: konten yang isinya berubah akan kembali
+"belum diverifikasi" dan perlu ditandai ulang (bagian 2 dan 2a).
 
 ### Memastikan server sehat
 
