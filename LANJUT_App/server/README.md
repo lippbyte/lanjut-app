@@ -47,6 +47,7 @@ cp .env.example .env
 | `DB_NAME` | `lanjut` | Basis data yang sudah dibuat di atas |
 | `ASAL_DIIZINKAN` | `http://localhost:5500` | CORS, dipisah koma, **tidak pernah** `*` |
 | `SESI_UMUR_HARI` | `90` | Umur sesi login, bergulir (§5.3) |
+| `JUMLAH_PROXY` | (kosong) | Opsional. Jumlah reverse proxy di depan server — lihat bagian **Deployment** |
 
 Server **menolak menyala** (gagal cepat) bila salah satu variabel wajib
 kosong — pesan galatnya menyebutkan variabel mana yang kurang.
@@ -228,6 +229,119 @@ lapis per modul, batasnya tegas:
 | Rute | `*.rute.js` | Baca `req`, panggil layanan, susun respons | SQL, aturan bisnis |
 | Layanan | `*.layanan.js` | Aturan bisnis, panggil repositori | SQL, sentuh `req`/`res` |
 | Repositori | `*.repo.js` | **SQL (satu-satunya tempat)** | Sentuh `req`/`res` |
+
+## 6. Deployment
+
+Bagian ini berlaku untuk hosting apa pun. Langkah khusus Rumahweb (cPanel
+Node.js App) ada di [`DEPLOYMENT-RUMAHWEB.md`](DEPLOYMENT-RUMAHWEB.md).
+
+### Prasyarat
+
+- **Node.js 20 atau lebih baru** (dicantumkan juga di `package.json` → `engines`).
+- **MySQL 8** dengan satu basis data kosong berkarakter `utf8mb4`. Hosting
+  cPanel sering memakai **MariaDB**; skema ini belum pernah diuji di MariaDB
+  (yang paling mungkin bermasalah: `ROW_NUMBER() OVER` dan `CHECK`, keduanya
+  butuh MariaDB 10.2+).
+- Pengguna basis data dengan hak membuat & mengubah tabel (untuk migrasi).
+
+### Environment variable
+
+Semua konfigurasi dibaca dari environment variable (atau berkas `.env` di
+folder `server/`). Tidak ada nilai yang tertanam di kode. Daftar lengkap,
+sama dengan `.env.example`:
+
+| Variabel | Wajib? | Contoh produksi | Keterangan |
+|---|---|---|---|
+| `PORT` | tidak (bawaan `3000`) | `3000` | Banyak hosting mengisinya sendiri — biarkan hosting yang menentukan |
+| `NODE_ENV` | disarankan | `production` | `production` memakai batas laju asli (§8.2). **Jangan** `test` di server tayang |
+| `DB_HOST` | **ya** | `localhost` | Host MySQL |
+| `DB_PORT` | tidak (bawaan `3306`) | `3306` | |
+| `DB_USER` | **ya** | `akun_lanjut` | Di cPanel biasanya berawalan nama akun |
+| `DB_PASSWORD` | ya (boleh kosong hanya di lokal) | *(rahasia)* | |
+| `DB_NAME` | **ya** | `akun_lanjut` | |
+| `ASAL_DIIZINKAN` | **ya** | `https://edilakso.my.id` | Asal web yang boleh memanggil API, dipisah koma, **tidak pernah** `*` |
+| `SESI_UMUR_HARI` | tidak (bawaan `90`) | `90` | Umur sesi login (hari, bergulir) |
+| `JUMLAH_PROXY` | tidak (bawaan `0`) | `1` | Jumlah reverse proxy di depan server — lihat di bawah |
+
+Koneksi basis data memakai **lima variabel terpisah** (`DB_HOST`, `DB_PORT`,
+`DB_USER`, `DB_PASSWORD`, `DB_NAME`), bukan satu URL koneksi. Hosting yang
+memberi satu URL (mis. `mysql://user:sandi@host:port/nama`) perlu dipecah ke
+lima variabel itu.
+
+**`ASAL_DIIZINKAN` (CORS).** Isi dengan alamat web yang membuka aplikasi,
+persis termasuk `https://` dan tanpa garis miring di akhir (mis.
+`https://edilakso.my.id`). Variabel ini wajib walau web dan API satu
+domain — server menolak menyala bila kosong. **Aplikasi Android (APK) tidak
+terkena CORS** — CORS hanya berlaku untuk peramban — jadi APK tidak perlu
+dimasukkan ke daftar ini.
+
+**`JUMLAH_PROXY`.** Di hosting, server biasanya berada di belakang reverse
+proxy. Tanpa variabel ini, semua pengguna terlihat ber-IP sama (IP proxy),
+sehingga batas laju per-IP berlaku untuk **semua orang sekaligus** (mis.
+hanya 5 pendaftaran per jam untuk seluruh pengguna). Isi dengan jumlah proxy
+di depan server — biasanya `1`, tapi **pastikan ke dokumentasi hostingnya**.
+Jangan isi lebih besar dari jumlah sebenarnya: header `X-Forwarded-For` bisa
+dipalsukan pengguna untuk lolos dari batas laju.
+
+Rahasia hanya diisi di `.env` di server atau di pengaturan environment
+variable hosting — **tidak pernah** di berkas yang ada di git. Templat
+`.env.production.example` hanya berisi placeholder; `.env` dan
+`.env.production` diabaikan git.
+
+### Urutan langkah di server baru
+
+```bash
+# 1. Pasang dependensi (dari folder server/)
+npm ci
+
+# 2. Isi environment variable: salin templat lalu isi nilai sungguhan,
+#    ATAU isi lewat pengaturan env hosting (tanpa berkas .env).
+cp .env.production.example .env
+
+# 3. Buat semua tabel (hanya menjalankan migrasi yang belum pernah jalan)
+npm run migrasi
+
+# 4. Isi konten dari MVP-PWA/data/*.json (aman diulang)
+npm run benih
+
+# 5. (Opsional) Tandai konten yang sudah dicek ke sumber resmi — tanda ini
+#    tersimpan di basis data, jadi di server baru harus ditandai ulang
+npm run verifikasi-konten -- --list
+npm run verifikasi-konten -- --jenis=linimasa --id=daftar-akun-tka,pelaksanaan-tka,susulan-tka --oleh="Nama"
+
+# 6. Nyalakan server (mode produksi; tanpa auto-restart)
+npm start
+```
+
+Catatan:
+
+- Jalankan semua perintah **dari folder `server/`**: berkas `.env` dibaca
+  dari folder tempat perintah dijalankan.
+- **`npm run benih` membaca `../../MVP-PWA/data/`** (di luar folder
+  `server/`). Kalau yang diunggah ke server hanya folder `server/`, benih
+  gagal dengan "no such file or directory". Pastikan struktur folder repo
+  ikut terbawa (mis. `git clone` seluruh repo, lalu arahkan aplikasi ke
+  `LANJUT_App/server`), atau jalankan benih dari komputer lain yang
+  tersambung ke basis data server.
+- Menandai verifikasi (langkah 5) hanya untuk konten yang benar-benar sudah
+  dicocokkan dengan sumber resminya — lihat bagian 2a.
+
+### Memastikan server sehat
+
+```bash
+curl https://<domain>/api/v1/sehat
+# { "ok": true, "data": { "status": "ok", "waktu": "..." } }
+```
+
+`/api/v1/sehat` hanya memastikan proses Node hidup — **tidak** memeriksa
+basis data. Untuk memastikan basis data tersambung dan sudah dibenih, cek
+juga satu endpoint konten:
+
+```bash
+curl https://<domain>/api/v1/konten/prodi   # harus berisi daftar prodi
+```
+
+Kalau hosting meminta *health check path*, pakai `/api/v1/sehat`.
 
 ## Status & yang belum selesai
 

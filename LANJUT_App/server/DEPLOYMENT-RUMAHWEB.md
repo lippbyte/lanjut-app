@@ -48,7 +48,7 @@ jalankan migrasi & benih dari terminal cPanel/SSH:
 ```bash
 cd server
 npm run migrasi   # menjalankan src/db/migrasi/001..00N yang belum pernah jalan
-npm run benih     # mengisi konten dari app/data/*.json — aman diulang
+npm run benih     # mengisi konten dari ../../MVP-PWA/data/*.json — aman diulang
 ```
 
 Migrasi membaca kredensial dari `.env` (lihat langkah 2) — pastikan `.env`
@@ -78,6 +78,7 @@ lihat komentar di `.env.production.example` untuk arti tiap variabel):
 | `DB_NAME` | Basis data dari langkah 1 (dengan prefix akun cPanel) |
 | `ASAL_DIIZINKAN` | `https://<domain-anda>` — domain final Rumahweb Anda |
 | `SESI_UMUR_HARI` | `90` (usulan SDD §5.3), bisa disesuaikan kebijakan |
+| `JUMLAH_PROXY` | Jumlah reverse proxy di depan Node — kemungkinan `1` di cPanel/Passenger, **pastikan ke Rumahweb**. Tanpa ini batas laju per-IP berlaku untuk semua pengguna sekaligus (lihat `README.md` §6) |
 
 **Jangan pernah commit `.env` berisi nilai sungguhan ke git** — sudah
 dikunci di `server/.gitignore`, tapi tetap periksa manual sebelum push
@@ -92,6 +93,13 @@ Di cPanel → **Setup Node.js App**:
 1. Buat aplikasi baru, **Application root** menunjuk ke folder tempat kode
    `server/` di-upload (mis. `lanjut-backend`), **Application startup file**
    = `src/index.js`.
+
+   > **Penting (LANJUT_022):** `npm run benih` membaca data dari
+   > `../../MVP-PWA/data/` relatif terhadap folder `server/`. Kalau yang
+   > di-upload hanya isi folder `server/`, benih gagal ("no such file or
+   > directory"). Upload dengan struktur repo utuh (mis. `git clone` lalu
+   > Application root = `…/LANJUT_App/server`), atau jalankan benih dari
+   > komputer lain yang tersambung ke basis data Rumahweb.
 2. **Application mode**: Production.
 3. Masuk ke terminal aplikasi (tombol "Enter to virtual environment" di
    cPanel) lalu jalankan:
