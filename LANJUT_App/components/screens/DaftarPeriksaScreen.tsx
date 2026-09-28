@@ -186,7 +186,8 @@ const s = StyleSheet.create({
     borderColor: color.borderSoft,
     backgroundColor: color.white,
   },
-  kepingAktif: { backgroundColor: color.blue400, borderColor: color.blue400 },
+  // Putih 14 px di blue400 hanya 2,63:1 → blue600 5,69:1 (LANJUT_027).
+  kepingAktif: { backgroundColor: color.blue600, borderColor: color.blue600 },
   kepingTeks: { ...teks.bodySm, fontFamily: font.medium, color: color.ink700 },
   kepingTeksAktif: { color: color.white },
   kemajuan: { gap: spacing.s3 },

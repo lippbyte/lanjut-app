@@ -206,9 +206,11 @@ export function Tombol({
   );
 }
 
+// Kontras (LANJUT_027): putih di blue400 hanya 2,63:1 → utama blue600 5,69:1,
+// ditekan textMuted 9,81:1. Sekunder textMuted di blue200 6,96:1, ditekan di blue300 4,92:1.
 const TOMBOL = {
-  utama: { bg: color.blue400, bgTekan: color.blue500, fg: color.white, garis: 'transparent' },
-  sekunder: { bg: color.blue200, bgTekan: '#A8D6E3', fg: color.blue600, garis: 'transparent' },
+  utama: { bg: color.blue600, bgTekan: color.textMuted, fg: color.white, garis: 'transparent' },
+  sekunder: { bg: color.blue200, bgTekan: color.blue300, fg: color.textMuted, garis: 'transparent' },
   garis: { bg: color.white, bgTekan: color.blue100, fg: color.blue600, garis: color.borderBrand },
   hantu: { bg: 'transparent', bgTekan: color.blue100, fg: color.blue600, garis: 'transparent' },
 } as const;
