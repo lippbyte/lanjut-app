@@ -22,6 +22,9 @@ const sinkronRute = require('./modul/sinkron/sinkron.rute');
 const app = express();
 
 app.disable('x-powered-by');
+// Di belakang reverse proxy, req.ip diambil dari X-Forwarded-For sebanyak
+// JUMLAH_PROXY lompatan (lihat config/env.js). 0 = perilaku bawaan Express.
+if (env.JUMLAH_PROXY > 0) app.set('trust proxy', env.JUMLAH_PROXY);
 app.use(
   helmet({
     contentSecurityPolicy: {

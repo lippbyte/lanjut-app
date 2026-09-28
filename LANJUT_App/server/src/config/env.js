@@ -52,7 +52,17 @@ const env = {
     .map((s) => s.trim())
     .filter(Boolean),
   SESI_UMUR_HARI: angka('SESI_UMUR_HARI', 90),
+  // Jumlah reverse proxy tepercaya di depan Node (cPanel/Passenger, Railway,
+  // dst.). 0 = tidak ada (lokal). Tanpa ini di belakang proxy, semua
+  // pengguna terlihat ber-IP sama (IP proxy) dan batas laju per-IP (§8.2)
+  // berlaku untuk SEMUA orang sekaligus. Jangan diisi lebih besar dari
+  // jumlah proxy sebenarnya: header X-Forwarded-For bisa dipalsukan klien.
+  JUMLAH_PROXY: angka('JUMLAH_PROXY', 0),
 };
+
+if (!Number.isInteger(env.JUMLAH_PROXY) || env.JUMLAH_PROXY < 0) {
+  throw new Error(`JUMLAH_PROXY harus bilangan bulat ≥ 0, dapat: "${env.JUMLAH_PROXY}".`);
+}
 
 if (env.ASAL_DIIZINKAN.includes('*')) {
   throw new Error(
