@@ -42,6 +42,7 @@ npx eas-cli build --platform android --profile preview   # hasil: .apk (bukan .a
 - **HTTP polos** (`usesCleartextTraffic`) hanya diizinkan kalau URL-nya berawalan `http://`. Build ke backend `https://` otomatis kembali aman.
 - **Syarat di HP:** HP harus berada di WiFi yang sama dengan komputer backend, dan backend harus jalan (`cd server && npm start`). Backend sudah listen di `0.0.0.0:4000`.
 - **Penyimpanan APK:** simpan unduhan di `LANJUT_App/build/`. Folder ini diabaikan git.
+- **Aturan abaikan untuk EAS wajib di `.gitignore` root repo.** Saat mengemas proyek, EAS hanya membaca `.gitignore` root; aturan di `LANJUT_App/.gitignore` tidak berlaku untuk upload EAS (tanpa aturan root, APK di `build/` ikut terunggah dan arsip jadi ±220 MB). Cek isi arsip tanpa upload: `npx eas-cli build:inspect -p android -s archive -e preview -o <folder> --force`.
 
 ## Tampilan
 

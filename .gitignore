@@ -43,5 +43,8 @@ MVP-PWA/scratch_*
 scratch/
 
 # APK hasil unduhan EAS. Harus di .gitignore root: EAS Build hanya membaca
-# berkas ini saat mengemas proyek, jadi LANJUT_App/.gitignore tidak cukup.
+# berkas ini saat mengemas proyek, jadi LANJUT_App/.gitignore tidak cukup
+# (dibuktikan ulang 28 Sep: tanpa baris ini arsip EAS 221 MB, dengan 19 MB).
 LANJUT_App/build/
+# Cache & status server pengembangan Expo — sama alasannya, bukan bagian build.
+LANJUT_App/.expo/
