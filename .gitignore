@@ -12,7 +12,10 @@ LANJUT_App/server/.env.test
 LANJUT_App/server/.env.local
 !.env.example
 !LANJUT_App/server/.env.example
-!LANJUT_App/server/.env.production
+# Templat saja (berisi placeholder). Berkas berisi nilai sungguhan —
+# .env, .env.production, dst. — tetap diabaikan.
+!LANJUT_App/server/.env.production.example
+LANJUT_App/server/.env.production
 
 # Logs
 *.log

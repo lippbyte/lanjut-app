@@ -61,11 +61,11 @@ di direktori `server/` saat perintah dijalankan (via `dotenv`, lihat
 
 ```bash
 cd server
-cp .env.production .env
+cp .env.production.example .env
 ```
 
 Edit `.env` dan isi nilai sungguhan (nama variabel **tidak boleh diubah**,
-lihat komentar di `.env.production` untuk arti tiap variabel):
+lihat komentar di `.env.production.example` untuk arti tiap variabel):
 
 | Variabel | Isi dengan |
 |---|---|
