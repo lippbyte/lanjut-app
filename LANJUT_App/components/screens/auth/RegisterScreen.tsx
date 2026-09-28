@@ -9,6 +9,7 @@ import {
   BELUM,
   Field,
   Input,
+  Keterangan,
   PesanGalat,
   PilihProdi,
   TautanBawah,
@@ -19,6 +20,12 @@ import {
 // Aturan disalin dari server/src/modul/auth/auth.skema.js supaya kesalahan
 // umum tertangkap sebelum dikirim; server tetap sumber kebenaran.
 const NAMA_PENGGUNA_REGEX = /^[a-z0-9._]{3,32}$/;
+
+// Disetujui Khalifa 28 Sep 2026 (salinan-teks-lanjut.md §4.10). Pakai persis —
+// jangan menambah janji ("tidak dibagikan", "aman") atau klaim hukum. Tinjau
+// ulang bila ada fitur AI, analitik, atau perubahan penyimpanan data.
+const KALIMAT_DATA_PRIBADI =
+  'Kami menyimpan nama pengguna, nama tampilan, email (kalau kamu isi), kelas, prodi impian, dan centang Daftar Periksamu untuk menjalankan LANJUT, yaitu menampilkan jalur dan kemajuanmu.';
 
 // Medan & salinan teks mengikuti MVP-PWA/daftar.html: nama pengguna, email
 // (opsional), kata sandi, prodi impian (wajib, "belum" jawaban sah).
@@ -93,6 +100,7 @@ export function RegisterScreen() {
         </Field>
         <PesanGalat teks={error} />
         <TombolUtama label="Daftar" labelProses="Mendaftarkan…" proses={loading} onPress={kirim} />
+        <Keterangan>{KALIMAT_DATA_PRIBADI}</Keterangan>
         <TautanBawah teks="Sudah punya akun?" tautan="Masuk" onPress={() => router.replace('/masuk')} />
       </View>
     </AuthLayout>

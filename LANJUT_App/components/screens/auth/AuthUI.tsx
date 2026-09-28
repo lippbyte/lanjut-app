@@ -112,6 +112,15 @@ export function Input(props: TextInputProps) {
   );
 }
 
+/**
+ * Keterangan kecil di form Masuk/Daftar — gaya yang sama dengan petunjuk di
+ * bawah isian (caption + textMuted, kontras 9:1). Sengaja bukan `Penafian`
+ * (textSubtle, kontras ±2:1): keterangan di sini harus benar-benar terbaca.
+ */
+export function Keterangan({ children }: { children: string }) {
+  return <Text style={styles.hint}>{children}</Text>;
+}
+
 export function PesanGalat({ teks }: { teks: string | null }) {
   if (!teks) return null;
   return (
