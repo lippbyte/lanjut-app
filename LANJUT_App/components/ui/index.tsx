@@ -342,6 +342,10 @@ const s = StyleSheet.create({
   tombolTeks: { fontFamily: teks.h1.fontFamily, fontSize: 16, lineHeight: 22 },
   tombolTeksBesar: { fontFamily: teks.h1.fontFamily, fontSize: 18, lineHeight: 24 },
   tombolTeksKecil: { fontFamily: teks.h1.fontFamily, fontSize: 14, lineHeight: 20 },
-  sumber: { ...teks.caption, color: color.textSubtle },
+  // textMuted, bukan textSubtle seperti tokens.css PWA (LANJUT_026): textSubtle
+  // hanya ±2,2:1 di atas putih — penafian & label sumber praktis tak terbaca di
+  // HP redup. textMuted 8,6–9,8:1 di semua latar app. Tetap terlihat sekunder
+  // lewat ukuran caption 13 px dan letaknya, bukan lewat warna yang samar.
+  sumber: { ...teks.caption, color: color.textMuted },
   memuat: { marginVertical: spacing.s8 },
 });
