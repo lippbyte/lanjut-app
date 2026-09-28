@@ -232,6 +232,21 @@ dokumen ini, bukan dikarang ulang di kode.
 - **Luring:** Sedang tidak tersambung. Yang sudah pernah dibuka masih bisa dilihat.
 - **CTA di `pilih-mapel.html`:** Lihat prospek & kampus untuk [nama prodi], dengan baris kecil: Peminat, mata kuliah, dan kampus yang cocok.
 
+### 4.10 Daftar (buat akun)
+
+Berlaku untuk **LANJUT_App** (layar Daftar Expo, `RegisterScreen`). Belum
+dipakai di `MVP-PWA/daftar.html`.
+
+- **Keterangan data pribadi (di bawah tombol Daftar):** Kami menyimpan nama pengguna, nama tampilan, email (kalau kamu isi), kelas, prodi impian, dan centang Daftar Periksamu untuk menjalankan LANJUT, yaitu menampilkan jalur dan kemajuanmu.
+
+> **Status:** disetujui Khalifa, 28 Sep 2026 (LANJUT_025). Dipakai **persis
+> apa adanya**: jangan dipersingkat, jangan ditambah janji ("tidak
+> dibagikan", "aman", "terenkripsi") atau klaim hukum. Kalimat ini sengaja
+> hanya menyebut yang memang dilakukan app sekarang.
+>
+> **Tinjau ulang** bila ada fitur AI, analitik, atau perubahan penyimpanan
+> data — kalimat ini akan menjadi tidak lengkap.
+
 ---
 
 ## 5. Notifikasi
