@@ -11,7 +11,7 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const fs = require('node:fs');
 const { nyalakanServer, urlDari, pool } = require('./bantuan');
-const { benihChecklist } = require('../src/db/benih/benih');
+const { benihChecklist, DIR_DATA } = require('../src/db/benih/benih');
 
 const CONTOH = JSON.parse(
   fs.readFileSync(path.join(__dirname, 'contoh', 'checklist-contoh-rumpun.json'), 'utf8')
@@ -65,9 +65,8 @@ test('benih: butir tanpa berlaku_untuk_rumpun tetap NULL (berlaku umum)', async 
   // Data konten asli belum punya medan rumpun. Benih ulang (idempoten, isi
   // sama persis) harus tetap menyimpan NULL untuk semuanya.
   await benihChecklist();
-  const asli = JSON.parse(
-    fs.readFileSync(path.join(__dirname, '..', '..', '..', 'MVP-PWA', 'data', 'checklist.json'), 'utf8')
-  );
+  // Folder yang sama dengan yang dibaca benih (LOKASI_DATA_KONTEN / bawaan).
+  const asli = JSON.parse(fs.readFileSync(path.join(DIR_DATA, 'checklist.json'), 'utf8'));
   const ids = asli.kategori.flatMap((k) => k.butir.map((b) => b.id));
   assert.ok(ids.length > 0);
   const rumpun = await rumpunDiDb(ids);

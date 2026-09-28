@@ -58,6 +58,10 @@ const env = {
   // berlaku untuk SEMUA orang sekaligus. Jangan diisi lebih besar dari
   // jumlah proxy sebenarnya: header X-Forwarded-For bisa dipalsukan klien.
   JUMLAH_PROXY: angka('JUMLAH_PROXY', 0),
+  // Folder berisi *.json konten untuk `npm run benih` (LANJUT_023). Kosong =
+  // bawaan ../../MVP-PWA/data dari folder server/. Absolut, atau relatif
+  // terhadap folder server/. Hanya dipakai benih, bukan oleh API.
+  LOKASI_DATA_KONTEN: opsional('LOKASI_DATA_KONTEN', null),
 };
 
 if (!Number.isInteger(env.JUMLAH_PROXY) || env.JUMLAH_PROXY < 0) {

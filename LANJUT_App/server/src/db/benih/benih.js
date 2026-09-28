@@ -41,15 +41,67 @@
 
 const fs = require('fs');
 const path = require('path');
+const env = require('../../config/env');
 const pool = require('../koneksi');
 
-// server/src/db/benih → naik 5 tingkat ke akar repo. Data konten tinggal di
-// MVP-PWA/data sejak restrukturisasi repo (78cfbad); sebelumnya app/data.
-const DIR_DATA = path.join(__dirname, '..', '..', '..', '..', '..', 'MVP-PWA', 'data');
+// Folder server/ (tempat package.json & .env): server/src/db/benih → naik 3.
+const DIR_SERVER = path.join(__dirname, '..', '..', '..');
+
+// Lokasi *.json konten (LANJUT_023). Bawaan: ../../MVP-PWA/data dari folder
+// server/, yaitu MVP-PWA/data di akar repo — persis lokasi sebelum env ini
+// ada. Di hosting yang hanya menerima folder server/, salin folder data ke
+// sana dan isi LOKASI_DATA_KONTEN (absolut, atau relatif terhadap server/ —
+// sengaja bukan terhadap folder tempat perintah dijalankan, supaya hasilnya
+// tidak bergantung dari mana `npm run benih` dipanggil).
+const DIR_DATA = env.LOKASI_DATA_KONTEN
+  ? path.resolve(DIR_SERVER, env.LOKASI_DATA_KONTEN)
+  : path.join(DIR_SERVER, '..', '..', 'MVP-PWA', 'data');
+
+const BERKAS_DATA = [
+  'prodi.json',
+  'mapel.json',
+  'prodi-mapel.json',
+  'linimasa.json',
+  'khusus-smk.json',
+  'cerita-alumni.json',
+  'checklist.json',
+  'arsip.json',
+];
+
+function asalLokasi() {
+  return env.LOKASI_DATA_KONTEN
+    ? `dari env LOKASI_DATA_KONTEN="${env.LOKASI_DATA_KONTEN}"`
+    : 'lokasi bawaan, LOKASI_DATA_KONTEN tidak diisi';
+}
+
+/**
+ * Dipanggil sebelum menulis apa pun: folder harus ada dan lengkap. Tanpa
+ * ini, folder yang salah baru ketahuan di tengah benih (setelah sebagian
+ * tabel terisi) lewat galat "ENOENT" yang tidak menyebut env mana yang salah.
+ */
+function pastikanFolderData() {
+  if (!fs.existsSync(DIR_DATA) || !fs.statSync(DIR_DATA).isDirectory()) {
+    throw new Error(
+      `Folder data konten tidak ditemukan: ${DIR_DATA} (${asalLokasi()}). ` +
+        'Periksa env LOKASI_DATA_KONTEN — isi dengan folder yang berisi prodi.json, ' +
+        'linimasa.json, dst. (lihat README bagian Deployment). Tidak ada data yang ditulis.'
+    );
+  }
+  const hilang = BERKAS_DATA.filter((f) => !fs.existsSync(path.join(DIR_DATA, f)));
+  if (hilang.length) {
+    throw new Error(
+      `Folder data konten ${DIR_DATA} (${asalLokasi()}) tidak lengkap — tidak ada: ${hilang.join(', ')}. ` +
+        'Periksa env LOKASI_DATA_KONTEN. Tidak ada data yang ditulis.'
+    );
+  }
+}
 
 function bacaJson(namaBerkas) {
-  const isi = fs.readFileSync(path.join(DIR_DATA, namaBerkas), 'utf8');
-  return JSON.parse(isi);
+  const berkas = path.join(DIR_DATA, namaBerkas);
+  if (!fs.existsSync(berkas)) {
+    throw new Error(`Berkas data konten tidak ditemukan: ${berkas} (${asalLokasi()}). Periksa env LOKASI_DATA_KONTEN.`);
+  }
+  return JSON.parse(fs.readFileSync(berkas, 'utf8'));
 }
 
 /** `berkas` bisa diganti (dipakai test dengan berkas fixture); bawaan linimasa.json. */
@@ -379,6 +431,8 @@ async function benihArsipKartu() {
 }
 
 async function jalankanBenih() {
+  pastikanFolderData();
+  console.log(`[benih] data konten: ${DIR_DATA}`);
   await benihProdi();
   await benihMapel();
   await benihProdiMapel();
@@ -399,4 +453,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { jalankanBenih, benihLinimasa, benihChecklist };
+module.exports = { jalankanBenih, benihLinimasa, benihChecklist, DIR_DATA };
