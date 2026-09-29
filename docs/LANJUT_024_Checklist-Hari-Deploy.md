@@ -36,8 +36,9 @@ Tanda: 👤 = kamu sendiri, 🤖 = bisa diserahkan ke Claude Code, ⚠️ = deta
 
 - [ ] 🤖 Ubah `EXPO_PUBLIC_API_URL` di `LANJUT_App/eas.json` ke URL publik backend (bukan IP LAN lagi).
 - [ ] 🤖 ⚠️ **Pakai `https://`.** Android modern umumnya memblokir lalu lintas `http://` polos dari aplikasi. Kalau hosting belum punya SSL aktif, aktifkan dulu (di cPanel biasanya tersedia sertifikat gratis; di Railway otomatis). Minta Claude Code memastikan bagaimana konfigurasi cleartext di proyek ini sekarang.
-- [ ] 🤖 Jalankan Metro/build dengan cache bersih (`--clear`) agar konfigurasi lama tidak menempel (pelajaran dari misteri port 4900).
-- [ ] 🤖 `eas build` profil preview. Ingat: pengecekan ukuran paket sudah beres (19 MB), tapi pastikan `LANJUT_App/build/` tetap di `.gitignore` root.
+- [ ] 🤖 Build EAS berjalan di cloud, jadi `--clear` (cache Metro laptop) **tidak berlaku** di sini. Pakai `eas build --clear-cache`, dan setelah build selesai periksa isi APK untuk memastikan URL yang tertanam adalah URL publik (cara ini dipakai di LANJUT_002). `--clear` tetap dipakai untuk Metro/dev build di laptop.
+- [ ] 🤖 `eas build` profil preview. **Sebelum build, verifikasi `.gitignore`:** temuan sebelumnya (26 Sep) menyebut EAS hanya membaca `.gitignore` di root repo, dan perbaikannya adalah menambah `LANJUT_App/build/` ke root. Laporan terbaru menyebut aturan itu ada di `LANJUT_App/.gitignore`. Dua pernyataan ini harus dicocokkan (misalnya lewat `git check-ignore -v LANJUT_App/build/x.apk` dan cek isi `.gitignore` root). Kalau di root tidak ada, paket akan kembali 200+ MB dan upload gagal lagi.
+- [ ] 🤖 Ubah `eas.json` ke `https://<domain>/api/v1`. **Akhiran `/api/v1` jangan sampai hilang.**
 - [ ] 👤 Unduh APK, pasang di **minimal 2 HP fisik**, **pakai data seluler/WiFi berbeda dari laptop** (ini uji sesungguhnya: bukti bahwa app tidak lagi bergantung pada jaringan lokal).
 
 ## E. Uji di HP (setelah APK terpasang)
@@ -52,8 +53,9 @@ Tanda: 👤 = kamu sendiri, 🤖 = bisa diserahkan ke Claude Code, ⚠️ = deta
 
 ## F. Rencana mundur (kalau ada yang gagal)
 
-- Deploy server gagal atau tidak stabil → jangan hapus apa pun di lokal, backend laptop tetap bisa dipakai untuk demo internal di jaringan yang sama.
-- APK baru bermasalah → APK lama (IP LAN) masih bisa dipakai untuk demo selama laptop dan HP satu jaringan.
+- Deploy server gagal atau tidak stabil → jangan hapus apa pun di lokal. Cadangan yang benar-benar jalan: **dev build + server di laptop** (jalankan Metro dengan `--clear` di IP laptop saat itu; HP dan laptop harus satu WiFi).
+- **APK lama bukan cadangan yang bisa diandalkan.** APK itu terkunci ke IP LAN saat dibuild, dan IP laptop berubah tiap pindah jaringan (sudah tiga kali). Baru berguna kalau laptop kebetulan kembali ke IP yang sama.
+- **Satu HP hanya bisa punya satu versi app ini.** APK preview dan dev build memakai nama paket yang sama (`com.edilakso.lanjut`), jadi memasang salah satunya menggantikan yang lain. Untuk uji E, sisakan satu HP khusus yang tidak dipakai coding, atau siap memasang ulang dev build setelahnya.
 - Jangan mengumumkan ke 50 calon pengguna sebelum bagian E lolos di minimal 2 HP.
 
 ## G. Setelah rilis: jadwal cek manual

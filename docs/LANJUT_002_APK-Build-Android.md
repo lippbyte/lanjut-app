@@ -15,6 +15,7 @@ Saat ini base URL API kemungkinan `http://localhost:4000/api/v1` (dipakai untuk 
 ### Langkah 0 — Cari & catat base URL yang benar
 
 1. Cari di mana `API_BASE_URL` (atau nama env var sejenis) didefinisikan di `LANJUT_App/` (kemungkinan `.env`, `app.config.js`, atau `src/services/client.ts`).
+   - ⚠️ **Catatan dari task sebelumnya (LANJUT_004):** pernah ditemukan `EXPO_PUBLIC_API_URL` fallback ke port yang salah (4900, bukan 4000) karena ada pengecekan env var yang tidak konsisten. **Verifikasi ulang nilai env var ini benar-benar terbaca sebagai yang di-set di `eas.json`, bukan fallback default yang salah** — cek dengan log/print nilai yang dipakai saat runtime, jangan asumsi dari kode saja.
 2. Cari LAN IP komputer yang menjalankan backend:
    - Windows: `ipconfig` → cari `IPv4 Address` (biasanya `192.168.x.x`)
 3. Cek apakah backend (`LANJUT_App/server/`) listen di `0.0.0.0` (bisa diakses dari device lain) atau cuma `127.0.0.1`/`localhost` (cuma bisa diakses dari komputer itu sendiri).
