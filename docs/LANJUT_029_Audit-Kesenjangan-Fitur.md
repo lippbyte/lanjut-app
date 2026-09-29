@@ -1,197 +1,175 @@
-# LAPORAN: Audit Kesenjangan Fitur MVP-PWA vs LANJUT_App
+# LAPORAN LANJUT_029 — Audit Kesenjangan Fitur MVP-PWA vs LANJUT_App
 
-**Status Dokumen:** Laporan Audit Final (LANJUT_029)  
-**Tanggal Audit:** 28 September 2026  
-**Basis Kode Diperiksa:** `EDILAKSO-LANJUT-repo` pada commit `af98618`  
-**Prinsip Audit:** Berdasarkan pemeriksaan langsung terhadap kode sumber, pengujian otomatis (`npm test` di backend: 69/69 lolos, `tsc --noEmit`: 0 error, `node tools/test-levelin.js .`: lolos), dan skema basis data MySQL. Tanpa asumsi atau tebakan.
+**Tanggal:** 29 September 2026 (bukti dikumpulkan 28–29 Sep)
+**Kode yang diperiksa:** commit `ee68a93` (kode aplikasi sama dengan `c51a980`; `ee68a93` hanya berisi dokumen)
+**Menggantikan:** versi laporan di commit `ee68a93`. Beberapa klaimnya tidak cocok dengan kode; daftar koreksinya ada di Bagian 7.
 
----
-
-## Ringkasan Eksekutif
-
-Pertanyaan Khalifa: *"Apakah LANJUT_App sudah setara dengan MVP-PWA?"*
-
-**Jawaban:** **Belum setara penuh secara fitur, tetapi LANJUT_App sudah jauh lebih matang untuk cakupan P0 (core value) dan infrastruktur produksi.**
-
-1. **Apa yang sudah setara & bahkan melebihi PWA:**
-   - **5 Layar P0** (Beranda/Linimasa, Khusus SMK, Pilih Mapel, Cerita Alumni, Daftar Periksa) sudah berfungsi penuh dengan data riil dari backend Express + MySQL.
-   - **Fitur Baru v1.1 di Expo yang tidak ada di PWA:** **Jalur Saya** (`/akun`) dan **Cek Posisi Gue** (`/cek-posisi`, rule-based tanpa AI), serta filter rumpun prodi pada Checklist dan sinkronisasi centang antar-perangkat berbasis akun.
-   - **Aksesibilitas & Kontras:** Expo sudah diaudit dan memenuhi rasio kontras WCAG (LANJUT_026 & LANJUT_027).
-
-2. **Kesenjangan yang belum ada di Expo:**
-   - **Eksplorasi Tujuan (F10):** Data JSON lengkap di PWA (`profil-prodi.json`), namun backend belum memiliki tabel/endpoint, dan belum ada layar di Expo.
-   - **Level-In (Confidence Gap Tracker):** Logika murni klien selesai di PWA (`levelin.js`), namun backend `keputusan.js` masih stub `TODO` (melempar error bila dipanggil), dan UI Expo belum mengintegrasikannya.
-   - **Arsip Belajar (F6), Latihan Hari Ini (F7), dan Bank Soal (F9):** Backend memiliki skema tabel dan CRUD dasar untuk `kartu`, namun antarmuka flashcard/latihan belum di-port ke Expo. Bank Soal di PWA sendiri masih berupa mockup statis tanpa mitra nyata.
-   - **Onboarding Cerita:** Di PWA ada 4 slide cerita + 2 pertanyaan. Di Expo, alur onboarding ditiadakan; 2 pertanyaannya (kelas & prodi impian) dipindahkan langsung ke formulir pendaftaran akun.
+**Cara audit.** Tidak ada kode, data, atau konfigurasi yang diubah.
+- Membaca kode `MVP-PWA/`, `LANJUT_App/`, dan `LANJUT_App/server/`.
+- Tes: `npm test` backend **69/69 lolos**; `node tools/validasi.js` PWA **semua gerbang lolos**, termasuk `test-levelin.js` (**96 cek**).
+- PWA dibuka di Chrome 360 px (server statis lokal): onboarding, arsip, arsip-detail, latihan → latihan-selesai, beranda, bank-soal, eksplorasi-tujuan (Teknik Informatika & Teknik Elektro). **0 galat JS.**
+- API backend dipanggil dengan akun uji, **hanya GET** (tidak menulis data).
+- Isi basis data dibaca saja (jumlah baris & status verifikasi). Yang dibaca adalah DB lokal **`lanjut_test`**, bukan produksi (produksi belum ada).
+- Layar Expo terakhir dijalankan di web 360 px pada 28 Sep (skrip uji LANJUT_027); tidak diulang untuk audit ini.
 
 ---
 
-## Langkah 1 — Inventaris Fitur MVP-PWA
+## 1. Jawaban singkat
 
-Daftar seluruh fitur dan halaman pada repositori acuan `MVP-PWA/`:
+**Belum setara.** Lima layar P0 (F1–F5) ada di Expo, ditambah dua fitur yang tidak ada di PWA (Jalur Saya, Cek Posisi Gue). Yang belum ada:
 
-| No | Kode / Nama Fitur | Halaman & Berkas Utama PWA | Sumber Data PWA | Keterangan Fungsional di PWA |
-|:---|:---|:---|:---|:---|
-| 1 | **F1 — Linimasa** | `beranda.html`, `assets/app.js` | `data/linimasa.json` | Hitung mundur tenggat resmi TKA/SNBP/SNBT, pengelompokan tanggal, penanda contoh/resmi. |
-| 2 | **F2 — Khusus SMK** | `khusus-smk.html`, `assets/app.js` | `data/khusus-smk.json` | 6 butir perbandingan "apa yang beda" & "apa yang bisa dilakukan". Bawaan PWA: kartu pertama terbuka. |
-| 3 | **F3 — Penolong Pilih Mapel** | `pilih-mapel.html`, `assets/app.js` | `data/prodi.json`, `data/mapel.json`, `data/prodi-mapel.json` | Pilihan prodi → mapel pendukung TKA → rekomendasi 2 mapel. Agregasi bobot dihitung client-side. |
-| 4 | **F4 — Cerita Alumni SMK** | `alumni.html`, `assets/app.js` | `data/cerita-alumni.json` | Kartu pengalaman alumni SMK tembus PTN (saat ini 2 cerita contoh bertanda izin belum terverifikasi). |
-| 5 | **F5 — Daftar Periksa (Checklist)** | `checklist.html`, `assets/app.js` | `data/checklist.json`, `localStorage` | 11 butir persiapan dalam 3 kategori. Penyaringan kelas/jalur belum jalan di PWA, centang lokal. |
-| 6 | **F6 — Arsip Belajar** | `arsip.html`, `arsip-detail.html`, `arsip-tambah.html`, `assets/app.js` | `data/arsip.json`, `data/mapel.json`, `localStorage` | Manajemen kartu catatan dan soal per mapel. Tambah kartu manual, filter Semua/Catatan/Soal. |
-| 7 | **F7 — Latihan Hari Ini** | `latihan.html`, `latihan-selesai.html`, `assets/app.js`, `assets/levelin.js` | `data/arsip.json`, `sessionStorage`, `localStorage` | Sesi 12 kartu flashcard acak (~8 menit), balik kartu, tombol Benar/Salah, skor sesi. |
-| 8 | **Level-In (CGT - P1)** | `assets/levelin.js`, `assets/levelin.css`, `beranda.html`, `latihan.html`, `latihan-selesai.html` | `data/levelin-konfig.json`, `localStorage` | Confidence Gap Tracker: chip keyakinan 1-5, strip pembanding gap (over/underconfident/selaras/netral), saran latihan di beranda. |
-| 9 | **F8 — Fitur Berbayar** | *(Belum ada halaman)* | - | Hanya dicatat di PRD §6 (timer, statistik per mapel, spaced repetition). Belum dibangun di PWA. |
-| 10 | **F9 — Bank Soal Mitra** | `bank-soal.html` | Statis di markup HTML | Mockup kartu paket soal bertuliskan "[nama mitra]" dan tampilan kosong fallback bila belum ada mitra. |
-| 11 | **F10 — Eksplorasi Tujuan** | `eksplorasi-tujuan.html`, `assets/app.js` | `data/profil-prodi.json` | Profil detail prodi: jenjang, rasio peminat/daya tampung resmi, matkul inti, prospek karir, kampus vokasi & akademik. |
-| 12 | **Onboarding** | `onboarding.html`, `assets/app.js` | `localStorage['lanjut.profil.v1']` | 4 layar cerita pengantar + 2 pertanyaan (kelas dan target prodi). Mengarahkan ke beranda. |
-| 13 | **Splash / Entry Router** | `index.html`, `assets/app.js` | `localStorage['lanjut.profil.v1']` | Deteksi profil awal: ada profil → `beranda.html`, belum ada → `onboarding.html`. |
-| 14 | **Autentikasi & Akun** | `masuk.html`, `daftar.html`, `akun.html`, `assets/api.js` | Backend API REST (`/auth/*`, `/sinkron/klaim`) | Formulir login/register dan klaim migrasi data tamu lokal ke akun server. |
+| Tidak ada di Expo | Sebagian di Expo | Tidak ada di keduanya |
+|---|---|---|
+| Onboarding cerita, F6 Arsip Belajar, F7 Latihan, Level-In, F9 Bank Soal, F10 Eksplorasi Tujuan | F3 Pilih Mapel (tanpa pintu ke F10; simpan ke checklist lebih umum), F5 Daftar Periksa (tanpa butir tambahan dari F3/F10), Beranda (tanpa pintu Arsip/Latihan dan kartu saran Level-In) | F8 Fitur berbayar |
+
+**Temuan paling penting:** endpoint Level-In di backend **gagal saat dipanggil**. `GET /kalibrasi/ringkasan` dan `GET /saran-harian` membalas **500** (dijalankan), karena `keputusan.js` masih stub. Expo belum memanggil endpoint ini, jadi pengguna v1 tidak terdampak. Tetapi Level-In **tidak bisa** diselesaikan dengan "menyalin fungsi dari PWA" saja (lihat 4.4).
 
 ---
 
-## Langkah 2 — Status di LANJUT_App
+## 2. Inventaris fitur MVP-PWA (Langkah 1)
 
-Tabel komparasi status implementasi di `LANJUT_App/` (React Native Expo) dan kesiapan backend:
-
-| Fitur | Status di Expo | Komponen / Layar Expo | Kesiapan Backend | Ketergantungan Konten / Izin |
-|:---|:---:|:---|:---|:---|
-| **F1 Linimasa** | **Ada** | `app/(app)/linimasa.tsx`, `LinimasaScreen.tsx` | **Siap & Teruji.** `GET /konten/linimasa`. 3 tahapan TKA 2026 diverifikasi resmi. | Menunggu pengumuman resmi Kemendikdasmen untuk jadwal SNBP/SNBT 2027. Tanggal tanpa verifikasi otomatis disembunyikan. |
-| **F2 Khusus SMK** | **Ada** | `app/(app)/khusus-smk.tsx`, `KhususSmkScreen.tsx` | **Siap & Teruji.** `GET /konten/khusus-smk`. 6 butir tersimpan di DB via benih. | Konten naratif internal kurasi tim, tidak ada ketergantungan pihak ketiga. Default kartu tertutup (permintaan user). |
-| **F3 Pilih Mapel** | **Ada** | `app/(app)/pilih-mapel.tsx`, `PilihMapelScreen.tsx` | **Siap & Teruji.** `GET /konten/prodi`, `/prodi/:id/mapel`, `/mapel/agregasi-lintas-prodi`. | Data resmi 19 prodi dan 10 mapel TKA. Penafian resmi aktif. |
-| **F4 Cerita Alumni** | **Ada (UI)** | `app/(app)/cerita-alumni.tsx`, `CeritaAlumniScreen.tsx` | **Siap & Teruji.** `GET /konten/cerita-alumni` (query menyaring `tayang = 1 AND izin_tayang = 1`). | **TERBLOCKIR KONTEN.** 2 data contoh di DB disetel `izin_tayang = 0`, sehingga layar Expo menampilkan keadaan kosong yang benar. Butuh izin tertulis narasumber. |
-| **F5 Daftar Periksa** | **Ada (Unggul)** | `app/(app)/daftar-periksa.tsx`, `DaftarPeriksaScreen.tsx` | **Siap & Teruji.** `GET /konten/checklist` (mendukung filter `kelas`, `jalur`, dan `rumpun`). `POST/DELETE /kemajuan/:id`. | Tersedia 11 butir umum + dukungan butir khusus rumpun. Kemajuan tersimpan ke akun di database. |
-| **Jalur Saya (v1.1)** | **Ada (Baru)** | `app/(app)/akun.tsx`, `AkunScreen.tsx` | **Siap & Teruji.** `PATCH /pengguna/saya` (`nama_tampilan`, `kelas`, `prodi_impian`). | Mandiri (data profil siswa). |
-| **Cek Posisi Gue (v1.1)** | **Ada (Baru)** | `app/(app)/cek-posisi.tsx`, `CekPosisiScreen.tsx`, `lib/cekPosisi.ts` | **Tidak butuh backend khusus.** Berjalan murni rule-based dari profil & centang checklist yang sudah dimuat. | Mandiri. Tanpa AI, tanpa biaya berjalan, responsif instan. |
-| **F6 Arsip Belajar** | **Tidak Ada** | Belum ada layar / komponen | **Sebagian.** Tabel `kartu` ada (migrasi 004). Rute CRUD `server/src/modul/kartu` lengkap & diuji (`kartu-otorisasi.test.js`). 12 kartu bawaan ada di `benih.js`. | Kartu bawaan dari `arsip.json` sudah ada, namun belum diverifikasi kurikulum formal. |
-| **F7 Latihan Hari Ini** | **Tidak Ada** | Belum ada layar / komponen | **Sebagian.** Tabel `sesi_latihan` dan `riwayat_latihan` ada (migrasi 005). Endpoint `POST/PATCH /sesi-latihan` ada. Logika pemilihan kartu acak belum ada di server. | Ketergantungan pada kartu F6. |
-| **Level-In (CGT)** | **Tidak Ada** | Belum ada layar / komponen | **Macet / TODO.** Tabel `konfigurasi_levelin` ada tapi kosong (belum dibenih). File `server/src/modul/levelin/keputusan.js` sengaja masih berstatus TODO dan melempar error bila dipanggil. | Logika acuan ada di `MVP-PWA/assets/levelin.js` dan sudah lolos 100% tes klien, belum disalin ke backend. |
-| **F8 Fitur Berbayar** | **Tidak Ada** | - | **Tidak Ada.** Tidak ada tabel/endpoint. | Perlu keputusan model bisnis dan payment gateway. |
-| **F9 Bank Soal Mitra** | **Tidak Ada** | Belum ada layar / komponen | **Tidak Ada.** Tabel `kartu` mendukung kolom `sumber='mitra'`, namun endpoint katalog paket mitra belum ada. | Belum ada mitra bimbel resmi yang MoU/bergabung. |
-| **F10 Eksplorasi Tujuan** | **Tidak Ada** | Belum ada layar / komponen | **Tidak Ada.** Data ada di `MVP-PWA/data/profil-prodi.json` (25 KB). Backend sama sekali belum punya tabel `profil_prodi` atau endpoint `GET /konten/prodi/:id/profil`. | Data riset prodi sudah ada di file JSON, tetapi belum diverifikasi ke sumber PDDIKTI / SNPMB terbaru. |
-| **Onboarding** | **Tidak Ada (Pindah)** | Alur cerita tidak ada. Pertanyaan diintegrasikan ke `DaftarScreen.tsx`. | **Siap & Teruji.** Pendaftaran langsung menerima `kelas` dan `prodi_impian`. | Alur cerita dihilangkan demi mengurangi friksi registrasi pengguna. |
-| **Autentikasi & Sesi** | **Ada (Unggul)** | `app/(auth)/masuk.tsx`, `daftar.tsx`, `providers/AuthProvider.tsx` | **Siap & Teruji.** `POST /auth/masuk`, `POST /auth/daftar`, `GET /auth/saya`. Auto redirect 401 aktif, offline fallback aman. | Sesuai regulasi data pribadi siswa (LANJUT_025). |
+| Fitur | Halaman / file utama | Data yang dipakai | Yang benar-benar dikerjakan kodenya |
+|---|---|---|---|
+| Splash | `index.html`, `pasangSplash()` di `assets/app.js` | `localStorage lanjut.profil.v1` | Profil ada → Beranda, belum → Onboarding |
+| Onboarding | `onboarding.html`, `pasangOnboarding()` | `localStorage lanjut.profil.v1` | 4 layar cerita + 1 layar tanya (kelas, prodi impian). Layar ke-3 menjanjikan "Latihan harian: 15 menit" |
+| F1 Beranda / Linimasa | `beranda.html`, `pasangBeranda()` | `data/linimasa.json` | Tenggat terdekat + linimasa. Beranda juga berisi pintu "Latihan & Arsip Belajar", pintu Cerita Alumni, dan kartu saran Level-In (`pasangSaranBeranda()` di `levelin.js`) |
+| F2 Khusus SMK | `khusus-smk.html`, `pasangKhususSmk()` | `data/khusus-smk.json` | 6 butir berpasangan |
+| F3 Pilih Mapel | `pilih-mapel.html`, `pasangPilihMapel()` | `prodi.json`, `mapel.json`, `prodi-mapel.json`, profil lokal | Prodi → mapel pendukung + ketersediaan → saran 2 mapel. Tombol ke F10. "Simpan ke Daftar Periksa" **menambah butir khusus prodi** ("Pilih X & Y sebagai mapel TKA — untuk [prodi]") lalu mencentangnya |
+| F4 Cerita Alumni | `alumni.html`, `pasangAlumni()` | `data/cerita-alumni.json` | 2 cerita **contoh**, `izin_tayang: false` |
+| F5 Checklist | `checklist.html`, `pasangChecklist()` | `checklist.json`, `localStorage` (progres + butir tambahan) | 11 butir, 3 kategori, centang lokal, ditambah butir dari F3/F10. **Tidak ada** saringan kelas/jalur di layar (0 keping kelas/jalur) |
+| F6 Arsip Belajar | `arsip.html`, `arsip-detail.html`, `arsip-tambah.html` | `arsip.json` (12 kartu kurasi) + kartu pengguna di `localStorage` | Daftar mapel + jumlah kartu, tab Semua/Catatan/Soal, formulir kartu baru. Kartu kurasi diberi lencana **"Resmi"** |
+| F7 Latihan | `latihan.html`, `latihan-selesai.html`, `pasangLatihan()` | **Satu kartu statis di HTML** (`k-mtk-1`), tidak membaca `arsip.json` | Pilih keyakinan → lihat jawaban → Benar/Salah → selesai. Di browser: 1 kartu, skor "0/1". `docs/backlog-v1.1-F7-antrian-kartu.md` menyatakan antrian multi-kartu **belum pernah diimplementasikan** |
+| Level-In | `assets/levelin.js` (1039 baris), `levelin.css`; dipasang di beranda, latihan, latihan-selesai | `levelin-konfig.json`, `localStorage lanjut.levelin.v1`, `sessionStorage` | Chip keyakinan 1–5, strip gap, ringkasan kalibrasi, saran harian. Lapisan keputusan murni lolos 96 cek |
+| F9 Bank Soal | `bank-soal.html` (tanpa logika JS) | Markup statis | 2 kartu "[nama mitra]" + keadaan kosong. Belum ada mitra |
+| F10 Eksplorasi Tujuan | `eksplorasi-tujuan.html`, `pasangEksplorasiTujuan()` | `data/profil-prodi.json` | Profil prodi (peminat, mata kuliah, profesi, kampus). Prodi tanpa profil → daftar cadangan. "Simpan ke Daftar Periksa" menambah butir "Riset Kampus" |
+| Daftar / Masuk / Akun | `daftar.html`, `masuk.html`, `akun.html`, `assets/api.js` | API `/auth/*`, `/pengguna/saya`, `/konten/prodi` | Akun opsional; tanpa akun tampil keadaan tamu. PWA **tidak** memanggil `/sinkron/klaim` |
+| F8 Fitur berbayar | — | — | Hanya ada di PRD; tidak dibangun |
 
 ---
 
-## Langkah 3 — Analisis Fitur yang Belum Ada / Sebagian
+## 3. Status di LANJUT_App dan kesiapan backend (Langkah 2)
 
-Berikut rincian teknis, risiko, estimasi ukuran relatif, dan keputusan yang dibutuhkan untuk fitur yang belum ada di `LANJUT_App`:
+Tabel utama (format "Laporkan di akhir"). Ukuran relatif hanya diisi untuk fitur yang belum ada atau sebagian; alasannya ada di Bagian 4.
 
-### 1. Eksplorasi Tujuan (F10)
-- **Pekerjaan yang Dibutuhkan:**
-  - *Data & Backend:* Buat migrasi tabel `profil_prodi` (atau simpan JSON di server/assets), perbarui `benih.js` untuk membaca `profil-prodi.json`, buat modul `server/src/modul/konten` endpoint `GET /konten/prodi/:id/profil` beserta tesnya.
-  - *Expo:* Buat layar `app/(app)/eksplorasi-tujuan.tsx`, hook `useProfilProdi(id)`, komponen tampilan rasio keketatan, daftar kampus vokasi vs akademik, dan prospek karir. Sambungkan tombol "Lihat prospek & kampus" di hasil `PilihMapelScreen.tsx`.
-- **Ketergantungan & Risiko:** Data `profil-prodi.json` (25 KB, memuat 19 prodi) disusun pada masa riset awal. Risiko: angka daya tampung dan rasio peminat bisa dianggap usang jika siswa mencocokkan dengan web SNPMB terbaru.
-- **Ukuran Relatif:** **Sedang.** UI-nya murni presentasional (read-only), tidak ada mutasi state rumit. Backend hanya butuh 1 endpoint `GET`.
-- **Keputusan Khalifa:** Apakah data keketatan & kampus di `profil-prodi.json` saat ini sudah layak tayang ke publik, atau harus diaudit ulang satu per satu oleh tim riset sebelum dibuka?
-
-### 2. Level-In (Confidence Gap Tracker)
-- **Pekerjaan yang Dibutuhkan:**
-  - *Backend:* Salin logika Lapisan 2 dari `MVP-PWA/assets/levelin.js` ke `server/src/modul/levelin/keputusan.js` (sesuai instruksi B-K6 di dokumen SDD). Salin test suite `MVP-PWA/tools/test-levelin.js` ke `server/tests/levelin-keputusan.test.js`. Buat benih data default untuk `konfigurasi_levelin`.
-  - *Expo:* Bangun komponen UI: pemilih keyakinan 1-5 (chips), strip perbandingan gap (`LevelinGapStrip`), ringkasan kalibrasi sesi, dan widget saran latihan di Beranda.
-- **Ketergantungan & Risiko:** Risiko desinkronisasi perhitungan kalibrasi klien vs server (RB5). Jika pengguna mengerjakan latihan saat koneksi putus lalu sinkronisasi belakangan, ada risiko konflik riwayat.
-- **Ukuran Relatif:** **Besar.** Melibatkan sinkronisasi state lokal dan server, perhitungan kalibrasi matematika, serta perubahan layout Beranda dan alur latihan.
-- **Keputusan Khalifa:** Konfirmasi keputusan produk §10.2 SDD-LevelIn: apakah metrik kalibrasi Level-In akan menjadi fitur gratis untuk seluruh siswa, atau dibatasi sebagai fitur berbayar/premium di masa depan?
-
-### 3. Arsip Belajar (F6) & Latihan Hari Ini (F7)
-- **Pekerjaan yang Dibutuhkan:**
-  - *Backend:* Endpoint backend untuk kartu sebenarnya sudah ada (`/kartu`), tetapi butuh penambahan endpoint agregasi kartu per mapel dan generator antrian latihan harian (misal: 12 kartu per sesi dari mapel fokus).
-  - *Expo:* Porting total dari PWA ke komponen React Native:
-    - Layar katalog arsip per mapel (`/arsip`).
-    - Layar daftar kartu dalam satu mapel (`/arsip/[mapelId]`).
-    - Layar tambah/edit kartu (`/arsip/tambah`).
-    - Layar sesi latihan flashcard beranimasi flip/putar kartu (`/latihan`).
-    - Layar rangkuman latihan selesai (`/latihan/selesai`).
-- **Ketergantungan & Risiko:** Membutuhkan animasi sentuh flip kartu di React Native (`react-native-reanimated` atau CSS transform). Memerlukan manajemen sesi latihan di memori/storage lokal agar tidak hilang bila app tertutup tidak sengaja.
-- **Ukuran Relatif:** **Sangat Besar.** Ini merupakan sub-aplikasi tersendiri (alat belajar interaktif).
-- **Keputusan Khalifa:** Apakah v1 ditargetkan murni sebagai *panduan keputusan jalur* (decision guide: Linimasa, Mapel, Posisi, Checklist), atau wajib memiliki modul latihan soal flashcard saat rilis awal?
-
-### 4. Bank Soal Mitra (F9)
-- **Pekerjaan yang Dibutuhkan:** Backend membutuhkan tabel mitra dan paket soal. Expo membutuhkan layar direktori mitra.
-- **Ketergantungan & Risiko:** Risiko hukum dan reputasi jika menampilkan nama lembaga bimbel tanpa kesepakatan kerjasama tertulis (MoU).
-- **Ukuran Relatif:** **Kecil secara teknis, tetapi terhenti total di sisi kemitraan/bisnis.**
-- **Keputusan Khalifa:** Belum ada mitra. Halaman ini sebaiknya tetap dinonaktifkan/disembunyikan dari aplikasi sampai ada mitra resmi.
-
-### 5. Cerita Alumni SMK (F4) — Status Penerbitan
-- **Pekerjaan yang Dibutuhkan:** Komponen Expo (`CeritaAlumniScreen.tsx`) dan backend (`/konten/cerita-alumni`) **sudah 100% siap**. Pekerjaan yang tersisa adalah **persetujuan data**.
-- **Ketergantungan & Risiko:** 2 cerita yang ada saat ini berstatus dummy/contoh (`izin_tayang = 0`). Menayangkan cerita personal tanpa izin tertulis melanggar etika dan privasi.
-- **Ukuran Relatif:** **Sangat Kecil (Non-Koding).** Cukup ubah `izin_tayang = 1` dan `tayang = 1` di database bila surat izin sudah ditandatangani.
-- **Keputusan Khalifa:** Apakah tim EDILAKSO Group memiliki kontak alumni SMK nyata yang bersedia diwawancarai dan memberikan izin rilis sebelum peluncuran?
+| Fitur | Ada di Expo? | Kesiapan backend | Ketergantungan konten | Ukuran relatif |
+|---|---|---|---|---|
+| F1 Linimasa | **Ada** (`LinimasaScreen.tsx`) | `GET /konten/linimasa` jalan; **tidak ada tes HTTP** untuk endpoint ini (yang dites: benih & verifikasi). DB: 6 tahapan, **3 terverifikasi** (TKA), 3 belum. Klien menyaring yang belum dicek | Jadwal SNBP/SNBT 2027 belum dirilis | — |
+| Beranda (pintu & kartu saran) | **Sebagian**: pintu Cek Posisi & Alumni ada; pintu Arsip/Latihan dan kartu saran Level-In tidak ada | Mengikuti F6/F7/Level-In | Mengikuti F6/F7/Level-In | ikut F6/F7 |
+| F2 Khusus SMK | **Ada** (`KhususSmkScreen.tsx`) | `GET /konten/khusus-smk` jalan, tanpa tes HTTP. DB: 6 butir, **semua `belum_diverifikasi`**. Expo tetap menampilkannya; baris "dicek" hanya muncul bila `diperiksa_pada` terisi | 6 butir perlu diverifikasi tim konten | — |
+| F3 Pilih Mapel | **Sebagian** (`PilihMapelScreen.tsx`). Ada: pilih prodi / belum tahu, mapel + ketersediaan + bobot, saran 2 mapel, penafian. Tidak ada: pintu ke F10; "Simpan ke Daftar Periksa" hanya mencentang butir umum `mapel-tka` | `/konten/prodi`, `/konten/prodi/:id/mapel`, `/konten/mapel/agregasi-lintas-prodi` jalan & dites. Tidak ada endpoint butir checklist milik pengguna | DB: 19 prodi, 10 mapel, 76 relasi, **semua `belum_diverifikasi`** | Kecil (pintu F10, setelah F10 ada); sedang untuk butir khusus prodi |
+| F4 Cerita Alumni | **Ada** (`CeritaAlumniScreen.tsx`); tampil kosong | `GET /konten/cerita-alumni` menyaring `izin_tayang=1 AND tayang=1` di SQL. **Saringan ini tidak punya tes HTTP** | 2 cerita yang ada adalah **contoh fiktif**, bukan alumni yang menunggu izin. PRD F4: minimal 3 cerita nyata berizin tertulis | — (pekerjaan konten, bukan kode) |
+| F5 Daftar Periksa | **Ada, lebih lengkap dari PWA** (centang di server; saring kelas, jalur, rumpun). Tidak ada: butir tambahan dari F3/F10 | `GET /konten/checklist` dites (13 rujukan di tes, termasuk rumpun). `GET/PUT/DELETE /kemajuan` jalan, **tanpa tes HTTP langsung** | DB: 11 butir, **semua `belum_diverifikasi`**; Expo menampilkan pemberitahuan belum dicek | Sedang (butir per pengguna, bersama F3/F10) |
+| Daftar / Masuk / Akun | **Ada, lebih lengkap** (Jalur Saya, 401 kapan pun → Masuk) | `/auth/*` (18 tes), `PATCH /pengguna/saya` (dites). `/sinkron/klaim` (5 tes) **tidak dibutuhkan Expo** karena login wajib dan tidak ada data tamu | — | — |
+| Cek Posisi Gue | **Ada, hanya di Expo** | Tidak butuh endpoint baru | Tenggat hanya dari tahapan terverifikasi | — |
+| Onboarding cerita | **Tidak ada.** Form Daftar (`RegisterScreen.tsx`) menanyakan nama pengguna, email, kata sandi, **prodi impian**; **kelas tidak ditanyakan** (diisi nanti di Jalur Saya atau keping Daftar Periksa) | `POST /auth/daftar` sudah menerima `kelas` (opsional); tidak ada yang kurang di backend | Teks ada di salinan §3; layar ke-3 menyebut latihan harian yang tidak ada di Expo | Kecil |
+| F6 Arsip Belajar | **Tidak ada** | `GET/POST/PATCH/DELETE /kartu` ada + **7 tes otorisasi**. 12 kartu kurasi masuk DB lewat benih (`GET /kartu` mengembalikan 12, dijalankan). **Tabel `kartu` tidak punya kolom kategori** (catatan/soal) | 12 kartu (hanya Matematika, Bahasa Inggris, Informatika, masing-masing 4), **semua `belum_diverifikasi`**, padahal PWA melabelinya "Resmi" | Sedang |
+| F7 Latihan | **Tidak ada** (PWA sendiri baru 1 kartu statis) | `POST/PATCH /sesi-latihan`, `POST /riwayat-latihan` ada, **tanpa tes**. Pemilihan kartu untuk sesi tidak ada di server maupun PWA. `POST /riwayat-latihan` dengan nilai keyakinan memanggil stub `keputusan.js` → galat (dari kode; lihat Bagian 5) | Butuh kartu F6 | Sedang–besar |
+| Level-In | **Tidak ada** | **Rusak/terblokir.** `keputusan.js` stub → `/kalibrasi/ringkasan` & `/saran-harian` **500** (dijalankan). `konfigurasi_levelin` **0 baris** → `GET /konfigurasi/levelin` membalas `{}`. Tes server hanya memastikan stub melempar galat (5 tes) | Ambang di `levelin-konfig.json` berasal "perkiraan", bukan dari data pemakaian | Besar |
+| F9 Bank Soal | **Tidak ada** | Tidak ada tabel/endpoint mitra; skema `GET /kartu` hanya mengenal nilai `sumber=mitra` | Belum ada mitra maupun perjanjian | Kecil secara teknis, tetapi terblokir mitra |
+| F10 Eksplorasi Tujuan | **Tidak ada** | **Tidak ada tabel maupun endpoint** (`/konten/profil-prodi` dan `/konten/prodi/:id` → 404, dijalankan). Skrip `verifikasi-konten` belum mengenal jenis ini | `profil-prodi.json`: **18 profil** (19 prodi; `teknik-elektro` tanpa profil). Status berkas `terverifikasi_sebagian` (dicek 31 Agu 2026): peminat/profesi/kampus "Terverifikasi", **mata kuliah "Perkiraan"** | Sedang |
+| F8 Fitur berbayar | Tidak ada (juga tidak ada di PWA) | Tidak ada | Butuh keputusan model bisnis | Di luar audit |
 
 ---
 
-## Langkah 4 — Rekomendasi Urutan Pengerjaan
+## 4. Rincian fitur yang belum ada atau sebagian (Langkah 3)
 
-Dengan mempertimbangkan tenggat waktu rilis awal (target deploy backend 2–3 Oktober 2026 dan uji coba $\ge 50$ siswa sebelum 23 Oktober 2026), **menambah fitur interaktif baru (seperti Latihan/Flashcard) sekarang adalah risiko bunuh diri teknis (high regression risk).**
+### 4.1 F10 Eksplorasi Tujuan — sedang
+- **Pekerjaan.** Backend: tabel `profil_prodi` (atau kolom JSON), benih dari `profil-prodi.json`, endpoint `GET /konten/prodi/:id/profil`, dukungan di `verifikasi-konten`, tes. Expo: satu layar (isi, keadaan "profil belum ada", galat), pintu dari hasil Pilih Mapel.
+- **Kenapa sedang.** Layarnya hanya menampilkan data (tidak ada data milik pengguna) dan datanya sudah ada. Tetapi strukturnya bersarang (peminat, kampus, profesi, status sumber per bagian), sehingga butuh skema DB baru dan pola verifikasi baru.
+- **Risiko.** Menampilkan angka peminat dan data "Perkiraan" sebagai fakta. Prinsip proyek: data tanpa sumber tidak tampil.
+- **Butuh keputusan Khalifa.** (1) Apakah bagian berstatus "Perkiraan" boleh tampil dengan label, atau disembunyikan? (2) Apakah tombol "Simpan ke Daftar Periksa" (butir Riset Kampus) ikut dibawa? Kalau ya, perlu 4.3.
 
-Oleh karena itu, alur pengerjaan dibagi menjadi dua horizon waktu:
+### 4.2 Onboarding cerita — kecil
+- **Pekerjaan.** Hanya Expo: 3–4 layar sebelum Masuk/Daftar, atau sesudah daftar pertama kali. Bisa juga ditambah pertanyaan kelas di form Daftar (backend sudah menerima `kelas`).
+- **Kenapa kecil.** Tidak ada backend baru; teksnya sudah ada di salinan §3.
+- **Risiko.** Menambah langkah sebelum nilai pertama (Linimasa). Layar ke-3 PWA menjanjikan latihan harian, jadi teks itu harus diubah kalau F7 belum ada.
+- **Butuh keputusan Khalifa.** Apakah onboarding memang sengaja dihapus di Expo? Saya tidak menemukan catatan keputusannya (lihat Bagian 5). Apakah kelas perlu ditanyakan saat daftar?
 
-```
-                  28 Sep - 4 Okt 2026                  Pasca 4 Okt - 23 Okt 2026
-             [Fokus Deploy & Stabilitas v1]              [Iterasi Fitur v1.1+]
-             
-┌──────────────────────────────────────────────────┐   ┌─────────────────────────────────┐
-│ 1. Deploy Backend Publik (Rumahweb/Railway)     │   │ 5. Aktifkan F10 (Eksplorasi)   │
-│ 2. Verifikasi Konten Resmi & Seed DB Server      │──>│ 6. Selesaikan keputusan.js      │
-│ 3. Build Ulang APK Android (EAS) dgn URL HTTPS   │   │    (Level-In Backend)           │
-│ 4. Smoke Test E2E di 2 HP Fisik (Data Seluler)  │   │ 7. Porting Arsip & Latihan (F6-F7)│
-└──────────────────────────────────────────────────┘   └─────────────────────────────────┘
-```
+### 4.3 Butir Daftar Periksa milik pengguna (untuk F3 dan F10) — sedang
+- **Pekerjaan.** Backend: tabel butir per pengguna + endpoint tambah/hapus + tes. Expo: gabungkan butir itu ke Daftar Periksa, ubah tombol simpan di Pilih Mapel (dan F10 nanti).
+- **Kenapa sedang.** Menyentuh data milik pengguna, jadi perlu otorisasi dan tes lintas akun seperti modul kartu.
+- **Risiko.** Kebocoran antar-akun. Pola ini sudah dua kali ditemukan di proyek (lihat LANJUT_028 Bagian 6).
+- **Butuh keputusan Khalifa.** Apakah perilaku Expo sekarang (mencentang butir umum `mapel-tka`) sudah cukup? Kalau cukup, pekerjaan ini tidak perlu.
 
-### A. Sebelum 4 Oktober 2026 (Wajib Selesai untuk Rilis v1)
-*Prinsip: Feature Freeze. Nol fitur besar baru. Prioritas 100% pada deployment dan stabilitas rilis.*
+### 4.4 Level-In — besar
+- **Pekerjaan.**
+  - Backend: isi `keputusan.js`. Ini **bukan salin-tempel**: layanan server memanggil `agregatPerMapel(baris, mapelDenganRiwayat, ketersediaan, jendela)` dan `saranHarian(ringkasan, ketersediaan, adaRiwayat)`, sedangkan PWA memakai `agregatPerMapel(peristiwa, konfigObj, semuaMapelId)` dan `saranHarian(agregat, ketersediaanKartu, konfigObj)`. Jadi perlu adaptor atau penulisan ulang layanan, plus uji bersama dengan `MVP-PWA/tools/test-levelin.js` (SDD RB5).
+  - Isi benih `konfigurasi_levelin` dan tambahkan tes endpoint.
+  - Komentar di kepala `keputusan.js` sudah basi: masih menyebut `levelin.js` "BELUM ADA".
+  - Expo: chip keyakinan, strip gap, ringkasan sesi, kartu saran di Beranda.
+- **Kenapa besar.** Butuh F7 lebih dulu (tanpa sesi latihan tidak ada data), menyentuh backend dan tiga layar, dan logika keputusannya menentukan saran ke siswa.
+- **Risiko.** Dua sumber kebenaran angka kalibrasi (klien dan server) yang diam-diam berbeda. Ambang yang dipakai masih perkiraan.
+- **Butuh keputusan Khalifa.** (1) Keputusan §10.2 no. 3 SDD-LevelIn: tampilan agregat gratis atau berbayar (di konfigurasi masih `belum_diputuskan`). (2) Untuk Expo yang wajib login: dihitung di server saja, atau tetap di klien? (3) Apakah ambang perkiraan boleh dipakai saat rilis.
 
-1. **Deploy Backend ke Server Hosting Publik (2–3 Oktober):**
-   - Setup Node.js 20+ & MySQL/MariaDB di Rumahweb (atau Railway).
-   - Pastikan konfigurasi `.env` produksi: `JUMLAH_PROXY`, `LOKASI_DATA_KONTEN`, `ASAL_DIIZINKAN`.
-2. **Eksekusi Verifikasi Konten di Database Server:**
-   - Jalankan migrasi dan benih di server produksi.
-   - Jalankan `npm run verifikasi-konten` untuk menandai 3 tahapan resmi TKA Kemendikdasmen di DB produksi.
-3. **Build Ulang APK Android Preview (EAS):**
-   - Ubah `EXPO_PUBLIC_API_URL` di `LANJUT_App/eas.json` dari IP LAN ke URL HTTPS backend publik.
-   - Jalankan EAS build (`npx eas-cli build -p android --profile preview`).
-4. **Pengujian Lapangan (Uji 2 HP Fisik Berbeda):**
-   - Uji registrasi, login, checklist persisten, dan pergantian akun menggunakan jaringan seluler (4G/5G).
+### 4.5 F6 Arsip Belajar — sedang
+- **Pekerjaan.** Expo: daftar mapel, daftar kartu per mapel (tab Catatan/Soal), formulir kartu baru, hook ke `/kartu`. Backend: putuskan cara menyimpan kategori catatan/soal (PWA menurunkannya dari ada tidaknya jawaban; tabel tidak punya kolom kategori). Perlu juga tes agar kartu belum terverifikasi tidak berlabel "Resmi".
+- **Kenapa sedang.** CRUD dan otorisasi backend sudah ada dan dites; sisanya tiga layar dan satu keputusan skema kecil.
+- **Risiko.** Kartu kurasi belum diverifikasi, tetapi di PWA berlabel "Resmi". Arsip baru mencakup 3 dari 10 mapel. Kartu buatan siswa tersimpan di server (data pribadi siswa).
+- **Butuh keputusan Khalifa.** Siapa yang memverifikasi 12 kartu kurasi, dan apakah arsip boleh tayang hanya dengan 3 mapel.
 
-### B. Sesudah 4 Oktober 2026 (Ekspansi Fitur v1.1+)
-*Prinsip: Dibangun setelah aplikasi v1 terbukti stabil di tangan 50 siswa SMK.*
+### 4.6 F7 Latihan — sedang–besar
+- **Pekerjaan.** Rancang antrian multi-kartu dulu (belum pernah dibangun, termasuk di PWA): cara memilih kartu, jumlah per sesi, dan urutan. Lalu layar latihan + selesai di Expo, serta tes untuk `/sesi-latihan` dan `/riwayat-latihan`.
+- **Kenapa sedang–besar.** Belum ada desain acuan yang berjalan (PWA hanya 1 kartu), jadi ini pekerjaan desain dan bukan porting. Juga bergantung pada F6.
+- **Risiko.** `POST /riwayat-latihan` gagal untuk jawaban yang membawa keyakinan selama `keputusan.js` masih stub. F7 tanpa Level-In berarti mengirim tanpa keyakinan, atau mengisi 4.4 lebih dulu.
+- **Butuh keputusan Khalifa.** Apakah F7 perlu Level-In sejak versi pertamanya.
 
-1. **Prioritas 1: Eksplorasi Tujuan (F10) — Ukuran: Sedang**
-   - Alasan: Layar informatif read-only yang melengkapi *Pilih Mapel*. Resiko bug rendah karena tidak memiliki interaksi state yang rumit. Cukup buat 1 endpoint backend dan 1 layar di Expo.
-2. **Prioritas 2: Selesaikan Backend Level-In (`keputusan.js`) — Ukuran: Kecil-Sedang**
-   - Alasan: Kode logika murni sudah teruji di `MVP-PWA/assets/levelin.js`. Salin fungsinya ke `server/src/modul/levelin/keputusan.js` agar endpoint `/kalibrasi/ringkasan` dan `/saran-harian` tidak lagi melempar error TODO.
-3. **Prioritas 3: Arsip Belajar (F6) & Sesi Latihan Hari Ini (F7) — Ukuran: Sangat Besar**
-   - Alasan: Membutuhkan perancangan UI flashcard yang nyaman di HP, animasi interaktif, dan integrasi Level-In client-side. Kerjakan setelah umpan balik v1 terkumpul dari siswa.
-4. **Prioritas 4: Bank Soal Mitra (F9) & Fitur Berbayar (F8) — Ukuran: Tertunda**
-   - Alasan: Bergantung sepenuhnya pada pembicaraan bisnis dengan mitra bimbel luar.
-
----
-
-## Tabel Ringkasan Audit (Definition of Done)
-
-| Fitur | Ada di Expo? | Kesiapan Backend | Ketergantungan / Blocker | Ukuran Relatif | Target Waktu |
-|:---|:---:|:---|:---|:---:|:---:|
-| **F1 Linimasa** | **Ada** | Siap & Teruji (69 tes pass) | Menunggu rilis jadwal SNBP/SNBT 2027 | - | Rilis v1 (Sekarang) |
-| **F2 Khusus SMK** | **Ada** | Siap & Teruji | Tidak ada (Mandiri) | - | Rilis v1 (Sekarang) |
-| **F3 Pilih Mapel** | **Ada** | Siap & Teruji | Tidak ada (Mandiri) | - | Rilis v1 (Sekarang) |
-| **F4 Cerita Alumni** | **Ada (UI)** | Siap & Teruji | **Izin tertulis narasumber (konten)** | Sangat Kecil | Pasca Izin |
-| **F5 Daftar Periksa** | **Ada** | Siap & Teruji (Multi-device) | Tidak ada (Mandiri) | - | Rilis v1 (Sekarang) |
-| **Jalur Saya** | **Ada** | Siap & Teruji | Tidak ada (Mandiri) | - | Rilis v1 (Sekarang) |
-| **Cek Posisi Gue** | **Ada** | Mandiri (Rule-based klien) | Tidak ada (Mandiri) | - | Rilis v1 (Sekarang) |
-| **F10 Eksplorasi Tujuan** | **Tidak Ada** | Data JSON ada, endpoint/DB belum | Validasi akurasi data prodi | **Sedang** | Target v1.1 (Okt) |
-| **Level-In (CGT)** | **Tidak Ada** | Skema DB ada, `keputusan.js` TODO | Salin Lapisan 2 dari `levelin.js` | **Besar** | Target v1.1 (Okt) |
-| **F6 Arsip Belajar** | **Tidak Ada** | CRUD DB siap & teruji | Butuh layar mobile UI | **Sedang** | Target v1.2 |
-| **F7 Latihan Hari Ini** | **Tidak Ada** | Tabel DB siap, generator antrian belum | Butuh UI flashcard & animasi | **Besar** | Target v1.2 |
-| **F9 Bank Soal Mitra** | **Tidak Ada** | Tidak ada | Perjanjian kerjasama mitra | **Kecil** | Ditunda (Hold) |
-| **Onboarding Cerita** | **Ditiadakan** | Pertanyaan masuk ke form daftar | Keputusan desain (kurangi friksi) | - | Disengaja |
+### 4.7 F9 Bank Soal — kecil secara teknis, terblokir
+- **Pekerjaan.** Layar keadaan kosong itu kecil. Katalog mitra yang sebenarnya butuh tabel dan alur baru.
+- **Risiko.** Menampilkan nama lembaga tanpa perjanjian tertulis.
+- **Butuh keputusan Khalifa.** Tidak perlu dibawa ke Expo sampai ada mitra. Layar yang isinya hanya "belum ada mitra" tidak menambah nilai.
 
 ---
 
-## Hal-Hal yang Memerlukan Keputusan & Pengecekan (Klarifikasi)
+## 5. Hal yang tidak yakin dan apa yang perlu dicek
 
-1. **Status Izin Cerita Alumni (F4):**
-   - Apakah 2 alumni contoh akan diganti dengan alumni riil sekolah binaan EDILAKSO Group sebelum disebarkan ke 50 siswa? Jika belum ada, layar akan menampilkan pesan ajakan menghubungkan tim ke alumni (keadaan kosong yang sah).
-2. **Kesesuaian Hosting Rumahweb (Checklist Deploy):**
-   - Perlu login ke cPanel Rumahweb untuk memastikan ketersediaan Node.js versi 20+ dan MariaDB/MySQL yang mendukung JSON & sintaks migrasi. Jika tidak ada Node 20+, segera alihkan target ke Railway.
-3. **Pemisahan Scope v1 vs v2:**
-   - Ditegaskan kembali bahwa **LANJUT v1 adalah aplikasi panduan keputusan (Decision Support System)**, bukan bank soal atau bimbel online. Ketiadaan fitur Latihan dan Bank Soal pada rilis 4 Oktober tidak menggugurkan *value proposition* utama bagi siswa SMK.
+1. **`POST /riwayat-latihan` gagal bila ada nilai keyakinan.** Ini dari membaca kode (`simpanRiwayatBorongan` memanggil `keputusan.gapNumerik` sebelum menulis). Tidak saya jalankan supaya tidak menulis ke DB. *Cek:* tes HTTP di DB uji.
+2. **Alasan onboarding tidak ada di Expo.** Tidak ada catatan keputusan di `docs/` maupun `LANJUT_App/README.md`. *Cek:* tanya Khalifa apakah ini disengaja.
+3. **Isi 12 kartu kurasi Arsip.** Belum diverifikasi siapa pun; saya tidak menilai kebenaran materinya.
+4. **Label "Terverifikasi" di `profil-prodi.json`.** Tidak saya cocokkan ke sumber aslinya. *Cek:* tim riset.
+5. **Kondisi DB produksi.** Yang dibaca adalah `lanjut_test` lokal (berisi 576 pengguna dan 132 kartu buatan tes). Angka konten di atas berasal dari benih yang sama yang akan dipakai produksi.
+6. **Layar Expo di HP.** Tidak diulang untuk audit ini. Terakhir diuji di web 360 px pada 28 Sep dan di development build.
+7. **Arti tanggal 4 Oktober.** Saya pakai batas di LANJUT_024 (hosting + APK selesai 2–3 Okt, sisakan buffer).
+
+---
+
+## 6. Rekomendasi urutan (Langkah 4)
+
+### Sebelum 4 Oktober 2026: tidak ada fitur baru
+Hosting backend dan build APK ulang jatuh di periode yang sama. Setiap fitur baru menambah risiko bug tanpa waktu uji. Semua kesenjangan di atas tidak memblokir v1, karena Expo tidak memanggil endpoint yang rusak.
+
+1. **Hosting backend** sesuai LANJUT_024: migrasi, benih, `verifikasi-konten` untuk 3 tahapan TKA.
+2. **Build APK ulang.** Profil `preview` di `LANJUT_App/eas.json` masih `EXPO_PUBLIC_API_URL=http://10.141.5.75:4000/api/v1` (IP LAN).
+3. **Verifikasi konten P0 oleh tim konten** (bukan pekerjaan kode, bisa paralel): Khusus SMK 6 butir, Daftar Periksa 11 butir, prodi 19, mapel 10. Semuanya masih `belum_diverifikasi`.
+4. **Pencarian cerita alumni nyata** (paralel, non-kode).
+
+### Sesudah 4 Oktober: urutan usulan
+| Urutan | Pekerjaan | Ukuran | Alasan urutan |
+|---|---|---|---|
+| 1 | F10 Eksplorasi Tujuan | Sedang | Melengkapi F3 (pembeda inti produk), datanya paling siap, hanya menampilkan data. Perlu keputusan soal data "Perkiraan" |
+| 2 | Onboarding ringan (+ tanya kelas saat daftar) | Kecil | Murah; hanya kalau Khalifa memutuskan perlu |
+| 3 | Butir Daftar Periksa milik pengguna | Sedang | Membuka "simpan" yang spesifik di F3 dan F10. Bisa dilewati kalau perilaku sekarang dianggap cukup |
+| 4 | Tes HTTP untuk endpoint yang belum dites (`/kemajuan`, `/konten/cerita-alumni` termasuk saringan izin, `/konten/linimasa`, `/konten/khusus-smk`) | Kecil | Endpoint ini sudah dipakai v1. Saringan izin alumni adalah perlindungan data |
+| 5 | F6 Arsip Belajar | Sedang | Backend siap; tunggu keputusan verifikasi kartu kurasi |
+| 6 | F7 Latihan (rancang antrian dulu) | Sedang–besar | Butuh F6; desainnya belum ada |
+| 7 | Level-In (backend + Expo) | Besar | Butuh F7 dan tiga keputusan produk (4.4) |
+| — | F9 Bank Soal, F8 berbayar | — | Hanya bila ada mitra / keputusan bisnis |
+
+---
+
+## 7. Koreksi terhadap versi laporan sebelumnya (commit `ee68a93`)
+
+Versi sebelumnya tidak dibuat di sesi audit ini. Klaim berikut tidak cocok dengan kode atau hasil menjalankan app:
+
+| Klaim versi `ee68a93` | Yang benar (bukti) |
+|---|---|
+| Pertanyaan onboarding (kelas & prodi) dipindah ke form daftar `DaftarScreen.tsx` | File itu tidak ada. `RegisterScreen.tsx` hanya menanyakan prodi impian; **kelas tidak ditanyakan** |
+| Latihan PWA: "sesi 12 kartu flashcard acak (~8 menit)" | Satu kartu statis `k-mtk-1` di HTML (browser: skor 0/1); `backlog-v1.1-F7` menyatakan multi-kartu belum pernah dibangun |
+| `profil-prodi.json` memuat 19 prodi, "belum diverifikasi" | 18 profil (`teknik-elektro` tanpa profil); status `terverifikasi_sebagian`, dicek 31 Agu 2026, mata kuliah "Perkiraan" |
+| Level-In: cukup salin fungsi dari PWA, ukuran kecil–sedang (di bagian lain "besar") | Tanda tangan fungsi server ≠ PWA; `POST /riwayat-latihan` juga bergantung stub. Besar |
+| F3: "data resmi 19 prodi dan 10 mapel" | Di DB, 19/19 prodi dan 10/10 mapel `belum_diverifikasi` |
+| F2: tidak ada ketergantungan konten | 6/6 butir `belum_diverifikasi` |
+| F4: cukup ubah `izin_tayang = 1` | 2 cerita yang ada adalah contoh fiktif; perlu cerita nyata berizin (minimal 3) |
+| Semua endpoint P0 "siap & teruji" | `/konten/linimasa`, `/konten/khusus-smk`, `/konten/cerita-alumni`, `/kemajuan` tidak punya tes HTTP |
+| Kemajuan: `POST/DELETE /kemajuan/:id` | `PUT/DELETE /kemajuan/:butirId` |
+| Auth "sesuai regulasi data pribadi siswa (LANJUT_025)" | LANJUT_025 sengaja tidak membuat klaim hukum; klaim ini dihapus |
+| Onboarding "dihilangkan demi mengurangi friksi" | Alasan tidak ditemukan tertulis; masuk daftar "tidak yakin" |
