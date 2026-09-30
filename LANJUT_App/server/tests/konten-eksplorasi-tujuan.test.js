@@ -15,6 +15,8 @@ const { test, before, after, mock } = require('node:test');
 const assert = require('node:assert/strict');
 const { nyalakanServer, urlDari, pool } = require('./bantuan');
 const kontenRepo = require('../src/modul/konten/konten.repo');
+const { benihProfilProdi } = require('../src/db/benih/benih');
+const { ubahStatus, daftarBelum, GalatPakai } = require('../src/db/verifikasi/verifikasi-konten');
 
 const ASAL_UJI = 'uji-031';
 const ID_PRODI_CADANGAN = 'uji-031-prodi';
@@ -56,6 +58,10 @@ before(async () => {
   server = await nyalakanServer();
   baseUrl = urlDari(server);
   await pool.query('DELETE FROM profil_prodi WHERE asal = ?', [ASAL_UJI]); // sisa run yang gagal di tengah
+  // Profil asli dari berkas dipastikan ada dulu (idempoten, tanda verifikasi
+  // tim tidak disentuh), supaya prodi "tanpa profil" di bawah benar-benar
+  // tidak ada di profil-prodi.json dan benih asli tidak menimpa fixture.
+  await benihProfilProdi();
 
   const [kosong] = await pool.query(
     `SELECT p.id, p.nama, p.rumpun FROM prodi p LEFT JOIN profil_prodi pp ON pp.id = p.id
@@ -198,5 +204,133 @@ test('eksplorasi-tujuan: galat basis data → 500 GALAT_SERVER tanpa membocorkan
     assert.equal(res.status, 500);
     assert.equal(JSON.parse(teks).galat.kode, 'GALAT_SERVER');
     assert.ok(!/ER_BAD_FIELD|profil_prodi|rahasia/.test(teks));
+  }
+});
+
+// --- Benih & verifikasi-konten (LANJUT_031 commit 2) -------------------------
+// Memakai berkas fixture ber-asal 'uji-031' untuk prodi fixture yang sama.
+
+function berkasFixture(ubah) {
+  const item = {
+    id: prodi.id,
+    nama: prodi.nama,
+    jenjang: 'S1',
+    rumpun: prodi.rumpun,
+    badge_relevan_smk: false,
+    peminat: { jumlah: 1200, kampus: 'Universitas Uji', tahun: 2026, jalur: 'SNBP', sumber: 'SNPMB' },
+    diterima: 60,
+    mata_kuliah: ['Satu', 'Dua'],
+    profesi: ['Profesi A', 'Profesi B'],
+    kampus: [{ nama: 'Universitas Uji', jenis: 'PTN Akademik', jalur_masuk: ['SNBP'] }],
+    status_sumber: { peminat: 'Terverifikasi', mata_kuliah: 'Perkiraan', profesi: 'Terverifikasi', kampus: 'Terverifikasi' },
+    catatan_studi: null,
+    _catatan_data: 'catatan tim, tidak disimpan',
+  };
+  return {
+    sumber: 'resmi',
+    pemilik: 'tim',
+    // Seperti kepala profil-prodi.json asli: BUKAN tanda verifikasi.
+    status: 'terverifikasi_sebagian',
+    diperiksa_pada: '2026-08-31',
+    asal: ASAL_UJI,
+    url_sumber: 'https://contoh.invalid/f10',
+    data: [ubah ? ubah(item) : item],
+  };
+}
+
+async function barisFixture() {
+  const [[b]] = await pool.query('SELECT * FROM profil_prodi WHERE id = ?', [prodi.id]);
+  return b;
+}
+
+const tampil = async () => (await ambil('/konten/eksplorasi-tujuan')).json.data.some((p) => p.id === prodi.id);
+
+test('benih profil asli: semua entri profil-prodi.json ada di tabel dengan nama sesuai prodi', async () => {
+  const berkas = require('../../../MVP-PWA/data/profil-prodi.json');
+  const [baris] = await pool.query('SELECT id, nama FROM profil_prodi WHERE id IN (?)', [berkas.data.map((p) => p.id)]);
+  assert.equal(baris.length, berkas.data.length);
+  for (const p of berkas.data) assert.equal(baris.find((b) => b.id === p.id).nama, p.nama);
+});
+
+test('benih: status kepala berkas "terverifikasi_sebagian" TIDAK jadi tanda → belum_diverifikasi, diperiksa_pada NULL', async () => {
+  await pool.query('DELETE FROM profil_prodi WHERE asal = ?', [ASAL_UJI]);
+  await benihProfilProdi(berkasFixture());
+  const b = await barisFixture();
+  assert.equal(b.status_verifikasi, 'belum_diverifikasi');
+  assert.equal(b.diperiksa_pada, null);
+  assert.deepEqual(b.mata_kuliah, ['Satu', 'Dua']);
+  assert.equal(b.peminat_jumlah, 1200);
+  assert.equal(await tampil(), false, 'profil hasil benih langsung tampil tanpa verifikasi');
+});
+
+test('verifikasi-konten: jenis eksplorasi-tujuan menandai profil → tampil di endpoint, hilang dari --list', async () => {
+  await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: '2099-02-01', batal: false });
+  const b = await barisFixture();
+  assert.equal(b.status_verifikasi, 'terverifikasi');
+  assert.equal(b.mata_kuliah.length, 2, 'isi konten tidak boleh ikut berubah');
+  assert.equal(await tampil(), true);
+  const belum = (await daftarBelum('eksplorasi-tujuan'))[0].baris.map((x) => x.id);
+  assert.ok(!belum.includes(prodi.id));
+  assert.equal((await ambil(`/konten/eksplorasi-tujuan/${prodi.id}`)).json.data.diperiksa_pada, '2099-02-01');
+});
+
+test('benih ulang dengan isi sama: tanda verifikasi tetap (LANJUT_011), termasuk kolom JSON', async () => {
+  await benihProfilProdi(berkasFixture());
+  const b = await barisFixture();
+  assert.equal(b.status_verifikasi, 'terverifikasi');
+  assert.ok(b.diperiksa_pada);
+});
+
+test('benih dengan isi berubah (urutan mata kuliah / kampus / angka): tanda direset (LANJUT_020)', async () => {
+  const perubahan = [
+    (i) => ({ ...i, mata_kuliah: ['Dua', 'Satu'] }),
+    (i) => ({ ...i, kampus: [{ ...i.kampus[0], jalur_masuk: ['SNBP', 'SNBT'] }] }),
+    (i) => ({ ...i, diterima: 61 }),
+    (i) => ({ ...i, status_sumber: { ...i.status_sumber, mata_kuliah: 'Terverifikasi' } }),
+  ];
+  for (const ubah of perubahan) {
+    await benihProfilProdi(berkasFixture());
+    await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: '2099-02-01', batal: false });
+    await benihProfilProdi(berkasFixture(ubah));
+    const b = await barisFixture();
+    assert.equal(b.status_verifikasi, 'belum_diverifikasi', `tidak direset untuk ${ubah.toString()}`);
+    assert.equal(b.diperiksa_pada, null);
+    assert.equal(await tampil(), false);
+  }
+});
+
+test('verifikasi-konten --batal mengembalikan profil ke belum terverifikasi', async () => {
+  await benihProfilProdi(berkasFixture());
+  await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: '2099-02-01', batal: false });
+  await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: null, batal: true });
+  const b = await barisFixture();
+  assert.equal(b.status_verifikasi, 'belum_diverifikasi');
+  assert.equal(b.diperiksa_pada, null);
+  assert.equal(await tampil(), false);
+});
+
+test('verifikasi-konten: id profil yang tidak ada → galat, tidak ada yang diubah', async () => {
+  await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: '2099-02-01', batal: false });
+  await assert.rejects(
+    ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id, 'profil-tidak-ada'], tanggal: null, batal: true }),
+    (g) => g instanceof GalatPakai && /profil-tidak-ada/.test(g.message)
+  );
+  assert.equal((await barisFixture()).status_verifikasi, 'terverifikasi');
+});
+
+test('benih menolak berkas yang salah SEBELUM menulis apa pun (id / nama / rumpun / larik)', async () => {
+  await pool.query('DELETE FROM profil_prodi WHERE asal = ?', [ASAL_UJI]);
+  const salah = [
+    [(i) => ({ ...i, id: 'prodi-tidak-ada' }), /tidak ada di tabel prodi/],
+    [(i) => ({ ...i, nama: 'Nama Salah' }), /nama "Nama Salah" beda/],
+    [(i) => ({ ...i, rumpun: 'Rumpun Salah' }), /rumpun "Rumpun Salah" beda/],
+    [(i) => ({ ...i, kampus: 'UNS' }), /kampus harus larik/],
+  ];
+  for (const [ubah, pola] of salah) {
+    const berkas = berkasFixture();
+    berkas.data.unshift(berkasFixture().data[0]); // entri benar DI DEPAN entri salah
+    berkas.data[1] = ubah(berkas.data[1]);
+    await assert.rejects(benihProfilProdi(berkas), pola);
+    assert.equal(await barisFixture(), undefined, 'entri benar sempat ditulis sebelum galat');
   }
 });

@@ -149,7 +149,16 @@ Alat ini mengubah basis data yang tertulis di `.env`.
 | Salah tandai, mau dibatalkan | `--batal` | `npm run verifikasi-konten -- --jenis=linimasa --id=daftar-snbp --batal` |
 
 Jenis yang tersedia: `linimasa`, `khusus-smk`, `checklist`, `prodi`, `mapel`,
-`cerita-alumni`.
+`cerita-alumni`, `eksplorasi-tujuan`.
+
+`eksplorasi-tujuan` (F10, LANJUT_031) = satu profil prodi utuh per ID (ID =
+id prodi, mis. `--id=k3`): peminat, mata kuliah, profesi, dan kampus dicek
+bersama. Profil baru tampil di layar Eksplorasi Tujuan setelah ditandai.
+Label "Terverifikasi"/"Perkiraan" per kelompok di `profil-prodi.json`
+(`status_sumber`) tetap tampil apa adanya; tanda dari skrip ini yang
+menentukan profil boleh tampil atau tidak. Status di kepala berkas
+(`terverifikasi_sebagian`, 31 Agu 2026) **tidak** dianggap tanda — itu
+tanggal riset disusun, jadi semua profil mulai sebagai belum terverifikasi.
 
 ### Kalau muncul pesan galat
 

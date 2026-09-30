@@ -31,6 +31,8 @@ const JENIS = {
   prodi: { tabel: 'prodi', judul: 'nama', label: 'Prodi' },
   mapel: { tabel: 'mapel', judul: 'nama', label: 'Mapel' },
   'cerita-alumni': { tabel: 'cerita_alumni', judul: 'nama', label: 'Cerita Alumni' },
+  // F10 (LANJUT_031): satu baris = satu profil prodi; id = id prodi.
+  'eksplorasi-tujuan': { tabel: 'profil_prodi', judul: 'nama', label: 'Eksplorasi Tujuan (profil prodi)' },
 };
 
 const BERKAS_LOG = path.join(__dirname, '..', '..', '..', 'verifikasi-konten.log');

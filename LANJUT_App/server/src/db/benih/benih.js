@@ -66,6 +66,7 @@ const BERKAS_DATA = [
   'cerita-alumni.json',
   'checklist.json',
   'arsip.json',
+  'profil-prodi.json',
 ];
 
 function asalLokasi() {
@@ -430,12 +431,101 @@ async function benihArsipKartu() {
   console.log(`[benih] kartu (resmi): ${berkas.data.length} baris`);
 }
 
+/**
+ * F10 profil prodi (LANJUT_031) → tabel profil_prodi (migrasi 008).
+ *
+ * Status awal SELALU 'belum_diverifikasi' / diperiksa_pada NULL, kecuali
+ * berkas bertanda 'terverifikasi' persis. Kepala profil-prodi.json berisi
+ * `status: "terverifikasi_sebagian"` + `diperiksa_pada` — itu tanggal laporan
+ * riset disusun dan penilaian per kelompok (status_sumber), BUKAN tanda
+ * bahwa tim konten sudah mengecek profil itu lewat verifikasi-konten. Jadi
+ * tidak dinaikkan diam-diam jadi terverifikasi. status_sumber tetap dibawa
+ * apa adanya (label "Terverifikasi"/"Perkiraan" per kelompok di layar).
+ *
+ * Validasi dulu seluruh berkas (id ada di tabel prodi, nama & rumpun sama
+ * persis) supaya salah ketik tidak meninggalkan benih setengah jadi.
+ * `_catatan_data` (catatan tim, tidak dirender) tidak disimpan.
+ *
+ * `berkas` bisa diganti (dipakai test dengan berkas fixture); bawaan profil-prodi.json.
+ */
+async function benihProfilProdi(berkas = bacaJson('profil-prodi.json')) {
+  const [prodiDb] = await pool.query('SELECT id, nama, rumpun FROM prodi');
+  const petaProdi = new Map(prodiDb.map((p) => [p.id, p]));
+  for (const item of berkas.data) {
+    const p = petaProdi.get(item.id);
+    if (!p) throw new Error(`profil-prodi "${item.id}": id tidak ada di tabel prodi (jalankan benih prodi dulu / cek prodi.json). Tidak ada data yang ditulis.`);
+    if (p.nama !== item.nama) throw new Error(`profil-prodi "${item.id}": nama "${item.nama}" beda dengan prodi.json ("${p.nama}"). Tidak ada data yang ditulis.`);
+    if (item.rumpun !== undefined && p.rumpun !== item.rumpun) {
+      throw new Error(`profil-prodi "${item.id}": rumpun "${item.rumpun}" beda dengan prodi.json ("${p.rumpun}"). Tidak ada data yang ditulis.`);
+    }
+    for (const k of ['mata_kuliah', 'profesi', 'kampus']) {
+      if (!Array.isArray(item[k])) throw new Error(`profil-prodi "${item.id}": ${k} harus larik. Tidak ada data yang ditulis.`);
+    }
+  }
+
+  const terverifikasi = berkas.status === 'terverifikasi';
+  const sama = `nama <=> VALUES(nama) AND urutan <=> VALUES(urutan) AND jenjang <=> VALUES(jenjang) AND
+            badge_relevan_smk <=> VALUES(badge_relevan_smk) AND peminat_jumlah <=> VALUES(peminat_jumlah) AND
+            peminat_kampus <=> VALUES(peminat_kampus) AND peminat_tahun <=> VALUES(peminat_tahun) AND
+            peminat_jalur <=> VALUES(peminat_jalur) AND peminat_sumber <=> VALUES(peminat_sumber) AND
+            diterima <=> VALUES(diterima) AND mata_kuliah <=> VALUES(mata_kuliah) AND profesi <=> VALUES(profesi) AND
+            kampus <=> VALUES(kampus) AND status_sumber <=> VALUES(status_sumber) AND catatan_studi <=> VALUES(catatan_studi) AND
+            sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND asal <=> VALUES(asal) AND url_sumber <=> VALUES(url_sumber)`;
+
+  for (const [i, item] of berkas.data.entries()) {
+    const pm = item.peminat || {};
+    await pool.execute(
+      `INSERT INTO profil_prodi
+         (id, nama, urutan, jenjang, badge_relevan_smk, peminat_jumlah, peminat_kampus, peminat_tahun,
+          peminat_jalur, peminat_sumber, diterima, mata_kuliah, profesi, kampus, status_sumber, catatan_studi,
+          sumber, pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE
+         status_verifikasi = IF(${sama}, status_verifikasi, 'belum_diverifikasi'),
+         diperiksa_pada = IF(${sama}, diperiksa_pada, NULL),
+         nama=VALUES(nama), urutan=VALUES(urutan), jenjang=VALUES(jenjang),
+         badge_relevan_smk=VALUES(badge_relevan_smk), peminat_jumlah=VALUES(peminat_jumlah),
+         peminat_kampus=VALUES(peminat_kampus), peminat_tahun=VALUES(peminat_tahun),
+         peminat_jalur=VALUES(peminat_jalur), peminat_sumber=VALUES(peminat_sumber),
+         diterima=VALUES(diterima), mata_kuliah=VALUES(mata_kuliah), profesi=VALUES(profesi),
+         kampus=VALUES(kampus), status_sumber=VALUES(status_sumber), catatan_studi=VALUES(catatan_studi),
+         sumber=VALUES(sumber), pemilik=VALUES(pemilik), asal=VALUES(asal), url_sumber=VALUES(url_sumber)`,
+      [
+        item.id,
+        item.nama,
+        i + 1,
+        item.jenjang,
+        item.badge_relevan_smk ? 1 : 0,
+        pm.jumlah ?? null,
+        pm.kampus ?? null,
+        pm.tahun ?? null,
+        pm.jalur ?? null,
+        pm.sumber ?? null,
+        item.diterima ?? null,
+        JSON.stringify(item.mata_kuliah),
+        JSON.stringify(item.profesi),
+        JSON.stringify(item.kampus),
+        JSON.stringify(item.status_sumber || {}),
+        item.catatan_studi ?? null,
+        berkas.sumber,
+        berkas.pemilik,
+        terverifikasi ? 'terverifikasi' : 'belum_diverifikasi',
+        berkas.asal,
+        berkas.url_sumber || null,
+        terverifikasi ? berkas.diperiksa_pada || null : null,
+      ]
+    );
+  }
+  console.log(`[benih] profil_prodi: ${berkas.data.length} baris`);
+}
+
 async function jalankanBenih() {
   pastikanFolderData();
   console.log(`[benih] data konten: ${DIR_DATA}`);
   await benihProdi();
   await benihMapel();
   await benihProdiMapel();
+  await benihProfilProdi();
   await benihLinimasa();
   await benihKhususSmk();
   await benihCeritaAlumni();
@@ -453,4 +543,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { jalankanBenih, benihLinimasa, benihChecklist, DIR_DATA };
+module.exports = { jalankanBenih, benihLinimasa, benihChecklist, benihProfilProdi, DIR_DATA };
