@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { pesanUntuk, type DataUbahProfil, type Pengguna } from '../../api/auth';
+import { pesanUntuk, type DataUbahProfil, type GayaBelajar, type Pengguna } from '../../api/auth';
 import { ApiError } from '../../api/client';
 import { useSesi } from '../../providers/AuthProvider';
 import { useProdi } from '../../hooks/useProdi';
 import { useProgresDaftarPeriksa, useSaringDaftarPeriksa } from '../../hooks/useProgresDaftarPeriksa';
 import { useUbahProfil } from '../../hooks/useUbahProfil';
+import { GAYA_BELAJAR, labelGayaBelajar } from '../../lib/gayaBelajar';
 import { color, font, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Kartu, KartuPintu, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
 import { BELUM, DaftarOpsi, Field, Input, OpsiPil, PesanGalat, PilihProdi } from './auth/AuthUI';
@@ -71,6 +72,7 @@ function KartuJalur({ pengguna }: { pengguna: Pengguna }) {
       <View style={s.daftar}>
         <Baris label="Kelas" nilai={pengguna.kelas ? `Kelas ${pengguna.kelas}` : null} />
         <Baris label="Target prodi" nilai={namaProdi} />
+        <Baris label="Gaya belajar" nilai={labelGayaBelajar(pengguna.gaya_belajar)} />
       </View>
       <View style={s.aksi}>
         <Tombol
@@ -95,6 +97,7 @@ function FormJalur({ pengguna, onSelesai }: { pengguna: Pengguna; onSelesai: () 
   const [nama, setNama] = useState(pengguna.nama_tampilan);
   const [kelas, setKelas] = useState<Kelas | null>(pengguna.kelas);
   const [prodi, setProdi] = useState<string>(pengguna.prodi_impian ?? BELUM);
+  const [gayaBelajar, setGayaBelajar] = useState<GayaBelajar | null>(pengguna.gaya_belajar ?? null);
   const [galatNama, setGalatNama] = useState<string | null>(null);
 
   const kirim = () => {
@@ -109,6 +112,7 @@ function FormJalur({ pengguna, onSelesai }: { pengguna: Pengguna; onSelesai: () 
     if (namaBersih !== pengguna.nama_tampilan) data.nama_tampilan = namaBersih;
     if (kelas !== pengguna.kelas) data.kelas = kelas;
     if (prodiBaru !== pengguna.prodi_impian) data.prodi_impian = prodiBaru;
+    if (gayaBelajar !== (pengguna.gaya_belajar ?? null)) data.gaya_belajar = gayaBelajar;
     if (!Object.keys(data).length) return onSelesai();
 
     simpan.mutate(data, {
@@ -146,6 +150,13 @@ function FormJalur({ pengguna, onSelesai }: { pengguna: Pengguna; onSelesai: () 
       </Field>
       <Field label="Target prodi" hint="Boleh dijawab “belum”." galat={medan?.prodi_impian}>
         <PilihProdi nilai={prodi} onPilih={setProdi} />
+      </Field>
+      <Field label="Gaya belajar" hint="Cara belajar yang paling nyambung buat kamu." galat={medan?.gaya_belajar}>
+        <DaftarOpsi>
+          {GAYA_BELAJAR.map((g) => (
+            <OpsiPil key={g.id} label={g.label} aktif={gayaBelajar === g.id} onPress={() => setGayaBelajar(g.id)} />
+          ))}
+        </DaftarOpsi>
       </Field>
       <PesanGalat teks={simpan.isError ? pesanUntuk(simpan.error) : null} />
       <View style={s.aksiForm}>

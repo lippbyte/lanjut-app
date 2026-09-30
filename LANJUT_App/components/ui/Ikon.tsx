@@ -52,6 +52,15 @@ const IKON = {
       <Circle cx="12" cy="9.5" r="2.5" />
     </>
   ),
+  // Gelembung obrolan bertitik untuk Ngobrol Bareng LANJUT (LANJUT_032).
+  obrolan: (
+    <>
+      <Path d="M4 5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-5 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z" />
+      <Path d="M8 10.5h.01" />
+      <Path d="M12 10.5h.01" />
+      <Path d="M16 10.5h.01" />
+    </>
+  ),
   centang: <Path d="m5 12.5 4.5 4.5L19 7.5" />,
   ok: (
     <>

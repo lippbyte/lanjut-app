@@ -46,6 +46,14 @@ export function LinimasaScreen() {
         onPress={() => router.push('/cek-posisi')}
       />
 
+      {/* LANJUT_032 — uji UX; balasan masih stub, bukan AI (lib/chatStub.ts). */}
+      <KartuPintu
+        ikon="obrolan"
+        judul="Ngobrol Bareng LANJUT"
+        keterangan="Cerita soal minat, cara belajar, atau rencana kuliahmu. Versi uji coba."
+        onPress={() => router.push('/ngobrol')}
+      />
+
       {/* Satu-satunya jalan ke Cerita Alumni — bukan tab (sama dengan PWA). */}
       <KartuPintu
         ikon="alumni"

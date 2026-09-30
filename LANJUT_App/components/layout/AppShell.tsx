@@ -22,7 +22,13 @@ const HALAMAN_ANAK: Record<string, string> = {
   '/cerita-alumni': 'Cerita Alumni SMK',
   '/akun': 'Jalur Saya',
   '/cek-posisi': 'Cek Posisi Gue',
+  '/gaya-belajar': 'Gaya Belajar',
+  '/ngobrol': 'Ngobrol Bareng LANJUT',
 };
+
+// Layar yang mengatur gulirnya sendiri (chat: daftar pesan bergulir, kolom
+// input tetap di bawah), jadi tidak dibungkus ScrollView halaman.
+const TANPA_GULIR_HALAMAN = new Set(['/ngobrol']);
 
 function tabAktif(pathname: string) {
   if (pathname in HALAMAN_ANAK) return '/linimasa';
@@ -38,9 +44,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <AppBar tampilkanProfil={pathname !== '/akun'} />
       {judulAnak ? <PageBar judul={judulAnak} /> : null}
       <Main style={s.main}>
-        <ScrollView contentContainerStyle={s.gulir} keyboardShouldPersistTaps="handled">
-          <View style={s.kolom}>{children}</View>
-        </ScrollView>
+        {TANPA_GULIR_HALAMAN.has(pathname) ? (
+          <View style={s.kolomPenuh}>{children}</View>
+        ) : (
+          <ScrollView contentContainerStyle={s.gulir} keyboardShouldPersistTaps="handled">
+            <View style={s.kolom}>{children}</View>
+          </ScrollView>
+        )}
       </Main>
       <TabBar aktif={tabAktif(pathname)} />
     </View>
@@ -162,6 +172,7 @@ const s = StyleSheet.create({
   gulir: { flexGrow: 1, backgroundColor: color.white },
   // .app di PWA: kolom putih maksimal 420px, di tengah layar lebar.
   kolom: { width: '100%', maxWidth: layout.lebarMaks, alignSelf: 'center', flexGrow: 1 },
+  kolomPenuh: { flex: 1, width: '100%', maxWidth: layout.lebarMaks, alignSelf: 'center', backgroundColor: color.white },
   tabbar: {
     flexDirection: 'row',
     backgroundColor: color.tabbarBg,

@@ -15,9 +15,14 @@ export type Pengguna = {
   status: string;
   kelas: '10' | '11' | '12' | null;
   prodi_impian: string | null;
+  // Opsional di tipe: sesi yang tersimpan sebelum LANJUT_032 belum punya medan ini.
+  gaya_belajar?: GayaBelajar | null;
   dibuat_pada: string | null;
   terakhir_masuk_pada: string | null;
 };
+
+// Nilai sama persis dengan ENUM di server/src/db/migrasi/007_gaya_belajar.sql.
+export type GayaBelajar = 'visual' | 'auditori' | 'kinestetik' | 'baca_tulis';
 
 export type Sesi = { token: string; kedaluwarsa_pada: string; pengguna: Pengguna };
 
@@ -66,6 +71,7 @@ export type DataUbahProfil = {
   nama_tampilan?: string;
   kelas?: '10' | '11' | '12' | null;
   prodi_impian?: string | null;
+  gaya_belajar?: GayaBelajar | null;
 };
 
 /** PATCH /pengguna/saya — mengembalikan profil terbaru (bentuk sama dengan /auth/saya). */
