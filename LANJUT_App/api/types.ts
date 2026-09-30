@@ -50,6 +50,26 @@ export type Prodi = MetaSumberResmi & {
   rumpun: string;
 };
 
+// F10 — profil_prodi (konten.rute.js `bentukProfilProdi`, LANJUT_031). Server
+// hanya mengirim profil yang sudah terverifikasi. Tidak ada gaji maupun rasio:
+// rasio keketatan dihitung di lib/eksplorasi.ts.
+export type StatusSumber = 'Terverifikasi' | 'Perkiraan';
+export type KampusProfil = { nama: string; jenis: string; jalur_masuk: string[] };
+export type ProfilProdi = MetaSumberResmi & {
+  id: string;
+  nama: string;
+  rumpun: string;
+  jenjang: string;
+  badge_relevan_smk: boolean;
+  peminat: { jumlah: number; kampus: string | null; tahun: number | null; jalur: string | null; sumber: string | null } | null;
+  diterima: number | null;
+  mata_kuliah: string[];
+  profesi: string[];
+  kampus: KampusProfil[];
+  status_sumber: Partial<Record<'peminat' | 'mata_kuliah' | 'profesi' | 'kampus', StatusSumber>>;
+  catatan_studi: string | null;
+};
+
 // F3 — mapel (konten.repo.js `ambilMapel`).
 export type Mapel = MetaSumberResmi & {
   id: string; // VARCHAR(64) slug, mis. "bahasa-indonesia"

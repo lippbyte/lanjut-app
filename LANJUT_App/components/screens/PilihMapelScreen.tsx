@@ -186,13 +186,13 @@ function LangkahHasil({
         <Tombol label="Ubah prodi" varian="hantu" kecil onPress={onUbah} />
       </View>
       {prodi && prodi.id === prodiTarget ? <Lencana>{LABEL_TARGET}</Lencana> : null}
-      {prodi ? <HasilProdi prodiId={prodi.id} /> : <HasilUmum totalProdi={totalProdi} />}
+      {prodi ? <HasilProdi prodi={prodi} /> : <HasilUmum totalProdi={totalProdi} />}
     </View>
   );
 }
 
-function HasilProdi({ prodiId }: { prodiId: string }) {
-  const { data, isPending, isError } = useProdiMapel(prodiId);
+function HasilProdi({ prodi }: { prodi: Prodi }) {
+  const { data, isPending, isError } = useProdiMapel(prodi.id);
   if (isPending) return <Memuat />;
   if (isError) return <KeadaanGalat />;
   // Urut bobot tertinggi dulu: dua teratas sah dijadikan saran mapel TKA.
@@ -201,7 +201,7 @@ function HasilProdi({ prodiId }: { prodiId: string }) {
     .slice()
     .sort((a, b) => b.bobot - a.bobot)
     .map((m) => ({ id: m.id, nama: m.nama, tersedia: m.tersedia_di_smk, ket: labelBobot(m.bobot) }));
-  return <IsiHasil baris={baris} />;
+  return <IsiHasil baris={baris} prodi={prodi} />;
 }
 
 // "Belum tahu prodi" tetap wajib berguna (PRD F3): dihitung di backend lewat
@@ -219,7 +219,8 @@ function HasilUmum({ totalProdi }: { totalProdi: number }) {
   return <IsiHasil baris={baris} />;
 }
 
-function IsiHasil({ baris }: { baris: BarisMapel[] }) {
+/** `prodi` diisi → hasil satu prodi, jadi ada pintu ke F10. Rangkuman umum tidak. */
+function IsiHasil({ baris, prodi }: { baris: BarisMapel[]; prodi?: Prodi }) {
   const router = useRouter();
   const tandai = useTandaiKemajuan();
 
@@ -263,6 +264,17 @@ function IsiHasil({ baris }: { baris: BarisMapel[] }) {
       </Kartu>
 
       <Penafian>{PENAFIAN}</Penafian>
+
+      {/* F10 (LANJUT_031) — salinan teks §4.9. Disembunyikan untuk rangkuman
+          umum: F10 selalu butuh SATU prodi (SDD-F10 §G.1). */}
+      {prodi ? (
+        <KartuPintu
+          ikon="posisi"
+          judul={`Lihat prospek & kampus untuk ${prodi.nama}`}
+          keterangan="Peminat, mata kuliah, dan kampus yang cocok."
+          onPress={() => router.push({ pathname: '/eksplorasi-tujuan', params: { prodi: prodi.id } })}
+        />
+      ) : null}
 
       <View style={s.tumpuk}>
         {tandai.isError ? <Text style={s.galat}>Belum tersimpan. Coba lagi sebentar lagi.</Text> : null}

@@ -232,6 +232,18 @@ dokumen ini, bukan dikarang ulang di kode.
 - **Luring:** Sedang tidak tersambung. Yang sudah pernah dibuka masih bisa dilihat.
 - **CTA di `pilih-mapel.html`:** Lihat prospek & kampus untuk [nama prodi], dengan baris kecil: Peminat, mata kuliah, dan kampus yang cocok.
 
+**LANJUT_App (LANJUT_031) — tambahan, DRAF belum disetujui Khalifa.** Expo
+hanya menampilkan profil yang sudah ditandai lewat `verifikasi-konten`, jadi
+butuh satu keadaan yang tidak ada di PWA (pola sama dengan Beranda "Tanggal
+resminya sedang kami cek."):
+
+- **Belum ada profil terverifikasi — judul:** Profil prodi sedang kami cek.
+- **Belum ada profil terverifikasi — isi:** Peminat, mata kuliah, dan kampus tiap prodi baru tampil di sini setelah dicek ke sumber resmi. Sementara itu, mapel yang dibutuhkan sudah bisa kamu lihat di Pilih Mapel.
+- **Tombol:** Kembali ke Pilih Mapel · di bawah profil: Lihat prodi lain
+- **Lencana SMK:** Relevan untuk RPL/TKJ/Teknik (dari SDD-F10 §F.2)
+- **Baris sumber peminat:** Sumber: SNPMB [jalur] [tahun], [kampus] — nama kampus disebut karena angka pendaftar adalah angka satu kampus, bukan nasional.
+- Tombol **Simpan ke Daftar Periksa** belum ada di Expo (butuh butir Daftar Periksa milik pengguna di backend — LANJUT_029 §4.3).
+
 ### 4.10 Daftar (buat akun)
 
 Berlaku untuk **LANJUT_App** (layar Daftar Expo, `RegisterScreen`). Belum

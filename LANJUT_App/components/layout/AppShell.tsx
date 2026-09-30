@@ -24,6 +24,13 @@ const HALAMAN_ANAK: Record<string, string> = {
   '/cek-posisi': 'Cek Posisi Gue',
   '/gaya-belajar': 'Gaya Belajar',
   '/ngobrol': 'Ngobrol Bareng LANJUT',
+  '/eksplorasi-tujuan': 'Eksplorasi Tujuan',
+};
+
+// Tab yang tetap aktif untuk halaman anak. Bawaannya Beranda; F10 adalah
+// lanjutan langsung Pilih Mapel, jadi tab itu yang menyala (SDD-F10 §E.1).
+const TAB_INDUK: Record<string, (typeof TAB)[number]['href']> = {
+  '/eksplorasi-tujuan': '/pilih-mapel',
 };
 
 // Layar yang mengatur gulirnya sendiri (chat: daftar pesan bergulir, kolom
@@ -31,7 +38,7 @@ const HALAMAN_ANAK: Record<string, string> = {
 const TANPA_GULIR_HALAMAN = new Set(['/ngobrol']);
 
 function tabAktif(pathname: string) {
-  if (pathname in HALAMAN_ANAK) return '/linimasa';
+  if (pathname in HALAMAN_ANAK) return TAB_INDUK[pathname] ?? '/linimasa';
   return TAB.find((t) => pathname.startsWith(t.href))?.href ?? '/linimasa';
 }
 
