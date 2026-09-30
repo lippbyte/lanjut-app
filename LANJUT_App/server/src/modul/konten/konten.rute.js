@@ -107,6 +107,64 @@ router.get('/cerita-alumni', async (req, res, next) => {
   }
 });
 
+// F10 Eksplorasi Tujuan (LANJUT_031). Hanya profil yang sudah terverifikasi
+// (disaring di repositori). JSON bisa datang sebagai objek (MySQL) atau
+// teks (MariaDB menyimpan JSON sebagai LONGTEXT) — keduanya diterima.
+const jsonDari = (v) => (typeof v === 'string' ? JSON.parse(v) : v);
+
+function bentukProfilProdi(b) {
+  return {
+    id: b.id,
+    nama: b.nama,
+    rumpun: b.rumpun,
+    jenjang: b.jenjang,
+    badge_relevan_smk: !!b.badge_relevan_smk,
+    peminat:
+      b.peminat_jumlah === null
+        ? null
+        : {
+            jumlah: b.peminat_jumlah,
+            kampus: b.peminat_kampus,
+            tahun: b.peminat_tahun,
+            jalur: b.peminat_jalur,
+            sumber: b.peminat_sumber,
+          },
+    diterima: b.diterima,
+    mata_kuliah: jsonDari(b.mata_kuliah),
+    profesi: jsonDari(b.profesi),
+    kampus: jsonDari(b.kampus),
+    status_sumber: jsonDari(b.status_sumber),
+    catatan_studi: b.catatan_studi,
+    sumber: b.sumber,
+    pemilik: b.pemilik,
+    status_verifikasi: b.status_verifikasi,
+    asal: b.asal,
+    url_sumber: b.url_sumber,
+    diperiksa_pada: keTanggal(b.diperiksa_pada),
+  };
+}
+
+router.get('/eksplorasi-tujuan', async (req, res, next) => {
+  try {
+    const baris = await konten.ambilProfilProdiTerverifikasi(null);
+    sukses(res, baris.map(bentukProfilProdi));
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Profil yang belum terverifikasi dijawab 404 yang SAMA dengan id yang tidak
+// ada, supaya isi yang belum dicek tidak bocor lewat jalur mana pun.
+router.get('/eksplorasi-tujuan/:id', async (req, res, next) => {
+  try {
+    const [b] = await konten.ambilProfilProdiTerverifikasi(req.params.id);
+    if (!b) return galat(res, 'TIDAK_DITEMUKAN', 'Profil prodi tidak ditemukan.');
+    sukses(res, bentukProfilProdi(b));
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get('/checklist', async (req, res, next) => {
   try {
     const baris = await konten.ambilChecklist({

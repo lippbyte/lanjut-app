@@ -123,7 +123,31 @@ async function ambilChecklist({ kelas, jalur, rumpun }) {
   return baris;
 }
 
+/**
+ * F10 — profil prodi yang SUDAH TERVERIFIKASI saja (LANJUT_031). Disaring di
+ * sini, bukan di rute, supaya tidak bisa terlewat (pola sama dengan
+ * ambilCeritaAlumniTayang). "Terverifikasi" = definisi skrip verifikasi-konten:
+ * status 'terverifikasi' DAN diperiksa_pada terisi. Rumpun dibaca dari prodi.
+ * `id` diisi → satu profil (larik 0/1 baris); kosong → semua, urut berkas.
+ */
+async function ambilProfilProdiTerverifikasi(id) {
+  const [baris] = await pool.execute(
+    `SELECT pp.id, pp.nama, p.rumpun, pp.jenjang, pp.badge_relevan_smk,
+            pp.peminat_jumlah, pp.peminat_kampus, pp.peminat_tahun, pp.peminat_jalur, pp.peminat_sumber,
+            pp.diterima, pp.mata_kuliah, pp.profesi, pp.kampus, pp.status_sumber, pp.catatan_studi,
+            pp.sumber, pp.pemilik, pp.status_verifikasi, pp.asal, pp.url_sumber, pp.diperiksa_pada
+       FROM profil_prodi pp
+       JOIN prodi p ON p.id = pp.id
+      WHERE pp.status_verifikasi = 'terverifikasi' AND pp.diperiksa_pada IS NOT NULL
+        AND (? IS NULL OR pp.id = ?)
+      ORDER BY pp.urutan ASC, pp.id ASC`,
+    [id ?? null, id ?? null]
+  );
+  return baris;
+}
+
 module.exports = {
+  ambilProfilProdiTerverifikasi,
   ambilLinimasa,
   ambilKhususSmk,
   ambilProdi,
