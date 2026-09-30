@@ -22,7 +22,7 @@ async function cariUntukMasuk(namaPengguna) {
 async function cariProfil(penggunaId) {
   const [baris] = await pool.execute(
     `SELECT id, nama_pengguna, nama_tampilan, email, peran, status,
-            kelas, prodi_tujuan, dibuat_pada, terakhir_masuk_pada
+            kelas, prodi_tujuan, gaya_belajar, dibuat_pada, terakhir_masuk_pada
        FROM pengguna
       WHERE id = ?
       LIMIT 1`,
@@ -89,26 +89,30 @@ async function updateKataSandiHash(penggunaId, kataSandiHashBaru) {
 }
 
 /**
- * PATCH /pengguna/saya — hanya kelas, prodi_tujuan, nama_tampilan (§4.3).
+ * PATCH /pengguna/saya — hanya kelas, prodi_tujuan, nama_tampilan, dan
+ * gaya_belajar (§4.3, LANJUT_032).
  * SQL statis: medan yang tidak dikirim (`undefined`) memakai flag CASE WHEN
  * supaya tidak perlu merakit klausa SET secara dinamis (§2.2 aturan 2).
  */
-async function updateProfil(penggunaId, { kelas, prodiTujuan, namaTampilan }) {
+async function updateProfil(penggunaId, { kelas, prodiTujuan, namaTampilan, gayaBelajar }) {
   const ubahKelas = kelas !== undefined;
   const ubahProdi = prodiTujuan !== undefined;
   const ubahNama = namaTampilan !== undefined;
-  if (!ubahKelas && !ubahProdi && !ubahNama) return;
+  const ubahGaya = gayaBelajar !== undefined;
+  if (!ubahKelas && !ubahProdi && !ubahNama && !ubahGaya) return;
 
   await pool.execute(
     `UPDATE pengguna
         SET kelas = CASE WHEN ? THEN ? ELSE kelas END,
             prodi_tujuan = CASE WHEN ? THEN ? ELSE prodi_tujuan END,
-            nama_tampilan = CASE WHEN ? THEN ? ELSE nama_tampilan END
+            nama_tampilan = CASE WHEN ? THEN ? ELSE nama_tampilan END,
+            gaya_belajar = CASE WHEN ? THEN ? ELSE gaya_belajar END
       WHERE id = ?`,
     [
       ubahKelas, kelas || null,
       ubahProdi, prodiTujuan || null,
       ubahNama, namaTampilan || null,
+      ubahGaya, gayaBelajar || null,
       penggunaId,
     ]
   );

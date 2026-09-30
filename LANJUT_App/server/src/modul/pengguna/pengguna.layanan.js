@@ -6,7 +6,7 @@ const {
   bentukProfil,
 } = require('../auth/auth.layanan');
 
-async function ubahProfil(penggunaId, { kelas, prodi_impian, nama_tampilan }) {
+async function ubahProfil(penggunaId, { kelas, prodi_impian, nama_tampilan, gaya_belajar }) {
   const perubahan = {};
   if (kelas !== undefined) perubahan.kelas = kelas;
   if (prodi_impian !== undefined) {
@@ -16,6 +16,7 @@ async function ubahProfil(penggunaId, { kelas, prodi_impian, nama_tampilan }) {
     await pastikanProdiValid(perubahan.prodiTujuan);
   }
   if (nama_tampilan !== undefined) perubahan.namaTampilan = nama_tampilan;
+  if (gaya_belajar !== undefined) perubahan.gayaBelajar = gaya_belajar;
 
   await penggunaRepo.updateProfil(penggunaId, perubahan);
 

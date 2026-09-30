@@ -48,6 +48,7 @@ function bentukProfil(baris) {
     // API menamainya `prodi_impian` (keputusan PM, C-1). Jangan ubah nama
     // kolom DB — hanya nama medan di respons ini.
     prodi_impian: baris.prodi_tujuan,
+    gaya_belajar: baris.gaya_belajar ?? null, // LANJUT_032
     dibuat_pada: keIso(baris.dibuat_pada),
     terakhir_masuk_pada: keIso(baris.terakhir_masuk_pada),
   };
