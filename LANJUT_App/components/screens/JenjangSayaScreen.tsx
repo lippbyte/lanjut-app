@@ -82,8 +82,8 @@ const PEMBUKA_SMK_KELAS_12 =
  *   - kelas 10–11 → pintu Pilih Mapel & F10; bagian SMK hanya butir tanpa
  *                   SNBP/PDSS/UTBK/kuota (lib/khususSmk.ts daftar izin).
  *   - kelas 12    → bagian SMK lengkap seperti halaman lama (tidak diblokir).
- * SMA vs SMK tidak bisa dibedakan dari data akun, jadi bagian SMK tampil ke
- * semua kelas 10–12 dengan judul "Kalau kamu anak SMK".
+ * Bagian "Kalau kamu anak SMK" hanya untuk jenis sekolah SMK (LANJUT_038);
+ * siswa SMA/MA kelas 10–12 tidak melihatnya.
  */
 export function JenjangSayaScreen() {
   const router = useRouter();
@@ -92,6 +92,9 @@ export function JenjangSayaScreen() {
   const kelompok = kelompokJenjang(kelas);
   const pintu = kelompok ? PINTU[kelompok] : PINTU_TANPA_KELAS;
   const catatan = kelompok ? CATATAN[kelompok] : undefined;
+  // LANJUT_038: menurut jenis sekolah, bukan rentang kelas. Kelas 7–9 selalu
+  // SMP, jadi syarat kelompok hanya menjaga data yang tidak konsisten.
+  const anakSmk = pengguna?.jenis_sekolah === 'SMK' && (kelompok === 'kelas10_11' || kelompok === 'kelas12');
 
   return (
     <View style={gaya.layarIsiRapat}>
@@ -111,7 +114,7 @@ export function JenjangSayaScreen() {
         </Kartu>
       ) : null}
 
-      {kelompok === 'kelas10_11' || kelompok === 'kelas12' ? <SeksiSmk kelompok={kelompok} /> : null}
+      {anakSmk && kelompok ? <SeksiSmk kelompok={kelompok} /> : null}
     </View>
   );
 }

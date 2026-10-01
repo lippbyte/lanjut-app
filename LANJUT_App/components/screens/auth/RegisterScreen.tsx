@@ -4,7 +4,14 @@ import { View } from 'react-native';
 
 import type { DataDaftar } from '../../../api/auth';
 import { useAuth } from '../../../hooks/useAuth';
-import { KELAS_OPSI, type Kelas } from '../../../lib/jenjang';
+import {
+  JENIS_SEKOLAH_MENENGAH,
+  KELAS_OPSI,
+  LABEL_JENIS_SEKOLAH,
+  tanyaJenisSekolah,
+  type JenisSekolahMenengah,
+  type Kelas,
+} from '../../../lib/jenjang';
 import {
   AuthLayout,
   BELUM,
@@ -42,6 +49,9 @@ export function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [kataSandi, setKataSandi] = useState('');
   const [kelas, setKelas] = useState<Kelas | null>(null);
+  // LANJUT_038: hanya ditanya & dikirim untuk kelas 10–12; kelas 7–9 → SMP di server.
+  const [jenis, setJenis] = useState<JenisSekolahMenengah | null>(null);
+  const tanyaJenis = tanyaJenisSekolah(kelas);
   const [prodi, setProdi] = useState<string | null>(null);
   const [galatLokal, setGalatLokal] = useState<Record<string, string>>({});
 
@@ -53,11 +63,13 @@ export function RegisterScreen() {
     }
     if (kataSandi.length < 8) cek.kata_sandi = 'Kata sandi minimal 8 karakter.';
     if (!kelas) cek.kelas = 'Pilih kelasmu.';
+    if (tanyaJenis && !jenis) cek.jenis_sekolah = 'Pilih jenis sekolahmu.';
     if (!prodi) cek.prodi_impian = 'Pilih prodi, atau "Belum, aku belum tahu".';
     setGalatLokal(cek);
     if (Object.keys(cek).length || !kelas) return;
 
     const data: DataDaftar = { nama_pengguna: nama, kata_sandi: kataSandi, kelas };
+    if (tanyaJenis && jenis) data.jenis_sekolah = jenis;
     if (email.trim()) data.email = email.trim();
     if (prodi && prodi !== BELUM) data.prodi_impian = prodi;
     register(data);
@@ -109,6 +121,15 @@ export function RegisterScreen() {
             ))}
           </DaftarOpsi>
         </Field>
+        {tanyaJenis ? (
+          <Field label="Jenis sekolah" galat={galat('jenis_sekolah')}>
+            <DaftarOpsi>
+              {JENIS_SEKOLAH_MENENGAH.map((j) => (
+                <OpsiPil key={j} label={LABEL_JENIS_SEKOLAH[j]} aktif={jenis === j} onPress={() => setJenis(j)} />
+              ))}
+            </DaftarOpsi>
+          </Field>
+        ) : null}
         <Field label="Prodi impian" hint="Boleh dijawab “belum”." galat={galat('prodi_impian')}>
           <PilihProdi nilai={prodi} onPilih={setProdi} />
         </Field>

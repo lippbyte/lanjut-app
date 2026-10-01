@@ -141,7 +141,7 @@ di atas apa adanya. Isi menurut kelas akun (`components/screens/JenjangSayaScree
   - Daftar Periksa — Satu per satu, tidak perlu sekaligus. (kelas 12)
 - **Kartu kelas 7–9 — SMA, SMK, atau MA?:** Habis SMP, kamu bisa lanjut ke SMA, SMK, atau MA. SMA dan MA lebih banyak belajar teori sebagai bekal kuliah. SMK langsung belajar keahlian lewat praktik dan PKL, dan lulusannya tetap bisa kuliah. Pilih yang paling cocok sama minatmu, bukan cuma ikut teman.
 - **Kartu kelas 10–11 — Belum perlu mikirin jadwal daftar:** Jadwal pendaftaran kuliah belum perlu dipikirkan sekarang. Fokus dulu cari jurusan yang cocok, lalu jaga nilai mapel yang mendukungnya.
-- **Seksi SMK (kelas 10–12):** Kalau kamu anak SMK
+- **Seksi SMK (kelas 10–12 dengan jenis sekolah SMK, LANJUT_038):** Kalau kamu anak SMK
   - **Pembuka kelas 10–11:** Beberapa hal memang beda buat anak SMK. Yang ini sudah bisa kamu siapkan dari sekarang.
   - **Pembuka kelas 12:** pembuka lama di atas.
 - **Butir SMK per kelas:** kelas 12 melihat keenam butir. Kelas 10–11 hanya
@@ -149,8 +149,8 @@ di atas apa adanya. Isi menurut kelas akun (`components/screens/JenjangSayaScree
   `mapel-tka-tidak-ada` (daftar izin di `lib/khususSmk.ts`). Empat butir lain
   disembunyikan, tidak ditulis ulang, supaya tidak ada klaim baru tanpa sumber.
   Kelas 7–9 tidak melihat bagian SMK.
-- **Keterbatasan:** akun hanya punya `kelas`, tidak ada medan SMA/SMK, jadi
-  bagian SMK tampil ke semua kelas 10–12.
+- **Sejak LANJUT_038:** akun punya `jenis_sekolah`, jadi seksi SMK hanya tampil
+  untuk siswa SMK. Siswa SMA/MA kelas 10–12 tidak melihatnya.
 
 ### 4.3 Cerita Alumni
 
@@ -302,6 +302,14 @@ dipakai di `MVP-PWA/daftar.html`.
 - **Label:** Kelas · **petunjuk:** SMP kelas 7–9, SMA/SMK kelas 10–12. · **pilihan:** Kelas 7 … Kelas 12
 - **Galat:** Pilih kelasmu.
 
+**LANJUT_038 — medan Jenis sekolah, DRAF belum disetujui Khalifa.** Hanya
+muncul (dan wajib) bila kelas yang dipilih 10–12; kelas 7–9 tidak ditanya
+(server mengisi SMP).
+
+- **Label:** Jenis sekolah · **pilihan:** SMA · SMK · MA (Madrasah Aliyah)
+- **Galat:** Pilih jenis sekolahmu.
+- **Jalur Saya:** baris "Sekolah" di kartu; medan yang sama di form Ubah, hanya untuk kelas 10–12.
+
 ### 4.11 Bukan kelas 12 (placeholder sementara)
 
 **LANJUT_035 — DRAF belum disetujui Khalifa.** Linimasa (bagian tenggat &
@@ -331,6 +339,15 @@ belum punya kelas, menggantikan seluruh app sampai kelas disimpan
 - **Medan:** Kelas · petunjuk: SMP kelas 7–9, SMA/SMK kelas 10–12. · galat: Pilih kelasmu.
 - **Bila kelas pernah dipilih di Daftar Periksa (perangkat ini):** Terpilih dari pilihanmu sebelumnya di Daftar Periksa. Cek lagi sebelum menyimpan.
 - **Tombol:** Simpan dan lanjut (proses: Menyimpan…) · Buka Jalur Saya · Keluar
+
+**Langkah 2 — jenis sekolah (LANJUT_038), DRAF.** Untuk kelas 10–12 yang
+belum memilih jenis sekolah; muncul sesudah langkah kelas, tidak pernah
+satu layar dengannya. Kelas 7–9 tidak pernah melihatnya.
+
+- **Judul:** Kamu sekolah di mana?
+- **Pengantar:** Kelas [kelas]: pilih jenis sekolahmu supaya isi LANJUT pas buat kamu. Nanti bisa diubah di Jalur Saya.
+- **Medan:** Jenis sekolah · pilihan: SMA · SMK · MA (Madrasah Aliyah) · galat: Pilih jenis sekolahmu.
+- **Tombol:** sama dengan langkah 1.
 
 ---
 

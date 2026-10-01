@@ -9,7 +9,15 @@ import { useProdi } from '../../hooks/useProdi';
 import { useProgresDaftarPeriksa, useSaringDaftarPeriksa } from '../../hooks/useProgresDaftarPeriksa';
 import { useUbahProfil } from '../../hooks/useUbahProfil';
 import { GAYA_BELAJAR, labelGayaBelajar } from '../../lib/gayaBelajar';
-import { KELAS_OPSI, type Kelas } from '../../lib/jenjang';
+import {
+  JENIS_SEKOLAH_MENENGAH,
+  KELAS_OPSI,
+  LABEL_JENIS_SEKOLAH,
+  adalahJenisMenengah,
+  tanyaJenisSekolah,
+  type JenisSekolahMenengah,
+  type Kelas,
+} from '../../lib/jenjang';
 import { color, font, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Kartu, KartuPintu, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
 import { BELUM, DaftarOpsi, Field, Input, OpsiPil, PesanGalat, PilihProdi } from './auth/AuthUI';
@@ -73,6 +81,7 @@ function KartuJalur({ pengguna }: { pengguna: Pengguna }) {
       <Text style={s.nama}>{pengguna.nama_tampilan}</Text>
       <View style={s.daftar}>
         <Baris label="Kelas" nilai={pengguna.kelas ? `Kelas ${pengguna.kelas}` : null} />
+        <Baris label="Sekolah" nilai={pengguna.jenis_sekolah ? LABEL_JENIS_SEKOLAH[pengguna.jenis_sekolah] : null} />
         <Baris label="Target prodi" nilai={namaProdi} />
         <Baris label="Gaya belajar" nilai={labelGayaBelajar(pengguna.gaya_belajar)} />
       </View>
@@ -95,6 +104,12 @@ function FormJalur({ pengguna, onSelesai }: { pengguna: Pengguna; onSelesai: () 
   const { pilih: setSaringan } = useSaringDaftarPeriksa();
   const [nama, setNama] = useState(pengguna.nama_tampilan);
   const [kelas, setKelas] = useState<Kelas | null>(pengguna.kelas);
+  // LANJUT_038: jenis sekolah hanya dipilih untuk kelas 10–12 (7–9 → SMP di server).
+  const [jenis, setJenis] = useState<JenisSekolahMenengah | null>(
+    adalahJenisMenengah(pengguna.jenis_sekolah) ? pengguna.jenis_sekolah : null
+  );
+  const [galatJenis, setGalatJenis] = useState<string | null>(null);
+  const tanyaJenis = tanyaJenisSekolah(kelas);
   const [prodi, setProdi] = useState<string>(pengguna.prodi_impian ?? BELUM);
   const [gayaBelajar, setGayaBelajar] = useState<GayaBelajar | null>(pengguna.gaya_belajar ?? null);
   const [galatNama, setGalatNama] = useState<string | null>(null);
@@ -104,12 +119,15 @@ function FormJalur({ pengguna, onSelesai }: { pengguna: Pengguna; onSelesai: () 
     if (!namaBersih) return setGalatNama('Nama tampilan belum diisi.');
     if (namaBersih.length > 60) return setGalatNama('Nama tampilan maksimal 60 karakter.');
     setGalatNama(null);
+    if (tanyaJenis && !jenis) return setGalatJenis('Pilih jenis sekolahmu.');
+    setGalatJenis(null);
 
     // Hanya medan yang berubah yang dikirim.
     const data: DataUbahProfil = {};
     const prodiBaru = prodi === BELUM ? null : prodi;
     if (namaBersih !== pengguna.nama_tampilan) data.nama_tampilan = namaBersih;
     if (kelas !== pengguna.kelas) data.kelas = kelas;
+    if (tanyaJenis && jenis !== (pengguna.jenis_sekolah ?? null)) data.jenis_sekolah = jenis;
     if (prodiBaru !== pengguna.prodi_impian) data.prodi_impian = prodiBaru;
     if (gayaBelajar !== (pengguna.gaya_belajar ?? null)) data.gaya_belajar = gayaBelajar;
     if (!Object.keys(data).length) return onSelesai();
@@ -147,6 +165,23 @@ function FormJalur({ pengguna, onSelesai }: { pengguna: Pengguna; onSelesai: () 
           ))}
         </DaftarOpsi>
       </Field>
+      {tanyaJenis ? (
+        <Field label="Jenis sekolah" galat={galatJenis ?? medan?.jenis_sekolah}>
+          <DaftarOpsi>
+            {JENIS_SEKOLAH_MENENGAH.map((j) => (
+              <OpsiPil
+                key={j}
+                label={LABEL_JENIS_SEKOLAH[j]}
+                aktif={jenis === j}
+                onPress={() => {
+                  setJenis(j);
+                  setGalatJenis(null);
+                }}
+              />
+            ))}
+          </DaftarOpsi>
+        </Field>
+      ) : null}
       <Field label="Target prodi" hint="Boleh dijawab “belum”." galat={medan?.prodi_impian}>
         <PilihProdi nilai={prodi} onPilih={setProdi} />
       </Field>

@@ -6,7 +6,7 @@ import { pesanUntuk } from '../../api/auth';
 import { useProfilLokal } from '../../hooks/useProfilLokal';
 import { useSaringDaftarPeriksa } from '../../hooks/useProgresDaftarPeriksa';
 import { useUbahProfil } from '../../hooks/useUbahProfil';
-import { KELAS_OPSI, type Kelas } from '../../lib/jenjang';
+import { JENIS_SEKOLAH_MENENGAH, KELAS_OPSI, LABEL_JENIS_SEKOLAH, type JenisSekolahMenengah, type Kelas } from '../../lib/jenjang';
 import { useSesi } from '../../providers/AuthProvider';
 import { spacing } from '../../theme/tokens';
 import { Tombol } from '../ui';
@@ -27,13 +27,11 @@ const adalahKelas = (k: string | null | undefined): k is Kelas => !!k && (KELAS_
  */
 export function IsiKelasScreen() {
   const router = useRouter();
-  const { keluar } = useSesi();
   const simpan = useUbahProfil();
   const { pilih: setSaringan } = useSaringDaftarPeriksa();
   const profilLokal = useProfilLokal();
   const [pilihan, setPilihan] = useState<Kelas | null>(null);
   const [galat, setGalat] = useState<string | null>(null);
-  const [mengeluarkan, setMengeluarkan] = useState(false);
 
   const usulan = adalahKelas(profilLokal.data?.kelas) ? profilLokal.data.kelas : null;
   const kelas = pilihan ?? usulan;
@@ -44,19 +42,15 @@ export function IsiKelasScreen() {
     simpan.mutate(
       { kelas },
       {
-        // Pengguna di AuthProvider sudah berkelas → layout melepas gerbang.
-        // Kelas di perangkat ikut diganti, sama seperti simpan di Jalur Saya.
+        // Pengguna di AuthProvider sudah berkelas → layout melepas gerbang ini
+        // (kelas 10–12 lanjut ke gerbang jenis sekolah, LANJUT_038). Kelas di
+        // perangkat ikut diganti, sama seperti simpan di Jalur Saya.
         onSuccess: () => {
           setSaringan({ kelas });
           router.replace('/linimasa');
         },
       }
     );
-  };
-
-  const onKeluar = async () => {
-    setMengeluarkan(true);
-    await keluar();
   };
 
   return (
@@ -85,12 +79,75 @@ export function IsiKelasScreen() {
         ) : null}
         <PesanGalat teks={simpan.isError ? pesanUntuk(simpan.error) : null} />
         <TombolUtama label="Simpan dan lanjut" labelProses="Menyimpan…" proses={simpan.isPending} onPress={kirim} />
-        <View style={s.lain}>
-          <Tombol label="Buka Jalur Saya" varian="hantu" onPress={() => router.push('/akun')} />
-          <Tombol label={mengeluarkan ? 'Mengeluarkan…' : 'Keluar'} varian="garis" proses={mengeluarkan} onPress={onKeluar} />
-        </View>
+        <KakiGerbang />
       </View>
     </AuthLayout>
+  );
+}
+
+/**
+ * Langkah 2 gerbang (LANJUT_038): kelas 10–12 yang belum memilih SMA, SMK,
+ * atau MA. Muncul SESUDAH gerbang kelas, tidak pernah satu layar dengannya;
+ * kelas 7–9 tidak pernah sampai ke sini (server mengisi SMP).
+ *
+ * TEKS DRAF, belum disetujui Khalifa (salinan §4.12).
+ */
+export function IsiJenisSekolahScreen() {
+  const router = useRouter();
+  const { pengguna } = useSesi();
+  const simpan = useUbahProfil();
+  const [jenis, setJenis] = useState<JenisSekolahMenengah | null>(null);
+  const [galat, setGalat] = useState<string | null>(null);
+
+  const kirim = () => {
+    if (!jenis) return setGalat('Pilih jenis sekolahmu.');
+    setGalat(null);
+    simpan.mutate({ jenis_sekolah: jenis }, { onSuccess: () => router.replace('/linimasa') });
+  };
+
+  return (
+    <AuthLayout
+      judul="Kamu sekolah di mana?"
+      pengantar={`Kelas ${pengguna?.kelas ?? ''}: pilih jenis sekolahmu supaya isi LANJUT pas buat kamu. Nanti bisa diubah di Jalur Saya.`}
+    >
+      <View style={authStyles.form}>
+        <Field label="Jenis sekolah" galat={galat ?? undefined}>
+          <DaftarOpsi>
+            {JENIS_SEKOLAH_MENENGAH.map((j) => (
+              <OpsiPil
+                key={j}
+                label={LABEL_JENIS_SEKOLAH[j]}
+                aktif={jenis === j}
+                onPress={() => {
+                  setJenis(j);
+                  setGalat(null);
+                }}
+              />
+            ))}
+          </DaftarOpsi>
+        </Field>
+        <PesanGalat teks={simpan.isError ? pesanUntuk(simpan.error) : null} />
+        <TombolUtama label="Simpan dan lanjut" labelProses="Menyimpan…" proses={simpan.isPending} onPress={kirim} />
+        <KakiGerbang />
+      </View>
+    </AuthLayout>
+  );
+}
+
+/** Satu-satunya jalan keluar gerbang selain menyimpan: Jalur Saya dan Keluar. */
+function KakiGerbang() {
+  const router = useRouter();
+  const { keluar } = useSesi();
+  const [mengeluarkan, setMengeluarkan] = useState(false);
+  const onKeluar = async () => {
+    setMengeluarkan(true);
+    await keluar();
+  };
+  return (
+    <View style={s.lain}>
+      <Tombol label="Buka Jalur Saya" varian="hantu" onPress={() => router.push('/akun')} />
+      <Tombol label={mengeluarkan ? 'Mengeluarkan…' : 'Keluar'} varian="garis" proses={mengeluarkan} onPress={onKeluar} />
+    </View>
   );
 }
 

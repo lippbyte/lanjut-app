@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import type { Kelas } from '../lib/jenjang';
+import type { JenisSekolah, Kelas } from '../lib/jenjang';
 import { ApiError, apiFetch } from './client';
 
 export const KUNCI_TOKEN = 'auth_token';
@@ -15,6 +15,8 @@ export type Pengguna = {
   peran: string;
   status: string;
   kelas: Kelas | null;
+  // Opsional di tipe: sesi yang tersimpan sebelum LANJUT_038 belum punya medan ini.
+  jenis_sekolah?: JenisSekolah | null;
   prodi_impian: string | null;
   // Opsional di tipe: sesi yang tersimpan sebelum LANJUT_032 belum punya medan ini.
   gaya_belajar?: GayaBelajar | null;
@@ -34,6 +36,8 @@ export type DataDaftar = {
   email?: string;
   nama_tampilan?: string;
   kelas?: Kelas;
+  // Hanya untuk kelas 10–12; kelas 7–9 diisi SMP oleh server (LANJUT_038).
+  jenis_sekolah?: JenisSekolah;
   prodi_impian?: string;
 };
 
@@ -71,6 +75,7 @@ export async function saya(token: string): Promise<Pengguna> {
 export type DataUbahProfil = {
   nama_tampilan?: string;
   kelas?: Kelas | null;
+  jenis_sekolah?: JenisSekolah | null;
   prodi_impian?: string | null;
   gaya_belajar?: GayaBelajar | null;
 };
