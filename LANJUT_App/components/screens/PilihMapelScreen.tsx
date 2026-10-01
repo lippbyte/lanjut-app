@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { Prodi } from '../../api/types';
 import { useAgregasiMapelLintasProdi } from '../../hooks/useAgregasiMapelLintasProdi';
+import { useSimpanButirPribadi } from '../../hooks/useButirPribadi';
 import { useTandaiKemajuan } from '../../hooks/useKemajuan';
 import { BUTIR_MAPEL_TKA, labelBobot } from '../../lib/pilihMapel';
 import { useProdi } from '../../hooks/useProdi';
@@ -223,6 +224,7 @@ function HasilUmum({ totalProdi }: { totalProdi: number }) {
 function IsiHasil({ baris, prodi }: { baris: BarisMapel[]; prodi?: Prodi }) {
   const router = useRouter();
   const tandai = useTandaiKemajuan();
+  const simpanPribadi = useSimpanButirPribadi();
 
   if (!baris.length) {
     return <Kosong judul="Bagian ini masih kami siapkan." teks="Kalau kamu punya bahannya, kirim ke kami." />;
@@ -230,11 +232,18 @@ function IsiHasil({ baris, prodi }: { baris: BarisMapel[]; prodi?: Prodi }) {
 
   const saran = baris.slice(0, 2).map((b) => b.nama).join(' & ');
 
+  // Satu prodi → butir pribadi "Pilih X & Y sebagai mapel TKA — untuk [prodi]",
+  // langsung tercentang (LANJUT_034, sama dengan PWA). Rangkuman umum tidak
+  // punya prodi untuk disebut → tetap mencentang butir umum `mapel-tka`.
+  const keDaftarPeriksa = { onSuccess: () => router.push('/daftar-periksa') };
   const simpan = () =>
-    tandai.mutate(
-      { butirId: BUTIR_MAPEL_TKA, selesai: true },
-      { onSuccess: () => router.push('/daftar-periksa') }
-    );
+    prodi
+      ? simpanPribadi.mutate(
+          { jenis: 'mapel_tka', prodi_id: prodi.id, mapel_ids: baris.slice(0, 2).map((b) => b.id) },
+          keDaftarPeriksa
+        )
+      : tandai.mutate({ butirId: BUTIR_MAPEL_TKA, selesai: true }, keDaftarPeriksa);
+  const menyimpan = prodi ? simpanPribadi : tandai;
 
   return (
     <>
@@ -277,8 +286,8 @@ function IsiHasil({ baris, prodi }: { baris: BarisMapel[]; prodi?: Prodi }) {
       ) : null}
 
       <View style={s.tumpuk}>
-        {tandai.isError ? <Text style={s.galat}>Belum tersimpan. Coba lagi sebentar lagi.</Text> : null}
-        <Tombol label="Simpan ke Daftar Periksa" besar penuh proses={tandai.isPending} onPress={simpan} />
+        {menyimpan.isError ? <Text style={s.galat}>Belum tersimpan. Coba lagi sebentar lagi.</Text> : null}
+        <Tombol label="Simpan ke Daftar Periksa" besar penuh proses={menyimpan.isPending} onPress={simpan} />
         <Tombol label="Lewati" varian="hantu" besar penuh onPress={() => router.push('/linimasa')} />
       </View>
     </>

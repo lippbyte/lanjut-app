@@ -155,3 +155,21 @@ export type Kemajuan = {
   butir_id: string;
   selesai_pada: string | null;
 };
+
+// Butir Daftar Periksa milik akun (LANJUT_034, butir-pribadi.layanan.js
+// `bentukButir`). Hasil "Simpan" di F3 (mapel_tka) dan F10 (riset_kampus);
+// centangnya ada di butir ini sendiri, bukan di /kemajuan.
+export type JenisButirPribadi = 'mapel_tka' | 'riset_kampus';
+export type ButirPribadi = {
+  id: string;
+  jenis: JenisButirPribadi;
+  prodi_id: string;
+  judul: string;
+  kategori_id: string;
+  kategori_nama: string;
+  selesai_pada: string | null;
+  dibuat_pada: string;
+};
+export type SimpanButirPribadi =
+  | { jenis: 'mapel_tka'; prodi_id: string; mapel_ids: string[] }
+  | { jenis: 'riset_kampus'; prodi_id: string };

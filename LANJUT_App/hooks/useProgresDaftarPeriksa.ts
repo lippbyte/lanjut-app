@@ -1,6 +1,7 @@
-import { hitungProgres } from '../lib/daftarPeriksa';
+import { gabungButirPribadi, hitungProgres } from '../lib/daftarPeriksa';
 import { useSesi } from '../providers/AuthProvider';
 import { useButirDaftarPeriksa } from './useButirDaftarPeriksa';
+import { useButirPribadi } from './useButirPribadi';
 import { useKemajuan } from './useKemajuan';
 import { useProdi } from './useProdi';
 import { useProfilLokal, useSetProfilLokal } from './useProfilLokal';
@@ -42,9 +43,11 @@ export function useSaringDaftarPeriksa() {
 }
 
 /**
- * Butir tersaring + centang akun + X/Y — satu-satunya tempat ketiganya
- * digabung. Tanpa kelas/jalur, atau selama saringan masih dimuat, query
- * butir tidak dijalankan. Terima hasil useSaringDaftarPeriksa() apa adanya.
+ * Butir tersaring + butir pribadi + centang akun + X/Y — satu-satunya tempat
+ * semuanya digabung, jadi Daftar Periksa, Jalur Saya, dan Cek Posisi
+ * menghitung X/Y yang sama. Tanpa kelas/jalur, atau selama saringan masih
+ * dimuat, query butir tidak dijalankan. Terima hasil useSaringDaftarPeriksa()
+ * apa adanya.
  */
 export function useProgresDaftarPeriksa({ kelas, jalur, rumpun, isPending: saringMemuat }: SaringanDaftarPeriksa) {
   const siap = !!kelas && !!jalur && !saringMemuat;
@@ -53,15 +56,27 @@ export function useProgresDaftarPeriksa({ kelas, jalur, rumpun, isPending: sarin
     siap
   );
   const kemajuanQuery = useKemajuan();
+  const pribadiQuery = useButirPribadi();
 
-  const isPending = siap && (butirQuery.isPending || kemajuanQuery.isPending);
-  const isError = siap && (butirQuery.isError || kemajuanQuery.isError);
-  if (!siap || !butirQuery.data || !kemajuanQuery.data) {
+  const isPending = siap && (butirQuery.isPending || kemajuanQuery.isPending || pribadiQuery.isPending);
+  const isError = siap && (butirQuery.isError || kemajuanQuery.isError || pribadiQuery.isError);
+  if (!siap || !butirQuery.data || !kemajuanQuery.data || !pribadiQuery.data) {
     return { siap, isPending, isError, data: null };
   }
 
-  const kategori = butirQuery.data.kategori.filter((k) => k.butir.length);
-  // DELETE /kemajuan tidak menghapus baris, hanya mengosongkan selesai_pada.
-  const selesai = new Set(kemajuanQuery.data.filter((k) => k.selesai_pada).map((k) => k.butir_id));
-  return { siap, isPending, isError, data: { kategori, selesai, progres: hitungProgres(kategori, selesai) } };
+  const pribadi = pribadiQuery.data;
+  const kategori = gabungButirPribadi(butirQuery.data.kategori, pribadi).filter((k) => k.butir.length);
+  // DELETE /kemajuan (dan /butir-pribadi/:id/selesai) tidak menghapus baris,
+  // hanya mengosongkan selesai_pada.
+  const selesai = new Set([
+    ...kemajuanQuery.data.filter((k) => k.selesai_pada).map((k) => k.butir_id),
+    ...pribadi.filter((b) => b.selesai_pada).map((b) => b.id),
+  ]);
+  const pribadiIds = new Set(pribadi.map((b) => b.id));
+  return {
+    siap,
+    isPending,
+    isError,
+    data: { kategori, selesai, pribadiIds, progres: hitungProgres(kategori, selesai) },
+  };
 }

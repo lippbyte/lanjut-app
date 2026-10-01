@@ -1,9 +1,17 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { type QueryClient, useQueryClient } from '@tanstack/react-query';
 
 import * as authApi from '../api/auth';
 import type { Pengguna, Sesi } from '../api/auth';
 import { ApiError, saatSesiBerakhir } from '../api/client';
+
+// Cache data milik akun (useKemajuan, useButirPribadi). Dibuang setiap sesi
+// berganti supaya data akun A tidak pernah tampil di akun B.
+const KUNCI_DATA_AKUN = [['kemajuan'], ['butir_pribadi']] as const;
+
+function hapusDataAkun(queryClient: QueryClient) {
+  for (const queryKey of KUNCI_DATA_AKUN) queryClient.removeQueries({ queryKey });
+}
 
 type StatusSesi = 'memuat' | 'masuk' | 'keluar';
 
@@ -49,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!tokenRef.current) return; // sudah ditangani (banyak request gagal sekaligus)
     tokenRef.current = null;
     await authApi.hapusSesiLokal();
-    queryClient.removeQueries({ queryKey: ['kemajuan'] });
+    hapusDataAkun(queryClient);
     setToken(null);
     setPengguna(null);
     setAlasanKeluar('sesi_berakhir');
@@ -102,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const terapkanSesi = useCallback((sesi: Sesi) => {
     // Data milik akun (mis. kemajuan) tidak boleh terbawa ke akun lain.
-    queryClient.removeQueries({ queryKey: ['kemajuan'] });
+    hapusDataAkun(queryClient);
     tokenRef.current = sesi.token;
     setToken(sesi.token);
     setPengguna(sesi.pengguna);
@@ -127,7 +135,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       sedangKeluarRef.current = false;
     }
     tokenRef.current = null;
-    queryClient.removeQueries({ queryKey: ['kemajuan'] });
+    hapusDataAkun(queryClient);
     setToken(null);
     setPengguna(null);
     setAlasanKeluar(null);

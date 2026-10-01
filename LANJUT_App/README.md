@@ -6,6 +6,7 @@
 - Lima layar P0: Beranda/Linimasa, Khusus SMK, Pilih Mapel, Cerita Alumni, Daftar Periksa. Datanya diambil dari backend lewat React Query.
 - Masuk, Daftar, Akun + Keluar, dan perlindungan rute berbasis token.
 - Centang Daftar Periksa tersimpan ke akun (`/kemajuan`), jadi ikut pindah ke HP lain.
+- **Butir Daftar Periksa milik akun** (LANJUT_034, `/butir-pribadi`): "Simpan ke Daftar Periksa" di Pilih Mapel menambah butir "Pilih X & Y sebagai mapel TKA — untuk [prodi]" (langsung tercentang), dan di Eksplorasi Tujuan menambah "Cari tahu lebih lanjut soal [prodi]" (kategori Riset Kampus). Butir ini bisa dicentang, dibatalkan, dan dihapus, serta ikut dihitung di X/Y.
 - **Jalur Saya** (v1.1, di layar Akun `/akun`): nama tampilan, kelas, target prodi, dan ringkasan "X dari Y langkah Daftar Periksa selesai". Nama, kelas, dan prodi bisa diubah; disimpan ke akun lewat `PATCH /pengguna/saya`.
 - **Cek Posisi Gue** (v1.1, `/cek-posisi`, pintu dari Beranda dan Jalur Saya): tahap siswa (Eksplorasi → Pemantapan Awal → Persiapan Aktif → Menjelang Pendaftaran), fokus sekarang, dan tombol langkah berikutnya. Tahap dihitung rule-based di `lib/cekPosisi.ts` dari data yang sudah ada — prodi impian, centang `mapel-tka`, dan persen Daftar Periksa — tanpa kuis. Satu pertanyaan opsional ("apa yang paling bikin bingung") hanya menambah kalimat fokus dan tidak disimpan.
 - Tampilan disamakan dengan `MVP-PWA/` (lihat bagian **Tampilan**).
@@ -111,6 +112,7 @@ server/                backend Express + MySQL (lihat server/README.md)
 - **Ringkasan kemajuan di Jalur Saya memakai `hooks/useProgresDaftarPeriksa`, hook yang sama dengan layar Daftar Periksa** — saringan kelas/jalur dan hitungan X/Y hanya ada di satu tempat, jadi angkanya selalu cocok.
 - **Pilihan kelas/jalur di perangkat disimpan per akun** (`lanjut.profil.lokal.v1:<id pengguna>`) — HP yang dipakai bergantian tidak membawa saringan akun lain.
 - **`DELETE /kemajuan/:id` tidak menghapus baris**, hanya mengosongkan `selesai_pada`; klien menganggap butir tercentang hanya kalau `selesai_pada` terisi.
+- **Cache data milik akun (`['kemajuan']`, `['butir_pribadi']`) dibuang di `AuthProvider` setiap sesi berganti** — keluar, masuk akun lain, atau sesi ditolak server — supaya data akun A tidak pernah tampil di akun B pada perangkat yang sama.
 
 ## Yang belum ada
 

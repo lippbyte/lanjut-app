@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { ProfilProdi, StatusSumber } from '../../api/types';
+import { useButirPribadi, useSimpanButirPribadi } from '../../hooks/useButirPribadi';
 import { useEksplorasiTujuan } from '../../hooks/useEksplorasiTujuan';
 import { angkaRibuan, rasioKeketatan } from '../../lib/eksplorasi';
 import { formatTanggal } from '../../lib/linimasa';
@@ -193,7 +194,42 @@ function Profil({ profil: p, onLainnya }: { profil: ProfilProdi; onLainnya: () =
       <Sumber>
         Diperbarui dari {lembagaSumber(p.url_sumber)} · dicek {formatTanggal(p.diperiksa_pada)}
       </Sumber>
+      <SimpanRisetKampus prodiId={p.id} />
       <Tombol label="Lihat prodi lain" varian="garis" besar penuh onPress={onLainnya} />
+    </View>
+  );
+}
+
+/**
+ * "Simpan ke Daftar Periksa" (salinan §4.9) → butir pribadi "Cari tahu lebih
+ * lanjut soal [prodi]" di kategori Riset Kampus, BELUM dicentang (LANJUT_034,
+ * sama dengan PWA). Keadaan tersimpan dibaca dari butir akun, jadi tetap
+ * benar saat layar dibuka lagi.
+ */
+function SimpanRisetKampus({ prodiId }: { prodiId: string }) {
+  const router = useRouter();
+  const { data: butir } = useButirPribadi();
+  const simpan = useSimpanButirPribadi();
+  const tersimpan = butir?.some((b) => b.jenis === 'riset_kampus' && b.prodi_id === prodiId);
+
+  if (tersimpan) {
+    return (
+      <View style={s.tersimpan}>
+        <Text style={gaya.teksBody}>Sudah masuk Daftar Periksa.</Text>
+        <Tombol label="Lihat Daftar Periksa" varian="sekunder" besar penuh onPress={() => router.push('/daftar-periksa')} />
+      </View>
+    );
+  }
+  return (
+    <View style={s.tersimpan}>
+      {simpan.isError ? <Text style={s.galat}>Belum tersimpan. Coba lagi sebentar lagi.</Text> : null}
+      <Tombol
+        label="Simpan ke Daftar Periksa"
+        besar
+        penuh
+        proses={simpan.isPending}
+        onPress={() => simpan.mutate({ jenis: 'riset_kampus', prodi_id: prodiId })}
+      />
     </View>
   );
 }
@@ -240,5 +276,7 @@ const s = StyleSheet.create({
   barisJudul: { ...teks.body, color: color.textBody },
   caption: { ...teks.caption, color: color.textMuted },
   pengantar: { ...teks.body, fontFamily: font.medium, color: color.textBody },
+  tersimpan: { gap: spacing.s2 },
+  galat: { ...teks.caption, color: color.blue600, textAlign: 'center' },
   ditekan: { opacity: 0.9, transform: [{ scale: 0.98 }] },
 });

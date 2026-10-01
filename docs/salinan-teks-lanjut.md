@@ -139,6 +139,14 @@ Dipakai di: beranda, notifikasi, layar kosong.
 - **Kemajuan:** 3 dari 11 beres. Jalan terus.
 - **Selesai semua:** Bagian persiapannya beres. Sisanya tinggal latihan.
 
+**LANJUT_App (LANJUT_034) — butir milik akun, DRAF belum disetujui Khalifa.**
+Kalimat butirnya sama dengan PWA dan disusun server (`butir-pribadi.layanan.js`):
+
+- **Dari Pilih Mapel (kategori Pendaftaran, langsung tercentang):** Pilih [mapel] & [mapel] sebagai mapel TKA — untuk [nama prodi]
+- **Dari Eksplorasi Tujuan (kategori Riset Kampus, belum tercentang):** Cari tahu lebih lanjut soal [nama prodi]
+- **Tombol di butir milik akun:** Hapus
+- **Galat centang/hapus:** Perubahan terakhir belum tersimpan. Coba lagi. (sebelumnya "Centang terakhir belum tersimpan. Coba lagi.", diganti karena kini juga berlaku untuk hapus)
+
 ### 4.5 Arsip Belajar
 
 **Judul:** Arsip Belajar
@@ -242,7 +250,7 @@ resminya sedang kami cek."):
 - **Tombol:** Kembali ke Pilih Mapel · di bawah profil: Lihat prodi lain
 - **Lencana SMK:** Relevan untuk RPL/TKJ/Teknik (dari SDD-F10 §F.2)
 - **Baris sumber peminat:** Sumber: SNPMB [jalur] [tahun], [kampus] — nama kampus disebut karena angka pendaftar adalah angka satu kampus, bukan nasional.
-- Tombol **Simpan ke Daftar Periksa** belum ada di Expo (butuh butir Daftar Periksa milik pengguna di backend — LANJUT_029 §4.3).
+- Tombol **Simpan ke Daftar Periksa** ada di Expo sejak LANJUT_034, memakai teks PWA di atas (butir milik akun; lihat §4.4).
 
 ### 4.10 Daftar (buat akun)
 

@@ -1,4 +1,4 @@
-import type { KategoriDaftarPeriksa } from '../api/types';
+import type { ButirDaftarPeriksa, ButirPribadi, KategoriDaftarPeriksa } from '../api/types';
 
 /**
  * F5 — Daftar Periksa (docs/prd-sdd-lanjut.md Bagian 6 & 13). Logika murni
@@ -32,4 +32,39 @@ export function hitungProgres(kategori: KategoriDaftarPeriksa[], selesaiIds: Rea
   const status: StatusProgres = total === 0 || selesai === 0 ? 'kosong' : selesai === total ? 'selesai' : 'berjalan';
 
   return { selesai, total, status };
+}
+
+// Butir pribadi diletakkan sesudah butir umum di kategorinya, dan kategori
+// yang tidak ada di butir umum (mis. "Riset Kampus") di akhir daftar.
+const URUTAN_PRIBADI = 1000;
+
+/**
+ * Butir milik akun (LANJUT_034) digabung ke butir umum — padanan PWA
+ * pasangChecklist() + ChecklistTambahan. Butir pribadi tidak disaring kelas,
+ * jalur, atau rumpun: siswa sendiri yang menyimpannya. Masukan tidak diubah.
+ */
+export function gabungButirPribadi(kategori: KategoriDaftarPeriksa[], pribadi: ButirPribadi[]): KategoriDaftarPeriksa[] {
+  const hasil = kategori.map((k) => ({ ...k, butir: [...k.butir] }));
+  pribadi.forEach((p, i) => {
+    const butir: ButirDaftarPeriksa = {
+      id: p.id,
+      judul: p.judul,
+      urutan: URUTAN_PRIBADI + i,
+      berlaku_untuk_kelas: [],
+      berlaku_untuk_jalur: [],
+      sumber: 'pengguna',
+      pemilik: 'pengguna',
+      status_verifikasi: 'belum_diverifikasi',
+      asal: 'pengguna',
+      url_sumber: null,
+      diperiksa_pada: null,
+    };
+    let k = hasil.find((x) => x.id === p.kategori_id);
+    if (!k) {
+      k = { id: p.kategori_id, nama: p.kategori_nama, urutan: URUTAN_PRIBADI + i, butir: [] };
+      hasil.push(k);
+    }
+    k.butir.push(butir);
+  });
+  return hasil;
 }
