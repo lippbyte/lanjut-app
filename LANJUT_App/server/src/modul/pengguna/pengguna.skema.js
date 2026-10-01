@@ -1,7 +1,8 @@
 const { z } = require('zod');
+const { KELAS } = require('../../util/kelas');
 
 const ubahProfilSkema = z.object({
-  kelas: z.enum(['10', '11', '12']).nullable().optional(),
+  kelas: z.enum(KELAS).nullable().optional(),
   prodi_impian: z.string().trim().max(64).nullable().optional(),
   nama_tampilan: z.string().trim().min(1).max(60).nullable().optional(),
   // LANJUT_032 — null mengosongkan pilihan.

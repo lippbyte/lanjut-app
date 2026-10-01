@@ -3,6 +3,7 @@
 // (mode default, bukan .passthrough()) — menutup mass assignment.
 
 const { z } = require('zod');
+const { KELAS } = require('../../util/kelas');
 
 // 3–32 karakter, a-z 0-9 . _ ; disimpan huruf kecil semua.
 const NAMA_PENGGUNA_REGEX = /^[a-z0-9._]{3,32}$/;
@@ -36,7 +37,9 @@ const kataSandiSkema = z
     message: 'Kata sandi ini terlalu umum, pilih yang lain.',
   });
 
-const kelasSkema = z.enum(['10', '11', '12']).optional();
+// Opsional di server: APK lama (sebelum LANJUT_035) mendaftar tanpa kelas.
+// Form Daftar di app terbaru yang mewajibkannya.
+const kelasSkema = z.enum(KELAS).optional();
 
 const daftarSkema = z.object({
   nama_pengguna: namaPenggunaSkema,

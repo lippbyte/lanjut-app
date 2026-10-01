@@ -394,6 +394,10 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
 - **B1–B5 selesai penuh**: kerangka server, migrasi 001–005, benih, auth
   (daftar/masuk/keluar/keluar-semua/saya/ubah-sandi), konten publik F1–F5,
   `kemajuan` (F5), `kartu` (F6) dengan uji otorisasi kepemilikan.
+- **Kelas SMP (LANJUT_035, migrasi 010)**: `pengguna.kelas` menerima
+  '7'–'12' (daftar nilai di `src/util/kelas.js`, dipakai skema daftar, ubah
+  profil, dan klaim sinkron). `kelas` tetap opsional saat daftar supaya APK
+  lama tidak gagal. Tes: `tests/pengguna-kelas.test.js`.
 - **`butir-pribadi` (LANJUT_034, migrasi 009)**: butir Daftar Periksa milik
   akun dari F3/F10. `GET/POST /butir-pribadi`, `PUT/DELETE
   /butir-pribadi/:id/selesai` (centang/batal, baris tetap), `DELETE

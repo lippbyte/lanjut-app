@@ -2,9 +2,10 @@
 
 const { z } = require('zod');
 const { catatanRiwayatSkema } = require('../levelin/levelin.skema');
+const { KELAS } = require('../../util/kelas');
 
 const profilKlaimSkema = z.object({
-  kelas: z.enum(['10', '11', '12']).nullable().optional(),
+  kelas: z.enum(KELAS).nullable().optional(),
   prodi_impian: z.string().trim().max(64).nullable().optional(),
 });
 
