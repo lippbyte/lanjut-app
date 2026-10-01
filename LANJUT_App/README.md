@@ -3,10 +3,11 @@
 **Status:** jalur pengembangan utama LANJUT sejak 18 Sep 2026. Expo dipilih menggantikan rencana Flutter, dan aplikasi ini adalah penerus PWA v1. `MVP-PWA/` sekarang berstatus arsip dan menjadi acuan UI; aplikasi Expo ini harus tampil sama dengannya.
 
 **Sudah jalan:**
-- Lima layar P0: Beranda/Linimasa, Khusus SMK, Pilih Mapel, Cerita Alumni, Daftar Periksa. Datanya diambil dari backend lewat React Query.
+- Lima layar P0: Beranda/Linimasa, Jenjang Saya (dulu Khusus SMK), Pilih Mapel, Cerita Alumni, Daftar Periksa. Datanya diambil dari backend lewat React Query.
 - Masuk, Daftar, Akun + Keluar, dan perlindungan rute berbasis token.
 - Centang Daftar Periksa tersimpan ke akun (`/kemajuan`), jadi ikut pindah ke HP lain.
 - **Kelas SMP 7–9** (LANJUT_035): kelas 7–12 ditanyakan wajib di form Daftar dan bisa diubah di Jalur Saya. Linimasa (tenggat & tahapan), Daftar Periksa, dan Cek Posisi berisi SNBP/SNBT/TKA, jadi hanya tampil untuk **kelas akun = 12**; kelas 7–11 dan akun tanpa kelas melihat placeholder sementara (`components/screens/KhususKelas12.tsx`, teks DRAF di salinan §4.11).
+- **Jenjang Saya** (LANJUT_037, `/jenjang-saya`, tab "Jenjang"; dulu Khusus SMK, `/khusus-smk` dialihkan): hub per jenjang menurut kelas akun. SMP 7–9: pintu Ngobrol, Gaya Belajar, Eksplorasi Tujuan, tanpa bagian SMK. Kelas 10–11: pintu Pilih Mapel & Eksplorasi Tujuan, dan hanya butir SMK tanpa SNBP/PDSS/UTBK/kuota (daftar izin `lib/khususSmk.ts`). Kelas 12: keenam butir SMK seperti dulu. Akun tidak membedakan SMA/SMK, jadi bagian SMK tampil ke semua kelas 10–12. Teks baru DRAF (salinan §4.2).
 - **Gerbang wajib isi kelas** (LANJUT_036): akun tanpa kelas (akun lama) tertahan di layar "Kamu kelas berapa sekarang?" (`components/screens/IsiKelasScreen.tsx`) sampai kelas disimpan; yang tetap terbuka hanya Jalur Saya dan tombol Keluar. Dipasang di `app/(app)/_layout.tsx` setelah gerbang auth dan sebelum gerbang kelas 12.
 - **Butir Daftar Periksa milik akun** (LANJUT_034, `/butir-pribadi`): "Simpan ke Daftar Periksa" di Pilih Mapel menambah butir "Pilih X & Y sebagai mapel TKA — untuk [prodi]" (langsung tercentang), dan di Eksplorasi Tujuan menambah "Cari tahu lebih lanjut soal [prodi]" (kategori Riset Kampus). Butir ini bisa dicentang, dibatalkan, dan dihapus, serta ikut dihitung di X/Y.
 - **Jalur Saya** (v1.1, di layar Akun `/akun`): nama tampilan, kelas, target prodi, dan ringkasan "X dari Y langkah Daftar Periksa selesai". Nama, kelas, dan prodi bisa diubah; disimpan ke akun lewat `PATCH /pengguna/saya`.
@@ -54,7 +55,7 @@ Tampilan meniru `MVP-PWA/` (port, bukan desain ulang):
 - **Token desain:** `theme/tokens.ts`. Warna, huruf, jarak, radius, bayangan, dan gradasi disalin dari `MVP-PWA/assets/tokens.css`. Komponen tidak menulis HEX atau ukuran huruf mentah.
 - **Huruf:** Poppins 400/500/600, sama dengan PWA. Dimuat di `app/_layout.tsx` lewat `@expo-google-fonts/poppins`.
 - **Komponen dasar:** `components/ui/` berisi padanan kelas CSS PWA: `Kartu` (`.kartu`, `--soft`, `--outline`, `--brand`), `KartuPintu`, `Lencana`, `Peringatan`, `Kosong`, `Tombol`, `Kepala`, `SeksiJudul`, `Sumber`/`Penafian`, dan `Ikon` (SVG garis yang sama dengan PWA).
-- **Navigasi:** app bar (maskot, wordmark, ikon profil), tab bar bawah empat ikon (Beranda, Khusus SMK, Pilih Mapel, Checklist), dan page bar dengan tombol kembali untuk halaman anak (Cerita Alumni, Jalur Saya). Semuanya ada di `components/layout/AppShell.tsx`.
+- **Navigasi:** app bar (maskot, wordmark, ikon profil), tab bar bawah empat ikon (Beranda, Jenjang, Pilih Mapel, Checklist), dan page bar dengan tombol kembali untuk halaman anak (Cerita Alumni, Jalur Saya). Semuanya ada di `components/layout/AppShell.tsx`.
 
 Perbedaan yang disengaja dari PWA:
 
@@ -62,7 +63,7 @@ Perbedaan yang disengaja dari PWA:
 |---|---|---|
 | Beranda | Tahapan tanpa `diperiksa_pada` tidak ditampilkan (PWA menampilkannya dengan peringatan "Contoh"). Layar kosongnya mengarah ke laman resmi SNPMB. | PRD F1; keputusan PM 26 Sep 2026. |
 | Beranda | Tidak ada kartu "Latihan Hari Ini" dan pintu "Latihan & Arsip Belajar". | Fitur Latihan/Arsip belum ada di Expo. |
-| Khusus SMK | Semua kartu tertutup saat layar dibuka (PWA membuka kartu pertama). | Kartu pertama yang terbuka menutupi judul lain di layar HP; permintaan user 27 Sep 2026. |
+| Jenjang Saya (dulu Khusus SMK) | Semua kartu tertutup saat layar dibuka (PWA membuka kartu pertama). | Kartu pertama yang terbuka menutupi judul lain di layar HP; permintaan user 27 Sep 2026. |
 | Pilih Mapel | Tidak ada kartu "Lihat prospek & kampus" (F10). "Simpan ke Daftar Periksa" mencentang butir `mapel-tka` di akun, tidak membuat butir baru. | F10 belum ada di Expo; backend belum mendukung butir buatan pengguna. |
 | Pilih Mapel | Rangkuman umum memakai `GET /konten/mapel/agregasi-lintas-prodi` (jumlah prodi), PWA menjumlah bobot di klien. | Endpoint backend sudah ada. |
 | Daftar Periksa | Ada keping Kelas & Jalur untuk menyaring butir. Centang disimpan ke akun. | AC F5 di PRD (PWA belum menyaring). Jalur disimpan di perangkat karena akun belum punya medan jalur. |

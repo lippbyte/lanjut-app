@@ -1,10 +1,8 @@
 import React from 'react';
+import { Redirect } from 'expo-router';
 
-import { KhususSmkScreen } from '../../components/screens/KhususSmkScreen';
-
-// F2 — Khusus SMK (docs/prd-sdd-lanjut.md Bagian 6): butir berpasangan
-// "apa yang beda" + "apa yang bisa dilakukan" untuk siswa SMK.
-// Markup & logika sungguhan ada di components/screens/KhususSmkScreen.tsx.
-export default function KhususSmkRoute() {
-  return <KhususSmkScreen />;
+// Rute lama "Khusus SMK" (sebelum LANJUT_037). Tetap ada supaya tautan,
+// bookmark, dan APK lama yang membuka /khusus-smk sampai ke Jenjang Saya.
+export default function KhususSmkLamaRoute() {
+  return <Redirect href="/jenjang-saya" />;
 }

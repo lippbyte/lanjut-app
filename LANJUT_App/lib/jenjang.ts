@@ -15,3 +15,17 @@ export type Kelas = (typeof KELAS_OPSI)[number];
 export function untukKelas12(kelas: Kelas | null | undefined): boolean {
   return kelas === '12';
 }
+
+/**
+ * Kelompok isi halaman Jenjang Saya (LANJUT_037). Data akun hanya punya
+ * `kelas` — tidak ada medan jenis sekolah — jadi SMA dan SMK di kelas 10–12
+ * TIDAK bisa dibedakan; kelompoknya dibagi menurut kelas saja.
+ */
+export type KelompokJenjang = 'smp' | 'kelas10_11' | 'kelas12';
+
+export function kelompokJenjang(kelas: Kelas | null | undefined): KelompokJenjang | null {
+  if (kelas === '7' || kelas === '8' || kelas === '9') return 'smp';
+  if (kelas === '10' || kelas === '11') return 'kelas10_11';
+  if (kelas === '12') return 'kelas12';
+  return null;
+}

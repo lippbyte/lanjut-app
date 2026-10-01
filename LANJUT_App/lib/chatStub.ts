@@ -13,7 +13,7 @@ import type { GayaBelajar } from '../api/auth';
 // ditutup — keputusan penyimpanan riwayat juga menunggu Khalifa.
 
 /** Rute yang boleh dituju tombol di bawah balasan bot. */
-export type RutePintu = '/linimasa' | '/khusus-smk' | '/pilih-mapel' | '/daftar-periksa' | '/cek-posisi' | '/gaya-belajar';
+export type RutePintu = '/linimasa' | '/jenjang-saya' | '/pilih-mapel' | '/daftar-periksa' | '/cek-posisi' | '/gaya-belajar';
 
 export type BalasanBot = {
   teks: string;
@@ -96,8 +96,8 @@ export function dapatkanBalasanBot(
 
   if (ADA(/(smk|kejuruan|pkl|anak smk)/, t)) {
     return {
-      teks: 'Ada beberapa hal yang memang beda buat anak SMK, dan itu bukan berarti peluangmu lebih kecil. Aku rangkum di Khusus SMK.',
-      tautan: { label: 'Buka Khusus SMK', href: '/khusus-smk' },
+      teks: 'Ada beberapa hal yang memang beda buat anak SMK, dan itu bukan berarti peluangmu lebih kecil. Aku rangkum di Jenjang Saya.',
+      tautan: { label: 'Buka Jenjang Saya', href: '/jenjang-saya' },
     };
   }
 

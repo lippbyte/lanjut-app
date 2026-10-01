@@ -10,9 +10,11 @@ import { Ikon, type NamaIkon } from '../ui/Ikon';
 // Empat tab, tidak pernah lebih — sama dengan .tabbar di MVP-PWA. Cerita
 // Alumni & Akun bukan tab: dijangkau dari Beranda / ikon profil, dan saat
 // dibuka tab Beranda yang tetap aktif (seperti alumni.html di PWA).
-const TAB: { href: '/linimasa' | '/khusus-smk' | '/pilih-mapel' | '/daftar-periksa'; label: string; ikon: NamaIkon }[] = [
+const TAB: { href: '/linimasa' | '/jenjang-saya' | '/pilih-mapel' | '/daftar-periksa'; label: string; ikon: NamaIkon }[] = [
   { href: '/linimasa', label: 'Beranda', ikon: 'beranda' },
-  { href: '/khusus-smk', label: 'Khusus SMK', ikon: 'smk' },
+  // LANJUT_037: dulu Khusus SMK (/khusus-smk masih dialihkan ke sini). Label
+  // pendek: "Jenjang Saya" terpotong di 360 px saat tab aktif (tebal).
+  { href: '/jenjang-saya', label: 'Jenjang', ikon: 'smk' },
   { href: '/pilih-mapel', label: 'Pilih Mapel', ikon: 'mapel' },
   { href: '/daftar-periksa', label: 'Checklist', ikon: 'checklist' },
 ];

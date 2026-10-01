@@ -114,13 +114,43 @@ Dipakai di: beranda, notifikasi, layar kosong.
 
 > **Catatan:** hitungan mundur ditampilkan sebagai angka biasa, bukan hitungan detik yang berdetak. Tenggat perlu diketahui, bukan dijadikan tekanan.
 
-### 4.2 Khusus SMK
+### 4.2 Khusus SMK → Jenjang Saya
 
 **Judul:** Khusus SMK
 **Kalimat pendamping:** Hal-hal yang memang beda buat kita.
 
 **Pembuka halaman:**
 > Sebagian aturan seleksi menganggap semua pendaftar berasal dari SMA. Halaman ini merangkum bagian yang tidak berlaku sama untuk kita — dan apa yang bisa dilakukan.
+
+**LANJUT_App (LANJUT_037) — halaman jadi "Jenjang Saya" (`/jenjang-saya`,
+tab "Jenjang" — "Jenjang Saya" terpotong di 360 px; `/khusus-smk` dialihkan). Teks di bawah DRAF, belum
+disetujui Khalifa**, kecuali pembuka SMK kelas 12 yang memakai pembuka lama
+di atas apa adanya. Isi menurut kelas akun (`components/screens/JenjangSayaScreen.tsx`):
+
+- **Judul:** Jenjang Saya
+- **Pendamping kelas 7–9:** Kelas [kelas] SMP: waktunya kenalan sama minat dan bakatmu.
+- **Pendamping kelas 10–11:** Kelas [kelas]: mulai kenalan sama jurusan yang kamu incar.
+- **Pendamping kelas 12:** Kelas 12: yang perlu kamu siapkan sebelum daftar kuliah.
+- **Pendamping tanpa kelas:** Isi kelasmu di Jalur Saya supaya isi halaman ini pas buat kamu.
+- **Seksi pintu:** Mulai dari sini
+  - Ngobrol Bareng LANJUT — Cerita soal yang kamu suka, nanti dibantu cari arahnya. (kelas 7–9)
+  - Gaya Belajar — Kenali cara belajar yang paling nyambung buat kamu. (kelas 7–11)
+  - Eksplorasi Tujuan — Intip prodi kuliah: belajar apa dan lulusannya kerja di mana. (kelas 7–11)
+  - Pilih Mapel — Lihat mapel yang mendukung jurusan incaranmu, dan mana yang ada di sekolahmu. (kelas 10–11)
+  - Cek Posisi Gue — Lihat kamu lagi di tahap mana dan langkah berikutnya. (kelas 12)
+  - Daftar Periksa — Satu per satu, tidak perlu sekaligus. (kelas 12)
+- **Kartu kelas 7–9 — SMA, SMK, atau MA?:** Habis SMP, kamu bisa lanjut ke SMA, SMK, atau MA. SMA dan MA lebih banyak belajar teori sebagai bekal kuliah. SMK langsung belajar keahlian lewat praktik dan PKL, dan lulusannya tetap bisa kuliah. Pilih yang paling cocok sama minatmu, bukan cuma ikut teman.
+- **Kartu kelas 10–11 — Belum perlu mikirin jadwal daftar:** Jadwal pendaftaran kuliah belum perlu dipikirkan sekarang. Fokus dulu cari jurusan yang cocok, lalu jaga nilai mapel yang mendukungnya.
+- **Seksi SMK (kelas 10–12):** Kalau kamu anak SMK
+  - **Pembuka kelas 10–11:** Beberapa hal memang beda buat anak SMK. Yang ini sudah bisa kamu siapkan dari sekarang.
+  - **Pembuka kelas 12:** pembuka lama di atas.
+- **Butir SMK per kelas:** kelas 12 melihat keenam butir. Kelas 10–11 hanya
+  butir tanpa SNBP/PDSS/UTBK/kuota/periode pendaftaran: `portofolio` dan
+  `mapel-tka-tidak-ada` (daftar izin di `lib/khususSmk.ts`). Empat butir lain
+  disembunyikan, tidak ditulis ulang, supaya tidak ada klaim baru tanpa sumber.
+  Kelas 7–9 tidak melihat bagian SMK.
+- **Keterbatasan:** akun hanya punya `kelas`, tidak ada medan SMA/SMK, jadi
+  bagian SMK tampil ke semua kelas 10–12.
 
 ### 4.3 Cerita Alumni
 
@@ -281,10 +311,10 @@ ini sampai konten per jenjang didesain (`components/screens/KhususKelas12.tsx`).
 
 - **Kelas 7–11 — judul:** Bagian ini untuk kelas 12.
 - **Kelas 7–11 — isi:** Isinya jadwal dan persiapan SNBP, SNBT, dan TKA. Versi untuk kelas [kelas] sedang kami siapkan.
-- **Kelas 7–11 — tombol:** Buka Khusus SMK
+- **Kelas 7–11 — tombol:** Buka Jenjang Saya (sebelum LANJUT_037: Buka Khusus SMK)
 - **Kelas kosong — judul:** Isi kelasmu dulu.
 - **Kelas kosong — isi:** Isi bagian ini menyesuaikan kelasmu. Isi kelas di Jalur Saya, ya.
-- **Kelas kosong — tombol:** Isi kelas di Jalur Saya · Buka Khusus SMK
+- **Kelas kosong — tombol:** Isi kelas di Jalur Saya · Buka Jenjang Saya
 - **Jalur Saya, kartu Kemajuan:** Kemajuan persiapan SNBP, SNBT, dan TKA tampil di sini saat kamu kelas 12.
 
 Sejak LANJUT_036, akun tanpa kelas tertahan di gerbang §4.12 dulu, jadi
