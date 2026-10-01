@@ -9,9 +9,11 @@ import { useProdi } from '../../hooks/useProdi';
 import { useProgresDaftarPeriksa, useSaringDaftarPeriksa } from '../../hooks/useProgresDaftarPeriksa';
 import { useUbahProfil } from '../../hooks/useUbahProfil';
 import { GAYA_BELAJAR, labelGayaBelajar } from '../../lib/gayaBelajar';
+import { KELAS_OPSI, type Kelas } from '../../lib/jenjang';
 import { color, font, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Kartu, KartuPintu, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
 import { BELUM, DaftarOpsi, Field, Input, OpsiPil, PesanGalat, PilihProdi } from './auth/AuthUI';
+import { useUntukKelas12 } from './KhususKelas12';
 
 // "Jalur Saya" (v1.1, LANJUT_004) di atas padanan MVP-PWA/akun.html
 // (keadaan "sudah masuk"). Keadaan tamu tidak ada di sini karena layar ini
@@ -85,9 +87,6 @@ function KartuJalur({ pengguna }: { pengguna: Pengguna }) {
     </Kartu>
   );
 }
-
-const KELAS_OPSI = ['10', '11', '12'] as const;
-type Kelas = (typeof KELAS_OPSI)[number];
 
 // Menyimpan ke PATCH /pengguna/saya. Validasi di sini hanya yang paling
 // jelas (nama kosong/terlalu panjang); server tetap sumber kebenaran.
@@ -167,9 +166,24 @@ function FormJalur({ pengguna, onSelesai }: { pengguna: Pengguna; onSelesai: () 
   );
 }
 
+// LANJUT_035: X/Y Daftar Periksa = persiapan SNBP/SNBT/TKA, hanya kelas 12.
+// Tombolnya tetap ada: butir pribadi siswa non-12 juga ada di Daftar Periksa.
+function RingkasanKemajuan() {
+  const router = useRouter();
+  const kelas12 = useUntukKelas12();
+  if (kelas12) return <RingkasanKemajuanKelas12 />;
+  return (
+    <Kartu style={s.kemajuan}>
+      {/* TEKS DRAF (salinan §4.11). */}
+      <Text style={gaya.teksKecil}>Kemajuan persiapan SNBP, SNBT, dan TKA tampil di sini saat kamu kelas 12.</Text>
+      <Tombol label="Buka Daftar Periksa" varian="sekunder" kecil onPress={() => router.push('/daftar-periksa')} />
+    </Kartu>
+  );
+}
+
 // X dari Y memakai saringan & hitungan yang sama dengan layar Daftar
 // Periksa (useProgresDaftarPeriksa), jadi angkanya selalu cocok.
-function RingkasanKemajuan() {
+function RingkasanKemajuanKelas12() {
   const router = useRouter();
   const saring = useSaringDaftarPeriksa();
   const { kelas, jalur, isPending: saringMemuat } = saring;

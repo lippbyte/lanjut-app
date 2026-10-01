@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import type { Kelas } from '../lib/jenjang';
 import { ApiError, apiFetch } from './client';
 
 export const KUNCI_TOKEN = 'auth_token';
@@ -13,7 +14,7 @@ export type Pengguna = {
   email: string | null;
   peran: string;
   status: string;
-  kelas: '10' | '11' | '12' | null;
+  kelas: Kelas | null;
   prodi_impian: string | null;
   // Opsional di tipe: sesi yang tersimpan sebelum LANJUT_032 belum punya medan ini.
   gaya_belajar?: GayaBelajar | null;
@@ -32,7 +33,7 @@ export type DataDaftar = {
   kata_sandi: string;
   email?: string;
   nama_tampilan?: string;
-  kelas?: '10' | '11' | '12';
+  kelas?: Kelas;
   prodi_impian?: string;
 };
 
@@ -69,7 +70,7 @@ export async function saya(token: string): Promise<Pengguna> {
 // Medan yang tidak dikirim tidak diubah; `null` mengosongkannya.
 export type DataUbahProfil = {
   nama_tampilan?: string;
-  kelas?: '10' | '11' | '12' | null;
+  kelas?: Kelas | null;
   prodi_impian?: string | null;
   gaya_belajar?: GayaBelajar | null;
 };

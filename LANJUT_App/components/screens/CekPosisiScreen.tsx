@@ -7,6 +7,7 @@ import { KEBINGUNGAN, NAMA_TAHAP, type Kebingungan, type Tahap } from '../../lib
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Ikon, Kartu, Kepala, Lencana, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
 import { DaftarOpsi, OpsiPil } from './auth/AuthUI';
+import { BukanKelas12, useUntukKelas12 } from './KhususKelas12';
 
 const URUTAN: Tahap[] = ['eksplorasi', 'pemantapan', 'persiapan', 'menjelang'];
 // Satu kata per tahap supaya muat di kolom peta tanpa terpotong di tengah kata.
@@ -23,6 +24,19 @@ const LABEL_PETA: Record<Tahap, string> = {
  * jadi tidak ada kuis yang menanyakan ulang hal yang app sudah tahu.
  */
 export function CekPosisiScreen() {
+  // LANJUT_035: tahap & tenggatnya berbasis SNBP/SNBT/TKA — hanya kelas 12.
+  const kelas12 = useUntukKelas12();
+  if (!kelas12) {
+    return (
+      <View style={gaya.layarIsiRapat}>
+        <BukanKelas12 />
+      </View>
+    );
+  }
+  return <CekPosisiKelas12 />;
+}
+
+function CekPosisiKelas12() {
   // undefined = belum dijawab; null = dilewati. Tidak disimpan ke server
   // (belum ada endpoint preferensi) — hanya mempersonalkan tampilan saat ini.
   const [jawaban, setJawaban] = useState<Kebingungan | null | undefined>(undefined);

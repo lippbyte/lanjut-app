@@ -4,12 +4,15 @@ import { View } from 'react-native';
 
 import type { DataDaftar } from '../../../api/auth';
 import { useAuth } from '../../../hooks/useAuth';
+import { KELAS_OPSI, type Kelas } from '../../../lib/jenjang';
 import {
   AuthLayout,
   BELUM,
+  DaftarOpsi,
   Field,
   Input,
   Keterangan,
+  OpsiPil,
   PesanGalat,
   PilihProdi,
   TautanBawah,
@@ -29,6 +32,8 @@ const KALIMAT_DATA_PRIBADI =
 
 // Medan & salinan teks mengikuti MVP-PWA/daftar.html: nama pengguna, email
 // (opsional), kata sandi, prodi impian (wajib, "belum" jawaban sah).
+// Kelas (LANJUT_035) wajib di form ini: menentukan apakah Linimasa, Daftar
+// Periksa, dan Cek Posisi tampil (kelas 12) atau placeholder (7–11).
 export function RegisterScreen() {
   const router = useRouter();
   const { register, loading, error, medan } = useAuth();
@@ -36,6 +41,7 @@ export function RegisterScreen() {
   const [namaPengguna, setNamaPengguna] = useState('');
   const [email, setEmail] = useState('');
   const [kataSandi, setKataSandi] = useState('');
+  const [kelas, setKelas] = useState<Kelas | null>(null);
   const [prodi, setProdi] = useState<string | null>(null);
   const [galatLokal, setGalatLokal] = useState<Record<string, string>>({});
 
@@ -46,11 +52,12 @@ export function RegisterScreen() {
       cek.nama_pengguna = '3–32 karakter, hanya huruf kecil, angka, titik, dan garis bawah.';
     }
     if (kataSandi.length < 8) cek.kata_sandi = 'Kata sandi minimal 8 karakter.';
+    if (!kelas) cek.kelas = 'Pilih kelasmu.';
     if (!prodi) cek.prodi_impian = 'Pilih prodi, atau "Belum, aku belum tahu".';
     setGalatLokal(cek);
-    if (Object.keys(cek).length) return;
+    if (Object.keys(cek).length || !kelas) return;
 
-    const data: DataDaftar = { nama_pengguna: nama, kata_sandi: kataSandi };
+    const data: DataDaftar = { nama_pengguna: nama, kata_sandi: kataSandi, kelas };
     if (email.trim()) data.email = email.trim();
     if (prodi && prodi !== BELUM) data.prodi_impian = prodi;
     register(data);
@@ -94,6 +101,13 @@ export function RegisterScreen() {
             autoComplete="new-password"
             textContentType="newPassword"
           />
+        </Field>
+        <Field label="Kelas" hint="SMP kelas 7–9, SMA/SMK kelas 10–12." galat={galat('kelas')}>
+          <DaftarOpsi>
+            {KELAS_OPSI.map((k) => (
+              <OpsiPil key={k} label={`Kelas ${k}`} aktif={kelas === k} onPress={() => setKelas(k)} />
+            ))}
+          </DaftarOpsi>
         </Field>
         <Field label="Prodi impian" hint="Boleh dijawab “belum”." galat={galat('prodi_impian')}>
           <PilihProdi nilai={prodi} onPilih={setProdi} />

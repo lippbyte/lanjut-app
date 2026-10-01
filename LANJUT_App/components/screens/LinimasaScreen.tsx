@@ -19,6 +19,7 @@ import {
   Tombol,
   gaya,
 } from '../ui';
+import { KhususKelas12 } from './KhususKelas12';
 
 const LAMAN_SNPMB = 'https://snpmb.bppp.kemdikbud.go.id/';
 
@@ -30,13 +31,15 @@ const LAMAN_SNPMB = 'https://snpmb.bppp.kemdikbud.go.id/';
  */
 export function LinimasaScreen() {
   const router = useRouter();
-  const { data, isPending, isError } = useTahapanLinimasa();
 
   return (
     <View style={gaya.layarIsi}>
       <H1 style={s.k1}>Tahu harus ngapain hari ini.</H1>
 
-      {isPending ? <Memuat /> : isError ? <KeadaanGalat /> : <Isi data={data} />}
+      {/* LANJUT_035: tenggat & tahapan SNBP/SNBT/TKA hanya untuk kelas 12. */}
+      <KhususKelas12>
+        <Tenggat />
+      </KhususKelas12>
 
       {/* v1.1 — tidak ada di PWA. Di bawah tenggat supaya tenggat tetap pertama. */}
       <KartuPintu
@@ -64,6 +67,11 @@ export function LinimasaScreen() {
       />
     </View>
   );
+}
+
+function Tenggat() {
+  const { data, isPending, isError } = useTahapanLinimasa();
+  return isPending ? <Memuat /> : isError ? <KeadaanGalat /> : <Isi data={data} />;
 }
 
 function Isi({ data }: { data: TahapanLinimasa[] | undefined }) {

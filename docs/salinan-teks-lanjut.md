@@ -267,6 +267,26 @@ dipakai di `MVP-PWA/daftar.html`.
 > **Tinjau ulang** bila ada fitur AI, analitik, atau perubahan penyimpanan
 > data — kalimat ini akan menjadi tidak lengkap.
 
+**LANJUT_035 — medan Kelas (wajib), DRAF belum disetujui Khalifa:**
+
+- **Label:** Kelas · **petunjuk:** SMP kelas 7–9, SMA/SMK kelas 10–12. · **pilihan:** Kelas 7 … Kelas 12
+- **Galat:** Pilih kelasmu.
+
+### 4.11 Bukan kelas 12 (placeholder sementara)
+
+**LANJUT_035 — DRAF belum disetujui Khalifa.** Linimasa (bagian tenggat &
+tahapan), Daftar Periksa, dan Cek Posisi berisi SNBP/SNBT/TKA, jadi hanya
+tampil untuk kelas 12. Kelas 7–11 dan akun tanpa kelas melihat placeholder
+ini sampai konten per jenjang didesain (`components/screens/KhususKelas12.tsx`).
+
+- **Kelas 7–11 — judul:** Bagian ini untuk kelas 12.
+- **Kelas 7–11 — isi:** Isinya jadwal dan persiapan SNBP, SNBT, dan TKA. Versi untuk kelas [kelas] sedang kami siapkan.
+- **Kelas 7–11 — tombol:** Buka Khusus SMK
+- **Kelas kosong — judul:** Isi kelasmu dulu.
+- **Kelas kosong — isi:** Isi bagian ini menyesuaikan kelasmu. Isi kelas di Jalur Saya, ya.
+- **Kelas kosong — tombol:** Isi kelas di Jalur Saya · Buka Khusus SMK
+- **Jalur Saya, kartu Kemajuan:** Kemajuan persiapan SNBP, SNBT, dan TKA tampil di sini saat kamu kelas 12.
+
 ---
 
 ## 5. Notifikasi

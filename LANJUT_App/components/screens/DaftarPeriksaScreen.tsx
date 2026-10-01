@@ -12,6 +12,7 @@ import {
 import { gabungButirPribadi, type Progres } from '../../lib/daftarPeriksa';
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Ikon, Kartu, KeadaanGalat, Kepala, Kosong, Memuat, SeksiJudul, Sumber, gaya } from '../ui';
+import { BukanKelas12, useUntukKelas12 } from './KhususKelas12';
 
 const KELAS_OPSI = ['10', '11', '12'] as const;
 const JALUR_OPSI = ['TKA', 'SNBP', 'SNBT'] as const;
@@ -33,6 +34,24 @@ const JALUR_OPSI = ['TKA', 'SNBP', 'SNBT'] as const;
  * ini tidak disaring kelas/jalur, jadi tetap tampil sebelum keduanya dipilih.
  */
 export function DaftarPeriksaScreen() {
+  const kelas12 = useUntukKelas12();
+  return kelas12 ? <DaftarPeriksaKelas12 /> : <DaftarPeriksaBukanKelas12 />;
+}
+
+// LANJUT_035: butir umum (persiapan SNBP/SNBT/TKA) hanya untuk kelas 12.
+// Butir pribadi dari Pilih Mapel & Eksplorasi Tujuan tetap tampil — itu
+// rencana siswa sendiri, bukan tenggat — supaya "Simpan" tetap ada gunanya.
+function DaftarPeriksaBukanKelas12() {
+  return (
+    <View style={gaya.layarIsi}>
+      <Kepala judul="Daftar Periksa" pengantar="Satu per satu, tidak perlu sekaligus." />
+      <BukanKelas12 />
+      <ButirPribadiSaja />
+    </View>
+  );
+}
+
+function DaftarPeriksaKelas12() {
   const saring = useSaringDaftarPeriksa();
   const { kelas, jalur, pilih, isPending } = saring;
 
