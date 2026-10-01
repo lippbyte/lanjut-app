@@ -287,6 +287,21 @@ ini sampai konten per jenjang didesain (`components/screens/KhususKelas12.tsx`).
 - **Kelas kosong — tombol:** Isi kelas di Jalur Saya · Buka Khusus SMK
 - **Jalur Saya, kartu Kemajuan:** Kemajuan persiapan SNBP, SNBT, dan TKA tampil di sini saat kamu kelas 12.
 
+Sejak LANJUT_036, akun tanpa kelas tertahan di gerbang §4.12 dulu, jadi
+keadaan "Kelas kosong" di atas hanya jaring pengaman.
+
+### 4.12 Gerbang wajib isi kelas
+
+**LANJUT_036 — DRAF belum disetujui Khalifa.** Muncul untuk akun lama yang
+belum punya kelas, menggantikan seluruh app sampai kelas disimpan
+(`components/screens/IsiKelasScreen.tsx`).
+
+- **Judul:** Kamu kelas berapa sekarang?
+- **Pengantar:** Isi sekali ini saja supaya LANJUT menampilkan yang sesuai buat kamu. Nanti bisa diubah di Jalur Saya.
+- **Medan:** Kelas · petunjuk: SMP kelas 7–9, SMA/SMK kelas 10–12. · galat: Pilih kelasmu.
+- **Bila kelas pernah dipilih di Daftar Periksa (perangkat ini):** Terpilih dari pilihanmu sebelumnya di Daftar Periksa. Cek lagi sebelum menyimpan.
+- **Tombol:** Simpan dan lanjut (proses: Menyimpan…) · Buka Jalur Saya · Keluar
+
 ---
 
 ## 5. Notifikasi
