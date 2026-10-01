@@ -8,6 +8,7 @@
 const { sekarangUntukDb, keDbDariKlien } = require('../../util/waktu');
 const penggunaRepo = require('../pengguna/pengguna.repo');
 const { petakanProdiTujuan } = require('../auth/auth.layanan');
+const { tentukanJenisSekolah } = require('../../util/kelas');
 const kontenRepo = require('../konten/konten.repo');
 const kemajuanRepo = require('../kemajuan/kemajuan.repo');
 const kartuRepo = require('../kartu/kartu.repo');
@@ -18,7 +19,12 @@ const sinkronRepo = require('./sinkron.repo');
 async function klaimProfil(penggunaId, profil) {
   if (!profil) return;
   const perubahan = {};
-  if (profil.kelas !== undefined) perubahan.kelas = profil.kelas;
+  if (profil.kelas !== undefined) {
+    perubahan.kelas = profil.kelas;
+    // LANJUT_038: klaim tidak membawa jenis sekolah; selaraskan dengan kelas.
+    const lama = await penggunaRepo.cariProfil(penggunaId);
+    perubahan.jenisSekolah = tentukanJenisSekolah(profil.kelas, undefined, lama ? lama.jenis_sekolah : null);
+  }
   if (profil.prodi_impian !== undefined) {
     const prodiTujuan = petakanProdiTujuan(profil.prodi_impian);
     // C-2b: klaim bersifat "gagal sebagian, bisa dicoba lagi" (§6.3/A4), jadi

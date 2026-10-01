@@ -394,6 +394,12 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
 - **B1–B5 selesai penuh**: kerangka server, migrasi 001–005, benih, auth
   (daftar/masuk/keluar/keluar-semua/saya/ubah-sandi), konten publik F1–F5,
   `kemajuan` (F5), `kartu` (F6) dengan uji otorisasi kepemilikan.
+- **Jenis sekolah (LANJUT_038, migrasi 011)**: `pengguna.jenis_sekolah`
+  SMP/SMA/SMK/MA; migrasi mengisi SMP untuk kelas 7–9. Aturannya satu, di
+  `src/util/kelas.js` `tentukanJenisSekolah` (dipakai daftar, PATCH profil,
+  klaim sinkron): kelas 7–9 → SMP; kelas 10–12 → SMA/SMK/MA atau null (SMP
+  lama dikosongkan saat kelas naik); kombinasi bertentangan → 400. Tes:
+  `tests/pengguna-jenis-sekolah.test.js`.
 - **Kelas SMP (LANJUT_035, migrasi 010)**: `pengguna.kelas` menerima
   '7'–'12' (daftar nilai di `src/util/kelas.js`, dipakai skema daftar, ubah
   profil, dan klaim sinkron). `kelas` tetap opsional saat daftar supaya APK

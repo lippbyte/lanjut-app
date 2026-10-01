@@ -1,4 +1,5 @@
 const { GalatApi } = require('../../util/respons');
+const { tentukanJenisSekolah } = require('../../util/kelas');
 const penggunaRepo = require('./pengguna.repo');
 const {
   petakanProdiTujuan,
@@ -6,9 +7,17 @@ const {
   bentukProfil,
 } = require('../auth/auth.layanan');
 
-async function ubahProfil(penggunaId, { kelas, prodi_impian, nama_tampilan, gaya_belajar }) {
+async function ubahProfil(penggunaId, { kelas, jenis_sekolah, prodi_impian, nama_tampilan, gaya_belajar }) {
   const perubahan = {};
   if (kelas !== undefined) perubahan.kelas = kelas;
+  // LANJUT_038: jenis sekolah selalu diselaraskan dengan kelas yang berlaku
+  // sesudah perubahan (mis. kelas 8 → 11 mengosongkan SMP lama).
+  if (kelas !== undefined || jenis_sekolah !== undefined) {
+    const lama = await penggunaRepo.cariProfil(penggunaId);
+    if (!lama) throw new GalatApi('TIDAK_DITEMUKAN', 'Pengguna tidak ditemukan.');
+    const kelasBaru = kelas !== undefined ? kelas : lama.kelas;
+    perubahan.jenisSekolah = tentukanJenisSekolah(kelasBaru, jenis_sekolah, lama.jenis_sekolah);
+  }
   if (prodi_impian !== undefined) {
     perubahan.prodiTujuan = petakanProdiTujuan(prodi_impian);
     // C-2b: validasi keberadaan prodi juga di jalur PATCH /pengguna/saya,

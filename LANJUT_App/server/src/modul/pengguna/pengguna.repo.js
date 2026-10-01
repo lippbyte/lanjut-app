@@ -22,7 +22,7 @@ async function cariUntukMasuk(namaPengguna) {
 async function cariProfil(penggunaId) {
   const [baris] = await pool.execute(
     `SELECT id, nama_pengguna, nama_tampilan, email, peran, status,
-            kelas, prodi_tujuan, gaya_belajar, dibuat_pada, terakhir_masuk_pada
+            kelas, jenis_sekolah, prodi_tujuan, gaya_belajar, dibuat_pada, terakhir_masuk_pada
        FROM pengguna
       WHERE id = ?
       LIMIT 1`,
@@ -53,14 +53,15 @@ async function buatPengguna({
   email,
   kataSandiHash,
   kelas,
+  jenisSekolah,
   prodiTujuan,
   dibuatPada,
 }) {
   await pool.execute(
     `INSERT INTO pengguna
        (id, nama_pengguna, nama_tampilan, email, kata_sandi_hash, peran, status,
-        kelas, prodi_tujuan, dibuat_pada)
-     VALUES (?, ?, ?, ?, ?, 'siswa', 'aktif', ?, ?, ?)`,
+        kelas, jenis_sekolah, prodi_tujuan, dibuat_pada)
+     VALUES (?, ?, ?, ?, ?, 'siswa', 'aktif', ?, ?, ?, ?)`,
     [
       id,
       namaPengguna,
@@ -68,6 +69,7 @@ async function buatPengguna({
       email || null,
       kataSandiHash,
       kelas || null,
+      jenisSekolah || null,
       prodiTujuan || null,
       dibuatPada,
     ]
@@ -89,27 +91,30 @@ async function updateKataSandiHash(penggunaId, kataSandiHashBaru) {
 }
 
 /**
- * PATCH /pengguna/saya — hanya kelas, prodi_tujuan, nama_tampilan, dan
- * gaya_belajar (§4.3, LANJUT_032).
+ * PATCH /pengguna/saya — hanya kelas, jenis_sekolah, prodi_tujuan,
+ * nama_tampilan, dan gaya_belajar (§4.3, LANJUT_032, LANJUT_038).
  * SQL statis: medan yang tidak dikirim (`undefined`) memakai flag CASE WHEN
  * supaya tidak perlu merakit klausa SET secara dinamis (§2.2 aturan 2).
  */
-async function updateProfil(penggunaId, { kelas, prodiTujuan, namaTampilan, gayaBelajar }) {
+async function updateProfil(penggunaId, { kelas, jenisSekolah, prodiTujuan, namaTampilan, gayaBelajar }) {
   const ubahKelas = kelas !== undefined;
+  const ubahJenis = jenisSekolah !== undefined;
   const ubahProdi = prodiTujuan !== undefined;
   const ubahNama = namaTampilan !== undefined;
   const ubahGaya = gayaBelajar !== undefined;
-  if (!ubahKelas && !ubahProdi && !ubahNama && !ubahGaya) return;
+  if (!ubahKelas && !ubahJenis && !ubahProdi && !ubahNama && !ubahGaya) return;
 
   await pool.execute(
     `UPDATE pengguna
         SET kelas = CASE WHEN ? THEN ? ELSE kelas END,
+            jenis_sekolah = CASE WHEN ? THEN ? ELSE jenis_sekolah END,
             prodi_tujuan = CASE WHEN ? THEN ? ELSE prodi_tujuan END,
             nama_tampilan = CASE WHEN ? THEN ? ELSE nama_tampilan END,
             gaya_belajar = CASE WHEN ? THEN ? ELSE gaya_belajar END
       WHERE id = ?`,
     [
       ubahKelas, kelas || null,
+      ubahJenis, jenisSekolah || null,
       ubahProdi, prodiTujuan || null,
       ubahNama, namaTampilan || null,
       ubahGaya, gayaBelajar || null,

@@ -6,6 +6,7 @@ const { sekarangUntukDb, sekarangIso, keIso } = require('../../util/waktu');
 const { hashKataSandi, cocokKataSandi } = require('../../util/kata-sandi');
 const { buatTokenMentah, hashToken } = require('../../util/token');
 const { GalatApi } = require('../../util/respons');
+const { tentukanJenisSekolah } = require('../../util/kelas');
 const env = require('../../config/env');
 
 const penggunaRepo = require('../pengguna/pengguna.repo');
@@ -44,6 +45,7 @@ function bentukProfil(baris) {
     peran: baris.peran,
     status: baris.status,
     kelas: baris.kelas,
+    jenis_sekolah: baris.jenis_sekolah ?? null, // LANJUT_038
     // Kolom DB tetap `prodi_tujuan` (FK -> prodi.id, §13/§3.3), tapi kontrak
     // API menamainya `prodi_impian` (keputusan PM, C-1). Jangan ubah nama
     // kolom DB — hanya nama medan di respons ini.
@@ -54,7 +56,10 @@ function bentukProfil(baris) {
   };
 }
 
-async function daftar({ nama_pengguna, kata_sandi, nama_tampilan, email, kelas, prodi_impian }) {
+async function daftar({ nama_pengguna, kata_sandi, nama_tampilan, email, kelas, jenis_sekolah, prodi_impian }) {
+  // LANJUT_038: kelas 7–9 → SMP; kelas 10–12 + SMP (atau 7–9 + SMA) → 400.
+  const jenisSekolah = tentukanJenisSekolah(kelas ?? null, jenis_sekolah, null);
+
   const dipakai = await penggunaRepo.cekNamaPenggunaDipakai(nama_pengguna);
   if (dipakai) {
     throw new GalatApi(
@@ -91,6 +96,7 @@ async function daftar({ nama_pengguna, kata_sandi, nama_tampilan, email, kelas, 
     email,
     kataSandiHash,
     kelas,
+    jenisSekolah,
     prodiTujuan,
     dibuatPada,
   });

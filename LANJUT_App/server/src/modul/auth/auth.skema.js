@@ -3,7 +3,7 @@
 // (mode default, bukan .passthrough()) — menutup mass assignment.
 
 const { z } = require('zod');
-const { KELAS } = require('../../util/kelas');
+const { KELAS, JENIS_SEKOLAH } = require('../../util/kelas');
 
 // 3–32 karakter, a-z 0-9 . _ ; disimpan huruf kecil semua.
 const NAMA_PENGGUNA_REGEX = /^[a-z0-9._]{3,32}$/;
@@ -47,6 +47,8 @@ const daftarSkema = z.object({
   nama_tampilan: z.string().trim().min(1).max(60).optional(),
   email: z.string().trim().toLowerCase().email().max(190).optional(),
   kelas: kelasSkema,
+  // LANJUT_038: hanya untuk kelas 10–12; kelas 7–9 diisi SMP oleh server.
+  jenis_sekolah: z.enum(JENIS_SEKOLAH).optional(),
   prodi_impian: z.string().trim().max(64).optional(),
 });
 
