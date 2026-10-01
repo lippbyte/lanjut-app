@@ -15,6 +15,7 @@ const authRute = require('./modul/auth/auth.rute');
 const penggunaRute = require('./modul/pengguna/pengguna.rute');
 const kontenRute = require('./modul/konten/konten.rute');
 const kemajuanRute = require('./modul/kemajuan/kemajuan.rute');
+const butirPribadiRute = require('./modul/butir-pribadi/butir-pribadi.rute');
 const kartuRute = require('./modul/kartu/kartu.rute');
 const levelinRute = require('./modul/levelin/levelin.rute');
 const sinkronRute = require('./modul/sinkron/sinkron.rute');
@@ -66,6 +67,7 @@ app.use('/api/v1/auth', authRute);
 app.use('/api/v1/pengguna', penggunaRute);
 app.use('/api/v1/konten', kontenRute);
 app.use('/api/v1/kemajuan', kemajuanRute);
+app.use('/api/v1/butir-pribadi', butirPribadiRute);
 app.use('/api/v1/kartu', kartuRute);
 app.use('/api/v1', levelinRute); // sesi-latihan, riwayat-latihan, kalibrasi, saran-harian, konfigurasi
 app.use('/api/v1/sinkron', sinkronRute);

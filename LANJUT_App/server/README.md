@@ -394,6 +394,11 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
 - **B1–B5 selesai penuh**: kerangka server, migrasi 001–005, benih, auth
   (daftar/masuk/keluar/keluar-semua/saya/ubah-sandi), konten publik F1–F5,
   `kemajuan` (F5), `kartu` (F6) dengan uji otorisasi kepemilikan.
+- **`butir-pribadi` (LANJUT_034, migrasi 009)**: butir Daftar Periksa milik
+  akun dari F3/F10. `GET/POST /butir-pribadi`, `PUT/DELETE
+  /butir-pribadi/:id/selesai` (centang/batal, baris tetap), `DELETE
+  /butir-pribadi/:id` (hapus lunak). Judul disusun server; butir akun lain →
+  404. Tes: `tests/butir-pribadi.test.js`, termasuk lintas akun.
 - **B6 (Level-In) sebagian**: endpoint, skema, dan repositori sudah lengkap
   dan sudah diuji manual untuk jalur PENULISAN (`POST /sesi-latihan`,
   `PATCH /sesi-latihan/{id}`, `POST /riwayat-latihan`,

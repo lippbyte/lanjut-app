@@ -25,7 +25,7 @@ const KATA_KUNCI_SQL = /(?<!\.)\b(SELECT|INSERT|UPDATE|DELETE)\b/;
 // ADALAH lapisan SQL infrastruktur (migrasi & benih), bukan kode rute/layanan.
 const DIKECUALIKAN_DARI_ATURAN_1 = [path.join(DIR_SRC, 'db')];
 
-const TABEL_PRIBADI = ['sesi_pengguna', 'kemajuan', 'kartu', 'sesi_latihan', 'riwayat_latihan'];
+const TABEL_PRIBADI = ['sesi_pengguna', 'kemajuan', 'kartu', 'sesi_latihan', 'riwayat_latihan', 'butir_pribadi'];
 
 let galatDitemukan = [];
 
