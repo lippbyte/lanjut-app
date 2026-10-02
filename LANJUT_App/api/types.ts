@@ -190,3 +190,18 @@ export type Kartu = {
   diubah_pada: string;
 };
 export type IsiKartu = { mapel_id: string; judul: string; isi: string; jawaban: string | null };
+
+// F7 Latihan (LANJUT_041) — levelin.layanan.js `daftarSesi` (GET /sesi-latihan).
+export type SesiLatihan = {
+  id: string;
+  dimulai_pada: string;
+  selesai_pada: string | null;
+  mapel_fokus_id: string | null;
+  asal_mula: 'beranda_saran' | 'arsip' | 'arsip_detail';
+  jumlah_kartu_direncanakan: number;
+  jumlah_dijawab: number;
+  jumlah_benar: number;
+};
+// Satu catatan POST /riwayat-latihan (levelin.skema.js `catatanRiwayatSkema`),
+// tanpa keyakinan — F7 versi ini tidak memakai Level-In.
+export type CatatanLatihan = { id: string; sesi_id: string; kartu_id: string; benar: boolean; waktu: string };

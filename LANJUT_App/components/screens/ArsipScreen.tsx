@@ -63,6 +63,10 @@ export function ArsipScreen() {
     <View style={gaya.layarIsiRapat}>
       <Kepala judul="Arsip Belajar" pengantar="Yang kamu simpan hari ini, kepakai nanti." />
       <Tombol label="Tambah kartu" besar penuh onPress={() => router.push('/arsip-tulis')} />
+      {/* F7 (LANJUT_041) — latihan memakai kartu di arsip ini. */}
+      {kartuQuery.data?.length ? (
+        <Tombol label="Mulai latihan" varian="sekunder" besar penuh onPress={() => router.push('/latihan')} />
+      ) : null}
       {isi()}
     </View>
   );

@@ -218,6 +218,23 @@ ditampilkan sampai terverifikasi.
 - **Setelah bolong beberapa hari:** Sempat berhenti beberapa hari — tidak apa-apa. Kartunya masih di sini. `[ Lanjut ]`
 - **Ketika waktu mepet:** Lagi padat? Ambil 5 kartu saja. Lebih baik sedikit daripada tidak sama sekali.
 
+**LANJUT_App (LANJUT_041) — F7 tanpa Level-In. DRAF belum disetujui Khalifa**,
+kecuali judul, pendamping, "Ketika waktu mepet", dan "Beres. [n] benar dari
+[m]." yang dipakai apa adanya. Bagian "Yang salah akan muncul lagi lusa"
+**tidak dipakai**: versi ini tidak punya pengulangan berjadwal, jadi itu
+janji yang tidak bisa dipenuhi. Satu sesi maks. 12 kartu (pilihan singkat 5),
+kartu milik sendiri, diacak.
+
+- **Sebelum mulai:** [n] kartu, kira-kira [m] menit. (12 kartu → 8 menit) · Mapel: Semua ([n]) / [mapel] ([n]) · tombol Mulai · Ambil 5 kartu · Riwayat latihan
+- **Arsip kosong:** Belum ada kartu untuk dilatih. · Latihan memakai kartu buatanmu di Arsip Belajar. Tambah satu dulu. · Tambah kartu
+- **Pintu di Arsip Belajar:** Mulai latihan
+- **Selama sesi:** Kartu [i] dari [n] · [mapel] · Soal/Catatan · Lihat jawaban / Lihat isi · Coba ingat isi catatan ini dulu. · Jawaban / Isi catatan · Jawabanmu tadi? Salah · Benar / Kamu ingat? Belum ingat · Sudah ingat · Pilih dulu hasilnya, baru lanjut. · Berikutnya / Lihat hasil · Selesai sekarang
+- **Sesudah selesai:** Latihan Selesai · [i] dari [n] kartu · Beres. [b] benar dari [i]. · (berhenti lebih awal) Berhenti sebelum selesai — tidak apa-apa. [b] benar dari [i]. · (tidak ada jawaban) Belum ada kartu yang dijawab.
+- **Penyimpanan:** Menyimpan hasil… · Tersimpan di Riwayat Latihan. · Hasil latihan belum tersimpan. · Coba lagi
+- **Tombol akhir:** Ulangi · Lihat riwayat latihan · Kembali ke Arsip
+- **Galat mulai:** Latihan belum bisa dimulai. Coba lagi sebentar lagi.
+- **Riwayat Latihan:** [mapel] / Semua mapel · [tanggal, jam] · [i] dari [n] kartu · [b] benar · lencana Tidak selesai · kosong: Belum ada sesi latihan. Sesi yang sudah kamu kerjakan muncul di sini. · Mulai latihan
+
 ### 4.8 Level-In / kalibrasi (nama internal — "Level-In" tidak pernah tampil di layar)
 
 Ditulis lebih dulu sesuai SDD-LevelIn.md §7.7, sebelum satu baris kode UI-nya

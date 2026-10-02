@@ -31,6 +31,9 @@ const HALAMAN_ANAK: Record<string, string> = {
   '/arsip': 'Arsip Belajar',
   '/arsip-kartu': 'Kartu',
   '/arsip-tulis': 'Tulis Kartu',
+  // F7 (LANJUT_041) — dibuka dari Arsip Belajar.
+  '/latihan': 'Latihan',
+  '/latihan-riwayat': 'Riwayat Latihan',
 };
 
 // Tab yang tetap aktif untuk halaman anak. Bawaannya Beranda; F10 adalah
