@@ -313,6 +313,17 @@ resminya sedang kami cek."):
 - **Baris sumber peminat:** Sumber: SNPMB [jalur] [tahun], [kampus] — nama kampus disebut karena angka pendaftar adalah angka satu kampus, bukan nasional.
 - Tombol **Simpan ke Daftar Periksa** ada di Expo sejak LANJUT_034, memakai teks PWA di atas (butir milik akun; lihat §4.4).
 
+**LANJUT_044 — penjelas label "Perkiraan", DRAF belum disetujui Khalifa.**
+Khalifa (2 Okt 2026) membolehkan profil yang sebagian isinya berlabel
+"Perkiraan" ditandai terverifikasi, asalkan label itu benar-benar terlihat
+siswa. Lencana "Perkiraan" saja tidak menjelaskan artinya, dan kaki halaman
+"dicek [tanggal]" berlaku untuk seluruh profil. Karena itu kalimat ini tampil
+tepat di bawah lencana pada setiap kelompok data yang berlabel "Perkiraan"
+(peminat, mata kuliah, profesi, atau kampus), dan tidak tampil pada kelompok
+yang "Terverifikasi":
+
+- **Penjelas Perkiraan:** Perkiraan artinya bagian ini disusun dari sumber umum, belum dari sumber resmi, jadi cek lagi ke kampus tujuanmu.
+
 ### 4.10 Daftar (buat akun)
 
 Berlaku untuk **LANJUT_App** (layar Daftar Expo, `RegisterScreen`). Belum

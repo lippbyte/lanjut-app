@@ -15,6 +15,9 @@ import { Ikon, Kartu, KeadaanGalat, Kosong, Lencana, Memuat, Penafian, SeksiJudu
 // Salinan teks §4.9 (docs/salinan-teks-lanjut.md) — jangan ditulis ulang di sini.
 const DISCLAIMER = 'Data ini rangkuman dari SNPMB/BAN-PT, bisa berubah. Cek laman resmi untuk info terkini.';
 const SEKSI_KOSONG = 'Bagian ini masih kami siapkan.';
+// Salinan teks §4.9, LANJUT_044 — DRAF belum disetujui Khalifa.
+const PENJELAS_PERKIRAAN =
+  'Perkiraan artinya bagian ini disusun dari sumber umum, belum dari sumber resmi, jadi cek lagi ke kampus tujuanmu.';
 
 /**
  * F10 Eksplorasi Tujuan (LANJUT_031). Dibuka dari hasil Pilih Mapel dengan
@@ -106,6 +109,15 @@ function LencanaStatus({ status }: { status?: StatusSumber }) {
   return <Lencana varian={status === 'Terverifikasi' ? 'resmi' : 'neutral'}>{status}</Lencana>;
 }
 
+/**
+ * LANJUT_044: lencana "Perkiraan" saja tidak menjelaskan artinya, dan kaki
+ * halaman "dicek [tanggal]" berlaku untuk seluruh profil. Satu kalimat di
+ * bawah lencana supaya siswa tidak membaca isi perkiraan sebagai fakta.
+ */
+function PenjelasStatus({ status }: { status?: StatusSumber }) {
+  return status === 'Perkiraan' ? <Text style={gaya.teksKecil}>{PENJELAS_PERKIRAAN}</Text> : null;
+}
+
 function Profil({ profil: p, onLainnya }: { profil: ProfilProdi; onLainnya: () => void }) {
   const rasio = rasioKeketatan(p.diterima, p.peminat?.jumlah);
   const sumberPeminat = p.peminat
@@ -143,6 +155,7 @@ function Profil({ profil: p, onLainnya }: { profil: ProfilProdi; onLainnya: () =
               <Text style={[s.caption, s.flex]}>{sumberPeminat}</Text>
               <LencanaStatus status={p.status_sumber.peminat} />
             </View>
+            <PenjelasStatus status={p.status_sumber.peminat} />
           </>
         ) : (
           <Text style={gaya.teksKecil}>{SEKSI_KOSONG}</Text>
@@ -241,6 +254,7 @@ function Seksi({ judul, status, children }: { judul: string; status?: StatusSumb
         <SeksiJudul>{judul}</SeksiJudul>
         <LencanaStatus status={status} />
       </View>
+      <PenjelasStatus status={status} />
       <View style={s.tumpukRapat}>{children}</View>
     </View>
   );

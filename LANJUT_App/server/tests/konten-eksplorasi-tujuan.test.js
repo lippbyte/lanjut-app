@@ -148,6 +148,31 @@ test('eksplorasi-tujuan: profil terverifikasi tampil di daftar & detail dengan b
   assert.deepEqual(detail.json.data, harapan);
 });
 
+// LANJUT_044: penanda "Perkiraan" per kelompok tidak boleh hilang di server.
+// Pola pertama = 5 profil asli (mata kuliah DAN profesi Perkiraan).
+test('eksplorasi-tujuan: status_sumber per kelompok diteruskan apa adanya, termasuk "Perkiraan"', async () => {
+  const POLA = [
+    { peminat: 'Terverifikasi', mata_kuliah: 'Perkiraan', profesi: 'Perkiraan', kampus: 'Terverifikasi' },
+    { peminat: 'Perkiraan', mata_kuliah: 'Terverifikasi', profesi: 'Terverifikasi', kampus: 'Perkiraan' },
+    { peminat: 'Terverifikasi', mata_kuliah: 'Terverifikasi', profesi: 'Terverifikasi', kampus: 'Terverifikasi' },
+  ];
+  try {
+    for (const pola of POLA) {
+      await pool.query('UPDATE profil_prodi SET status_sumber = ? WHERE id = ? AND asal = ?', [
+        JSON.stringify(pola), prodi.id, ASAL_UJI,
+      ]);
+      const daftar = await ambil('/konten/eksplorasi-tujuan');
+      assert.deepEqual(daftar.json.data.find((p) => p.id === prodi.id).status_sumber, pola, 'daftar');
+      const detail = await ambil(`/konten/eksplorasi-tujuan/${prodi.id}`);
+      assert.deepEqual(detail.json.data.status_sumber, pola, 'detail');
+    }
+  } finally {
+    await pool.query('UPDATE profil_prodi SET status_sumber = ? WHERE id = ? AND asal = ?', [
+      JSON.stringify(ISI.status_sumber), prodi.id, ASAL_UJI,
+    ]);
+  }
+});
+
 test('eksplorasi-tujuan: SEMUA isi daftar terverifikasi dan berbentuk sama', async () => {
   const { json } = await ambil('/konten/eksplorasi-tujuan');
   assert.ok(json.data.length >= 1);
@@ -250,6 +275,22 @@ test('benih profil asli: semua entri profil-prodi.json ada di tabel dengan nama 
   const [baris] = await pool.query('SELECT id, nama FROM profil_prodi WHERE id IN (?)', [berkas.data.map((p) => p.id)]);
   assert.equal(baris.length, berkas.data.length);
   for (const p of berkas.data) assert.equal(baris.find((b) => b.id === p.id).nama, p.nama);
+});
+
+// LANJUT_044: jalur berkas → tabel untuk penanda "Perkiraan" (jalur tabel →
+// respons diuji dengan fixture di atas).
+test('benih profil asli: status_sumber tiap profil di tabel sama persis dengan profil-prodi.json', async () => {
+  const berkas = require('../../../MVP-PWA/data/profil-prodi.json');
+  const [baris] = await pool.query('SELECT id, status_sumber FROM profil_prodi WHERE id IN (?)', [berkas.data.map((p) => p.id)]);
+  for (const p of berkas.data) {
+    const b = baris.find((x) => x.id === p.id);
+    const diTabel = typeof b.status_sumber === 'string' ? JSON.parse(b.status_sumber) : b.status_sumber;
+    assert.deepEqual(diTabel, p.status_sumber, p.id);
+  }
+  // Pembanding: berkas memang memuat Perkiraan untuk mata kuliah dan profesi.
+  for (const kelompok of ['mata_kuliah', 'profesi']) {
+    assert.ok(berkas.data.some((p) => p.status_sumber[kelompok] === 'Perkiraan'), kelompok);
+  }
 });
 
 test('benih: status kepala berkas "terverifikasi_sebagian" TIDAK jadi tanda → belum_diverifikasi, diperiksa_pada NULL', async () => {

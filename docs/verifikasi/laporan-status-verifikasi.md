@@ -269,12 +269,16 @@ berkas → `node tools/validasi.js` (MVP-PWA) → `npm run benih` →
 
 ### 4.2 Profil yang sudah ada (18)
 
-- **Keputusan yang dibutuhkan (paling menghambat F10):** apakah profil yang
-  sebagian isinya berlabel "Perkiraan" boleh ditandai terverifikasi?
-  Lencana "Perkiraan" tetap tampil ke siswa per bagian. Kalau jawabannya
-  "tidak", hanya 4 profil yang seluruh bagiannya "Terverifikasi"
-  (`teknik-informatika`, `ilmu-hukum`, `farmasi`, `ilmu-komunikasi`), dan ke-4
-  profil itu pun tetap harus dicek ke sumbernya.
+- **Sudah diputuskan Khalifa (2 Oktober 2026):** profil yang sebagian isinya
+  berlabel "Perkiraan" **boleh** ditandai terverifikasi, dengan dua syarat:
+  1. Bagian yang bukan perkiraan sudah dicek ke sumbernya (kerja tim konten).
+  2. Label "Perkiraan" terlihat oleh siswa. Syarat ini dipenuhi LANJUT_044:
+     lencana "Perkiraan" sudah tampil di samping judul bagiannya, dan sejak
+     LANJUT_044 di bawahnya ada satu kalimat penjelas (DRAF, salinan teks
+     §4.9).
+
+  Hanya 4 profil yang seluruh bagiannya "Terverifikasi": `teknik-informatika`,
+  `ilmu-hukum`, `farmasi`, dan `ilmu-komunikasi`.
 - **Mata kuliah "Perkiraan" di 14 profil** butuh dokumen kurikulum resmi
   kampus agar bisa dinaikkan ke "Terverifikasi".
 - **Profesi "Perkiraan" di 5 profil** (`keperawatan`,
