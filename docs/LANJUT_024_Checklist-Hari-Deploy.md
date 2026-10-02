@@ -29,7 +29,7 @@ Tanda: 👤 = kamu sendiri, 🤖 = bisa diserahkan ke Claude Code, ⚠️ = deta
 - [ ] 👤 Buka `https://[domain-backend]/api/v1/sehat` → harus menjawab OK.
 - [ ] 👤 Buka `.../api/v1/konten/linimasa` → harus menjawab data.
 - [ ] 👤 Daftar satu akun uji lewat curl atau Postman → 201 dan dapat token.
-- [ ] 🤖 Tandai verifikasi TKA di server produksi memakai `npm run verifikasi-konten` (data TKA sudah diverifikasi di database lokal; **database server terpisah, tanda itu tidak ikut**). `--tanggal` = tanggal pengecekan, dan cocokkan ulang ke siaran pers Kemendikdasmen sebelum menandai.
+- [ ] 🤖 Tandai verifikasi TKA di server produksi memakai `npm run verifikasi-konten` (data TKA sudah diverifikasi di database lokal; **database server terpisah, tanda itu tidak ikut**). `--tanggal` = tanggal pengecekan, dan cocokkan ulang ke siaran pers Kemendikdasmen sebelum menandai. Sejak LANJUT_043 perintahnya wajib diakhiri `--ya`; tanpa itu hanya pratinjau (README server §2a).
 - [ ] 👤 Cek Linimasa di endpoint produksi menampilkan tiga tahapan TKA dengan tanggal benar.
 
 ## D. Hari-H: build ulang APK ke server publik

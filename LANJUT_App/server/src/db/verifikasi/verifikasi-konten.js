@@ -4,7 +4,9 @@
 // isi konten (judul, tanggal, teks) tidak pernah diubah.
 //
 // Skrip ini hanya ALAT. Keputusan baris mana yang boleh ditandai tetap di
-// tim konten, berdasar sumber resmi.
+// tim konten, berdasar sumber resmi. Sejak LANJUT_043 setiap perubahan status
+// wajib dikonfirmasi eksplisit dengan --ya; tanpa itu skrip hanya menampilkan
+// pratinjau baris yang AKAN diubah, lalu berhenti tanpa mengubah apa pun.
 //
 // `pemilik` sengaja TIDAK diubah: kolom itu berarti siapa yang mengkurasi
 // ("tim" atau nama mitra, docs/SDD-Backend-Foundation.md §3.4), bukan siapa
@@ -12,9 +14,10 @@
 //
 // Pemakaian (dari folder LANJUT_App/server):
 //   npm run verifikasi-konten -- --list [--jenis=linimasa]
-//   npm run verifikasi-konten -- --jenis=linimasa --id=snbp-daftar --oleh="Nama"
-//   npm run verifikasi-konten -- --jenis=linimasa --id=a,b --tanggal=2026-09-27
-//   npm run verifikasi-konten -- --jenis=linimasa --id=snbp-daftar --batal
+//   npm run verifikasi-konten -- --jenis=linimasa --id=snbp-daftar --oleh="Nama"          (pratinjau)
+//   npm run verifikasi-konten -- --jenis=linimasa --id=snbp-daftar --oleh="Nama" --ya     (menandai)
+//   npm run verifikasi-konten -- --jenis=linimasa --id=a,b --tanggal=2026-09-27 --ya
+//   npm run verifikasi-konten -- --jenis=linimasa --id=snbp-daftar --batal --ya
 
 const fs = require('fs');
 const path = require('path');
@@ -22,8 +25,7 @@ const pool = require('../koneksi');
 const { sekarangIso } = require('../../util/waktu');
 
 // Daftar tetap jenis → tabel. Nama tabel/kolom HANYA diambil dari sini,
-// tidak pernah dari masukan pengguna. `kartu` sengaja tidak ada: berisi
-// kartu buatan pengguna, dan Latihan belum dipakai aplikasi.
+// tidak pernah dari masukan pengguna.
 const JENIS = {
   linimasa: { tabel: 'tahapan_linimasa', judul: 'judul', label: 'Linimasa (Beranda)' },
   'khusus-smk': { tabel: 'butir_khusus_smk', judul: 'judul', label: 'Khusus SMK' },
@@ -33,11 +35,48 @@ const JENIS = {
   'cerita-alumni': { tabel: 'cerita_alumni', judul: 'nama', label: 'Cerita Alumni' },
   // F10 (LANJUT_031): satu baris = satu profil prodi; id = id prodi.
   'eksplorasi-tujuan': { tabel: 'profil_prodi', judul: 'nama', label: 'Eksplorasi Tujuan (profil prodi)' },
+  // LANJUT_043: tabel `kartu` juga berisi kartu buatan SISWA. `kurasi: true`
+  // membuat setiap query memakai varian di SQL di bawah yang hanya menyentuh
+  // kartu kurasi tim (sumber 'resmi') yang belum dihapus — id kartu siswa
+  // diperlakukan sebagai "tidak ditemukan".
+  kartu: { tabel: 'kartu', judul: 'judul', label: 'Kartu kurasi Arsip Belajar', kurasi: true },
 };
+
+// Query statis (§2.2 aturan 2: tidak ada SQL yang dirakit dari potongan).
+// Nama tabel/kolom lewat placeholder `??` dari JENIS di atas.
+const SQL = {
+  belum: `SELECT id, ?? AS judul, asal, status_verifikasi, diperiksa_pada
+            FROM ??
+           WHERE status_verifikasi <> 'terverifikasi' OR diperiksa_pada IS NULL
+           ORDER BY id`,
+  belumKurasi: `SELECT id, ?? AS judul, asal, status_verifikasi, diperiksa_pada
+                  FROM ??
+                 WHERE sumber = 'resmi' AND dihapus_pada IS NULL
+                   AND (status_verifikasi <> 'terverifikasi' OR diperiksa_pada IS NULL)
+                 ORDER BY id`,
+  kunci: 'SELECT id, ?? AS judul, status_verifikasi, diperiksa_pada FROM ?? WHERE id IN (?) FOR UPDATE',
+  kunciKurasi:
+    "SELECT id, ?? AS judul, status_verifikasi, diperiksa_pada FROM ?? WHERE id IN (?) AND sumber = 'resmi' AND dihapus_pada IS NULL FOR UPDATE",
+  tandai: "UPDATE ?? SET status_verifikasi = 'terverifikasi', diperiksa_pada = ? WHERE id IN (?)",
+  tandaiKurasi:
+    "UPDATE ?? SET status_verifikasi = 'terverifikasi', diperiksa_pada = ? WHERE id IN (?) AND sumber = 'resmi' AND dihapus_pada IS NULL",
+  batal: "UPDATE ?? SET status_verifikasi = 'belum_diverifikasi', diperiksa_pada = NULL WHERE id IN (?)",
+  batalKurasi:
+    "UPDATE ?? SET status_verifikasi = 'belum_diverifikasi', diperiksa_pada = NULL WHERE id IN (?) AND sumber = 'resmi' AND dihapus_pada IS NULL",
+};
+const sql = (j, nama) => SQL[j.kurasi ? `${nama}Kurasi` : nama];
 
 const BERKAS_LOG = path.join(__dirname, '..', '..', '..', 'verifikasi-konten.log');
 
 class GalatPakai extends Error {}
+
+/** Perintahnya sah, tetapi belum dikonfirmasi (--ya). `pratinjau` = baris yang AKAN diubah. */
+class PerluKonfirmasi extends GalatPakai {
+  constructor(pesan, pratinjau) {
+    super(pesan);
+    this.pratinjau = pratinjau;
+  }
+}
 
 function ambilJenis(jenis) {
   const j = JENIS[jenis];
@@ -60,13 +99,7 @@ async function daftarBelum(jenis) {
   const hasil = [];
   for (const nama of semua) {
     const j = ambilJenis(nama);
-    const [baris] = await pool.query(
-      `SELECT id, ?? AS judul, asal, status_verifikasi, diperiksa_pada
-         FROM ??
-        WHERE status_verifikasi <> 'terverifikasi' OR diperiksa_pada IS NULL
-        ORDER BY id`,
-      [j.judul, j.tabel]
-    );
+    const [baris] = await pool.query(sql(j, 'belum'), [j.judul, j.tabel]);
     hasil.push({ jenis: nama, label: j.label, baris });
   }
   return hasil;
@@ -75,19 +108,18 @@ async function daftarBelum(jenis) {
 /**
  * Tandai (atau batalkan) verifikasi. Semua ID diperiksa dulu di dalam satu
  * transaksi; kalau ada satu saja yang tidak ditemukan, TIDAK ADA yang diubah.
+ * Tanpa `konfirmasi: true` tidak ada yang diubah sama sekali: dilempar
+ * PerluKonfirmasi berisi pratinjau baris yang akan diubah (LANJUT_043).
  */
-async function ubahStatus({ jenis, ids, tanggal, batal }) {
+async function ubahStatus({ jenis, ids, tanggal, batal, konfirmasi }) {
   const j = ambilJenis(jenis);
-  const daftarId = [...new Set(ids.map((i) => i.trim()).filter(Boolean))];
+  const daftarId = [...new Set((ids || []).map((i) => i.trim()).filter(Boolean))];
   if (!daftarId.length) throw new GalatPakai('ID belum diisi. Contoh: --id=snbp-daftar');
 
   const koneksi = await pool.getConnection();
   try {
     await koneksi.beginTransaction();
-    const [ada] = await koneksi.query(
-      'SELECT id, ?? AS judul, status_verifikasi, diperiksa_pada FROM ?? WHERE id IN (?) FOR UPDATE',
-      [j.judul, j.tabel, daftarId]
-    );
+    const [ada] = await koneksi.query(sql(j, 'kunci'), [j.judul, j.tabel, daftarId]);
     const ditemukan = new Set(ada.map((b) => b.id));
     const hilang = daftarId.filter((id) => !ditemukan.has(id));
     if (hilang.length) {
@@ -96,17 +128,18 @@ async function ubahStatus({ jenis, ids, tanggal, batal }) {
           `Lihat ID yang benar dengan: npm run verifikasi-konten -- --list --jenis=${jenis}`
       );
     }
+    if (konfirmasi !== true) {
+      throw new PerluKonfirmasi(
+        `Belum ada yang diubah. Periksa daftar di atas, lalu ulangi perintah yang sama dengan --ya ` +
+          `untuk benar-benar ${batal ? 'membatalkan tandanya' : 'menandai sudah dicek'}.`,
+        ada
+      );
+    }
 
     if (batal) {
-      await koneksi.query(
-        "UPDATE ?? SET status_verifikasi = 'belum_diverifikasi', diperiksa_pada = NULL WHERE id IN (?)",
-        [j.tabel, daftarId]
-      );
+      await koneksi.query(sql(j, 'batal'), [j.tabel, daftarId]);
     } else {
-      await koneksi.query(
-        "UPDATE ?? SET status_verifikasi = 'terverifikasi', diperiksa_pada = ? WHERE id IN (?)",
-        [j.tabel, tanggal, daftarId]
-      );
+      await koneksi.query(sql(j, 'tandai'), [j.tabel, tanggal, daftarId]);
     }
     await koneksi.commit();
     return ada;
@@ -126,7 +159,7 @@ function catatLog(baris) {
   }
 }
 
-const OPSI = ['list', 'jenis', 'id', 'oleh', 'tanggal', 'batal'];
+const OPSI = ['list', 'jenis', 'id', 'oleh', 'tanggal', 'batal', 'ya'];
 
 function bacaArgumen(argv) {
   const arg = {};
@@ -166,15 +199,26 @@ async function jalankan(argv) {
   const oleh = typeof arg.oleh === 'string' && arg.oleh.trim() ? arg.oleh.trim() : '(tidak diisi)';
   const batal = arg.batal === true;
   const tanggal = batal ? null : periksaTanggal(typeof arg.tanggal === 'string' ? arg.tanggal : sekarangIso().slice(0, 10));
-
-  const sebelum = await ubahStatus({ jenis: arg.jenis, ids: arg.id.split(','), tanggal, batal });
-
   const aksi = batal ? 'DIBATALKAN' : `TERVERIFIKASI (dicek ${tanggal})`;
+
+  let sebelum;
+  try {
+    sebelum = await ubahStatus({ jenis: arg.jenis, ids: arg.id.split(','), tanggal, batal, konfirmasi: arg.ya === true });
+  } catch (galat) {
+    if (galat instanceof PerluKonfirmasi) {
+      for (const b of galat.pratinjau) {
+        console.log(`[pratinjau] ${arg.jenis}/${b.id} "${b.judul}" → akan ${aksi}`);
+      }
+    }
+    throw galat;
+  }
+
   for (const b of sebelum) {
     const lama = b.status_verifikasi === 'terverifikasi' ? ` — sebelumnya sudah terverifikasi, dicek ${formatTanggal(b.diperiksa_pada)}` : '';
     console.log(`[verifikasi] ${arg.jenis}/${b.id} "${b.judul}" → ${aksi}${lama}`);
   }
   catatLog(`${sekarangIso()}\t${batal ? 'batal' : 'tandai'}\t${arg.jenis}\t${sebelum.map((b) => b.id).join(',')}\t${tanggal ?? '-'}\t${oleh}`);
+  return sebelum;
 }
 
 if (require.main === module) {
@@ -188,4 +232,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { JENIS, daftarBelum, ubahStatus, GalatPakai };
+module.exports = { JENIS, BERKAS_LOG, daftarBelum, ubahStatus, jalankan, GalatPakai, PerluKonfirmasi };

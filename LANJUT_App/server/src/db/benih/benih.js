@@ -423,20 +423,32 @@ async function benihKonfigurasiLevelin() {
   console.log(`[benih] konfigurasi_levelin: ${baris.length} kunci`);
 }
 
-async function benihArsipKartu() {
-  const berkas = bacaJson('arsip.json');
+// Kartu kurasi (arsip.json). LANJUT_043: pola LANJUT_011/020 seperti tabel
+// konten lain — tanda verifikasi hanya diisi saat INSERT (selalu "belum"),
+// lalu DIPERTAHANKAN selama isi kartu tidak berubah, dan direset bila satu
+// saja kolom isi berubah. Dulu benih selalu menulis 'belum_diverifikasi',
+// jadi tanda dari `verifikasi-konten --jenis=kartu` hilang di benih berikutnya.
+// `berkas` bisa diganti fixture di tes.
+async function benihArsipKartu(berkas = bacaJson('arsip.json')) {
   for (const item of berkas.data) {
     await pool.execute(
       `INSERT INTO kartu
          (id, pemilik_id, mapel_id, judul, isi, jawaban, sumber, penyedia,
           pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada,
           dibuat_pada, diubah_pada)
-       VALUES (?, NULL, ?, ?, ?, ?, ?, NULL, ?, ?, ?, NULL, ?, ?, ?)
+       VALUES (?, NULL, ?, ?, ?, ?, ?, NULL, ?, 'belum_diverifikasi', ?, NULL, NULL, ?, ?)
        ON DUPLICATE KEY UPDATE
+         status_verifikasi = IF(mapel_id <=> VALUES(mapel_id) AND judul <=> VALUES(judul) AND isi <=> VALUES(isi) AND
+            jawaban <=> VALUES(jawaban) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
+            asal <=> VALUES(asal),
+            status_verifikasi, 'belum_diverifikasi'),
+         diperiksa_pada = IF(mapel_id <=> VALUES(mapel_id) AND judul <=> VALUES(judul) AND isi <=> VALUES(isi) AND
+            jawaban <=> VALUES(jawaban) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
+            asal <=> VALUES(asal),
+            diperiksa_pada, NULL),
          mapel_id=VALUES(mapel_id), judul=VALUES(judul), isi=VALUES(isi),
          jawaban=VALUES(jawaban), sumber=VALUES(sumber), pemilik=VALUES(pemilik),
-         status_verifikasi=VALUES(status_verifikasi), asal=VALUES(asal),
-         diperiksa_pada=VALUES(diperiksa_pada), diubah_pada=VALUES(diubah_pada)`,
+         asal=VALUES(asal), diubah_pada=VALUES(diubah_pada)`,
       [
         item.id,
         item.mapel_id,
@@ -445,9 +457,7 @@ async function benihArsipKartu() {
         item.jawaban || null,
         item.sumber,
         berkas.pemilik,
-        'belum_diverifikasi',
         berkas.asal,
-        berkas.diperiksa_pada || null, // diperiksa_pada (DATE, nullable)
         item.dibuat_pada + ' 00:00:00', // dibuat_pada (DATETIME)
         item.dibuat_pada + ' 00:00:00', // diubah_pada (DATETIME)
       ]
@@ -569,4 +579,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { jalankanBenih, benihLinimasa, benihChecklist, benihProfilProdi, DIR_DATA };
+module.exports = { jalankanBenih, benihLinimasa, benihChecklist, benihProfilProdi, benihArsipKartu, DIR_DATA };

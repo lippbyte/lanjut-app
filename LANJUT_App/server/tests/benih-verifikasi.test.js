@@ -3,6 +3,8 @@
 // LANJUT_011: tandai lewat skrip verifikasi-konten → benih ulang dengan isi
 // yang SAMA → baris tetap terverifikasi; baris baru masuk "belum diverifikasi".
 // LANJUT_020: isi berubah → benih → tanda di-reset (verifikasi lama basi).
+// LANJUT_043: kartu kurasi (arsip.json) ikut aturan yang sama — dulu benih
+// selalu menulis ulang statusnya jadi "belum", sehingga tanda tim hilang.
 //
 // Baris baru & perubahan isi memakai berkas FIXTURE (id berawalan `uji-benih-`),
 // bukan baris konten asli: baris asli seperti `pelaksanaan-tka` bisa sudah
@@ -21,7 +23,7 @@
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const { pool } = require('./bantuan');
-const { jalankanBenih, benihLinimasa, benihChecklist } = require('../src/db/benih/benih');
+const { jalankanBenih, benihLinimasa, benihChecklist, benihArsipKartu } = require('../src/db/benih/benih');
 const { JENIS, ubahStatus } = require('../src/db/verifikasi/verifikasi-konten');
 
 // Satu baris asli per jenis yang bisa diverifikasi (selain checklist).
@@ -85,6 +87,28 @@ const CHECKLIST_CONTOH = {
 };
 const ID_CHECKLIST = CHECKLIST_CONTOH.kategori[0].butir[0].id;
 
+// LANJUT_043: kartu kurasi (arsip.json). Kartu kurasi terverifikasi langsung
+// terlihat semua akun, jadi fixture ini disisipkan SUDAH terverifikasi dan
+// hanya pernah turun ke "belum" — alasannya di kepala verifikasi-konten.test.js.
+const KARTU_FIXTURE = {
+  pemilik: 'tim',
+  asal: 'contoh',
+  data: [
+    {
+      id: 'uji-benih-kartu',
+      mapel_id: 'matematika',
+      judul: 'UJI: kartu fixture benih',
+      isi: 'UJI: isi kartu fixture',
+      jawaban: 'UJI: jawaban fixture',
+      sumber: 'resmi',
+      dibuat_pada: '2020-01-01',
+    },
+  ],
+};
+const ID_KARTU = KARTU_FIXTURE.data[0].id;
+const ID_KARTU_BARU = 'uji-benih-kartu-baru';
+const kartuDengan = (ubah) => ({ ...KARTU_FIXTURE, data: [{ ...KARTU_FIXTURE.data[0], ...ubah }] });
+
 const asli = {};
 
 async function status(jenis, id) {
@@ -104,13 +128,31 @@ async function hapusLinimasaFixture() {
   await pool.query('DELETE FROM tahapan_linimasa WHERE id = ?', [ID_LINIMASA]);
 }
 
-const tandai = (jenis, id) => ubahStatus({ jenis, ids: [id], tanggal: '2026-09-20', batal: false });
+async function hapusKartuFixture() {
+  await pool.query('DELETE FROM kartu WHERE id IN (?, ?)', [ID_KARTU, ID_KARTU_BARU]);
+}
+
+/** Kartu fixture dengan isi persis seperti yang ditulis benihArsipKartu(KARTU_FIXTURE), sudah ditandai. */
+async function sisipKartuTerverifikasi() {
+  const k = KARTU_FIXTURE.data[0];
+  const waktu = `${k.dibuat_pada} 00:00:00`;
+  await pool.query(
+    `INSERT INTO kartu
+       (id, pemilik_id, mapel_id, judul, isi, jawaban, sumber, penyedia, pemilik,
+        status_verifikasi, asal, url_sumber, diperiksa_pada, dibuat_pada, diubah_pada)
+     VALUES (?, NULL, ?, ?, ?, ?, ?, NULL, ?, 'terverifikasi', ?, NULL, '2026-09-20', ?, ?)`,
+    [k.id, k.mapel_id, k.judul, k.isi, k.jawaban, k.sumber, KARTU_FIXTURE.pemilik, KARTU_FIXTURE.asal, waktu, waktu]
+  );
+}
+
+const tandai = (jenis, id) => ubahStatus({ jenis, ids: [id], tanggal: '2026-09-20', batal: false, konfirmasi: true });
 const TERVERIFIKASI = { status: 'terverifikasi', tanggal: '2026-09-20' };
 const BELUM = { status: 'belum_diverifikasi', tanggal: null };
 
 before(async () => {
   await hapusChecklistContoh();
   await hapusLinimasaFixture();
+  await hapusKartuFixture();
   for (const [jenis, id] of [...Object.entries(BARIS), ...Object.entries(BARIS_BASI)]) {
     const [[b]] = await pool.query('SELECT status_verifikasi, diperiksa_pada FROM ?? WHERE id = ?', [JENIS[jenis].tabel, id]);
     assert.ok(b, `baris ${jenis}/${id} belum dibenih`);
@@ -132,12 +174,13 @@ after(async () => {
   }
   await hapusChecklistContoh();
   await hapusLinimasaFixture();
+  await hapusKartuFixture();
   await pool.end();
 });
 
 test('benih ulang: baris yang sudah ditandai terverifikasi TETAP terverifikasi (semua jenis)', async () => {
   for (const [jenis, id] of Object.entries(BARIS)) {
-    await ubahStatus({ jenis, ids: [id], tanggal: '2026-09-20', batal: false });
+    await ubahStatus({ jenis, ids: [id], tanggal: '2026-09-20', batal: false, konfirmasi: true });
   }
   await jalankanBenih();
   for (const [jenis, id] of Object.entries(BARIS)) {
@@ -149,7 +192,7 @@ test('benih ulang: butir checklist yang sudah ditandai terverifikasi TETAP terve
   await benihChecklist(CHECKLIST_CONTOH);
   assert.deepEqual(await status('checklist', ID_CHECKLIST), { status: 'belum_diverifikasi', tanggal: null });
 
-  await ubahStatus({ jenis: 'checklist', ids: [ID_CHECKLIST], tanggal: '2026-09-20', batal: false });
+  await ubahStatus({ jenis: 'checklist', ids: [ID_CHECKLIST], tanggal: '2026-09-20', batal: false, konfirmasi: true });
   await benihChecklist(CHECKLIST_CONTOH);
   assert.deepEqual(await status('checklist', ID_CHECKLIST), { status: 'terverifikasi', tanggal: '2026-09-20' });
 });
@@ -210,6 +253,20 @@ test('benih (LANJUT_020): butir checklist berubah → tanda di-reset', async () 
   await benihChecklist(berubah);
   assert.deepEqual(await status('checklist', ID_CHECKLIST), BELUM);
   await benihChecklist(CHECKLIST_CONTOH); // kembalikan isi untuk test lain di berkas ini
+});
+
+test('benih (LANJUT_043): kartu kurasi — isi SAMA → tanda tetap; isi berubah → tanda di-reset; kartu baru masuk belum', async () => {
+  await sisipKartuTerverifikasi(); // = sudah ditandai lewat `verifikasi-konten --jenis=kartu ... --ya`
+  await benihArsipKartu(KARTU_FIXTURE);
+  assert.deepEqual(await status('kartu', ID_KARTU), TERVERIFIKASI, 'isi sama, tapi tanda hilang (benih lama selalu mereset)');
+
+  await benihArsipKartu(kartuDengan({ jawaban: 'UJI: jawaban diubah' }));
+  assert.deepEqual(await status('kartu', ID_KARTU), BELUM, 'jawaban berubah, tapi tanda lama tetap');
+  const [[b]] = await pool.query('SELECT jawaban FROM kartu WHERE id = ?', [ID_KARTU]);
+  assert.equal(b.jawaban, 'UJI: jawaban diubah', 'isi baru tidak ditulis');
+
+  await benihArsipKartu(kartuDengan({ id: ID_KARTU_BARU }));
+  assert.deepEqual(await status('kartu', ID_KARTU_BARU), BELUM);
 });
 
 test('benih (LANJUT_020): isi berbeda dari JSON → tanda di-reset (Khusus SMK, prodi, mapel, Cerita Alumni)', async () => {

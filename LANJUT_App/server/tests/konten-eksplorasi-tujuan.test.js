@@ -264,7 +264,7 @@ test('benih: status kepala berkas "terverifikasi_sebagian" TIDAK jadi tanda → 
 });
 
 test('verifikasi-konten: jenis eksplorasi-tujuan menandai profil → tampil di endpoint, hilang dari --list', async () => {
-  await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: '2099-02-01', batal: false });
+  await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: '2099-02-01', batal: false, konfirmasi: true });
   const b = await barisFixture();
   assert.equal(b.status_verifikasi, 'terverifikasi');
   assert.equal(b.mata_kuliah.length, 2, 'isi konten tidak boleh ikut berubah');
@@ -290,7 +290,7 @@ test('benih dengan isi berubah (urutan mata kuliah / kampus / angka): tanda dire
   ];
   for (const ubah of perubahan) {
     await benihProfilProdi(berkasFixture());
-    await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: '2099-02-01', batal: false });
+    await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: '2099-02-01', batal: false, konfirmasi: true });
     await benihProfilProdi(berkasFixture(ubah));
     const b = await barisFixture();
     assert.equal(b.status_verifikasi, 'belum_diverifikasi', `tidak direset untuk ${ubah.toString()}`);
@@ -301,8 +301,8 @@ test('benih dengan isi berubah (urutan mata kuliah / kampus / angka): tanda dire
 
 test('verifikasi-konten --batal mengembalikan profil ke belum terverifikasi', async () => {
   await benihProfilProdi(berkasFixture());
-  await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: '2099-02-01', batal: false });
-  await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: null, batal: true });
+  await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: '2099-02-01', batal: false, konfirmasi: true });
+  await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: null, batal: true, konfirmasi: true });
   const b = await barisFixture();
   assert.equal(b.status_verifikasi, 'belum_diverifikasi');
   assert.equal(b.diperiksa_pada, null);
@@ -310,9 +310,9 @@ test('verifikasi-konten --batal mengembalikan profil ke belum terverifikasi', as
 });
 
 test('verifikasi-konten: id profil yang tidak ada → galat, tidak ada yang diubah', async () => {
-  await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: '2099-02-01', batal: false });
+  await ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id], tanggal: '2099-02-01', batal: false, konfirmasi: true });
   await assert.rejects(
-    ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id, 'profil-tidak-ada'], tanggal: null, batal: true }),
+    ubahStatus({ jenis: 'eksplorasi-tujuan', ids: [prodi.id, 'profil-tidak-ada'], tanggal: null, batal: true, konfirmasi: true }),
     (g) => g instanceof GalatPakai && /profil-tidak-ada/.test(g.message)
   );
   assert.equal((await barisFixture()).status_verifikasi, 'terverifikasi');

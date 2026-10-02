@@ -85,8 +85,9 @@ sumber resmi → `npm run verifikasi-konten`.
 
 Akibatnya, mengubah `status_verifikasi`/`diperiksa_pada` di berkas JSON
 **tidak** berpengaruh ke baris yang sudah ada. Untuk menandai atau
-membatalkan tanda, selalu pakai `npm run verifikasi-konten`. Pengecualian:
-kartu Latihan (`arsip.json`) masih diperbarui penuh oleh benih.
+membatalkan tanda, selalu pakai `npm run verifikasi-konten`. Sejak LANJUT_043
+aturan ini juga berlaku untuk kartu kurasi Arsip/Latihan (`arsip.json`);
+dulu benih selalu mengembalikannya ke "belum diverifikasi".
 
 ## 2a. Menandai konten sudah dicek (untuk tim konten)
 
@@ -98,6 +99,12 @@ Alat ini **hanya mengubah tanda "sudah dicek"** dan tanggal pengecekannya.
 Isi konten (judul, tanggal, teks) tidak bisa berubah, dan tidak ada yang
 terhapus. Memutuskan konten mana yang benar tetap tugas tim konten: tandai
 hanya konten yang sudah kamu cocokkan dengan sumber resminya.
+
+**Lembar review.** Daftar lengkap yang perlu dicek beserta isinya, sumbernya,
+dan kolom catatan ada di
+[`docs/verifikasi/lembar-review-konten.md`](../../docs/verifikasi/lembar-review-konten.md).
+Buat ulang lembar itu dari basis data kapan saja dengan `npm run lembar-review`
+(hanya membaca, tidak mengubah apa pun).
 
 ### Sebelum mulai (sekali saja)
 
@@ -130,9 +137,20 @@ Alat ini mengubah basis data yang tertulis di `.env`.
    ```
    Hanya ingin melihat satu jenis? Tambahkan `--jenis=`, misalnya
    `npm run verifikasi-konten -- --list --jenis=linimasa`.
-4. **Tandai yang sudah kamu cek.** Isi jenis, ID, dan namamu:
+4. **Periksa dulu apa yang akan ditandai.** Isi jenis, ID, dan namamu:
    ```
    npm run verifikasi-konten -- --jenis=linimasa --id=daftar-snbp --oleh="Nama Kamu"
+   ```
+   Tanpa `--ya` **belum ada yang diubah**. Skrip hanya menampilkan pratinjau
+   lalu berhenti:
+   ```
+   [pratinjau] linimasa/daftar-snbp "Pendaftaran SNBP" → akan TERVERIFIKASI (dicek 2026-09-27)
+   [verifikasi] Belum ada yang diubah. Periksa daftar di atas, lalu ulangi perintah yang sama dengan --ya ...
+   ```
+5. **Tandai.** Kalau pratinjaunya benar, ulangi perintah yang sama dengan
+   `--ya` di akhir:
+   ```
+   npm run verifikasi-konten -- --jenis=linimasa --id=daftar-snbp --oleh="Nama Kamu" --ya
    ```
    Kalau berhasil, muncul baris seperti ini:
    ```
@@ -146,10 +164,18 @@ Alat ini mengubah basis data yang tertulis di `.env`.
 |---|---|---|
 | Menandai beberapa sekaligus | pisahkan ID dengan koma, tanpa spasi | `--id=daftar-snbp,pdss` |
 | Tanggal cek bukan hari ini | `--tanggal=TAHUN-BULAN-TANGGAL` | `--tanggal=2026-09-25` |
-| Salah tandai, mau dibatalkan | `--batal` | `npm run verifikasi-konten -- --jenis=linimasa --id=daftar-snbp --batal` |
+| Salah tandai, mau dibatalkan | `--batal` (juga wajib `--ya`) | `npm run verifikasi-konten -- --jenis=linimasa --id=daftar-snbp --batal --ya` |
+
+Semua perubahan, termasuk `--batal`, baru terjadi kalau ada `--ya`. Hanya
+`--ya` persis seperti itu yang dihitung; `--ya=ya` dan sejenisnya tidak.
 
 Jenis yang tersedia: `linimasa`, `khusus-smk`, `checklist`, `prodi`, `mapel`,
-`cerita-alumni`, `eksplorasi-tujuan`.
+`cerita-alumni`, `eksplorasi-tujuan`, `kartu`.
+
+`kartu` (LANJUT_043) = kartu kurasi tim di Arsip Belajar/Latihan (`arsip.json`,
+mis. `--id=k-mtk-1`). Kartu buatan siswa tidak pernah bisa ditandai: ID-nya
+dianggap "tidak ditemukan". Kartu kurasi baru dikirim ke aplikasi setelah
+ditandai (LANJUT_040).
 
 `eksplorasi-tujuan` (F10, LANJUT_031) = satu profil prodi utuh per ID (ID =
 id prodi, mis. `--id=k3`): peminat, mata kuliah, profesi, dan kampus dicek
@@ -162,6 +188,8 @@ tanggal riset disusun, jadi semua profil mulai sebagai belum terverifikasi.
 
 ### Kalau muncul pesan galat
 
+- **"Belum ada yang diubah ... ulangi perintah yang sama dengan --ya"** —
+  bukan galat. Ini pratinjau (langkah 4); tambahkan `--ya` bila daftarnya benar.
 - **"ID tidak ditemukan"** — ada ID yang salah ketik. **Tidak ada yang
   diubah**, termasuk ID lain yang benar di perintah yang sama. Salin ID dari
   hasil `--list`, lalu ulangi.
@@ -176,13 +204,21 @@ tanggal riset disusun, jadi semua profil mulai sebagai belum terverifikasi.
 - Skrip: `src/db/verifikasi/verifikasi-konten.js`. Yang diubah hanya
   `status_verifikasi` (`terverifikasi` / `belum_diverifikasi`) dan
   `diperiksa_pada` (DATE; bawaannya tanggal hari ini menurut UTC). Semua ID
-  diperiksa dalam satu transaksi.
+  diperiksa dalam satu transaksi. Tanpa `--ya` (`konfirmasi: true` di
+  `ubahStatus`) transaksi di-rollback dan dilempar `PerluKonfirmasi` berisi
+  pratinjau (LANJUT_043).
 - `pemilik` **tidak** diubah: artinya kelas kurator (`tim` / nama mitra), bukan
   nama verifikator. Nama dari `--oleh` hanya dicatat ke
   `verifikasi-konten.log` di folder ini (diabaikan git, jadi hanya ada di
   komputer yang menjalankan skrip). Belum ada kolom basis data untuk
   menyimpan siapa verifikatornya.
-- `kartu` sengaja tidak termasuk: tabel itu berisi kartu buatan pengguna.
+- `kartu`: tabelnya juga berisi kartu buatan pengguna, jadi jenis ini memakai
+  varian SQL statis tersendiri (`*Kurasi`) yang selalu menyaring
+  `sumber = 'resmi' AND dihapus_pada IS NULL`, termasuk di `UPDATE`-nya.
+- `npm run lembar-review` (`src/db/verifikasi/lembar-review.js`) menyusun
+  lembar review Markdown dari basis data (SELECT saja) + `MVP-PWA/data/`.
+  Bawaannya ditulis ke `docs/verifikasi/lembar-review-konten.md`;
+  `--keluar=berkas.md` untuk lokasi lain.
 
 ## 3. Menjalankan server
 
@@ -316,9 +352,11 @@ npm run migrasi
 npm run benih
 
 # 5. (Opsional) Tandai konten yang sudah dicek ke sumber resmi — tanda ini
-#    tersimpan di basis data, jadi di server baru harus ditandai ulang
+#    tersimpan di basis data, jadi di server baru harus ditandai ulang.
+#    Tanpa --ya hanya pratinjau (LANJUT_043).
 npm run verifikasi-konten -- --list
 npm run verifikasi-konten -- --jenis=linimasa --id=daftar-akun-tka,pelaksanaan-tka,susulan-tka --oleh="Nama"
+npm run verifikasi-konten -- --jenis=linimasa --id=daftar-akun-tka,pelaksanaan-tka,susulan-tka --oleh="Nama" --ya
 
 # 6. Nyalakan server (mode produksi; tanpa auto-restart)
 npm start
@@ -409,8 +447,14 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
   tanpa parameter) hanya mengirim kartu resmi yang `status_verifikasi =
   'terverifikasi'` DAN `diperiksa_pada` terisi — syarat yang sama dengan F10 —
   plus kartu milik sendiri. `?sumber=` hanya menyaring lebih lanjut. Tes:
-  `tests/kartu-kurasi.test.js`. `verifikasi-konten` belum mengenal jenis
-  `kartu`, jadi menandai kartu kurasi masih harus lewat SQL.
+  `tests/kartu-kurasi.test.js`. Menandai kartu kurasi: `npm run
+  verifikasi-konten -- --jenis=kartu --id=... --ya` (LANJUT_043, bagian 2a).
+- **Persiapan verifikasi konten (LANJUT_043)**: `verifikasi-konten` mengenal
+  jenis `kartu` (hanya kurasi tim) dan setiap perubahan status wajib `--ya`;
+  benih kini mempertahankan tanda kartu kurasi selama isinya sama (pola
+  LANJUT_020); `npm run lembar-review` menyusun lembar review tim konten.
+  Tes: `tests/verifikasi-konten.test.js`, `tests/benih-verifikasi.test.js`,
+  `tests/lembar-review.test.js`.
 - **Jenis sekolah (LANJUT_038, migrasi 011)**: `pengguna.jenis_sekolah`
   SMP/SMA/SMK/MA; migrasi mengisi SMP untuk kelas 7–9. Aturannya satu, di
   `src/util/kelas.js` `tentukanJenisSekolah` (dipakai daftar, PATCH profil,
