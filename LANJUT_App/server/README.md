@@ -397,6 +397,15 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
 - **Arsip Belajar (LANJUT_039)**: `PATCH /kartu/:id` kini juga menerima
   `mapel_id` (kategori kartu, divalidasi ke tabel `mapel`). Tidak ada migrasi:
   `kartu.mapel_id` sudah ada sejak 004. Tes: `tests/kartu-arsip.test.js`.
+- **F7 Latihan (LANJUT_041)**: `GET /sesi-latihan` baru (sesi milik sendiri, 50
+  terakhir, dengan `jumlah_dijawab` & `jumlah_benar`). `POST /sesi-latihan`
+  menolak mapel tak dikenal (400) dan id sesi milik akun lain (400 `id`).
+  `POST /riwayat-latihan` memeriksa semua rujukan sebelum menulis: sesi milik
+  sendiri, kartu milik sendiri atau kurasi terverifikasi (404), mapel dikenal
+  (400); `mapel_id` diambil dari kartunya. Dulu rujukan tak dikenal jatuh ke
+  FK (500) dan akun lain bisa menautkan catatan ke sesi/kartu orang lain.
+  Jalur `keyakinan` (Level-In) tidak disentuh dan masih memanggil stub
+  `keputusan.js`. Tes: `tests/latihan.test.js`.
 - **Saringan kartu kurasi di server (LANJUT_040)**: `GET /kartu` (dengan atau
   tanpa parameter) hanya mengirim kartu resmi yang `status_verifikasi =
   'terverifikasi'` DAN `diperiksa_pada` terisi — syarat yang sama dengan F10 —
@@ -481,12 +490,14 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
 
 ### Yang belum diuji otomatis (diuji manual saja)
 
-- Endpoint konten publik (F1–F5) — diverifikasi lewat `curl` manual, belum
-  punya `tests/konten.test.js` tersendiri.
-- `kemajuan` (F5) — diverifikasi manual, belum punya berkas test khusus.
-- `POST /sesi-latihan`, `PATCH /sesi-latihan/{id}`, `POST /riwayat-latihan`,
-  `GET /konfigurasi/levelin` — diverifikasi manual (lihat log di atas), belum
-  punya test otomatis karena menunggu B6 selesai penuh (lihat di atas).
+- `GET /konfigurasi/levelin`, `GET /kalibrasi/ringkasan`, `GET /saran-harian`,
+  dan `POST /riwayat-latihan` dengan `keyakinan` — menunggu Level-In (B6)
+  selesai penuh (lihat di atas).
+
+Sudah punya tes HTTP sejak ditulisnya bagian ini: konten publik F1–F5 dan
+`kemajuan` (LANJUT_030, `tests/konten-*.test.js`, `tests/kemajuan.test.js`),
+serta `GET/POST/PATCH /sesi-latihan` dan `POST /riwayat-latihan` tanpa
+keyakinan (LANJUT_041, `tests/latihan.test.js`).
 
 ## Cara test manual cepat (tanpa menulis test)
 

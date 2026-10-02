@@ -24,6 +24,15 @@ router.post('/sesi-latihan', wajibLogin, validasiBody(mulaiSesiSkema), async (re
   }
 });
 
+// Riwayat Latihan (LANJUT_041) — sesi milik sendiri saja.
+router.get('/sesi-latihan', wajibLogin, async (req, res, next) => {
+  try {
+    sukses(res, await layanan.daftarSesi(req.pengguna.id));
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.patch(
   '/sesi-latihan/:id',
   wajibLogin,

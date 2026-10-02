@@ -107,6 +107,43 @@ async function ambilKetersediaanKartuPerMapel(penggunaId) {
   return baris;
 }
 
+/** Sesi ini milik pengguna? WHERE id = ? AND pengguna_id = ? (§8.4, LANJUT_041). */
+async function sesiMilikSendiri(penggunaId, sesiId) {
+  const [baris] = await pool.execute(
+    'SELECT id FROM sesi_latihan WHERE id = ? AND pengguna_id = ? LIMIT 1',
+    [sesiId, penggunaId]
+  );
+  return baris.length > 0;
+}
+
+async function mapelAda(mapelId) {
+  const [baris] = await pool.execute('SELECT id FROM mapel WHERE id = ? LIMIT 1', [mapelId]);
+  return baris.length > 0;
+}
+
+/**
+ * Riwayat Latihan (LANJUT_041): sesi milik sendiri, terbaru dulu, dengan
+ * jumlah kartu yang dijawab & benar. JOIN riwayat juga memfilter pengguna,
+ * jadi catatan akun lain tidak pernah ikut terhitung. 50 sesi terakhir.
+ */
+async function daftarSesiMilikSendiri(penggunaId) {
+  const [baris] = await pool.execute(
+    `SELECT s.id, s.dimulai_pada, s.selesai_pada, s.jumlah_kartu_direncanakan,
+            s.mapel_fokus_id, s.asal_mula,
+            COUNT(r.id) AS jumlah_dijawab,
+            COALESCE(SUM(r.benar), 0) AS jumlah_benar
+       FROM sesi_latihan s
+       LEFT JOIN riwayat_latihan r ON r.sesi_id = s.id AND r.pengguna_id = s.pengguna_id
+      WHERE s.pengguna_id = ?
+      GROUP BY s.id, s.dimulai_pada, s.selesai_pada, s.jumlah_kartu_direncanakan,
+               s.mapel_fokus_id, s.asal_mula
+      ORDER BY s.dimulai_pada DESC, s.id
+      LIMIT 50`,
+    [penggunaId]
+  );
+  return baris;
+}
+
 async function ambilSemuaKonfigurasi() {
   const [baris] = await pool.query(
     'SELECT kunci, nilai, versi, dasar, diubah_pada FROM konfigurasi_levelin'
@@ -122,5 +159,8 @@ module.exports = {
   ambilMapelDenganRiwayat,
   adaRiwayatSamaSekali,
   ambilKetersediaanKartuPerMapel,
+  sesiMilikSendiri,
+  mapelAda,
+  daftarSesiMilikSendiri,
   ambilSemuaKonfigurasi,
 };

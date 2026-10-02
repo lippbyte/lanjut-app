@@ -32,12 +32,18 @@ async function daftarUntukPengguna(penggunaId, { mapelId, sumber }) {
   return baris;
 }
 
-/** Dipakai saat pengguna menjawab kartu (Level-In) — kartu resmi ATAU milik sendiri. */
+/**
+ * Dipakai saat pengguna menjawab kartu (POST /riwayat-latihan, LANJUT_041) —
+ * kartu milik sendiri ATAU kartu resmi yang terverifikasi penuh (syarat yang
+ * sama dengan daftarUntukPengguna sejak LANJUT_040).
+ */
 async function ambilUntukDijawab(penggunaId, kartuId) {
   const [baris] = await pool.execute(
     `SELECT id, mapel_id, sumber, pemilik_id
        FROM kartu
-      WHERE id = ? AND dihapus_pada IS NULL AND (sumber = 'resmi' OR pemilik_id = ?)
+      WHERE id = ? AND dihapus_pada IS NULL
+        AND ((sumber = 'resmi' AND status_verifikasi = 'terverifikasi' AND diperiksa_pada IS NOT NULL)
+             OR pemilik_id = ?)
       LIMIT 1`,
     [kartuId, penggunaId]
   );
