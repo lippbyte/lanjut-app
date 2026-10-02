@@ -16,7 +16,9 @@ const buatKartuSkema = z.object({
   jawaban: z.string().trim().max(5000).optional(),
 });
 
+// LANJUT_039: mapel_id boleh diubah (kategori kartu = mapel, tabel `mapel`).
 const perbaruiKartuSkema = z.object({
+  mapel_id: z.string().trim().min(1).max(64).optional(),
   judul: z.string().trim().min(1).max(200).optional(),
   isi: z.string().trim().min(1).max(5000).optional(),
   jawaban: z.string().trim().max(5000).nullable().optional(),

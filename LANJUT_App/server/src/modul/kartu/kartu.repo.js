@@ -66,22 +66,25 @@ async function buatKartu({ id, pemilikId, mapelId, judul, isi, jawaban, waktu })
 
 /**
  * WHERE id = ? AND pemilik_id = ? (§4.5) — mengembalikan jumlah baris terdampak.
- * `judul`/`isi`/`jawaban` bernilai `undefined` berarti "jangan diubah" — dibedakan
+ * `mapel_id`/`judul`/`isi`/`jawaban` bernilai `undefined` berarti "jangan diubah" — dibedakan
  * dari `null` (yang untuk `jawaban` berarti "kosongkan") lewat flag CASE WHEN.
  */
-async function perbaruiMilikSendiri(penggunaId, kartuId, { judul, isi, jawaban, waktu }) {
+async function perbaruiMilikSendiri(penggunaId, kartuId, { mapel_id, judul, isi, jawaban, waktu }) {
+  const ubahMapel = mapel_id !== undefined;
   const ubahJudul = judul !== undefined;
   const ubahIsi = isi !== undefined;
   const ubahJawaban = jawaban !== undefined;
 
   const [hasil] = await pool.execute(
     `UPDATE kartu
-        SET judul = CASE WHEN ? THEN ? ELSE judul END,
+        SET mapel_id = CASE WHEN ? THEN ? ELSE mapel_id END,
+            judul = CASE WHEN ? THEN ? ELSE judul END,
             isi = CASE WHEN ? THEN ? ELSE isi END,
             jawaban = CASE WHEN ? THEN ? ELSE jawaban END,
             diubah_pada = ?
       WHERE id = ? AND pemilik_id = ? AND dihapus_pada IS NULL`,
     [
+      ubahMapel, mapel_id || null,
       ubahJudul, judul || null,
       ubahIsi, isi || null,
       ubahJawaban, jawaban === undefined ? null : jawaban,

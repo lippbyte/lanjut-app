@@ -45,6 +45,9 @@ async function tambah(penggunaId, { mapel_id, judul, isi, jawaban }) {
 
 /** 404 (bukan 403) untuk kartu milik orang lain — §8.4. */
 async function perbarui(penggunaId, kartuId, perubahan) {
+  if (perubahan.mapel_id !== undefined && !(await repo.mapelAda(perubahan.mapel_id))) {
+    throw new GalatApi('VALIDASI_GAGAL', 'Mapel tidak ditemukan.', { mapel_id: 'tidak ditemukan' });
+  }
   const waktu = sekarangUntukDb();
   const berhasil = await repo.perbaruiMilikSendiri(penggunaId, kartuId, { ...perubahan, waktu });
   if (!berhasil) {

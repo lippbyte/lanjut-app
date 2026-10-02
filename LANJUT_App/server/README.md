@@ -394,6 +394,11 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
 - **B1–B5 selesai penuh**: kerangka server, migrasi 001–005, benih, auth
   (daftar/masuk/keluar/keluar-semua/saya/ubah-sandi), konten publik F1–F5,
   `kemajuan` (F5), `kartu` (F6) dengan uji otorisasi kepemilikan.
+- **Arsip Belajar (LANJUT_039)**: `PATCH /kartu/:id` kini juga menerima
+  `mapel_id` (kategori kartu, divalidasi ke tabel `mapel`). Tidak ada migrasi:
+  `kartu.mapel_id` sudah ada sejak 004. Catatan: `GET /kartu` tanpa saringan
+  masih mengirim kartu kurasi (`sumber=resmi`) yang belum diverifikasi; app
+  Arsip memakai `?sumber=pengguna`. Tes: `tests/kartu-arsip.test.js`.
 - **Jenis sekolah (LANJUT_038, migrasi 011)**: `pengguna.jenis_sekolah`
   SMP/SMA/SMK/MA; migrasi mengisi SMP untuk kelas 7–9. Aturannya satu, di
   `src/util/kelas.js` `tentukanJenisSekolah` (dipakai daftar, PATCH profil,
