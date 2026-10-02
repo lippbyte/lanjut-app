@@ -48,9 +48,10 @@ const arsip = async (token, query = '') => {
 
 test('GET /kartu?sumber=pengguna hanya kartu milik sendiri — tanpa satu pun kartu kurasi', async () => {
   const token = await akunBaru();
-  // Pembanding: tanpa saringan, kartu kurasi memang ada di basis data.
-  const semua = (await panggil('GET', '/kartu', token)).json.data;
-  assert.ok(semua.some((k) => k.sumber === 'resmi'), 'butuh kartu kurasi di DB (npm run benih)');
+  // Pembanding: kartu kurasi memang ada di basis data (sejak LANJUT_040 GET
+  // /kartu tanpa saringan pun tidak lagi mengirim yang belum terverifikasi).
+  const [kurasi] = await pool.execute("SELECT COUNT(*) AS n FROM kartu WHERE sumber = 'resmi' AND dihapus_pada IS NULL");
+  assert.ok(kurasi[0].n > 0, 'butuh kartu kurasi di DB (npm run benih)');
 
   assert.deepEqual(await arsip(token), []);
   await buat(token);

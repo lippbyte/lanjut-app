@@ -112,13 +112,22 @@ test('PATCH/DELETE kartu dengan id yang sama sekali tidak ada -> 404', async () 
   assert.equal(hapus.status, 404);
 });
 
-test('kartu resmi (sumber=resmi) terlihat oleh semua pengguna', async () => {
+// LANJUT_040: kartu resmi hanya terlihat bila sudah terverifikasi penuh. Benih
+// berisi 12 kartu kurasi yang belum diverifikasi, jadi yang dicek di sini:
+// apa pun yang dikirim untuk ?sumber=resmi adalah kartu resmi terverifikasi.
+// Kasus "terverifikasi tampil ke semua akun" ada di kartu-kurasi.test.js.
+test('kartu resmi (sumber=resmi) yang tampil hanya yang terverifikasi', async () => {
   const res = await fetch(`${baseUrl}/api/v1/kartu?sumber=resmi`, {
     headers: { Authorization: `Bearer ${b.token}` },
   });
   const json = await res.json();
-  assert.ok(json.data.length > 0);
+  assert.equal(res.status, 200);
   assert.ok(json.data.every((k) => k.sumber === 'resmi'));
+  const [terverifikasi] = await pool.execute(
+    `SELECT id FROM kartu WHERE sumber = 'resmi' AND status_verifikasi = 'terverifikasi' AND diperiksa_pada IS NOT NULL`
+  );
+  const sah = new Set(terverifikasi.map((t) => t.id));
+  assert.ok(json.data.every((k) => sah.has(k.id)), 'kartu resmi belum terverifikasi terkirim');
 });
 
 test('kartu & data pribadi tanpa token -> 401 TIDAK_MASUK', async () => {

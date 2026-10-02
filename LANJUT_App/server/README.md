@@ -396,9 +396,13 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
   `kemajuan` (F5), `kartu` (F6) dengan uji otorisasi kepemilikan.
 - **Arsip Belajar (LANJUT_039)**: `PATCH /kartu/:id` kini juga menerima
   `mapel_id` (kategori kartu, divalidasi ke tabel `mapel`). Tidak ada migrasi:
-  `kartu.mapel_id` sudah ada sejak 004. Catatan: `GET /kartu` tanpa saringan
-  masih mengirim kartu kurasi (`sumber=resmi`) yang belum diverifikasi; app
-  Arsip memakai `?sumber=pengguna`. Tes: `tests/kartu-arsip.test.js`.
+  `kartu.mapel_id` sudah ada sejak 004. Tes: `tests/kartu-arsip.test.js`.
+- **Saringan kartu kurasi di server (LANJUT_040)**: `GET /kartu` (dengan atau
+  tanpa parameter) hanya mengirim kartu resmi yang `status_verifikasi =
+  'terverifikasi'` DAN `diperiksa_pada` terisi — syarat yang sama dengan F10 —
+  plus kartu milik sendiri. `?sumber=` hanya menyaring lebih lanjut. Tes:
+  `tests/kartu-kurasi.test.js`. `verifikasi-konten` belum mengenal jenis
+  `kartu`, jadi menandai kartu kurasi masih harus lewat SQL.
 - **Jenis sekolah (LANJUT_038, migrasi 011)**: `pengguna.jenis_sekolah`
   SMP/SMA/SMK/MA; migrasi mengisi SMP untuk kelas 7–9. Aturannya satu, di
   `src/util/kelas.js` `tentukanJenisSekolah` (dipakai daftar, PATCH profil,

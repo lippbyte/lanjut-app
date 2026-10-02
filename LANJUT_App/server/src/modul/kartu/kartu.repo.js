@@ -9,14 +9,21 @@
 
 const pool = require('../../db/koneksi');
 
-/** Kartu resmi + kartu milik sendiri. TIDAK PERNAH kartu pengguna lain (§4.5). */
+/**
+ * Kartu resmi TERVERIFIKASI + kartu milik sendiri. TIDAK PERNAH kartu
+ * pengguna lain (§4.5), dan TIDAK PERNAH kartu kurasi yang belum dicek tim
+ * konten (LANJUT_040) — aman tanpa parameter apa pun. Syarat terverifikasi
+ * sama dengan konten lain (mis. F10 profil_prodi): status 'terverifikasi'
+ * DAN diperiksa_pada terisi. `?sumber=` hanya menyaring lebih lanjut.
+ */
 async function daftarUntukPengguna(penggunaId, { mapelId, sumber }) {
   const [baris] = await pool.execute(
     `SELECT id, pemilik_id, mapel_id, judul, isi, jawaban, sumber, penyedia,
             dibuat_pada, diubah_pada
        FROM kartu
       WHERE dihapus_pada IS NULL
-        AND (sumber = 'resmi' OR pemilik_id = ?)
+        AND ((sumber = 'resmi' AND status_verifikasi = 'terverifikasi' AND diperiksa_pada IS NOT NULL)
+             OR pemilik_id = ?)
         AND (? IS NULL OR mapel_id = ?)
         AND (? IS NULL OR sumber = ?)
       ORDER BY dibuat_pada DESC`,
