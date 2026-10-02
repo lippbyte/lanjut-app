@@ -43,6 +43,8 @@ const fs = require('fs');
 const path = require('path');
 const env = require('../../config/env');
 const pool = require('../koneksi');
+const { sekarangUntukDb } = require('../../util/waktu');
+const { rataKonfig } = require('../../modul/levelin/konfigurasi');
 
 // Folder server/ (tempat package.json & .env): server/src/db/benih → naik 3.
 const DIR_SERVER = path.join(__dirname, '..', '..', '..');
@@ -67,6 +69,7 @@ const BERKAS_DATA = [
   'checklist.json',
   'arsip.json',
   'profil-prodi.json',
+  'levelin-konfig.json',
 ];
 
 function asalLokasi() {
@@ -398,6 +401,28 @@ async function benihChecklist(berkas = bacaJson('checklist.json')) {
   console.log(`[benih] kategori_checklist: ${berkas.kategori.length} baris, butir_daftar_periksa: ${totalButir} baris`);
 }
 
+// Level-In (LANJUT_042): data/levelin-konfig.json -> konfigurasi_levelin, satu
+// baris per kunci (pemetaan di modul/levelin/konfigurasi.js). `versi` naik dan
+// diubah_pada berganti HANYA bila nilainya berubah (SDD-LevelIn §3.2) — urutan
+// SET penting: keduanya membaca nilai lama sebelum nilai ditimpa.
+async function benihKonfigurasiLevelin() {
+  const baris = rataKonfig(bacaJson('levelin-konfig.json'));
+  const waktu = sekarangUntukDb();
+  for (const b of baris) {
+    await pool.execute(
+      `INSERT INTO konfigurasi_levelin (kunci, nilai, versi, dasar, diubah_pada)
+       VALUES (?, ?, 1, ?, ?)
+       ON DUPLICATE KEY UPDATE
+         versi = IF(nilai <=> VALUES(nilai), versi, versi + 1),
+         diubah_pada = IF(nilai <=> VALUES(nilai), diubah_pada, VALUES(diubah_pada)),
+         nilai = VALUES(nilai),
+         dasar = VALUES(dasar)`,
+      [b.kunci, b.nilai, b.dasar, waktu]
+    );
+  }
+  console.log(`[benih] konfigurasi_levelin: ${baris.length} kunci`);
+}
+
 async function benihArsipKartu() {
   const berkas = bacaJson('arsip.json');
   for (const item of berkas.data) {
@@ -531,6 +556,7 @@ async function jalankanBenih() {
   await benihCeritaAlumni();
   await benihChecklist();
   await benihArsipKartu();
+  await benihKonfigurasiLevelin();
   console.log('[benih] selesai.');
 }
 

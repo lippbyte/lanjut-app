@@ -58,53 +58,72 @@ async function simpanSatuRiwayat(penggunaId, catatan) {
   );
 }
 
-/** Jendela N catatan terbaru per mapel, milik pengguna, dengan keyakinan terisi (K4). */
+/**
+ * Jendela N catatan terbaru per mapel, milik pengguna, dengan keyakinan terisi
+ * (K4) — masukan agregatPerMapel() (kalibrasi keyakinan). Diurutkan LAMA ->
+ * BARU karena fungsi PWA memotong jendela dari ujung larik (slice(-jendela)).
+ */
 async function ambilRiwayatUntukAgregasi(penggunaId, jendelaPerMapel) {
   const [baris] = await pool.execute(
-    `SELECT pengguna_id, mapel_id, keyakinan, benar, kelas_gap, dijawab_pada
+    `SELECT mapel_id, keyakinan, benar, dijawab_pada
        FROM (
          SELECT r.*, ROW_NUMBER() OVER (
-                  PARTITION BY r.mapel_id ORDER BY r.dijawab_pada DESC
+                  PARTITION BY r.mapel_id ORDER BY r.dijawab_pada DESC, r.id DESC
                 ) AS urutan
            FROM riwayat_latihan r
           WHERE r.pengguna_id = ? AND r.mapel_id IS NOT NULL AND r.keyakinan IS NOT NULL
        ) t
-      WHERE t.urutan <= ?`,
+      WHERE t.urutan <= ?
+      ORDER BY t.dijawab_pada ASC, t.id ASC`,
     [penggunaId, jendelaPerMapel]
   );
-  return baris;
+  return baris.map((b) => ({ mapel_id: b.mapel_id, keyakinan: b.keyakinan, benar: !!b.benar }));
 }
 
-/** Semua mapel_id yang pernah dicatat pengguna (termasuk tanpa keyakinan),
- * dipakai supaya mapel dengan 0 kartu dikerjakan tetap muncul (AC FL3). */
-async function ambilMapelDenganRiwayat(penggunaId) {
+/**
+ * Jendela N jawaban terbaru per mapel, DENGAN ATAU TANPA keyakinan — masukan
+ * levelAkurasiPerMapel() (LANJUT_042), supaya riwayat F7 ikut terhitung.
+ */
+async function ambilJawabanUntukLevel(penggunaId, jendelaPerMapel) {
   const [baris] = await pool.execute(
-    `SELECT DISTINCT mapel_id FROM riwayat_latihan
-      WHERE pengguna_id = ? AND mapel_id IS NOT NULL`,
-    [penggunaId]
+    `SELECT mapel_id, benar, dijawab_pada
+       FROM (
+         SELECT r.*, ROW_NUMBER() OVER (
+                  PARTITION BY r.mapel_id ORDER BY r.dijawab_pada DESC, r.id DESC
+                ) AS urutan
+           FROM riwayat_latihan r
+          WHERE r.pengguna_id = ? AND r.mapel_id IS NOT NULL
+       ) t
+      WHERE t.urutan <= ?
+      ORDER BY t.dijawab_pada ASC, t.id ASC`,
+    [penggunaId, jendelaPerMapel]
   );
-  return baris.map((b) => b.mapel_id);
+  return baris.map((b) => ({ mapel_id: b.mapel_id, benar: !!b.benar }));
 }
 
-async function adaRiwayatSamaSekali(penggunaId) {
-  const [baris] = await pool.execute(
-    'SELECT id FROM riwayat_latihan WHERE pengguna_id = ? LIMIT 1',
-    [penggunaId]
-  );
-  return baris.length > 0;
-}
-
-/** Ketersediaan kartu per mapel (resmi + milik sendiri, belum dihapus) —
- * dipakai saranHarian() untuk memastikan CTA tidak mengarah ke mapel kosong. */
+/**
+ * Ketersediaan kartu per mapel — milik sendiri + kurasi TERVERIFIKASI
+ * (syarat LANJUT_040) — dipakai saranHarian() supaya CTA tidak mengarah ke
+ * mapel kosong atau ke kartu kurasi yang belum dicek tim konten.
+ */
 async function ambilKetersediaanKartuPerMapel(penggunaId) {
   const [baris] = await pool.execute(
     `SELECT mapel_id, COUNT(*) AS jumlah
        FROM kartu
-      WHERE dihapus_pada IS NULL AND (sumber = 'resmi' OR pemilik_id = ?)
+      WHERE dihapus_pada IS NULL
+        AND ((sumber = 'resmi' AND status_verifikasi = 'terverifikasi' AND diperiksa_pada IS NOT NULL)
+             OR pemilik_id = ?)
       GROUP BY mapel_id`,
     [penggunaId]
   );
   return baris;
+}
+
+/** Semua mapel yang dikenal — padanan semuaMapelId (data/mapel.json) di PWA,
+ * supaya setiap mapel muncul eksplisit di ringkasan walau 0 jawaban (AC FL3). */
+async function semuaMapelId() {
+  const [baris] = await pool.query('SELECT id FROM mapel ORDER BY id');
+  return baris.map((b) => b.id);
 }
 
 /** Sesi ini milik pengguna? WHERE id = ? AND pengguna_id = ? (§8.4, LANJUT_041). */
@@ -156,8 +175,8 @@ module.exports = {
   tutupSesiLatihan,
   simpanSatuRiwayat,
   ambilRiwayatUntukAgregasi,
-  ambilMapelDenganRiwayat,
-  adaRiwayatSamaSekali,
+  ambilJawabanUntukLevel,
+  semuaMapelId,
   ambilKetersediaanKartuPerMapel,
   sesiMilikSendiri,
   mapelAda,

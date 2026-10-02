@@ -404,8 +404,7 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
   sendiri, kartu milik sendiri atau kurasi terverifikasi (404), mapel dikenal
   (400); `mapel_id` diambil dari kartunya. Dulu rujukan tak dikenal jatuh ke
   FK (500) dan akun lain bisa menautkan catatan ke sesi/kartu orang lain.
-  Jalur `keyakinan` (Level-In) tidak disentuh dan masih memanggil stub
-  `keputusan.js`. Tes: `tests/latihan.test.js`.
+  Tes: `tests/latihan.test.js`.
 - **Saringan kartu kurasi di server (LANJUT_040)**: `GET /kartu` (dengan atau
   tanpa parameter) hanya mengirim kartu resmi yang `status_verifikasi =
   'terverifikasi'` DAN `diperiksa_pada` terisi — syarat yang sama dengan F10 —
@@ -427,22 +426,31 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
   /butir-pribadi/:id/selesai` (centang/batal, baris tetap), `DELETE
   /butir-pribadi/:id` (hapus lunak). Judul disusun server; butir akun lain →
   404. Tes: `tests/butir-pribadi.test.js`, termasuk lintas akun.
-- **B6 (Level-In) sebagian**: endpoint, skema, dan repositori sudah lengkap
-  dan sudah diuji manual untuk jalur PENULISAN (`POST /sesi-latihan`,
-  `PATCH /sesi-latihan/{id}`, `POST /riwayat-latihan`,
-  `GET /konfigurasi/levelin`). **Belum bisa dipakai**: `GET
-  /kalibrasi/ringkasan` dan `GET /saran-harian` — keduanya bergantung pada
-  `src/modul/levelin/keputusan.js`, yang **sengaja dibiarkan sebagai
-  placeholder** karena `app/assets/levelin.js` (sumber kebenaran fungsi
-  keputusan Level-In, dikerjakan ui-engineer) belum ada di repositori saat
-  berkas ini ditulis. Mengisi placeholder dengan tebakan sendiri akan
-  melanggar B-K6/RB5 (dua sumber kebenaran untuk angka kalibrasi yang sama).
-  **Cara menyelesaikan**: baca komentar di kepala
-  `src/modul/levelin/keputusan.js` — langkahnya adalah menyalin persis
-  lapisan 2 (`gapNumerik`, `klasifikasiKartu`, `agregatPerMapel`,
-  `ringkasSesi`, `saranHarian`) dari `app/assets/levelin.js` setelah berkas
-  itu ada, lalu mengisi `tests/levelin-keputusan.test.js` dengan kasus uji
-  yang sama dengan `app/tools/test-levelin.js`.
+- **B6 (Level-In) selesai di server (LANJUT_042)** — gratis, dihitung di
+  server (keputusan Khalifa). `src/modul/levelin/keputusan.js` kini SALINAN
+  PERSIS Lapisan 2 `MVP-PWA/assets/levelin.js` (`gapNumerik`,
+  `klasifikasiKartu`, `agregatPerMapel`, `ringkasSesi`, `saranHarian`);
+  `tests/levelin-keputusan.test.js` membandingkan teks badan fungsi dan
+  keluarannya dengan berkas PWA (B-K6/RB5). Perbedaan tanda tangan ditangani
+  adaptor di `levelin.layanan.js`. Ambang dibaca dari `konfigurasi_levelin`
+  (benih dari `data/levelin-konfig.json`, pemetaan di
+  `modul/levelin/konfigurasi.js`), bukan ditulis di kode.
+  - `GET /kalibrasi/ringkasan?jendela=` — satu baris `kalibrasi_mapel`
+    (SDD-LevelIn §3.2) per mapel, SEMUA mapel eksplisit, ditambah
+    `level_akurasi` { kartu_dijawab, n_benar, rate_benar, level }.
+  - `level_akurasi` (khusus server, `levelAkurasiPerMapel`): tabel fallback
+    Khalifa dari benar/salah tanpa keyakinan — < 10 jawaban
+    `belum_cukup_data`; < 50% `perlu_penguatan_dasar`; 50–75%
+    `cukup_lanjut_latihan`; > 75% `sudah_kuat`. Ada karena logika PWA hanya
+    menghitung jawaban berkeyakinan, sedangkan F7 tidak mengirimnya.
+  - `GET /saran-harian` — `{ jenis, mapel_id, alasan }`, `jenis` persis rantai
+    PWA §6.1f (dari kalibrasi keyakinan). Tanpa keyakinan, akun F7 mendapat
+    `pengguna_baru`.
+  - `POST /riwayat-latihan` dengan `keyakinan` kini menghitung `gap_numerik`,
+    `kelas_gap`, dan `aturan_versi` dengan ambang yang berlaku (dulu 500).
+  - Ketersediaan kartu untuk saran: milik sendiri + kurasi terverifikasi
+    (syarat LANJUT_040).
+  Tes: `tests/levelin-keputusan.test.js`, `tests/levelin-kalibrasi.test.js`.
 - **B7 selesai**: `POST /sinkron/klaim` — idempoten, menolak baris milik
   pengguna lain (`TIDAK_BERHAK`), tidak pernah memindahkan kepemilikan. Diuji
   di `tests/sinkron.test.js`.
@@ -490,14 +498,13 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
 
 ### Yang belum diuji otomatis (diuji manual saja)
 
-- `GET /konfigurasi/levelin`, `GET /kalibrasi/ringkasan`, `GET /saran-harian`,
-  dan `POST /riwayat-latihan` dengan `keyakinan` — menunggu Level-In (B6)
-  selesai penuh (lihat di atas).
-
-Sudah punya tes HTTP sejak ditulisnya bagian ini: konten publik F1–F5 dan
-`kemajuan` (LANJUT_030, `tests/konten-*.test.js`, `tests/kemajuan.test.js`),
-serta `GET/POST/PATCH /sesi-latihan` dan `POST /riwayat-latihan` tanpa
-keyakinan (LANJUT_041, `tests/latihan.test.js`).
+Tidak ada lagi endpoint yang hanya diuji manual. Sudah punya tes HTTP sejak
+ditulisnya bagian ini: konten publik F1–F5 dan `kemajuan` (LANJUT_030,
+`tests/konten-*.test.js`, `tests/kemajuan.test.js`), `GET/POST/PATCH
+/sesi-latihan` dan `POST /riwayat-latihan` (LANJUT_041, `tests/latihan.test.js`),
+serta `GET /kalibrasi/ringkasan`, `GET /saran-harian`, `GET
+/konfigurasi/levelin`, dan riwayat berkeyakinan (LANJUT_042,
+`tests/levelin-kalibrasi.test.js`).
 
 ## Cara test manual cepat (tanpa menulis test)
 

@@ -1,16 +1,25 @@
 // Aturan bisnis Level-In. Tidak ada SQL di sini — hanya memanggil repositori
 // dan fungsi keputusan murni (keputusan.js). docs/SDD-Backend-Foundation.md §4.6.
 //
-// CATATAN: agregasiPerMapelUntukPengguna() dan saranHarianUntukPengguna() akan
-// melempar error selama keputusan.js belum diisi (lihat komentar di kepala
-// berkas itu) — ini disengaja, bukan bug: server tidak boleh mengarang angka
-// kalibrasi dari interpretasi sendiri (RB5).
+// LANJUT_042: keputusan.js kini salinan persis Lapisan 2 PWA. Fungsi di sini
+// adalah ADAPTOR: menyiapkan masukan berbentuk PWA (peristiwa urut lama ->
+// baru, objek konfigurasi, daftar mapel, peta ketersediaan) dari basis data,
+// lalu membentuk keluaran sesuai SDD-LevelIn §3.2/§4.2. Ambang dibaca dari
+// tabel konfigurasi_levelin (konfigurasi.js), bukan ditulis di kode.
 
 const { GalatApi } = require('../../util/respons');
-const { keIso, keDbDariKlien } = require('../../util/waktu');
+const { keIso, keDbDariKlien, sekarangIso } = require('../../util/waktu');
 const repo = require('./levelin.repo');
 const kartuRepo = require('../kartu/kartu.repo');
 const keputusan = require('./keputusan');
+const { bentukKonfig } = require('./konfigurasi');
+
+/** Konfigurasi berlaku + versinya (versi tertinggi di antara baris tabel). */
+async function muatKonfig() {
+  const baris = await repo.ambilSemuaKonfigurasi();
+  const versi = baris.reduce((maks, b) => Math.max(maks, Number(b.versi) || 0), 0);
+  return { cfg: bentukKonfig(baris), versi: versi || keputusan.KONFIG_BAWAAN.versi };
+}
 
 async function mulaiSesi(penggunaId, body) {
   // LANJUT_041: mapel tak dikenal dulu jatuh ke pelanggaran FK (500).
@@ -91,13 +100,18 @@ async function tutupSesi(penggunaId, sesiId, body) {
 
 async function simpanRiwayatBorongan(penggunaId, daftarCatatan) {
   const mapelKartu = await periksaRujukan(penggunaId, daftarCatatan);
+  const adaKeyakinan = daftarCatatan.some((c) => c.keyakinan !== null && c.keyakinan !== undefined);
+  const { cfg } = adaKeyakinan ? await muatKonfig() : { cfg: null };
   for (const catatan of daftarCatatan) {
     let gapNumerik = null;
     let kelasGap = null;
+    let aturanVersi = catatan.aturan_versi;
     if (catatan.keyakinan !== null && catatan.keyakinan !== undefined) {
-      // Dihitung SERVER, tidak pernah diterima dari klien (§4.6 aturan 2).
+      // Dihitung SERVER, tidak pernah diterima dari klien (§4.6 aturan 2),
+      // dengan ambang yang berlaku — versi aturannya ikut dicatat.
       gapNumerik = keputusan.gapNumerik(catatan.keyakinan, catatan.benar);
-      kelasGap = keputusan.klasifikasiKartu(catatan.keyakinan, catatan.benar);
+      kelasGap = keputusan.klasifikasiKartu(catatan.keyakinan, catatan.benar, cfg);
+      aturanVersi = cfg.aturan_versi;
     }
     await repo.simpanSatuRiwayat(penggunaId, {
       id: catatan.id,
@@ -109,29 +123,69 @@ async function simpanRiwayatBorongan(penggunaId, daftarCatatan) {
       mapelId: catatan.kartu_id ? mapelKartu.get(catatan.kartu_id) : catatan.mapel_id,
       gapNumerik,
       kelasGap,
-      aturanVersi: catatan.aturan_versi,
+      aturanVersi,
     });
   }
   return { disimpan: daftarCatatan.length };
 }
 
-async function ringkasanKalibrasi(penggunaId, jendela) {
-  const jendelaPerMapel = jendela || 50;
-  const [baris, mapelDenganRiwayat, ketersediaan] = await Promise.all([
-    repo.ambilRiwayatUntukAgregasi(penggunaId, jendelaPerMapel),
-    repo.ambilMapelDenganRiwayat(penggunaId),
+/**
+ * Adaptor: data akun -> masukan fungsi keputusan PWA. `jendela` (query
+ * ?jendela=) menimpa ambang.jendela_per_mapel untuk panggilan ini saja.
+ */
+async function hitungKalibrasi(penggunaId, jendela) {
+  const { cfg, versi } = await muatKonfig();
+  if (jendela) cfg.ambang.jendela_per_mapel = jendela;
+  const n = cfg.ambang.jendela_per_mapel;
+  const [peristiwa, jawaban, mapelIds, ketersediaan] = await Promise.all([
+    repo.ambilRiwayatUntukAgregasi(penggunaId, n),
+    repo.ambilJawabanUntukLevel(penggunaId, n),
+    repo.semuaMapelId(),
     repo.ambilKetersediaanKartuPerMapel(penggunaId),
   ]);
-  return keputusan.agregatPerMapel(baris, mapelDenganRiwayat, ketersediaan, jendelaPerMapel);
+  const petaKetersediaan = {};
+  for (const b of ketersediaan) petaKetersediaan[b.mapel_id] = Number(b.jumlah);
+  return {
+    cfg,
+    versi,
+    kalibrasi: keputusan.agregatPerMapel(peristiwa, cfg, mapelIds),
+    level: keputusan.levelAkurasiPerMapel(jawaban, cfg, mapelIds),
+    petaKetersediaan,
+  };
 }
 
+/**
+ * GET /kalibrasi/ringkasan — satu baris `kalibrasi_mapel` (SDD-LevelIn §3.2)
+ * per mapel, SELALU semua mapel (belum_cukup_data eksplisit), ditambah
+ * `level_akurasi` (LANJUT_042, tabel fallback, dihitung tanpa keyakinan).
+ */
+async function ringkasanKalibrasi(penggunaId, jendela) {
+  const { versi, kalibrasi, level } = await hitungKalibrasi(penggunaId, jendela);
+  const dihitungPada = sekarangIso();
+  const mapelIds = [...new Set([...Object.keys(kalibrasi), ...Object.keys(level)])].sort();
+  return mapelIds.map((mapelId) => ({
+    mapel_id: mapelId,
+    ...kalibrasi[mapelId],
+    level_akurasi: level[mapelId],
+    dihitung_pada: dihitungPada,
+    konfig_versi: versi,
+  }));
+}
+
+/**
+ * GET /saran-harian — { jenis, mapel_id, alasan } (SDD-LevelIn §4.2). `jenis`
+ * persis rantai fallback saranHarian() PWA (§6.1f), dari kalibrasi keyakinan.
+ * `alasan` hanya untuk jenis 'saran': angka yang membuat mapel itu terpilih.
+ */
 async function saranHarian(penggunaId) {
-  const [ringkasan, ketersediaan, adaRiwayat] = await Promise.all([
-    ringkasanKalibrasi(penggunaId, 50),
-    repo.ambilKetersediaanKartuPerMapel(penggunaId),
-    repo.adaRiwayatSamaSekali(penggunaId),
-  ]);
-  return keputusan.saranHarian(ringkasan, ketersediaan, adaRiwayat);
+  const { cfg, kalibrasi, petaKetersediaan } = await hitungKalibrasi(penggunaId);
+  const saran = keputusan.saranHarian(kalibrasi, petaKetersediaan, cfg);
+  const agg = saran.jenis === 'saran' ? kalibrasi[saran.mapel_id] : null;
+  return {
+    jenis: saran.jenis,
+    mapel_id: saran.mapel_id,
+    alasan: agg ? { rate_overconfident: agg.rate_overconfident, kartu_dikerjakan: agg.kartu_dikerjakan } : null,
+  };
 }
 
 async function konfigurasi() {
