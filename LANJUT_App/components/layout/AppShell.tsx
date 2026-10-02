@@ -27,6 +27,10 @@ const HALAMAN_ANAK: Record<string, string> = {
   '/gaya-belajar': 'Gaya Belajar',
   '/ngobrol': 'Ngobrol Bareng LANJUT',
   '/eksplorasi-tujuan': 'Eksplorasi Tujuan',
+  // F6 (LANJUT_039) — dibuka dari Beranda, jadi tab Beranda yang tetap aktif.
+  '/arsip': 'Arsip Belajar',
+  '/arsip-kartu': 'Kartu',
+  '/arsip-tulis': 'Tulis Kartu',
 };
 
 // Tab yang tetap aktif untuk halaman anak. Bawaannya Beranda; F10 adalah

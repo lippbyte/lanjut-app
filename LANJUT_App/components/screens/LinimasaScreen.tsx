@@ -49,6 +49,15 @@ export function LinimasaScreen() {
         onPress={() => router.push('/cek-posisi')}
       />
 
+      {/* F6 (LANJUT_039) — untuk semua kelas, bukan konten SNBP. Pintu yang
+          sama dengan PWA ("Latihan & Arsip Belajar"), tanpa Latihan dulu. */}
+      <KartuPintu
+        ikon="mapel"
+        judul="Arsip Belajar"
+        keterangan="Catatan dan soal buatanmu, disimpan per mapel."
+        onPress={() => router.push('/arsip')}
+      />
+
       {/* LANJUT_032 — uji UX; balasan masih stub, bukan AI (lib/chatStub.ts). */}
       <KartuPintu
         ikon="obrolan"

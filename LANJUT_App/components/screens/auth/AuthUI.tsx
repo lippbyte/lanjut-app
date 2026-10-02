@@ -107,7 +107,9 @@ export function Input(props: TextInputProps) {
         setFokus(false);
         props.onBlur?.(e);
       }}
-      style={StyleSheet.flatten([styles.input, fokus && styles.inputFokus])}
+      // `style` pemanggil (mis. tinggi kolom isi Arsip) di tengah: gaya dasar
+      // tetap, tetapi bingkai fokus selalu menang.
+      style={StyleSheet.flatten([styles.input, props.style, fokus && styles.inputFokus])}
     />
   );
 }

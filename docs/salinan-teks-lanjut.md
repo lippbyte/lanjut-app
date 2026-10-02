@@ -186,6 +186,20 @@ Kalimat butirnya sama dengan PWA dan disusun server (`butir-pribadi.layanan.js`)
 - **Untuk kelas 10–11:** Kelas 12 nanti tidak akan sempat mengulang semuanya dari nol. Yang kamu tabung sekarang, itu yang dipakai nanti.
 - **Penanda kartu pengguna (tetap, tidak bisa disembunyikan):** Diunggah pengguna — belum diverifikasi tim.
 
+**LANJUT_App (LANJUT_039) — DRAF belum disetujui Khalifa**, kecuali judul,
+pendamping, layar kosong, dan penanda di atas yang dipakai apa adanya. Label
+formulir mengikuti `MVP-PWA/arsip-tambah.html`. Kartu kurasi tim belum
+ditampilkan sampai terverifikasi.
+
+- **Pintu di Beranda:** Arsip Belajar — Catatan dan soal buatanmu, disimpan per mapel.
+- **Daftar:** tombol Tambah kartu · saringan Semua (n) / [mapel] (n) · lencana [mapel] dan Soal/Catatan (Soal = ada jawaban)
+- **Judul halaman (page bar):** Arsip Belajar · Kartu · Tulis Kartu
+- **Formulir:** Tambah kartu baru / Ubah kartu · Mapel · Judul (mis. Turunan fungsi aljabar) · Isi (Tulis di sini...) · Jawaban (boleh dikosongkan; Jawaban atau pembahasan singkat...; Isi bila kartunya berbentuk soal.) · Kartu ini akan bertanda Diunggah pengguna — belum diverifikasi tim. · Simpan kartu
+- **Galat formulir:** Pilih mapelnya. · Judul belum diisi. · Isi belum diisi.
+- **Lihat kartu:** Lihat jawaban · Jawaban · Ubah kartu · Hapus kartu
+- **Konfirmasi hapus:** Hapus kartu ini? Kartu yang dihapus tidak bisa dikembalikan dari app. · Batal · Ya, hapus
+- **Kartu tidak ditemukan:** Kartu ini tidak ditemukan. · Mungkin sudah dihapus. · Kembali ke Arsip
+
 ### 4.6 Bank Soal
 
 **Judul:** Bank Soal

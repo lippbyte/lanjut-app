@@ -173,3 +173,20 @@ export type ButirPribadi = {
 export type SimpanButirPribadi =
   | { jenis: 'mapel_tka'; prodi_id: string; mapel_ids: string[] }
   | { jenis: 'riset_kampus'; prodi_id: string };
+
+// F6 Arsip Belajar (LANJUT_039) — kartu.layanan.js `bentukKartu`. Kategori
+// kartu = `mapel_id` (tabel `mapel`, daftar yang sama dengan F3). "Soal" bila
+// ada jawaban, "Catatan" bila tidak — diturunkan seperti di PWA, bukan kolom.
+export type Kartu = {
+  id: string;
+  pemilik_id: string | null;
+  mapel_id: string;
+  judul: string;
+  isi: string;
+  jawaban: string | null;
+  sumber: 'resmi' | 'pengguna' | 'mitra';
+  penyedia: string | null;
+  dibuat_pada: string;
+  diubah_pada: string;
+};
+export type IsiKartu = { mapel_id: string; judul: string; isi: string; jawaban: string | null };
