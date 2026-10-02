@@ -453,7 +453,14 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
   Tes: `tests/levelin-keputusan.test.js`, `tests/levelin-kalibrasi.test.js`.
 - **B7 selesai**: `POST /sinkron/klaim` — idempoten, menolak baris milik
   pengguna lain (`TIDAK_BERHAK`), tidak pernah memindahkan kepemilikan. Diuji
-  di `tests/sinkron.test.js`.
+  di `tests/sinkron.test.js`. **Audit LANJUT_042**: rujukan di dalam baris
+  kini diperiksa sebelum ditulis — `sesi_id`/`kartu_id` yang bukan milik
+  pengklaim dilepas (NULL, dihitung di `peristiwa.tautan_dilepas`), `mapel_id`
+  /`butir_id` tak dikenal ditolak per baris (`VALIDASI_GAGAL`), kartu
+  diklaim sebelum peristiwa. Dulu akun B bisa menautkan riwayatnya ke
+  sesi/kartu pribadi akun A, dan rujukan tak dikenal → 500. Tes lintas akun:
+  `tests/sinkron-lintas-akun.test.js`. Belum ada klien yang memanggil
+  endpoint ini (SDD §6.3, catatan 27 Sep 2026).
 - **B8, B9 tidak dikerjakan** — di luar cakupan tugas ini (penyambungan
   klien `daftar.html`/`masuk.html`/`akun.html`, dan penyiapan tayang/HTTPS/
   cadangan). Lihat §9.3 SDD.

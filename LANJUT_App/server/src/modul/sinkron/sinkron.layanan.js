@@ -4,6 +4,16 @@
 //   2. Idempoten — id/kunci gabungan yang sama tidak menggandakan apa pun.
 //   3. Baris yang SUDAH dimiliki pengguna lain DITOLAK (TIDAK_BERHAK per baris),
 //      TIDAK PERNAH memindahkan kepemilikan.
+//
+// LANJUT_042 (audit): rujukan di dalam setiap baris kini diperiksa SEBELUM
+// baris itu ditulis (pola LANJUT_041), tetap dengan penolakan per baris:
+//   - sesi_id / kartu_id yang bukan milik pengklaim → tautannya dilepas;
+//   - mapel_id / butir_id tak dikenal → baris ditolak VALIDASI_GAGAL;
+//   - kartu diklaim lebih dulu, supaya catatan boleh merujuk kartu tamu yang
+//     diklaim di permintaan yang sama.
+// Dulu akun B bisa menautkan riwayatnya ke sesi/kartu pribadi akun A, dan
+// rujukan tak dikenal jatuh ke pelanggaran FK (500) setelah sebagian baris
+// tertulis.
 
 const { sekarangUntukDb, keDbDariKlien } = require('../../util/waktu');
 const penggunaRepo = require('../pengguna/pengguna.repo');
@@ -14,6 +24,7 @@ const kemajuanRepo = require('../kemajuan/kemajuan.repo');
 const kartuRepo = require('../kartu/kartu.repo');
 const levelinRepo = require('../levelin/levelin.repo');
 const keputusan = require('../levelin/keputusan');
+const { bentukKonfig } = require('../levelin/konfigurasi');
 const sinkronRepo = require('./sinkron.repo');
 
 async function klaimProfil(penggunaId, profil) {
@@ -41,8 +52,13 @@ async function klaimProfil(penggunaId, profil) {
 }
 
 async function klaimKemajuan(penggunaId, daftar) {
-  const hasil = { diterima: 0 };
+  const hasil = { diterima: 0, ditolak: [] };
   for (const item of daftar || []) {
+    // Butir umum tak dikenal dulu jatuh ke FK kemajuan → 500.
+    if (!(await kemajuanRepo.butirAda(item.butir_id))) {
+      hasil.ditolak.push({ butir_id: item.butir_id, alasan: 'VALIDASI_GAGAL' });
+      continue;
+    }
     if (item.selesai_pada) {
       await kemajuanRepo.tandaiSelesai(
         penggunaId,
@@ -55,32 +71,73 @@ async function klaimKemajuan(penggunaId, daftar) {
   return hasil;
 }
 
+/**
+ * Rujukan satu catatan, diperiksa SEBELUM ditulis. Klaim tidak membawa sesi
+ * (sesi tamu tidak pernah ada di server), jadi sesi_id/kartu_id yang bukan
+ * milik pengklaim tidak menggagalkan baris — tautannya dilepas (NULL) dan
+ * jawabannya tetap dibawa. "Milik akun lain" dan "tidak ada" diperlakukan
+ * sama, supaya klaim tidak bisa dipakai menebak id milik orang lain.
+ * Kartu yang sah: milik sendiri atau kurasi terverifikasi (LANJUT_040);
+ * mapel_id lalu diambil dari kartunya.
+ */
+async function periksaRujukanCatatan(penggunaId, catatan) {
+  let dilepas = false;
+  let sesiId = null;
+  if (catatan.sesi_id) {
+    if (await levelinRepo.sesiMilikSendiri(penggunaId, catatan.sesi_id)) sesiId = catatan.sesi_id;
+    else dilepas = true;
+  }
+  let kartuId = null;
+  let mapelId = catatan.mapel_id || null;
+  if (catatan.kartu_id) {
+    const kartu = await kartuRepo.ambilUntukDijawab(penggunaId, catatan.kartu_id);
+    if (kartu) {
+      kartuId = kartu.id;
+      mapelId = kartu.mapel_id;
+    } else {
+      dilepas = true;
+    }
+  }
+  const mapelSah = kartuId || !mapelId || (await levelinRepo.mapelAda(mapelId));
+  return { sesiId, kartuId, mapelId, dilepas, mapelSah };
+}
+
 async function klaimPeristiwa(penggunaId, daftar) {
-  const hasil = { diterima: 0, ditolak: [] };
+  const hasil = { diterima: 0, ditolak: [], tautan_dilepas: 0 };
+  let cfg = null; // ambang berlaku, dimuat sekali bila ada catatan berkeyakinan
   for (const catatan of daftar || []) {
     const pemilikSaatIni = await sinkronRepo.pemilikRiwayat(catatan.id);
     if (pemilikSaatIni !== undefined && pemilikSaatIni !== penggunaId) {
       hasil.ditolak.push({ id: catatan.id, alasan: 'TIDAK_BERHAK' });
       continue;
     }
+    const rujukan = await periksaRujukanCatatan(penggunaId, catatan);
+    if (!rujukan.mapelSah) {
+      hasil.ditolak.push({ id: catatan.id, alasan: 'VALIDASI_GAGAL' });
+      continue;
+    }
     let gapNumerik = null;
     let kelasGap = null;
+    let aturanVersi = catatan.aturan_versi;
     if (catatan.keyakinan !== null && catatan.keyakinan !== undefined) {
+      if (!cfg) cfg = bentukKonfig(await levelinRepo.ambilSemuaKonfigurasi());
       gapNumerik = keputusan.gapNumerik(catatan.keyakinan, catatan.benar);
-      kelasGap = keputusan.klasifikasiKartu(catatan.keyakinan, catatan.benar);
+      kelasGap = keputusan.klasifikasiKartu(catatan.keyakinan, catatan.benar, cfg);
+      aturanVersi = cfg.aturan_versi;
     }
     await levelinRepo.simpanSatuRiwayat(penggunaId, {
       id: catatan.id,
-      kartuId: catatan.kartu_id,
+      kartuId: rujukan.kartuId,
       benar: catatan.benar,
       dijawabPada: keDbDariKlien(catatan.waktu),
-      sesiId: catatan.sesi_id,
+      sesiId: rujukan.sesiId,
       keyakinan: catatan.keyakinan,
-      mapelId: catatan.mapel_id,
+      mapelId: rujukan.mapelId,
       gapNumerik,
       kelasGap,
-      aturanVersi: catatan.aturan_versi,
+      aturanVersi,
     });
+    if (rujukan.dilepas) hasil.tautan_dilepas += 1;
     hasil.diterima += 1;
   }
   return hasil;
@@ -122,8 +179,9 @@ async function klaimKartu(penggunaId, daftar) {
 async function klaim(penggunaId, body) {
   await klaimProfil(penggunaId, body.profil);
   const kemajuan = await klaimKemajuan(penggunaId, body.kemajuan);
-  const peristiwa = await klaimPeristiwa(penggunaId, body.peristiwa);
+  // Kartu lebih dulu: catatan boleh merujuk kartu yang diklaim bersamanya.
   const kartu = await klaimKartu(penggunaId, body.kartu);
+  const peristiwa = await klaimPeristiwa(penggunaId, body.peristiwa);
   return { kemajuan, peristiwa, kartu };
 }
 
