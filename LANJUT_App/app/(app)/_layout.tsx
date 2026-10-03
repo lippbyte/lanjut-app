@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppShell } from '../../components/layout/AppShell';
 import { LayarMemuat } from '../../components/layout/LayarMemuat';
 import { IsiJenisSekolahScreen, IsiKelasScreen } from '../../components/screens/IsiKelasScreen';
+import { PromptKebijakan } from '../../components/screens/TerimaKebijakan';
 import { belumIsiJenisSekolah } from '../../lib/jenjang';
 import { useSesi } from '../../providers/AuthProvider';
 import { ObrolanProvider } from '../../providers/ObrolanProvider';
@@ -18,7 +19,11 @@ const TERBUKA_TANPA_KELAS = '/akun';
 //   2. isi kelas   — akun tanpa kelas wajib mengisinya dulu (LANJUT_036);
 //      lalu kelas 10–12 tanpa jenis sekolah memilih SMA/SMK/MA (LANJUT_038)
 //      — dua langkah berurutan, tidak pernah satu layar;
-//   3. layar biasa — di dalamnya gerbang kelas 12 vs placeholder (LANJUT_035).
+//   3. layar biasa — di dalamnya gerbang kelas 12 vs placeholder (LANJUT_035);
+//   4. prompt kebijakan privasi (LANJUT_048) — HANYA sesudah gerbang 2 beres
+//      (tidak menggantikan atau menumpuk di atas gerbang), bila kebijakan versi
+//      berlaku belum diterima. Tidak memblokir: "Nanti saja" menutupnya untuk
+//      sisa sesi login. Tidak tampil di /terima-kebijakan (layar yang sama).
 // Gerbang 2 dibaca dari kelas & jenis sekolah AKUN (bukan state layar), jadi menutup app di
 // tengah gerbang lalu membukanya lagi kembali ke gerbang yang sama, dan
 // gerbang hilang begitu keduanya tersimpan.
@@ -31,6 +36,7 @@ export default function AppLayout() {
   const tanpaKelas = !!pengguna && !pengguna.kelas;
   const tanpaJenis = !!pengguna && belumIsiJenisSekolah(pengguna.kelas, pengguna.jenis_sekolah);
   const tertahan = (tanpaKelas || tanpaJenis) && pathname !== TERBUKA_TANPA_KELAS;
+  const bolehPromptKebijakan = !!pengguna && !tanpaKelas && !tanpaJenis && pathname !== '/terima-kebijakan';
   return (
     // key: riwayat obrolan (hanya di memori) tidak terbawa ke akun lain dan
     // hilang saat keluar — layout ini tidak dirender lagi saat status 'keluar'.
@@ -45,6 +51,7 @@ export default function AppLayout() {
         </AppShell>
       </View>
       {tertahan ? tanpaKelas ? <IsiKelasScreen /> : <IsiJenisSekolahScreen /> : null}
+      {bolehPromptKebijakan ? <PromptKebijakan /> : null}
     </ObrolanProvider>
   );
 }

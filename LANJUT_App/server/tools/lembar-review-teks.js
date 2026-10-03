@@ -192,12 +192,44 @@ const PETA = [
         },
       },
       { task: 'LANJUT_047', awal: '**Jalur Saya — tautan:**', nama: 'Tautan kebijakan privasi', di: 'Jalur Saya, kartu Akun.', oleh: 'Semua akun.' },
+      {
+        task: 'LANJUT_048',
+        awal: '**Jalur Saya — baris:**',
+        nama: 'Baris kebijakan privasi & tombol',
+        di: 'Jalur Saya, kartu Akun, di atas baris persetujuan orang tua/wali; tombol hanya selama belum diterima.',
+        oleh: 'Semua akun.',
+      },
+    ],
+  },
+  {
+    kelompok: 'Terima kebijakan privasi (jendela setelah login & halaman /terima-kebijakan)',
+    butir: [
+      { task: 'LANJUT_048', awal: '**Judul (jendela & halaman):**', nama: 'Judul', di: 'Jendela setelah login dan halaman /terima-kebijakan.', oleh: 'Akun yang belum menerima kebijakan versi berlaku.' },
+      {
+        task: 'LANJUT_048',
+        awal: '**Pengantar, belum pernah menerima:**',
+        nama: 'Pengantar — belum pernah menerima',
+        di: 'Jendela setelah login (sekali per sesi, sesudah gerbang kelas & jenis sekolah) dan halaman /terima-kebijakan.',
+        oleh: 'Akun yang belum pernah menerima kebijakan (akun lama sebelum LANJUT_047).',
+        faktual: {
+          klaim: 'Semua fitur tetap bisa dipakai tanpa menerima; penerimaan dibutuhkan untuk fitur AI.',
+          sumber: 'Keputusan Khalifa & ahli hukum soal persetujuan untuk fitur dasar (pertanyaan terbuka LANJUT_047).',
+        },
+      },
+      { task: 'LANJUT_048', awal: '**Pengantar, perlu menerima ulang:**', nama: 'Pengantar — perlu menerima ulang', di: 'Jendela setelah login dan halaman /terima-kebijakan, bila versi naik.', oleh: 'Akun yang pernah menerima versi lama.' },
+      { task: 'LANJUT_048', awal: '**Versi di aplikasi berbeda', nama: 'Versi di aplikasi berbeda', di: 'Jendela setelah login dan halaman /terima-kebijakan, bila versi berlaku di server bukan versi teks di aplikasi (tombol Terima tidak tampil).', oleh: 'Akun yang memakai aplikasi versi lama saat kebijakan naik.' },
+      { task: 'LANJUT_048', awal: '**Tautan kebijakan lengkap:**', nama: 'Tautan buka/tutup kebijakan lengkap', di: 'Jendela dan halaman penerimaan.', oleh: 'Akun yang belum menerima kebijakan.' },
+      { task: 'LANJUT_048', awal: '**Tombol:** Terima', nama: 'Tombol Terima / Nanti saja / Kembali', di: 'Jendela dan halaman penerimaan.', oleh: 'Akun yang belum menerima kebijakan.' },
+      { task: 'LANJUT_048', awal: '**Galat simpan:**', nama: 'Galat simpan', di: 'Jendela dan halaman penerimaan, bila Terima gagal tersimpan.', oleh: 'Akun yang menekan Terima.' },
+      { task: 'LANJUT_048', awal: '**Sudah diterima (halaman):**', nama: 'Sudah diterima', di: 'Halaman /terima-kebijakan setelah diterima.', oleh: 'Akun yang sudah menerima.' },
+      { task: 'LANJUT_048', awal: '**Belum bisa dimuat:**', nama: 'Belum bisa dimuat', di: 'Halaman /terima-kebijakan bila versi berlaku belum ada di server.', oleh: 'Jarang; konfigurasi server belum lengkap.' },
     ],
   },
   {
     kelompok: 'Ngobrol Bareng LANJUT',
     butir: [
       { task: 'LANJUT_047', awal: '**Ngobrol — info:**', nama: 'Info persetujuan AI', di: 'Ngobrol Bareng LANJUT, di catatan "Versi uji coba" paling atas.', oleh: 'Semua akun yang membuka Ngobrol (pintu di Beranda dan di Jenjang Saya kelas 7–9).' },
+      { task: 'LANJUT_048', awal: '**Ngobrol — ajakan:**', nama: 'Ajakan menerima kebijakan', di: 'Ngobrol Bareng LANJUT, di bawah tautan gaya belajar; hanya selama kebijakan belum diterima.', oleh: 'Akun yang belum menerima kebijakan versi berlaku.' },
     ],
   },
   {

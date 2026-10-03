@@ -10,6 +10,7 @@ import { useProdi } from '../../hooks/useProdi';
 import { useProgresDaftarPeriksa, useSaringDaftarPeriksa } from '../../hooks/useProgresDaftarPeriksa';
 import { useUbahProfil } from '../../hooks/useUbahProfil';
 import { GAYA_BELAJAR, labelGayaBelajar } from '../../lib/gayaBelajar';
+import { keadaanKebijakan, perluTerimaUlang } from '../../lib/kebijakanPrivasi';
 import {
   JENIS_SEKOLAH_MENENGAH,
   KELAS_OPSI,
@@ -59,8 +60,10 @@ export function AkunScreen() {
         <View style={s.daftar}>
           <Baris label="Nama pengguna" nilai={pengguna.nama_pengguna} />
           <Baris label="Email" nilai={pengguna.email || '—'} />
+          <BarisKebijakan />
           <BarisPersetujuan />
         </View>
+        <TombolTerimaKebijakan onPress={() => router.push('/terima-kebijakan')} />
         <Text style={s.penjelas}>{PENJELAS_PERSETUJUAN}</Text>
         <Text style={s.tautan} onPress={() => router.push('/kebijakan-privasi')} accessibilityRole="link">
           Baca kebijakan privasi
@@ -274,6 +277,31 @@ function BarisPersetujuan() {
   const { data, isPending, isError } = usePersetujuan();
   const nilai = isPending ? '…' : isError || !data ? 'Belum bisa dimuat' : data.ortu_wali_aktif ? 'Sudah' : 'Belum';
   return <Baris label="Persetujuan orang tua/wali" nilai={nilai} />;
+}
+
+/**
+ * Status kebijakan privasi akun ini (LANJUT_048; salinan §4.14, DRAF). Siswa
+ * menerimanya sendiri lewat /terima-kebijakan; bukan syarat fitur dasar.
+ */
+function BarisKebijakan() {
+  const { data, isPending, isError } = usePersetujuan();
+  let nilai: string;
+  if (isPending) nilai = '…';
+  else if (isError || !data) nilai = 'Belum bisa dimuat';
+  else if (keadaanKebijakan(data) === 'diterima') nilai = `Diterima (versi ${data.kebijakan_privasi?.versi})`;
+  else nilai = perluTerimaUlang(data) ? 'Perlu diterima ulang' : 'Belum diterima';
+  return <Baris label="Kebijakan privasi" nilai={nilai} />;
+}
+
+/** Tombol ke /terima-kebijakan, hanya selama versi berlaku belum diterima. */
+function TombolTerimaKebijakan({ onPress }: { onPress: () => void }) {
+  const { data } = usePersetujuan();
+  if (!data || ['diterima', 'tidak_tersedia'].includes(keadaanKebijakan(data))) return null;
+  return (
+    <View style={s.aksi}>
+      <Tombol label="Baca dan terima" varian="sekunder" kecil onPress={onPress} />
+    </View>
+  );
 }
 
 /** `nilai` null → "Belum diisi" dengan gaya redup, bukan teks kosong. */

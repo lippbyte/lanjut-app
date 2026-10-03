@@ -430,6 +430,27 @@ bawah tombol Daftar.
 - **Jalur Saya — tautan:** Baca kebijakan privasi
 - **Ngobrol — info:** Balasan AI sungguhan nanti aktif setelah orang tua atau walimu memberi persetujuan.
 
+### 4.14 Terima kebijakan privasi (akun lama & terima ulang)
+
+**LANJUT_048 — DRAF belum disetujui Khalifa.** Untuk akun yang belum
+menerima kebijakan versi yang berlaku (akun lama, atau versinya naik).
+Jendela muncul sekali per sesi login, sesudah gerbang isi kelas dan jenis
+sekolah; "Nanti saja" tidak mencatat apa pun dan tidak memblokir apa pun.
+Ringkasan dan tautan kebijakan lengkap memakai teks §4.13 apa adanya.
+`[n]` = nomor versi kebijakan.
+
+- **Judul (jendela & halaman):** Kebijakan privasi · judul bilah halaman /terima-kebijakan: Kebijakan Privasi
+- **Pengantar, belum pernah menerima:** Baca ringkasan kebijakan privasi LANJUT di bawah, lalu terima. Semua fitur tetap bisa kamu pakai; penerimaan ini dibutuhkan untuk fitur AI nanti.
+- **Pengantar, perlu menerima ulang:** Kebijakan privasi LANJUT diperbarui ke versi [n]. Baca ringkasannya, lalu terima versi terbaru.
+- **Versi di aplikasi berbeda dengan yang berlaku:** Versi terbaru kebijakan privasi (versi [n]) belum ada di aplikasimu. Muat ulang atau perbarui aplikasi, lalu terima versi terbaru.
+- **Tautan kebijakan lengkap:** Baca kebijakan privasi lengkap · setelah dibuka: Sembunyikan kebijakan lengkap
+- **Tombol:** Terima (proses: Menyimpan…) · Nanti saja (jendela) / Kembali (halaman)
+- **Galat simpan:** Belum tersimpan. Coba lagi sebentar lagi. (atau pesan dari server)
+- **Sudah diterima (halaman):** Kebijakan privasi versi [n] sudah kamu terima.
+- **Belum bisa dimuat:** Kebijakan privasi belum bisa dimuat. Coba lagi sebentar lagi.
+- **Jalur Saya — baris:** Kebijakan privasi · nilai: Diterima (versi [n]) / Perlu diterima ulang / Belum diterima (Belum bisa dimuat bila gagal) · tombol: Baca dan terima
+- **Ngobrol — ajakan:** Terima kebijakan privasi dulu supaya fitur AI bisa diaktifkan nanti. · tautan: Baca dan terima
+
 ---
 
 ## 5. Notifikasi

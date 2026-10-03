@@ -278,6 +278,15 @@ ada endpoint AI; Ngobrol masih stub di app tanpa panggilan jaringan.
   lalu buat migrasi baru yang menaikkan `persetujuan_versi_kebijakan`
   (dan `persetujuan_versi_min_ortu` bila orang tua/wali perlu menyetujui ulang).
   Tes menolak bila versi di app berbeda dari konfigurasi.
+- **Terima ulang (LANJUT_048).** Begitu versi berlaku naik, semua akun yang
+  menerima versi lama melihat jendela kebijakan lagi setelah login (sekali
+  per sesi, sesudah gerbang kelas & jenis sekolah), dan Jalur Saya
+  menampilkan "Perlu diterima ulang". App hanya mengirim versi TEKS yang ia
+  tampilkan; selama app yang terpasang masih membawa teks lama, jendela hanya
+  meminta memuat ulang/memperbarui app (tanpa tombol Terima). Jadi
+  **rilis app dengan teks baru dulu, baru naikkan konfigurasi** — kalau
+  terbalik, siswa dengan app lama tidak bisa menerima sampai app diperbarui.
+  Fitur dasar tidak pernah diblokir oleh status ini.
 
 ### Endpoint (wajib login, hanya akun sendiri)
 

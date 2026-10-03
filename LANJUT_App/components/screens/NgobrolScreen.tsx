@@ -13,7 +13,9 @@ import {
   type TextInputKeyPressEventData,
 } from 'react-native';
 
+import { usePersetujuan } from '../../hooks/usePersetujuan';
 import { labelGayaBelajar } from '../../lib/gayaBelajar';
+import { keadaanKebijakan } from '../../lib/kebijakanPrivasi';
 import { useSesi } from '../../providers/AuthProvider';
 import { useObrolan } from '../../providers/ObrolanProvider';
 import { color, font, layout, radius, spacing, teks } from '../../theme/tokens';
@@ -25,6 +27,8 @@ const PANJANG_MAKS = 500;
 // stub tetap jalan untuk semua akun; gerbang AI sungguhan ada di server
 // (bolehPakaiAi), bukan di layar ini.
 const INFO_PERSETUJUAN_AI = 'Balasan AI sungguhan nanti aktif setelah orang tua atau walimu memberi persetujuan.';
+// Salinan teks §4.14 (LANJUT_048) — DRAF. Hanya ajakan; stub tidak berubah.
+const AJAKAN_KEBIJAKAN = 'Terima kebijakan privasi dulu supaya fitur AI bisa diaktifkan nanti.';
 
 /**
  * Ngobrol Bareng LANJUT (LANJUT_032) — UI chat untuk uji UX.
@@ -42,6 +46,9 @@ export function NgobrolScreen() {
   const gulir = useRef<ScrollView>(null);
   const [draf, setDraf] = useState('');
   const [fokus, setFokus] = useState(false);
+  const { data: persetujuan } = usePersetujuan();
+  const keadaan = persetujuan ? keadaanKebijakan(persetujuan) : null;
+  const ajakKebijakan = keadaan === 'bisa_diterima' || keadaan === 'versi_app_berbeda';
 
   const gayaBelajar = pengguna?.gaya_belajar ?? null;
   const labelGaya = labelGayaBelajar(gayaBelajar);
@@ -88,6 +95,14 @@ export function NgobrolScreen() {
             <Text style={s.gayaTautan}>{labelGaya ? 'Ubah' : 'Atur'}</Text>
           </Text>
         </Pressable>
+
+        {ajakKebijakan ? (
+          <Pressable onPress={() => router.push('/terima-kebijakan')} style={s.gaya} accessibilityRole="link">
+            <Text style={s.gayaTeks}>
+              {AJAKAN_KEBIJAKAN} <Text style={s.gayaTautan}>Baca dan terima</Text>
+            </Text>
+          </Pressable>
+        ) : null}
 
         {pesan.map((m) => (
           <View key={m.id} style={m.dari === 'pengguna' ? s.barisKanan : s.barisKiri}>

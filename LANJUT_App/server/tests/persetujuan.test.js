@@ -299,6 +299,38 @@ test('skrip: --berkas (komentar & baris kosong diabaikan), --sumber=admin, yang 
   assert.deepEqual(await catatanDb(tanpaAktif.id), []);
 });
 
+// LANJUT_048: akun lama (tanpa catatan) menerima lewat POST /persetujuan;
+// versi naik di konfigurasi → diminta menerima ulang; akun lain tidak terpengaruh.
+test('terima ulang: akun lama menerima; versi naik → diminta ulang; akun B tidak terpengaruh; ortu_wali tetap 403', async () => {
+  const a = await akun(); // akun lama: daftar tanpa versi_kebijakan
+  const b = await akun();
+  const status = async (x) => (await panggil('GET', '/persetujuan/saya', x.token)).json.data;
+  assert.equal((await status(a)).kebijakan_terkini, false);
+
+  assert.equal((await panggil('POST', '/persetujuan', a.token, { jenis: 'kebijakan_privasi', versi: versiBerlaku() })).status, 201);
+  assert.equal((await status(a)).kebijakan_terkini, true);
+  assert.equal((await status(b)).kebijakan_privasi, null, 'penerimaan A terlihat di B');
+
+  const baru = versiBerlaku() + 1;
+  await denganKonfig({ [KUNCI_VERSI]: baru }, async () => {
+    const sa = await status(a);
+    assert.equal(sa.kebijakan_terkini, false, 'A tidak diminta menerima ulang');
+    assert.equal(sa.versi_kebijakan_berlaku, baru);
+    assert.deepEqual([sa.kebijakan_privasi.status, sa.kebijakan_privasi.versi], ['setuju', versiBerlaku()]);
+    assert.equal((await panggil('POST', '/persetujuan', a.token, { jenis: 'kebijakan_privasi', versi: versiBerlaku() })).status, 409, 'versi lama diterima lagi');
+    assert.equal((await panggil('POST', '/persetujuan', a.token, { jenis: 'kebijakan_privasi', versi: baru })).status, 201);
+    assert.equal((await status(a)).kebijakan_terkini, true);
+    assert.equal((await status(b)).kebijakan_terkini, false);
+  });
+  assert.equal((await status(a)).kebijakan_terkini, true, 'versi diterima ≥ berlaku setelah konfigurasi dikembalikan');
+  assert.deepEqual((await catatanDb(a.id)).map((c) => `${c.jenis}:v${c.versi}`), [`kebijakan_privasi:v${versiBerlaku()}`, `kebijakan_privasi:v${baru}`]);
+  assert.deepEqual(await catatanDb(b.id), []);
+
+  const ortu = await panggil('POST', '/persetujuan', a.token, { jenis: 'ortu_wali', versi: versiBerlaku() });
+  assert.equal(ortu.status, 403);
+  assert.equal((await catatanDb(a.id)).filter((c) => c.jenis === 'ortu_wali').length, 0);
+});
+
 // --- penjaga struktural -------------------------------------------------------------
 
 test('versi kebijakan di app (lib/kebijakan-privasi.json) = versi yang berlaku di konfigurasi server', () => {
