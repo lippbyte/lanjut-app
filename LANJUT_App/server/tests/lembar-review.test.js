@@ -16,7 +16,7 @@ const { test, after } = require('node:test');
 const assert = require('node:assert/strict');
 const { acak, pool } = require('./bantuan');
 const { daftarBelum } = require('../src/db/verifikasi/verifikasi-konten');
-const { susunLembar, jalankan } = require('../src/db/verifikasi/lembar-review');
+const { susunLembar, jalankan, STANDAR_PEMERIKSAAN } = require('../src/db/verifikasi/lembar-review');
 
 after(async () => {
   await pool.end();
@@ -132,8 +132,30 @@ test('lembar review: --keluar menulis berkas Markdown; argumen tak dikenal ditol
     const isi = fs.readFileSync(berkas, 'utf8');
     assert.match(isi, /^# Lembar Review Konten LANJUT/);
     assert.ok(butirDiLembar(isi).length > 0);
+    assert.ok(isi.includes(STANDAR_PEMERIKSAAN.join('\n')), 'standar pemeriksaan hilang dari berkas hasil buat ulang');
   } finally {
     fs.rmSync(berkas, { force: true });
   }
   await assert.rejects(jalankan(['--ya']), /tidak dikenal/);
+});
+
+// LANJUT_046 (Bagian B): usulan standar pemeriksaan, DRAF, di AWAL lembar.
+test('lembar review: bagian "Standar pemeriksaan" (DRAF) ada di awal, sebelum cara pakai & butir pertama', async () => {
+  const { md } = await susunSambilMencatat();
+  const posisi = md.indexOf('## Standar pemeriksaan');
+  assert.ok(posisi > 0, 'bagian Standar pemeriksaan tidak ada');
+  assert.ok(posisi < md.indexOf('## Cara memakai lembar ini'));
+  assert.ok(posisi < md.indexOf('**ID:**'));
+  assert.ok(md.includes(STANDAR_PEMERIKSAAN.join('\n')));
+  const bagian = md.slice(posisi, md.indexOf('## Cara memakai lembar ini'));
+  assert.match(bagian, /\*\*DRAF — menunggu persetujuan Khalifa\.\*\*/);
+  for (const frasa of [
+    'SNPMB, laman PMB atau akademik kampus yang bersangkutan, PDDikti, dokumen kurikulum resmi prodi, dan sumber pemerintah lain yang setara',
+    'blog, artikel media, video, forum, dan ringkasan pihak ketiga',
+    'kalau pemeriksa bisa menunjuk sumber resminya (cantumkan di kolom catatan)',
+    'Bagian yang tidak bisa dicek ke sumber resmi tetap "Perkiraan"',
+  ]) {
+    assert.ok(bagian.includes(frasa), frasa);
+  }
+  assert.equal((bagian.match(/^\d+\. /gm) || []).length, 4, 'tepat empat butir usulan, tanpa aturan tambahan');
 });

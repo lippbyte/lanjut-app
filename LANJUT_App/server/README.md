@@ -104,7 +104,16 @@ hanya konten yang sudah kamu cocokkan dengan sumber resminya.
 dan kolom catatan ada di
 [`docs/verifikasi/lembar-review-konten.md`](../../docs/verifikasi/lembar-review-konten.md).
 Buat ulang lembar itu dari basis data kapan saja dengan `npm run lembar-review`
-(hanya membaca, tidak mengubah apa pun).
+(hanya membaca, tidak mengubah apa pun). Bagian "Standar pemeriksaan" di awal
+lembar (sumber apa yang dihitung resmi) masih **DRAF**, menunggu persetujuan
+Khalifa (LANJUT_046).
+
+**Lembar review draf teks** (LANJUT_046). Semua teks app yang masih DRAF di
+`docs/salinan-teks-lanjut.md` dikumpulkan di
+[`docs/lembar-review-draf-teks.md`](../../docs/lembar-review-draf-teks.md),
+dikelompokkan per layar, dengan kotak Setuju / Ubah / Tolak. Buat ulang dengan
+`npm run lembar-review-teks`. Perintah ini hanya membaca berkas salinan teks
+dan tidak butuh basis data.
 
 ### Sebelum mulai (sekali saja)
 
@@ -218,7 +227,15 @@ tanggal riset disusun, jadi semua profil mulai sebagai belum terverifikasi.
 - `npm run lembar-review` (`src/db/verifikasi/lembar-review.js`) menyusun
   lembar review Markdown dari basis data (SELECT saja) + `MVP-PWA/data/`.
   Bawaannya ditulis ke `docs/verifikasi/lembar-review-konten.md`;
-  `--keluar=berkas.md` untuk lokasi lain.
+  `--keluar=berkas.md` untuk lokasi lain. Bagian "Standar pemeriksaan" ditulis
+  dari `STANDAR_PEMERIKSAAN` di berkas yang sama, jadi tidak hilang saat
+  lembar dibuat ulang.
+- `npm run lembar-review-teks` (`tools/lembar-review-teks.js`, LANJUT_046)
+  membaca blok DRAF di `docs/salinan-teks-lanjut.md` dan menulis
+  `docs/lembar-review-draf-teks.md`. Bunyi teks disalin persis. Letak di app,
+  pembaca, dan klaim faktual dicatat di `PETA` di berkas itu; butir DRAF baru
+  yang belum dipetakan tetap masuk lembar, di bagian "Belum dipetakan".
+  Tes: `tests/lembar-review-teks.test.js` (tanpa basis data).
 
 ## 3. Menjalankan server
 

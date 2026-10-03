@@ -2,6 +2,15 @@
 
 Dibuat otomatis 2026-10-03 dengan `npm run lembar-review` (folder `LANJUT_App/server`) dari basis data `lanjut_test` dan berkas `MVP-PWA/data/`. Lembar ini **hanya bacaan**: membuat atau mengisinya tidak mengubah apa pun di aplikasi.
 
+## Standar pemeriksaan
+
+> **DRAF — menunggu persetujuan Khalifa.** Usulan awal (LANJUT_046), belum keputusan. Kaki halaman profil Eksplorasi Tujuan menjanjikan ke siswa bahwa bagian bertanda Terverifikasi "dicek ke sumber resmi". Janji itu hanya benar kalau pemeriksaan mengikuti standar ini.
+
+1. **Sumber yang dihitung "resmi":** SNPMB, laman PMB atau akademik kampus yang bersangkutan, PDDikti, dokumen kurikulum resmi prodi, dan sumber pemerintah lain yang setara.
+2. **Yang tidak dihitung:** blog, artikel media, video, forum, dan ringkasan pihak ketiga.
+3. Satu butir hanya boleh ditandai terverifikasi kalau pemeriksa bisa menunjuk sumber resminya (cantumkan di kolom catatan).
+4. Bagian yang tidak bisa dicek ke sumber resmi tetap "Perkiraan".
+
 ## Cara memakai lembar ini
 
 1. Kerjakan dari atas. Bagian 1 (profil prodi) paling mendesak: layar Eksplorasi Tujuan sudah jadi, tetapi kosong untuk semua siswa sampai profilnya ditandai. Bagian 2 (kartu kurasi) menyusul untuk alasan yang sama.

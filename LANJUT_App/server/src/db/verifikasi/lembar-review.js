@@ -463,6 +463,23 @@ function blokButir(bagian, b, nomor, riwayat) {
   return baris.join('\n');
 }
 
+// LANJUT_046 (Bagian B): usulan standar, BUKAN keputusan — tetap DRAF sampai
+// Khalifa menyetujui. Isinya persis empat butir usulan di
+// docs/LANJUT_046_Lembar-Review-Draf-Teks.md; jangan ditambah aturan di sini
+// tanpa keputusan. Ditulis oleh pembuat lembar supaya tidak hilang saat
+// lembar dibuat ulang.
+const STANDAR_PEMERIKSAAN = [
+  '## Standar pemeriksaan',
+  '',
+  '> **DRAF — menunggu persetujuan Khalifa.** Usulan awal (LANJUT_046), belum keputusan. Kaki halaman profil Eksplorasi Tujuan menjanjikan ke siswa bahwa bagian bertanda Terverifikasi "dicek ke sumber resmi". Janji itu hanya benar kalau pemeriksaan mengikuti standar ini.',
+  '',
+  '1. **Sumber yang dihitung "resmi":** SNPMB, laman PMB atau akademik kampus yang bersangkutan, PDDikti, dokumen kurikulum resmi prodi, dan sumber pemerintah lain yang setara.',
+  '2. **Yang tidak dihitung:** blog, artikel media, video, forum, dan ringkasan pihak ketiga.',
+  '3. Satu butir hanya boleh ditandai terverifikasi kalau pemeriksa bisa menunjuk sumber resminya (cantumkan di kolom catatan).',
+  '4. Bagian yang tidak bisa dicek ke sumber resmi tetap "Perkiraan".',
+  '',
+];
+
 function susunMarkdown(semuaBagian, { dibuat, basisData }) {
   const riwayat = bacaRiwayatLog();
   const out = [
@@ -470,6 +487,7 @@ function susunMarkdown(semuaBagian, { dibuat, basisData }) {
     '',
     `Dibuat otomatis ${dibuat} dengan \`npm run lembar-review\` (folder \`LANJUT_App/server\`) dari basis data \`${basisData}\` dan berkas \`MVP-PWA/data/\`. Lembar ini **hanya bacaan**: membuat atau mengisinya tidak mengubah apa pun di aplikasi.`,
     '',
+    ...STANDAR_PEMERIKSAAN,
     '## Cara memakai lembar ini',
     '',
     '1. Kerjakan dari atas. Bagian 1 (profil prodi) paling mendesak: layar Eksplorasi Tujuan sudah jadi, tetapi kosong untuk semua siswa sampai profilnya ditandai. Bagian 2 (kartu kurasi) menyusul untuk alasan yang sama.',
@@ -539,4 +557,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { susunLembar, jalankan, KELUARAN_BAWAAN };
+module.exports = { susunLembar, jalankan, KELUARAN_BAWAAN, STANDAR_PEMERIKSAAN };
