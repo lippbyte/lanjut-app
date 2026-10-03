@@ -446,7 +446,6 @@ bawah tombol Daftar.
 - **Jalur Saya — baris:** Persetujuan orang tua/wali · nilai: Sudah / Belum (Belum bisa dimuat bila gagal)
 - **Jalur Saya — penjelas:** Orang tua atau walimu memberi persetujuan lewat surat dari sekolah. Persetujuan ini dibutuhkan untuk fitur AI nanti; fitur lain tetap bisa kamu pakai seperti biasa.
 - **Jalur Saya — tautan:** Baca kebijakan privasi
-- **Ngobrol — info:** Balasan AI sungguhan nanti aktif setelah orang tua atau walimu memberi persetujuan.
 
 ### 4.14 Terima kebijakan privasi (akun lama & terima ulang)
 
@@ -468,6 +467,21 @@ Ringkasan dan tautan kebijakan lengkap memakai teks §4.13 apa adanya.
 - **Belum bisa dimuat:** Kebijakan privasi belum bisa dimuat. Coba lagi sebentar lagi.
 - **Jalur Saya — baris:** Kebijakan privasi · nilai: Diterima (versi [n]) / Perlu diterima ulang / Belum diterima (Belum bisa dimuat bila gagal) · tombol: Baca dan terima
 - **Ngobrol — ajakan:** Terima kebijakan privasi dulu supaya fitur AI bisa diaktifkan nanti. · tautan: Baca dan terima
+
+### 4.15 Ngobrol Bareng LANJUT dengan AI
+
+**LANJUT_051 — DRAF belum disetujui Khalifa.** Ngobrol kini dijawab AI
+(OpenRouter) lewat server, hanya untuk akun dengan persetujuan orang tua/wali
+dan kebijakan yang sudah diterima. Akun lain melihat layar "terkunci" tanpa
+kotak tulis. Catatan "Versi uji coba" dan info persetujuan lama (§4.13,
+LANJUT_047) tidak tampil lagi. Salam pembuka bot tetap teks LANJUT_032.
+
+- **Ngobrol — catatan AI:** Dijawab AI, jadi bisa keliru. Cek lagi info penting ke sumber resmi. LANJUT tidak menyimpan obrolan ini; obrolan hilang saat aplikasi ditutup.
+- **Ngobrol terkunci — judul:** Fitur AI belum aktif untuk akunmu
+- **Ngobrol terkunci — isi:** Ngobrol Bareng LANJUT dijawab AI dari penyedia pihak ketiga. Fitur ini baru aktif setelah orang tua atau walimu memberi persetujuan lewat sekolah, dan kamu sudah menerima kebijakan privasi.
+- **Ngobrol — status belum bisa dimuat:** Status fitur AI belum bisa dimuat. Coba lagi sebentar lagi.
+- **Ngobrol — galat kirim:** Fitur AI belum aktif untuk akunmu. / Fitur AI sedang belum bisa dipakai. Coba lagi nanti. / Maaf, aku belum bisa menjawab sekarang. Coba kirim lagi sebentar lagi. / Pesanmu sudah banyak. Istirahat sebentar, lalu coba lagi. / Pesanmu belum terkirim karena tidak tersambung. Coba lagi. / Ada yang tidak beres. Coba kirim lagi. · tombol: Coba lagi
+- **Beranda — kartu Ngobrol:** Cerita soal minat, cara belajar, atau rencana kuliahmu. (dulu diakhiri "Versi uji coba.")
 
 ---
 

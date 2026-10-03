@@ -26,6 +26,10 @@ const STATUS_PER_KODE = {
   PDF_GAGAL_DIBACA: 422,
   EMAIL_DIPAKAI: 400,
   TERLALU_SERING: 429,
+  // LANJUT_051 — Ngobrol dengan AI
+  AI_BELUM_DIIZINKAN: 403, // gerbang bolehPakaiAi: persetujuan ortu/wali atau kebijakan belum ada
+  AI_GAGAL: 502, // penyedia AI gagal/menolak; rinciannya tidak dikirim ke app
+  AI_TIDAK_TERSEDIA: 503, // kunci OpenRouter belum diisi di server
   GALAT_SERVER: 500,
 };
 

@@ -1,33 +1,39 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
-import type { GayaBelajar } from '../api/auth';
-import { dapatkanBalasanBot, type BalasanBot } from '../lib/chatStub';
+import { ApiError, apiFetch } from '../api/client';
+import type { BalasanNgobrol, PesanNgobrol } from '../api/types';
+import { KUNCI_PERSETUJUAN } from '../hooks/usePersetujuan';
+import { RIWAYAT_MAKS, pesanGalatNgobrol } from '../lib/ngobrol';
+import { useSesi } from './AuthProvider';
 
-export type Pesan = { id: number; dari: 'pengguna' | 'bot' } & BalasanBot;
-
-// Jeda kecil sebelum balasan tampil, supaya terasa seperti percakapan.
-const JEDA_BALASAN_MS = 700;
+/** `galat` = pemberitahuan gagal kirim; tampil di layar, TIDAK ikut dikirim ke AI. */
+export type Pesan = { id: number; dari: 'pengguna' | 'bot' | 'galat'; teks: string };
 
 type NilaiObrolan = {
   pesan: Pesan[];
   mengetik: boolean;
-  kirim: (isi: string, gayaBelajar: GayaBelajar | null) => void;
+  kirim: (isi: string) => void;
+  /** Kirim ulang riwayat yang sama setelah gagal (pesan siswa tidak diduplikasi). */
+  cobaLagi: () => void;
 };
 
 const Konteks = createContext<NilaiObrolan | null>(null);
 
 /**
- * Riwayat Ngobrol Bareng LANJUT (LANJUT_032) — HANYA di memori.
+ * Riwayat Ngobrol Bareng LANJUT (LANJUT_032, AI sejak LANJUT_051) — HANYA di memori.
  *
- * Tidak dikirim ke server, tidak ditulis ke AsyncStorage. Provider ini
- * dipasang di layout (app) dengan key = id pengguna, jadi riwayat bertahan
- * saat pindah layar (mis. ke Gaya Belajar lalu kembali), tetapi hilang saat
- * keluar akun, ganti akun, atau aplikasi ditutup. Keputusan menyimpan riwayat
- * lebih lama menyentuh data anak (UU PDP Pasal 25) dan menunggu Khalifa.
+ * Tidak ditulis ke AsyncStorage dan tidak disimpan server. Tiap pesan baru,
+ * riwayat sesi ini (maks. RIWAYAT_MAKS pesan terakhir) dikirim ke POST
+ * /ngobrol; server memeriksa gerbang persetujuan lalu meneruskannya ke AI.
+ * Provider dipasang di layout (app) dengan key = id pengguna, jadi riwayat
+ * hilang saat keluar akun, ganti akun, atau aplikasi ditutup.
  */
 export function ObrolanProvider({ namaTampilan, children }: { namaTampilan?: string; children: React.ReactNode }) {
+  const { token } = useSesi();
+  const queryClient = useQueryClient();
   const penghitung = useRef(1);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const terpasang = useRef(true);
   const [mengetik, setMengetik] = useState(false);
   const [pesan, setPesan] = useState<Pesan[]>(() => [
     {
@@ -36,27 +42,62 @@ export function ObrolanProvider({ namaTampilan, children }: { namaTampilan?: str
       teks: `Hai${namaTampilan ? `, ${namaTampilan}` : ''}! Aku teman ngobrolmu di LANJUT. Mau cerita soal minat, cara belajar, atau rencana kuliahmu?`,
     },
   ]);
+  const pesanRef = useRef(pesan);
+  pesanRef.current = pesan;
 
-  useEffect(() => () => {
-    if (timer.current) clearTimeout(timer.current);
-  }, []);
-
-  const kirim = useCallback(
-    (isi: string, gayaBelajar: GayaBelajar | null) => {
-      if (mengetik) return;
-      setPesan((p) => [...p, { id: penghitung.current++, dari: 'pengguna', teks: isi }]);
-      setMengetik(true);
-      timer.current = setTimeout(() => {
-        // STUB, bukan AI — lihat lib/chatStub.ts. Tidak ada panggilan jaringan.
-        const balasan = dapatkanBalasanBot(isi, gayaBelajar);
-        setPesan((p) => [...p, { id: penghitung.current++, dari: 'bot', ...balasan }]);
-        setMengetik(false);
-      }, JEDA_BALASAN_MS);
+  useEffect(
+    () => () => {
+      terpasang.current = false;
     },
-    [mengetik]
+    []
   );
 
-  return <Konteks.Provider value={{ pesan, mengetik, kirim }}>{children}</Konteks.Provider>;
+  const minta = useCallback(
+    async (riwayat: Pesan[]) => {
+      setMengetik(true);
+      const dikirim: PesanNgobrol[] = riwayat
+        .filter((m): m is Pesan & { dari: 'pengguna' | 'bot' } => m.dari !== 'galat')
+        .slice(-RIWAYAT_MAKS)
+        .map((m) => ({ peran: m.dari, teks: m.teks }));
+      try {
+        const { balasan } = await apiFetch<BalasanNgobrol>('/ngobrol', { method: 'POST', body: { pesan: dikirim }, token: token! });
+        if (!terpasang.current) return;
+        setPesan((p) => [...p, { id: penghitung.current++, dari: 'bot', teks: balasan }]);
+      } catch (err) {
+        if (!terpasang.current) return;
+        setPesan((p) => [...p, { id: penghitung.current++, dari: 'galat', teks: pesanGalatNgobrol(err) }]);
+        // Persetujuan dicabut di tengah sesi: muat ulang status supaya layar terkunci.
+        if (err instanceof ApiError && err.kode === 'AI_BELUM_DIIZINKAN') {
+          queryClient.invalidateQueries({ queryKey: KUNCI_PERSETUJUAN });
+        }
+      } finally {
+        if (terpasang.current) setMengetik(false);
+      }
+    },
+    [token, queryClient]
+  );
+
+  const kirim = useCallback(
+    (isi: string) => {
+      if (mengetik || !token) return;
+      const baru: Pesan = { id: penghitung.current++, dari: 'pengguna', teks: isi };
+      const riwayat = [...pesanRef.current, baru];
+      setPesan(riwayat);
+      minta(riwayat);
+    },
+    [mengetik, token, minta]
+  );
+
+  const cobaLagi = useCallback(() => {
+    if (mengetik || !token) return;
+    // Buang pemberitahuan galat terakhir, lalu kirim ulang riwayat yang sama.
+    const riwayat = pesanRef.current.filter((m, i, semua) => !(m.dari === 'galat' && i === semua.length - 1));
+    if (riwayat[riwayat.length - 1]?.dari !== 'pengguna') return;
+    setPesan(riwayat);
+    minta(riwayat);
+  }, [mengetik, token, minta]);
+
+  return <Konteks.Provider value={{ pesan, mengetik, kirim, cobaLagi }}>{children}</Konteks.Provider>;
 }
 
 export function useObrolan(): NilaiObrolan {

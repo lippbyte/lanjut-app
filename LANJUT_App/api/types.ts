@@ -239,3 +239,7 @@ export type HasilCariModul = {
   q: string;
   hasil: { modul_id: string; judul: string; mapel_id: string; urutan: number; potongan: string; skor: number }[];
 };
+
+// LANJUT_051 — Ngobrol dengan AI (POST /ngobrol)
+export type PesanNgobrol = { peran: 'pengguna' | 'bot'; teks: string };
+export type BalasanNgobrol = { balasan: string };

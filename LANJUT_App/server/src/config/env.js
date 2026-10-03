@@ -62,7 +62,19 @@ const env = {
   // bawaan ../../MVP-PWA/data dari folder server/. Absolut, atau relatif
   // terhadap folder server/. Hanya dipakai benih, bukan oleh API.
   LOKASI_DATA_KONTEN: opsional('LOKASI_DATA_KONTEN', null),
+  // Ngobrol Bareng LANJUT (LANJUT_051): AI lewat OpenRouter. Kunci KOSONG =
+  // fitur AI mati (503 AI_TIDAK_TERSEDIA), server tetap menyala. Kunci hanya
+  // ada di server: tidak pernah dikirim ke app dan tidak dicatat di log.
+  OPENROUTER_API_KEY: opsional('OPENROUTER_API_KEY', null),
+  OPENROUTER_MODEL: opsional('OPENROUTER_MODEL', 'anthropic/claude-sonnet-5.5'),
+  // Hanya diganti untuk uji (server tiruan di localhost).
+  OPENROUTER_BASE_URL: opsional('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1').replace(/\/$/, ''),
 };
+
+// Kunci API tidak boleh terkirim lewat HTTP polos, kecuali ke server tiruan lokal.
+if (!/^https:\/\/|^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/.test(env.OPENROUTER_BASE_URL)) {
+  throw new Error(`OPENROUTER_BASE_URL harus https:// (atau http://localhost untuk uji), dapat: "${env.OPENROUTER_BASE_URL}".`);
+}
 
 if (!Number.isInteger(env.JUMLAH_PROXY) || env.JUMLAH_PROXY < 0) {
   throw new Error(`JUMLAH_PROXY harus bilangan bulat ≥ 0, dapat: "${env.JUMLAH_PROXY}".`);

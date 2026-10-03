@@ -266,8 +266,9 @@ satu-satunya penentu. Hasilnya `true` hanya kalau:
 2. catatan `kebijakan_privasi` terakhir `setuju` dengan versi ≥
    `persetujuan_versi_kebijakan`.
 
-Gagal-tertutup: konfigurasi hilang atau tidak sah → `false`. Saat ini belum
-ada endpoint AI; Ngobrol masih stub di app tanpa panggilan jaringan.
+Gagal-tertutup: konfigurasi hilang atau tidak sah → `false`. Endpoint AI
+pertama, `POST /ngobrol` (LANJUT_051), memanggilnya sebelum apa pun dikirim
+ke OpenRouter; lihat bagian 2d.
 
 ### Data
 
@@ -416,6 +417,81 @@ supaya app bisa menyusun kalimatnya sendiri.
 
 Tes: `tests/modul.test.js`, `tests/modul-potong.test.js` (berkas contoh di
 `tests/fixtures/modul/`).
+
+## 2d. Ngobrol Bareng LANJUT dengan AI (LANJUT_051)
+
+Ngobrol dijawab AI lewat **OpenRouter**. Model bawaan:
+`anthropic/claude-sonnet-5.5`.
+
+> **Sebelum siswa sungguhan memakainya:** kebijakan privasi versi 1 masih
+> menyebut obrolan "belum dikirim ke mana pun" dan Ngobrol "versi uji coba",
+> dan surat orang tua/wali menyebut fitur AI "belum aktif". Perbarui
+> keduanya, naikkan versi kebijakan (bagian 2b), dan baru catat persetujuan
+> orang tua/wali sungguhan. Selama belum ada persetujuan yang tercatat, tidak
+> ada akun yang bisa memakai AI.
+
+### Menyalakan
+
+1. Buat kunci di openrouter.ai, lalu **pasang batas kredit pada kunci itu**
+   di dasbor OpenRouter (pengaman biaya terakhir).
+2. Isi `OPENROUTER_API_KEY=` di `server/.env`, dan opsional
+   `OPENROUTER_MODEL=`. Kunci hanya ada di server, jangan pernah di app atau
+   di `eas.json`. Kunci kosong = `503 AI_TIDAK_TERSEDIA`; server tetap jalan.
+3. `npm run migrasi` (014: batas pemakaian), lalu nyalakan ulang server.
+4. Akun harus lolos gerbang `bolehPakaiAi`: kebijakan diterima **dan**
+   persetujuan orang tua/wali tercatat (`npm run persetujuan-ortu`, bagian 2b).
+
+### Alur `POST /api/v1/ngobrol` (wajib login)
+
+`{ pesan: [{ peran: "pengguna" | "bot", teks }] }` → `{ balasan }`. App
+mengirim riwayat sesi (maks. 20 pesan; server menerima maks. 30, pesan siswa
+maks. 1.000 karakter, pesan terakhir harus dari siswa).
+
+1. Validasi → batas per akun (bukan per IP) → gerbang `bolehPakaiAi` → kunci
+   tersedia. Kalau salah satu gagal, **tidak ada apa pun yang dikirim keluar**.
+2. Server menyusun pesan sistem: aturan (bahasa santai, singkat, tanpa
+   Markdown, tidak menyebut tanggal/biaya/syarat sebagai fakta pasti, tidak
+   meminta data pribadi, tidak mengerjakan PR, arahan ke orang dewasa
+   tepercaya dan 112 untuk keadaan bahaya) **dan** profil belajar: kelas,
+   jenis sekolah, nama prodi impian, gaya belajar.
+3. **Tidak dikirim:** nama tampilan, nama pengguna, email, id akun.
+4. Ke OpenRouter: `provider.data_collection = "deny"` (hanya penyedia model
+   yang tidak menyimpan data untuk pelatihan), `max_tokens` 800, batas waktu
+   45 detik. Galat penyedia → `502 AI_GAGAL`, tanpa rincian ke app.
+
+**Isi obrolan tidak disimpan** di basis data dan tidak dicatat di log (log
+akses hanya metode & jalur; galat penyedia hanya jenis & status HTTP).
+Riwayat hanya hidup di memori app dan hilang saat app ditutup. Yang tetap
+terjadi: OpenRouter dan penyedia model menerima isi obrolan untuk membuat
+balasan, sesuai kebijakan mereka.
+
+| Kode | HTTP | Arti |
+|---|---|---|
+| `AI_BELUM_DIIZINKAN` | 403 | gerbang persetujuan belum lolos |
+| `TERLALU_SERING` | 429 | lewat batas pemakaian akun |
+| `AI_GAGAL` | 502 | penyedia AI gagal, menolak, saldo habis, atau lewat waktu |
+| `AI_TIDAK_TERSEDIA` | 503 | `OPENROUTER_API_KEY` kosong |
+
+### Batas pemakaian (di tabel konfigurasi)
+
+| Kunci | Default | Arti |
+|---|---|---|
+| `ngobrol_batas_5_menit` | 10 | pesan per akun per 5 menit |
+| `ngobrol_batas_24_jam` | 50 | pesan per akun per 24 jam (pengendali biaya) |
+
+```sql
+UPDATE konfigurasi_levelin SET nilai = '100' WHERE kunci = 'ngobrol_batas_24_jam';
+```
+
+Berlaku langsung tanpa restart. Hitungan disimpan di memori proses, jadi
+hilang saat server dinyalakan ulang.
+
+### Batas kode
+
+Hanya `src/modul/ngobrol/penyedia-ai.js` yang boleh mengirim data ke luar,
+dan hanya `ngobrol.layanan.js` yang memakainya, sesudah gerbang. Ini dijaga
+`tests/ngobrol.test.js`. Tes itu tidak pernah memanggil internet: penyedia
+di-mock, dan klien asli diuji terhadap server tiruan di localhost.
 
 ## 3. Menjalankan server
 

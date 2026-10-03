@@ -250,3 +250,25 @@ tidak diunduh dari Google saat app berjalan.
     seluruh teks masih DRAF dan belum berlaku, keputusan menaikkan versi ada
     di Khalifa. Bila dinaikkan: rilis app dengan teks baru dulu, baru naikkan
     `persetujuan_versi_kebijakan` lewat migrasi.
+11. **Fitur AI sudah dibangun (LANJUT_051), teks kebijakan belum diubah.**
+    Bagian "Fitur AI (belum aktif)" dan Ringkasan 3 sekarang **tidak sesuai**
+    dengan kode untuk akun yang lolos gerbang. Fakta teknis untuk mengisi
+    `[ISI]` di atas:
+    - **Penyedia:** OpenRouter (perantara), yang meneruskan ke penyedia model;
+      model bawaan `anthropic/claude-sonnet-5.5` (Anthropic). Keduanya
+      perusahaan Amerika Serikat; lokasi pemrosesan mengikuti mereka.
+    - **Yang dikirim:** pesan siswa dan balasan AI di sesi itu (maks. 20 pesan
+      terakhir), ditambah kelas, jenis sekolah, nama prodi impian, dan gaya
+      belajar. **Tidak dikirim:** nama, nama pengguna, email, id akun. Potongan
+      modul belum dikirim (belum dibangun).
+    - **Penyimpanan:** server LANJUT tidak menyimpan isi obrolan dan tidak
+      mencatatnya di log; obrolan hilang saat app ditutup. Permintaan memakai
+      `data_collection: deny` (OpenRouter hanya memilih penyedia yang tidak
+      memakai data untuk pelatihan). Masa simpan di sisi OpenRouter dan
+      penyedia model mengikuti kebijakan mereka dan perlu dicek.
+    - **Gerbang:** AI hanya jalan untuk akun dengan persetujuan orang tua/wali
+      tercatat dan kebijakan diterima. Selama belum ada persetujuan
+      sungguhan, tidak ada siswa yang terkena.
+
+    Sebelum mencatat persetujuan orang tua/wali sungguhan: perbarui teks
+    kebijakan dan surat orang tua/wali, lalu naikkan versi (lihat butir 10).

@@ -58,11 +58,11 @@ export function LinimasaScreen() {
         onPress={() => router.push('/arsip')}
       />
 
-      {/* LANJUT_032 — uji UX; balasan masih stub, bukan AI (lib/chatStub.ts). */}
+      {/* LANJUT_032; dijawab AI lewat server sejak LANJUT_051 (di balik gerbang persetujuan). */}
       <KartuPintu
         ikon="obrolan"
         judul="Ngobrol Bareng LANJUT"
-        keterangan="Cerita soal minat, cara belajar, atau rencana kuliahmu. Versi uji coba."
+        keterangan="Cerita soal minat, cara belajar, atau rencana kuliahmu."
         onPress={() => router.push('/ngobrol')}
       />
 

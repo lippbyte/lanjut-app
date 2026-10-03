@@ -21,6 +21,7 @@ const levelinRute = require('./modul/levelin/levelin.rute');
 const sinkronRute = require('./modul/sinkron/sinkron.rute');
 const persetujuanRute = require('./modul/persetujuan/persetujuan.rute');
 const modulRute = require('./modul/modul/modul.rute');
+const ngobrolRute = require('./modul/ngobrol/ngobrol.rute');
 
 const app = express();
 
@@ -75,6 +76,7 @@ app.use('/api/v1', levelinRute); // sesi-latihan, riwayat-latihan, kalibrasi, sa
 app.use('/api/v1/sinkron', sinkronRute);
 app.use('/api/v1/persetujuan', persetujuanRute); // LANJUT_047
 app.use('/api/v1/modul', modulRute); // LANJUT_049
+app.use('/api/v1/ngobrol', ngobrolRute); // LANJUT_051 — AI lewat OpenRouter, di balik gerbang persetujuan
 
 app.use((req, res) => {
   const { galat } = require('./util/respons');

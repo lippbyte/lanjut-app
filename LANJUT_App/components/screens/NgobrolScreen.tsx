@@ -16,48 +16,74 @@ import {
 import { usePersetujuan } from '../../hooks/usePersetujuan';
 import { labelGayaBelajar } from '../../lib/gayaBelajar';
 import { keadaanKebijakan } from '../../lib/kebijakanPrivasi';
+import { PANJANG_PESAN_MAKS, TEKS_NGOBROL } from '../../lib/ngobrol';
 import { useSesi } from '../../providers/AuthProvider';
 import { useObrolan } from '../../providers/ObrolanProvider';
 import { color, font, layout, radius, spacing, teks } from '../../theme/tokens';
-import { Ikon, Tombol } from '../ui';
+import { Ikon, Memuat, Peringatan, Tombol } from '../ui';
 
-const PANJANG_MAKS = 500;
-
-// Salinan teks §4.13 (LANJUT_047) — DRAF belum disetujui Khalifa. Info saja:
-// stub tetap jalan untuk semua akun; gerbang AI sungguhan ada di server
-// (bolehPakaiAi), bukan di layar ini.
-const INFO_PERSETUJUAN_AI = 'Balasan AI sungguhan nanti aktif setelah orang tua atau walimu memberi persetujuan.';
-// Salinan teks §4.14 (LANJUT_048) — DRAF. Hanya ajakan; stub tidak berubah.
+// Salinan teks §4.14 (LANJUT_048) — DRAF. Tampil di layar terkunci bila kebijakan belum diterima.
 const AJAKAN_KEBIJAKAN = 'Terima kebijakan privasi dulu supaya fitur AI bisa diaktifkan nanti.';
 
 /**
- * Ngobrol Bareng LANJUT (LANJUT_032) — UI chat untuk uji UX.
+ * Ngobrol Bareng LANJUT (LANJUT_032; AI lewat server sejak LANJUT_051).
  *
- * Balasan datang dari `dapatkanBalasanBot` (lib/chatStub.ts), STUB tanpa AI
- * dan tanpa panggilan jaringan. Riwayat hanya di memori (ObrolanProvider):
- * tidak dikirim ke server, tidak disimpan di perangkat, hilang saat keluar
- * akun atau aplikasi ditutup. Keputusan penyimpanan riwayat menunggu Khalifa
- * (data anak, UU PDP Pasal 25).
+ * Balasan dari POST /ngobrol (server → OpenRouter). Boleh-tidaknya AI dipakai
+ * SELALU diputuskan server (bolehPakaiAi); `boleh_pakai_ai` di sini hanya
+ * untuk memilih tampilan: obrolan, atau penjelasan kenapa fitur belum aktif.
+ * Riwayat hanya di memori (ObrolanProvider), tidak disimpan di perangkat
+ * maupun server.
  */
 export function NgobrolScreen() {
+  const { data: persetujuan, isPending, isError } = usePersetujuan();
+
+  if (isPending) return <Memuat />;
+  if (isError || !persetujuan) {
+    return (
+      <View style={s.terkunci}>
+        <Peringatan>{TEKS_NGOBROL.belumBisaDimuat}</Peringatan>
+      </View>
+    );
+  }
+  if (!persetujuan.boleh_pakai_ai) return <Terkunci />;
+  return <Obrolan />;
+}
+
+/** Fitur AI belum aktif: jelaskan syaratnya, tanpa kotak tulis. */
+function Terkunci() {
+  const router = useRouter();
+  const { data: persetujuan } = usePersetujuan();
+  const keadaan = persetujuan ? keadaanKebijakan(persetujuan) : null;
+  const ajakKebijakan = keadaan === 'bisa_diterima' || keadaan === 'versi_app_berbeda';
+  return (
+    <ScrollView contentContainerStyle={s.terkunci}>
+      <Peringatan judul={TEKS_NGOBROL.terkunciJudul}>{TEKS_NGOBROL.terkunciIsi}</Peringatan>
+      {ajakKebijakan ? (
+        <Pressable onPress={() => router.push('/terima-kebijakan')} style={s.gaya} accessibilityRole="link">
+          <Text style={s.gayaTeks}>
+            {AJAKAN_KEBIJAKAN} <Text style={s.gayaTautan}>Baca dan terima</Text>
+          </Text>
+        </Pressable>
+      ) : null}
+    </ScrollView>
+  );
+}
+
+function Obrolan() {
   const { pengguna } = useSesi();
-  const { pesan, mengetik, kirim: kirimPesan } = useObrolan();
+  const { pesan, mengetik, kirim: kirimPesan, cobaLagi } = useObrolan();
   const router = useRouter();
   const gulir = useRef<ScrollView>(null);
   const [draf, setDraf] = useState('');
   const [fokus, setFokus] = useState(false);
-  const { data: persetujuan } = usePersetujuan();
-  const keadaan = persetujuan ? keadaanKebijakan(persetujuan) : null;
-  const ajakKebijakan = keadaan === 'bisa_diterima' || keadaan === 'versi_app_berbeda';
 
-  const gayaBelajar = pengguna?.gaya_belajar ?? null;
-  const labelGaya = labelGayaBelajar(gayaBelajar);
+  const labelGaya = labelGayaBelajar(pengguna?.gaya_belajar ?? null);
 
   const kirim = () => {
     const isi = draf.trim();
     if (!isi || mengetik) return;
     setDraf('');
-    kirimPesan(isi, gayaBelajar);
+    kirimPesan(isi);
   };
 
   // Web: Enter mengirim, Shift+Enter baris baru. Di HP tombol kirim yang dipakai.
@@ -70,17 +96,10 @@ export function NgobrolScreen() {
   };
 
   const bisaKirim = draf.trim().length > 0 && !mengetik;
+  const terakhir = pesan[pesan.length - 1];
 
   return (
     <KeyboardAvoidingView style={s.akar} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <View style={s.uji} role="note">
-        <Ikon nama="info" ukuran={18} />
-        <Text style={s.ujiTeks}>
-          <Text style={s.ujiTebal}>Versi uji coba.</Text> Balasan belum dari AI sungguhan, dan obrolan ini tidak
-          disimpan. {INFO_PERSETUJUAN_AI}
-        </Text>
-      </View>
-
       <ScrollView
         ref={gulir}
         style={s.daftar}
@@ -89,6 +108,8 @@ export function NgobrolScreen() {
         onContentSizeChange={() => gulir.current?.scrollToEnd({ animated: true })}
         aria-live="polite"
       >
+        <Text style={s.catatan}>{TEKS_NGOBROL.catatanAi}</Text>
+
         <Pressable onPress={() => router.push('/gaya-belajar')} style={s.gaya} accessibilityRole="link">
           <Text style={s.gayaTeks}>
             {labelGaya ? `Gaya belajarmu: ${labelGaya}` : 'Gaya belajarmu belum dipilih'} ·{' '}
@@ -96,26 +117,28 @@ export function NgobrolScreen() {
           </Text>
         </Pressable>
 
-        {ajakKebijakan ? (
-          <Pressable onPress={() => router.push('/terima-kebijakan')} style={s.gaya} accessibilityRole="link">
-            <Text style={s.gayaTeks}>
-              {AJAKAN_KEBIJAKAN} <Text style={s.gayaTautan}>Baca dan terima</Text>
-            </Text>
-          </Pressable>
-        ) : null}
-
-        {pesan.map((m) => (
-          <View key={m.id} style={m.dari === 'pengguna' ? s.barisKanan : s.barisKiri}>
-            <View style={m.dari === 'pengguna' ? s.gelembungPengguna : s.gelembungBot}>
-              <Text style={m.dari === 'pengguna' ? s.teksPengguna : s.teksBot}>{m.teks}</Text>
-            </View>
-            {m.tautan ? (
-              <View style={s.tautan}>
-                <Tombol label={m.tautan.label} varian="garis" kecil onPress={() => router.push(m.tautan!.href)} />
+        {pesan.map((m) =>
+          m.dari === 'galat' ? (
+            <View key={m.id} style={s.barisKiri} role="alert">
+              <View style={s.gelembungGalat}>
+                <Text style={s.teksGalat}>{m.teks}</Text>
               </View>
-            ) : null}
-          </View>
-        ))}
+              {m === terakhir && !mengetik ? (
+                <View style={s.tautan}>
+                  <Tombol label={TEKS_NGOBROL.cobaLagi} varian="garis" kecil onPress={cobaLagi} />
+                </View>
+              ) : null}
+            </View>
+          ) : (
+            <View key={m.id} style={m.dari === 'pengguna' ? s.barisKanan : s.barisKiri}>
+              <View style={m.dari === 'pengguna' ? s.gelembungPengguna : s.gelembungBot}>
+                <Text style={m.dari === 'pengguna' ? s.teksPengguna : s.teksBot} selectable>
+                  {m.teks}
+                </Text>
+              </View>
+            </View>
+          )
+        )}
 
         {mengetik ? (
           <View style={s.barisKiri}>
@@ -131,13 +154,13 @@ export function NgobrolScreen() {
           value={draf}
           onChangeText={setDraf}
           onKeyPress={tekanTombol}
-          placeholder="Tulis pesanmu…"
+          placeholder={TEKS_NGOBROL.placeholder}
           placeholderTextColor={color.textSubtle}
           onFocus={() => setFokus(true)}
           onBlur={() => setFokus(false)}
           multiline
           numberOfLines={1}
-          maxLength={PANJANG_MAKS}
+          maxLength={PANJANG_PESAN_MAKS}
           style={StyleSheet.flatten([s.input, fokus && s.inputFokus])}
           accessibilityLabel="Pesan"
         />
@@ -160,18 +183,8 @@ export function NgobrolScreen() {
 
 const s = StyleSheet.create({
   akar: { flex: 1 },
-  uji: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: spacing.s2,
-    marginHorizontal: spacing.gutter,
-    marginTop: spacing.s3,
-    padding: spacing.s3,
-    borderRadius: radius.sm,
-    backgroundColor: color.blue100,
-  },
-  ujiTeks: { ...teks.bodySm, color: color.textBody, flex: 1 },
-  ujiTebal: { fontFamily: font.semibold },
+  terkunci: { padding: spacing.gutter, gap: spacing.s3 },
+  catatan: { ...teks.caption, color: color.textMuted, textAlign: 'center' },
   daftar: { flex: 1 },
   daftarIsi: { padding: spacing.gutter, gap: spacing.s3 },
   gaya: { alignSelf: 'center', paddingVertical: spacing.s1, minHeight: 44, justifyContent: 'center' },
@@ -195,8 +208,19 @@ const s = StyleSheet.create({
     borderTopRightRadius: spacing.s1,
     backgroundColor: color.blue600,
   },
+  gelembungGalat: {
+    maxWidth: '85%',
+    paddingVertical: spacing.s3,
+    paddingHorizontal: spacing.s4,
+    borderRadius: radius.md,
+    borderTopLeftRadius: spacing.s1,
+    borderWidth: 1,
+    borderColor: color.borderSoft,
+    backgroundColor: color.statusIdleBg,
+  },
   teksBot: { ...teks.bodySm, color: color.textBody },
   teksPengguna: { ...teks.bodySm, color: color.white },
+  teksGalat: { ...teks.bodySm, color: color.textMuted },
   mengetik: { ...teks.bodySm, color: color.textMuted, fontStyle: 'italic' },
   tautan: { flexDirection: 'row' },
   masukan: {

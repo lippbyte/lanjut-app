@@ -228,8 +228,33 @@ const PETA = [
   {
     kelompok: 'Ngobrol Bareng LANJUT',
     butir: [
-      { task: 'LANJUT_047', awal: '**Ngobrol — info:**', nama: 'Info persetujuan AI', di: 'Ngobrol Bareng LANJUT, di catatan "Versi uji coba" paling atas.', oleh: 'Semua akun yang membuka Ngobrol (pintu di Beranda dan di Jenjang Saya kelas 7–9).' },
-      { task: 'LANJUT_048', awal: '**Ngobrol — ajakan:**', nama: 'Ajakan menerima kebijakan', di: 'Ngobrol Bareng LANJUT, di bawah tautan gaya belajar; hanya selama kebijakan belum diterima.', oleh: 'Akun yang belum menerima kebijakan versi berlaku.' },
+      { task: 'LANJUT_048', awal: '**Ngobrol — ajakan:**', nama: 'Ajakan menerima kebijakan', di: 'Ngobrol Bareng LANJUT, layar terkunci, di bawah penjelasan; hanya selama kebijakan belum diterima.', oleh: 'Akun yang belum menerima kebijakan versi berlaku.' },
+      {
+        task: 'LANJUT_051',
+        awal: '**Ngobrol — catatan AI:**',
+        nama: 'Catatan AI di atas obrolan',
+        di: 'Ngobrol Bareng LANJUT, paling atas daftar pesan.',
+        oleh: 'Akun dengan persetujuan orang tua/wali dan kebijakan diterima.',
+        faktual: {
+          klaim: 'LANJUT tidak menyimpan obrolan; obrolan hilang saat aplikasi ditutup.',
+          sumber: 'Kode server (tidak ada tabel obrolan, isi tidak dicatat di log; tests/ngobrol.test.js). Penyimpanan di sisi OpenRouter/penyedia model mengikuti kebijakan mereka.',
+        },
+      },
+      { task: 'LANJUT_051', awal: '**Ngobrol terkunci — judul:**', nama: 'Layar terkunci — judul', di: 'Ngobrol Bareng LANJUT, bila fitur AI belum aktif.', oleh: 'Akun tanpa persetujuan orang tua/wali atau tanpa kebijakan diterima.' },
+      {
+        task: 'LANJUT_051',
+        awal: '**Ngobrol terkunci — isi:**',
+        nama: 'Layar terkunci — penjelasan',
+        di: 'Ngobrol Bareng LANJUT, bila fitur AI belum aktif.',
+        oleh: 'Akun tanpa persetujuan orang tua/wali atau tanpa kebijakan diterima.',
+        faktual: {
+          klaim: 'AI dari penyedia pihak ketiga; aktif setelah persetujuan orang tua/wali lewat sekolah dan kebijakan diterima.',
+          sumber: 'Gerbang bolehPakaiAi (server/README.md bagian 2b) dan keputusan Khalifa soal penyedia AI.',
+        },
+      },
+      { task: 'LANJUT_051', awal: '**Ngobrol — status belum bisa dimuat:**', nama: 'Status AI belum bisa dimuat', di: 'Ngobrol Bareng LANJUT, bila status persetujuan gagal dimuat.', oleh: 'Semua akun, saat tidak tersambung.' },
+      { task: 'LANJUT_051', awal: '**Ngobrol — galat kirim:**', nama: 'Pesan gagal kirim', di: 'Ngobrol Bareng LANJUT, gelembung abu-abu di bawah pesan siswa, dengan tombol Coba lagi.', oleh: 'Akun dengan fitur AI aktif, saat pesan gagal dijawab.' },
+      { task: 'LANJUT_051', awal: '**Beranda — kartu Ngobrol:**', nama: 'Kartu Ngobrol di Beranda', di: 'Beranda, kartu pintu Ngobrol Bareng LANJUT.', oleh: 'Semua akun.' },
     ],
   },
   {
