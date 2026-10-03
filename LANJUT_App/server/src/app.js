@@ -20,6 +20,7 @@ const kartuRute = require('./modul/kartu/kartu.rute');
 const levelinRute = require('./modul/levelin/levelin.rute');
 const sinkronRute = require('./modul/sinkron/sinkron.rute');
 const persetujuanRute = require('./modul/persetujuan/persetujuan.rute');
+const modulRute = require('./modul/modul/modul.rute');
 
 const app = express();
 
@@ -73,6 +74,7 @@ app.use('/api/v1/kartu', kartuRute);
 app.use('/api/v1', levelinRute); // sesi-latihan, riwayat-latihan, kalibrasi, saran-harian, konfigurasi
 app.use('/api/v1/sinkron', sinkronRute);
 app.use('/api/v1/persetujuan', persetujuanRute); // LANJUT_047
+app.use('/api/v1/modul', modulRute); // LANJUT_049
 
 app.use((req, res) => {
   const { galat } = require('./util/respons');

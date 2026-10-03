@@ -3,7 +3,7 @@
   "versi": 1,
   "status": "DRAF — belum berlaku. Wajib direview ahli hukum sebelum dipakai.",
   "ringkasan": [
-    "Kami menyimpan data akunmu (nama pengguna, kelas, jenis sekolah, prodi impian, gaya belajar, dan email kalau kamu isi) dan yang kamu buat di LANJUT (centang Daftar Periksa, kartu, dan hasil latihan) supaya kemajuanmu tidak hilang.",
+    "Kami menyimpan data akunmu (nama pengguna, kelas, jenis sekolah, prodi impian, gaya belajar, dan email kalau kamu isi) dan yang kamu buat di LANJUT (centang Daftar Periksa, kartu, modul yang kamu unggah, dan hasil latihan) supaya kemajuanmu tidak hilang.",
     "Kata sandimu disimpan dalam bentuk acak, bukan teks aslinya.",
     "Obrolan di Ngobrol Bareng LANJUT belum dikirim ke mana pun. Fitur AI sungguhan nanti memakai penyedia pihak ketiga yang mungkin berada di luar negeri, dan baru aktif setelah orang tua atau walimu memberi persetujuan lewat sekolah.",
     "Kamu dan orang tua atau walimu berhak melihat, membetulkan, dan meminta penghapusan datamu, serta mencabut persetujuan."
@@ -23,11 +23,12 @@
         "Jalur belajarmu: kelas, jenis sekolah (SMP, SMA, SMK, atau MA), prodi impian, dan gaya belajar yang kamu pilih.",
         "Kemajuan: butir Daftar Periksa yang kamu centang, dan butir yang kamu simpan dari Pilih Mapel atau Eksplorasi Tujuan.",
         "Arsip Belajar: kartu yang kamu tulis (mapel, judul, isi, dan jawaban). Isinya teks bebas, jadi sebaiknya jangan menulis data pribadi di kartu.",
+        "Modul: teks materi pelajaran yang kamu unggah ke Arsip Belajar (dari berkas .txt, .md, atau PDF, atau yang kamu tempel), beserta judul, mapel, nama berkas, dan waktu unggah. Berkas aslinya tidak disimpan, hanya teksnya. Teks itu juga dibelah menjadi potongan supaya bisa kamu cari. Modul bisa kamu hapus permanen kapan saja; teks dan semua potongannya ikut terhapus.",
         "Latihan: kapan sesi latihan dimulai dan selesai, mapel yang dilatih, kartu yang kamu jawab, benar atau salahnya jawabanmu, dan seberapa yakin kamu (kalau kamu mengisinya).",
         "Persetujuan: kapan kamu membaca kebijakan ini (dan versinya), serta kapan orang tua atau walimu memberi atau mencabut persetujuan lewat sekolah, termasuk nomor atau tanggal suratnya.",
         "Keamanan akun: kapan akun dibuat, kapan terakhir kamu masuk, status akun (aktif atau nonaktif), sesi masuk yang masih aktif, dan jumlah percobaan masuk yang gagal (supaya akun bisa dikunci sementara kalau ada yang mencoba menebak kata sandi).",
         "Catatan teknis server: setiap permintaan ke server mencatat fitur yang dibuka, hasilnya, lama prosesnya, dan ID akunmu (bukan namamu). Alamat IP perangkatmu dipakai sementara untuk membatasi permintaan yang terlalu sering, dan tidak disimpan di basis data. [ISI: berapa lama catatan teknis disimpan oleh server dan penyedianya.]",
-        "Kartu atau butir Daftar Periksa yang kamu hapus disembunyikan dari aplikasi, tetapi saat ini masih tersimpan di server. [ISI: kapan data yang dihapus benar-benar dihapus permanen.]"
+        "Kartu atau butir Daftar Periksa yang kamu hapus disembunyikan dari aplikasi, tetapi saat ini masih tersimpan di server (modul tidak termasuk: modul dihapus permanen). [ISI: kapan data yang dihapus benar-benar dihapus permanen.]"
       ]
     },
     {
@@ -41,7 +42,7 @@
     {
       "judul": "Yang tidak kami kumpulkan",
       "butir": [
-        "Lokasi, kontak, foto, rekaman suara, nomor HP, nama sekolah, dan nama lengkap aslimu (kecuali kalau kamu sendiri menulisnya sebagai nama tampilan atau di kartu).",
+        "Lokasi, kontak, foto, rekaman suara, nomor HP, nama sekolah, dan nama lengkap aslimu (kecuali kalau kamu sendiri menulisnya sebagai nama tampilan, di kartu, atau di modul).",
         "Saat ini LANJUT tidak memakai layanan analitik atau iklan dari pihak ketiga."
       ]
     },
@@ -68,7 +69,7 @@
       "judul": "Fitur AI (belum aktif)",
       "paragraf": [
         "Ngobrol Bareng LANJUT sekarang masih versi uji coba: balasannya contoh, bukan dari AI sungguhan.",
-        "Nanti, balasan AI sungguhan memakai penyedia AI pihak ketiga [ISI: nama penyedia AI]. Pesan yang kamu tulis, dan [ISI: data akun mana yang ikut dikirim, misalnya kelas dan gaya belajar], akan dikirim ke penyedia itu untuk dibuatkan balasan. Penyedia itu kemungkinan memproses datanya di luar negeri [ISI: negara atau wilayahnya, dan dasar pengirimannya].",
+        "Nanti, balasan AI sungguhan memakai penyedia AI pihak ketiga [ISI: nama penyedia AI]. Pesan yang kamu tulis, potongan modul di Arsip Belajarmu yang berkaitan dengan pertanyaanmu, dan [ISI: data akun lain yang ikut dikirim, misalnya kelas dan gaya belajar], akan dikirim ke penyedia itu untuk dibuatkan balasan. Penyedia itu kemungkinan memproses datanya di luar negeri [ISI: negara atau wilayahnya, dan dasar pengirimannya].",
         "Fitur AI hanya aktif kalau orang tua atau walimu sudah memberi persetujuan lewat sekolah, dan kamu sudah membaca kebijakan versi yang berlaku. Tanpa itu, data akunmu tidak dikirim ke penyedia AI.",
         "[ISI: apakah isi obrolan dengan AI disimpan, di mana, dan berapa lama.]"
       ]
@@ -86,7 +87,7 @@
       "butir": [
         "Melihat data apa saja yang tersimpan tentangmu.",
         "Membetulkan data yang salah. Nama tampilan, kelas, jenis sekolah, prodi impian, dan gaya belajar bisa kamu ubah sendiri di Jalur Saya.",
-        "Meminta datamu dihapus. Fitur hapus akun di aplikasi belum ada, jadi ajukan lewat kontak di bawah.",
+        "Meminta datamu dihapus. Modul bisa kamu hapus sendiri secara permanen di Arsip Belajar. Untuk data lain, fitur hapus akun di aplikasi belum ada, jadi ajukan lewat kontak di bawah.",
         "Mencabut persetujuan. Setelah persetujuan orang tua atau wali dicabut, fitur AI langsung tertutup untuk akunmu. Pencabutan diajukan lewat sekolah atau kontak di bawah.",
         "[ISI: berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.]"
       ]

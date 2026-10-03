@@ -7,7 +7,7 @@ import { ApiError, saatSesiBerakhir } from '../api/client';
 
 // Cache data milik akun (useKemajuan, useButirPribadi, useKartuSaya, useRiwayatLatihan, usePersetujuan). Dibuang
 // setiap sesi berganti supaya data akun A tidak pernah tampil di akun B.
-const KUNCI_DATA_AKUN = [['kemajuan'], ['butir_pribadi'], ['kartu'], ['sesi_latihan'], ['persetujuan']] as const;
+const KUNCI_DATA_AKUN = [['kemajuan'], ['butir_pribadi'], ['kartu'], ['sesi_latihan'], ['persetujuan'], ['modul']] as const;
 
 function hapusDataAkun(queryClient: QueryClient) {
   for (const queryKey of KUNCI_DATA_AKUN) queryClient.removeQueries({ queryKey });

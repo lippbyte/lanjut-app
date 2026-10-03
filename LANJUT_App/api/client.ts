@@ -115,15 +115,17 @@ export async function apiFetch<T>(path: string, opsi: ApiFetchOpsi = {}): Promis
     }
   }
 
+  // FormData (unggah modul, LANJUT_049): Content-Type & batas multipart diatur fetch sendiri.
+  const formulir = typeof FormData !== 'undefined' && opsi.body instanceof FormData;
   let res: Response;
   try {
     res = await fetch(url.toString(), {
       method: opsi.method || 'GET',
       headers: {
-        'Content-Type': 'application/json',
+        ...(formulir ? {} : { 'Content-Type': 'application/json' }),
         ...(opsi.token ? { Authorization: `Bearer ${opsi.token}` } : {}),
       },
-      body: opsi.body ? JSON.stringify(opsi.body) : undefined,
+      body: formulir ? (opsi.body as FormData) : opsi.body ? JSON.stringify(opsi.body) : undefined,
     });
   } catch (err) {
     // Network-level failure (server mati, salah IP, dsb) — bukan galat API

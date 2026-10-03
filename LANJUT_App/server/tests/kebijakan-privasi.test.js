@@ -72,6 +72,9 @@ test('setiap kelompok data yang disimpan disebut di kebijakan', () => {
     sesi_latihan: 'sesi latihan',
     riwayat_latihan: 'seberapa yakin',
     persetujuan: 'mencabut persetujuan',
+    modul: 'modul', // LANJUT_049
+    'modul.isi (berkas asli tidak disimpan)': 'berkas aslinya tidak disimpan',
+    'modul (hapus permanen)': 'hapus permanen',
   };
   for (const [kolom, kata] of Object.entries(WAJIB)) assert.ok(teks.includes(kata), `${kolom} → "${kata}"`);
 });

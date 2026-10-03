@@ -35,7 +35,7 @@
 
 ### Ringkasan (tampil di layar Daftar)
 
-- Kami menyimpan data akunmu (nama pengguna, kelas, jenis sekolah, prodi impian, gaya belajar, dan email kalau kamu isi) dan yang kamu buat di LANJUT (centang Daftar Periksa, kartu, dan hasil latihan) supaya kemajuanmu tidak hilang.
+- Kami menyimpan data akunmu (nama pengguna, kelas, jenis sekolah, prodi impian, gaya belajar, dan email kalau kamu isi) dan yang kamu buat di LANJUT (centang Daftar Periksa, kartu, modul yang kamu unggah, dan hasil latihan) supaya kemajuanmu tidak hilang.
 - Kata sandimu disimpan dalam bentuk acak, bukan teks aslinya.
 - Obrolan di Ngobrol Bareng LANJUT belum dikirim ke mana pun. Fitur AI sungguhan nanti memakai penyedia pihak ketiga yang mungkin berada di luar negeri, dan baru aktif setelah orang tua atau walimu memberi persetujuan lewat sekolah.
 - Kamu dan orang tua atau walimu berhak melihat, membetulkan, dan meminta penghapusan datamu, serta mencabut persetujuan.
@@ -52,11 +52,12 @@ LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya].
 - Jalur belajarmu: kelas, jenis sekolah (SMP, SMA, SMK, atau MA), prodi impian, dan gaya belajar yang kamu pilih.
 - Kemajuan: butir Daftar Periksa yang kamu centang, dan butir yang kamu simpan dari Pilih Mapel atau Eksplorasi Tujuan.
 - Arsip Belajar: kartu yang kamu tulis (mapel, judul, isi, dan jawaban). Isinya teks bebas, jadi sebaiknya jangan menulis data pribadi di kartu.
+- Modul: teks materi pelajaran yang kamu unggah ke Arsip Belajar (dari berkas .txt, .md, atau PDF, atau yang kamu tempel), beserta judul, mapel, nama berkas, dan waktu unggah. Berkas aslinya tidak disimpan, hanya teksnya. Teks itu juga dibelah menjadi potongan supaya bisa kamu cari. Modul bisa kamu hapus permanen kapan saja; teks dan semua potongannya ikut terhapus.
 - Latihan: kapan sesi latihan dimulai dan selesai, mapel yang dilatih, kartu yang kamu jawab, benar atau salahnya jawabanmu, dan seberapa yakin kamu (kalau kamu mengisinya).
 - Persetujuan: kapan kamu membaca kebijakan ini (dan versinya), serta kapan orang tua atau walimu memberi atau mencabut persetujuan lewat sekolah, termasuk nomor atau tanggal suratnya.
 - Keamanan akun: kapan akun dibuat, kapan terakhir kamu masuk, status akun (aktif atau nonaktif), sesi masuk yang masih aktif, dan jumlah percobaan masuk yang gagal (supaya akun bisa dikunci sementara kalau ada yang mencoba menebak kata sandi).
 - Catatan teknis server: setiap permintaan ke server mencatat fitur yang dibuka, hasilnya, lama prosesnya, dan ID akunmu (bukan namamu). Alamat IP perangkatmu dipakai sementara untuk membatasi permintaan yang terlalu sering, dan tidak disimpan di basis data. [ISI: berapa lama catatan teknis disimpan oleh server dan penyedianya.]
-- Kartu atau butir Daftar Periksa yang kamu hapus disembunyikan dari aplikasi, tetapi saat ini masih tersimpan di server. [ISI: kapan data yang dihapus benar-benar dihapus permanen.]
+- Kartu atau butir Daftar Periksa yang kamu hapus disembunyikan dari aplikasi, tetapi saat ini masih tersimpan di server (modul tidak termasuk: modul dihapus permanen). [ISI: kapan data yang dihapus benar-benar dihapus permanen.]
 
 ### Data yang hanya ada di HP atau browsermu
 
@@ -66,7 +67,7 @@ LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya].
 
 ### Yang tidak kami kumpulkan
 
-- Lokasi, kontak, foto, rekaman suara, nomor HP, nama sekolah, dan nama lengkap aslimu (kecuali kalau kamu sendiri menulisnya sebagai nama tampilan atau di kartu).
+- Lokasi, kontak, foto, rekaman suara, nomor HP, nama sekolah, dan nama lengkap aslimu (kecuali kalau kamu sendiri menulisnya sebagai nama tampilan, di kartu, atau di modul).
 - Saat ini LANJUT tidak memakai layanan analitik atau iklan dari pihak ketiga.
 
 ### Untuk apa datanya dipakai
@@ -88,7 +89,7 @@ LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya].
 
 Ngobrol Bareng LANJUT sekarang masih versi uji coba: balasannya contoh, bukan dari AI sungguhan.
 
-Nanti, balasan AI sungguhan memakai penyedia AI pihak ketiga [ISI: nama penyedia AI]. Pesan yang kamu tulis, dan [ISI: data akun mana yang ikut dikirim, misalnya kelas dan gaya belajar], akan dikirim ke penyedia itu untuk dibuatkan balasan. Penyedia itu kemungkinan memproses datanya di luar negeri [ISI: negara atau wilayahnya, dan dasar pengirimannya].
+Nanti, balasan AI sungguhan memakai penyedia AI pihak ketiga [ISI: nama penyedia AI]. Pesan yang kamu tulis, potongan modul di Arsip Belajarmu yang berkaitan dengan pertanyaanmu, dan [ISI: data akun lain yang ikut dikirim, misalnya kelas dan gaya belajar], akan dikirim ke penyedia itu untuk dibuatkan balasan. Penyedia itu kemungkinan memproses datanya di luar negeri [ISI: negara atau wilayahnya, dan dasar pengirimannya].
 
 Fitur AI hanya aktif kalau orang tua atau walimu sudah memberi persetujuan lewat sekolah, dan kamu sudah membaca kebijakan versi yang berlaku. Tanpa itu, data akunmu tidak dikirim ke penyedia AI.
 
@@ -106,7 +107,7 @@ Orang tua atau wali memberi persetujuan lewat surat yang dibagikan sekolah. Seko
 
 - Melihat data apa saja yang tersimpan tentangmu.
 - Membetulkan data yang salah. Nama tampilan, kelas, jenis sekolah, prodi impian, dan gaya belajar bisa kamu ubah sendiri di Jalur Saya.
-- Meminta datamu dihapus. Fitur hapus akun di aplikasi belum ada, jadi ajukan lewat kontak di bawah.
+- Meminta datamu dihapus. Modul bisa kamu hapus sendiri secara permanen di Arsip Belajar. Untuk data lain, fitur hapus akun di aplikasi belum ada, jadi ajukan lewat kontak di bawah.
 - Mencabut persetujuan. Setelah persetujuan orang tua atau wali dicabut, fitur AI langsung tertutup untuk akunmu. Pencabutan diajukan lewat sekolah atau kontak di bawah.
 - [ISI: berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.]
 
@@ -156,6 +157,8 @@ Sumber: migrasi `LANJUT_App/server/src/db/migrasi/001`–`012` dan kode app.
 | Centang Daftar Periksa | `kemajuan` (butir_id, selesai_pada) | Siswa | |
 | Butir Daftar Periksa milik akun | `butir_pribadi` (jenis, prodi_id, judul, selesai/dibuat/diubah/dihapus_pada) | Siswa, dari Pilih Mapel & Eksplorasi Tujuan | Hapus lunak: baris tetap ada, `dihapus_pada` terisi. |
 | Kartu Arsip Belajar | `kartu` (mapel_id, judul, isi, jawaban, dibuat/diubah/dihapus_pada) | Siswa | Teks bebas. Hapus lunak. |
+| Modul (materi unggahan) | `modul` (mapel_id, judul, isi = teks hasil ekstraksi, jumlah_karakter, jenis txt/md/pdf/tempel, nama_berkas, diunggah_pada) | Siswa (LANJUT_049) | Berkas asli **tidak** disimpan (diterima di memori, diekstrak, dibuang). Teks bisa memuat apa pun yang ada di materi. **Hapus permanen**, bukan hapus lunak. |
+| Potongan modul | `potongan_modul` (modul_id, urutan, isi ±800–1.200 karakter) + indeks FULLTEXT | Server, dari teks modul | Untuk pencarian di modul sendiri. Ikut terhapus permanen bersama modulnya; indeks FULLTEXT dirapikan (`OPTIMIZE TABLE`) ±30 detik sesudah penghapusan supaya kata dari modul yang dihapus tidak tertinggal di berkas indeks. |
 | Sesi latihan | `sesi_latihan` (dimulai/selesai_pada, jumlah kartu, mapel fokus, asal) | Siswa | |
 | Riwayat latihan | `riwayat_latihan` (kartu_id, benar, dijawab_pada, sesi_id, keyakinan, mapel_id, gap_numerik, kelas_gap, aturan_versi) | Siswa; dua kolom terakhir dihitung server | `keyakinan` hanya terisi dari data tamu PWA lama; app Expo tidak menanyakannya. |
 | Persetujuan | `persetujuan` (jenis, versi, status, sumber, catatan, dicatat_pada) | Siswa (kebijakan, `mandiri`); petugas lewat skrip `persetujuan-ortu` (orang tua/wali, `surat_sekolah`/`admin`) | Riwayat tidak ditimpa; `catatan` berisi nomor/tanggal surat. |
@@ -195,7 +198,7 @@ tidak diunduh dari Google saat app berjalan.
 6. **Siapa yang bisa melihat datamu** — nama penyedia dan lokasi servernya.
 7. **Siapa yang bisa melihat datamu** — konfirmasi apakah ini akan berubah.
 8. **Fitur AI (belum aktif)** — nama penyedia AI
-9. **Fitur AI (belum aktif)** — data akun mana yang ikut dikirim, misalnya kelas dan gaya belajar
+9. **Fitur AI (belum aktif)** — data akun lain yang ikut dikirim, misalnya kelas dan gaya belajar
 10. **Fitur AI (belum aktif)** — negara atau wilayahnya, dan dasar pengirimannya
 11. **Fitur AI (belum aktif)** — apakah isi obrolan dengan AI disimpan, di mana, dan berapa lama.
 12. **Persetujuan orang tua atau wali** — apakah membuat akun dan memakai fitur dasar juga butuh persetujuan orang tua atau wali lebih dulu. Menunggu keputusan pengelola dan ahli hukum.
@@ -228,6 +231,22 @@ tidak diunduh dari Google saat app berjalan.
    penyedia AI pihak ketiga yang kemungkinan memproses di luar negeri. Dasar
    dan syarat pengirimannya perlu ditetapkan sebelum fitur AI aktif.
 7. **Kalimat data pribadi di form Daftar** (salinan teks §4.10, disetujui
-   28 Sep 2026) belum menyebut jenis sekolah, gaya belajar, kartu, dan hasil
-   latihan. Kalimat itu tidak diubah di LANJUT_047; perlu ditinjau ulang
-   bersama kebijakan ini.
+   28 Sep 2026) belum menyebut jenis sekolah, gaya belajar, kartu, hasil
+   latihan, dan modul. Kalimat itu tidak diubah di LANJUT_047/049; perlu
+   ditinjau ulang bersama kebijakan ini.
+8. **Modul unggahan (LANJUT_049).** Siswa bisa mengunggah materi apa pun
+   sebagai teks. Peringatan di formulir meminta tidak mengunggah data pribadi
+   dan hanya materi yang boleh dipakai untuk belajar pribadi, tetapi isinya
+   tidak diperiksa. Perlu diputuskan: (a) tanggung jawab bila materi
+   melanggar hak cipta; (b) apakah data pribadi orang lain yang terbawa di
+   materi diperlakukan khusus; (c) masa simpan modul bila akun lama tidak
+   dipakai.
+9. **Modul dan fitur AI.** Kebijakan ini sudah menyebut bahwa potongan modul
+   yang berkaitan dengan pertanyaan akan dikirim ke penyedia AI saat fitur AI
+   aktif (sesuai spek AI, Keputusan 1). Rincian data yang dikirim tetap
+   `[ISI]` sampai backend AI dirancang.
+10. **Versi kebijakan.** Penambahan data modul mengubah isi kebijakan, tetapi
+    versinya **sengaja belum dinaikkan** (masih 1) di LANJUT_049. Karena
+    seluruh teks masih DRAF dan belum berlaku, keputusan menaikkan versi ada
+    di Khalifa. Bila dinaikkan: rilis app dengan teks baru dulu, baru naikkan
+    `persetujuan_versi_kebijakan` lewat migrasi.

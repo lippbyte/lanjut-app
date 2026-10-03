@@ -443,6 +443,31 @@ const PETA = [
     ],
   },
   {
+    kelompok: 'Arsip Belajar — Modul (materi unggahan)',
+    butir: [
+      { task: 'LANJUT_049', awal: '**Bagian Modul di Arsip:**', nama: 'Bagian Modul', di: 'Arsip Belajar, di bawah daftar kartu.', oleh: 'Semua akun.' },
+      { task: 'LANJUT_049', awal: '**Daftar modul:**', nama: 'Daftar modul', di: 'Arsip Belajar, bagian Modul.', oleh: 'Akun yang punya modul.' },
+      { task: 'LANJUT_049', awal: '**Cari di modul:**', nama: 'Cari di modul', di: 'Arsip Belajar, bagian Modul (hanya modul sendiri).', oleh: 'Akun yang punya modul.' },
+      { task: 'LANJUT_049', awal: '**Hapus semua modul:**', nama: 'Hapus semua modul', di: 'Arsip Belajar, bagian Modul; konfirmasi dua langkah.', oleh: 'Akun yang punya modul.' },
+      { task: 'LANJUT_049', awal: '**Lihat modul:**', nama: 'Lihat & hapus modul', di: 'Halaman satu modul (/arsip-modul).', oleh: 'Pemilik modul.' },
+      { task: 'LANJUT_049', awal: '**Modul tidak ditemukan:**', nama: 'Modul tidak ditemukan', di: 'Halaman satu modul, bila modul sudah dihapus atau milik akun lain.', oleh: 'Semua akun.' },
+      {
+        task: 'LANJUT_049',
+        awal: '**Peringatan sebelum unggah:**',
+        nama: 'Peringatan sebelum unggah',
+        di: 'Formulir unggah modul, paling atas.',
+        oleh: 'Semua akun yang mengunggah modul.',
+        faktual: {
+          klaim: 'Yang disimpan hanya teks, bukan berkas asli; modul bisa dihapus permanen. Juga larangan mengunggah data pribadi dan materi yang tidak boleh dipakai (hak cipta).',
+          sumber: 'Perilaku server (LANJUT_049: berkas tidak ditulis ke disk, hapus permanen + perapian indeks); aspek hak cipta perlu ditinjau ahli hukum.',
+        },
+      },
+      { task: 'LANJUT_049', awal: '**Formulir unggah:**', nama: 'Formulir unggah', di: 'Formulir unggah modul (/arsip-modul-unggah).', oleh: 'Semua akun yang mengunggah modul.' },
+      { task: 'LANJUT_049', awal: '**Galat formulir:**', nama: 'Galat formulir', di: 'Formulir unggah, sebelum dikirim.', oleh: 'Semua akun yang mengunggah modul.' },
+      { task: 'LANJUT_049', awal: '**Galat unggah dari server', nama: 'Galat unggah (tipe, ukuran, karakter, jumlah, PDF)', di: 'Formulir unggah, bila server menolak.', oleh: 'Semua akun yang mengunggah modul.' },
+    ],
+  },
+  {
     kelompok: 'Latihan',
     butir: [
       { task: 'LANJUT_041', awal: '**Pintu di Arsip Belajar:**', nama: 'Pintu di Arsip Belajar', di: 'Arsip Belajar, tombol menuju Latihan.', oleh: 'Semua akun.' },

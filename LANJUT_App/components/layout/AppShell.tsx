@@ -31,6 +31,9 @@ const HALAMAN_ANAK: Record<string, string> = {
   '/arsip': 'Arsip Belajar',
   '/arsip-kartu': 'Kartu',
   '/arsip-tulis': 'Tulis Kartu',
+  // LANJUT_049 — modul di Arsip Belajar.
+  '/arsip-modul': 'Modul',
+  '/arsip-modul-unggah': 'Unggah Modul',
   // F7 (LANJUT_041) — dibuka dari Arsip Belajar.
   '/latihan': 'Latihan',
   '/latihan-riwayat': 'Riwayat Latihan',

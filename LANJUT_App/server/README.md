@@ -327,6 +327,88 @@ untuk akun tanpa persetujuan aktif, dilewati. Pilihan: `--sumber=admin`,
 
 Tes: `tests/persetujuan.test.js`, `tests/kebijakan-privasi.test.js`.
 
+## 2c. Modul di Arsip Belajar (LANJUT_049)
+
+Siswa mengunggah materi pelajaran (.txt, .md, PDF berisi teks, atau teks yang
+ditempel). **Yang disimpan hanya teks hasil ekstraksi**; berkas asli diterima
+di memori (multer `memoryStorage`), diekstrak, lalu dibuang, tanpa pernah
+ditulis ke disk, dieksekusi, atau disajikan ulang. **Tidak ada layanan luar**:
+ekstraksi dan pencarian berjalan di server sendiri, dan isi modul tidak
+dikirim ke mana pun. Pengambilan konteks untuk AI belum dibangun.
+
+### Data
+
+- `modul` (migrasi 013): id, pengguna_id, mapel_id (10 mapel), judul, isi
+  (MEDIUMTEXT), jumlah_karakter, jenis (`txt`/`md`/`pdf`/`tempel`),
+  nama_berkas (tampilan saja), diunggah_pada.
+- `potongan_modul`: teks dibelah ±800–1.200 karakter di batas paragraf atau
+  kalimat (`src/modul/modul/potong.js`), dengan indeks **FULLTEXT MySQL**.
+  `pengguna_id` disalin ke potongan supaya setiap pencarian memfilter pemilik.
+- **Hapus permanen**: baris modul + potongan dihapus (bukan hapus lunak).
+  InnoDB menyimpan kata dari baris FULLTEXT yang dihapus sampai tabel
+  dirapikan, jadi ±30 detik sesudah penghapusan server menjalankan
+  `OPTIMIZE TABLE potongan_modul` (digabung bila banyak hapus berdekatan).
+  OPTIMIZE membangun ulang tabel itu; untuk data besar, pindahkan ke jadwal
+  di luar jam ramai.
+
+### Batas (di tabel konfigurasi, bukan di kode)
+
+| Kunci di `konfigurasi_levelin` | Bawaan | Arti |
+|---|---|---|
+| `modul_ukuran_maks_byte` | 5242880 (5 MB) | Ukuran berkas; juga teks tempelan (byte UTF-8). |
+| `modul_karakter_maks` | 200000 | Karakter teks hasil ekstraksi per modul. |
+| `modul_jumlah_maks` | 10 | Modul per akun (dicek ulang di transaksi dengan baris pengguna dikunci). |
+
+Ubah langsung, berlaku di unggahan berikutnya tanpa restart, mis.
+`UPDATE konfigurasi_levelin SET nilai = '20' WHERE kunci = 'modul_jumlah_maks';`.
+Kunci ini tidak ikut di endpoint publik `/konfigurasi/levelin`. Teks tempelan
+juga dibatasi `express.json` 1 MB.
+
+### Endpoint (wajib login, hanya milik sendiri; id orang lain → 404)
+
+| Metode | Jalur | Isi |
+|---|---|---|
+| POST | `/api/v1/modul` | multipart (`berkas`, `judul`, `mapel_id`) atau JSON (`judul`, `mapel_id`, `teks`) → 201 ringkasan + `jumlah_potongan` |
+| GET | `/api/v1/modul` | daftar tanpa isi |
+| GET | `/api/v1/modul/cari?q=` | potongan yang cocok (FULLTEXT, mode bahasa alami, maks. 10, urut skor) + judul modul |
+| GET | `/api/v1/modul/:id` | isi lengkap (teks biasa) |
+| DELETE | `/api/v1/modul/:id` | hapus permanen |
+| DELETE | `/api/v1/modul?semua=ya` | hapus permanen semua modul sendiri (tanpa `?semua=ya` → 400) |
+
+Penolakan: `TIPE_BERKAS_DITOLAK` 415, `BERKAS_TERLALU_BESAR` 413,
+`TEKS_TERLALU_PANJANG` 413, `BATAS_MODUL` 409, `PDF_TANPA_TEKS` /
+`PDF_TERENKRIPSI` / `PDF_GAGAL_DIBACA` 422. Angka batas ikut di `medan`
+supaya app bisa menyusun kalimatnya sendiri.
+
+### Ekstraksi & keamanan unggahan
+
+- **Tipe dari isi, bukan hanya ekstensi**: `.pdf` wajib diawali `%PDF-`;
+  `.txt`/`.md` wajib UTF-8 sah tanpa byte NUL dan bukan PDF yang diganti nama.
+  Ekstensi lain ditolak.
+- **PDF: pdfjs-dist 4.10.38** (Mozilla, Apache-2.0). Dipilih karena pustaka
+  pembaca PDF paling matang, murni JavaScript (tidak ada biner untuk teks),
+  dan bekerja dari byte tanpa jaringan. Versi 4.10 dipakai karena v5+
+  mensyaratkan Node ≥ 22.13, padahal server menjanjikan Node 20+. Sudah
+  memuat perbaikan CVE-2024-4367; `isEvalSupported: false` tetap dipasang.
+  (`@napi-rs/canvas` ikut terpasang sebagai dependensi opsional pdf.js. Modul
+  native itu **dilarang dimuat** di worker: ekstraksi teks tidak
+  membutuhkannya, dan memuatnya di worker_thread membuat seluruh proses
+  server kadang crash, berupa segfault dengan exit 139, saat beberapa PDF
+  diunggah beruntun. Dijaga oleh tes di `tests/modul.test.js`.)
+- Ekstraksi berjalan di **worker_thread** (`ekstrak-pdf.worker.mjs`) dengan
+  batas waktu 15 detik dan memori 256 MB; worker dihentikan paksa bila lewat.
+  Di dalam worker, modul jaringan Node (net, tls, http, https, dns, fetch)
+  dimatikan sebelum pdf.js dimuat.
+- PDF terenkripsi (ada `/Encrypt`, dengan atau tanpa sandi pembuka) ditolak
+  sebelum dibuka. PDF tanpa teks (pindai/foto) ditolak; tidak ada OCR.
+- Pencarian kata kunci FULLTEXT tidak memahami makna: tidak cocok untuk
+  sinonim atau imbuhan Indonesia ("membelah" ≠ "belah"), dan kata < 3 huruf
+  diabaikan. Pencarian makna lewat embedding pihak ketiga sengaja tidak
+  dipakai karena akan mengirim isi modul keluar.
+
+Tes: `tests/modul.test.js`, `tests/modul-potong.test.js` (berkas contoh di
+`tests/fixtures/modul/`).
+
 ## 3. Menjalankan server
 
 ```bash

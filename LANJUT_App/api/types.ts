@@ -222,3 +222,20 @@ export type StatusPersetujuan = {
   ortu_wali_aktif: boolean;
   boleh_pakai_ai: boolean;
 };
+
+// LANJUT_049 — modul di Arsip Belajar (modul.layanan.js). Isi hanya di GET /modul/:id.
+export type JenisModul = 'txt' | 'md' | 'pdf' | 'tempel';
+export type ModulRingkas = {
+  id: string;
+  judul: string;
+  mapel_id: string;
+  jumlah_karakter: number;
+  jenis: JenisModul;
+  nama_berkas: string | null;
+  diunggah_pada: string;
+};
+export type Modul = ModulRingkas & { isi: string };
+export type HasilCariModul = {
+  q: string;
+  hasil: { modul_id: string; judul: string; mapel_id: string; urutan: number; potongan: string; skor: number }[];
+};

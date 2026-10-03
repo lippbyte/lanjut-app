@@ -43,15 +43,17 @@ di bawah 18 tahun, sebagian fitur LANJUT membutuhkan persetujuan Bapak/Ibu.
 
 - data akun: nama pengguna, email (kalau diisi), kelas, jenis sekolah, prodi
   impian, dan gaya belajar;
-- yang dibuat anak di aplikasi: centang daftar persiapan, kartu catatan, dan
-  hasil latihan soal;
+- yang dibuat anak di aplikasi: centang daftar persiapan, kartu catatan,
+  hasil latihan soal, dan modul pelajaran yang diunggah (hanya teksnya; berkas
+  aslinya tidak disimpan, dan modul bisa dihapus permanen oleh anak);
 - catatan keamanan akun, misalnya kapan terakhir masuk.
 
 Kata sandi disimpan dalam bentuk acak sehingga tidak bisa dibaca siapa pun.
 LANJUT tidak mengumpulkan lokasi, kontak, foto, atau nomor HP anak.
 
 **Fitur AI (belum aktif).** Nanti LANJUT punya fitur tanya-jawab dengan AI.
-Pesan yang ditulis anak, dan [ISI: data akun yang ikut dikirim], akan dikirim
+Pesan yang ditulis anak, potongan modul pelajaran anak yang berkaitan dengan
+pertanyaannya, dan [ISI: data akun lain yang ikut dikirim], akan dikirim
 ke penyedia AI pihak ketiga, yaitu [ISI: nama penyedia AI], yang kemungkinan
 memprosesnya di luar negeri, di [ISI: negara/wilayah]. Fitur ini hanya aktif
 untuk anak Bapak/Ibu bila Bapak/Ibu menyetujuinya lewat surat ini.

@@ -9,6 +9,7 @@ import { jenisKartu, mapelBerkartu, namaMapel } from '../../lib/arsip';
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { Ikon, Kartu, KeadaanGalat, Kepala, Kosong, Lencana, Memuat, Tombol, gaya } from '../ui';
 import { DaftarOpsi, OpsiPil } from './auth/AuthUI';
+import { BagianModul } from './ModulScreens';
 
 const SEMUA = '__semua__';
 
@@ -68,6 +69,8 @@ export function ArsipScreen() {
         <Tombol label="Mulai latihan" varian="sekunder" besar penuh onPress={() => router.push('/latihan')} />
       ) : null}
       {isi()}
+      {/* LANJUT_049 — modul (materi unggahan, teks saja). */}
+      <BagianModul />
     </View>
   );
 }
