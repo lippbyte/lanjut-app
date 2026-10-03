@@ -13,6 +13,7 @@ const penggunaRepo = require('../pengguna/pengguna.repo');
 const kontenRepo = require('../konten/konten.repo');
 const sesiRepo = require('./sesi.repo');
 const percobaanRepo = require('./percobaanMasuk.repo');
+const persetujuanLayanan = require('../persetujuan/persetujuan.layanan');
 
 // Pemetaan prodi_impian → prodi_tujuan dilakukan DI SATU TEMPAT SAJA (§3.3).
 function petakanProdiTujuan(prodiImpian) {
@@ -56,9 +57,11 @@ function bentukProfil(baris) {
   };
 }
 
-async function daftar({ nama_pengguna, kata_sandi, nama_tampilan, email, kelas, jenis_sekolah, prodi_impian }) {
+async function daftar({ nama_pengguna, kata_sandi, nama_tampilan, email, kelas, jenis_sekolah, prodi_impian, versi_kebijakan }) {
   // LANJUT_038: kelas 7–9 → SMP; kelas 10–12 + SMP (atau 7–9 + SMA) → 400.
   const jenisSekolah = tentukanJenisSekolah(kelas ?? null, jenis_sekolah, null);
+  // LANJUT_047: versi kebijakan yang usang ditolak SEBELUM akun dibuat.
+  if (versi_kebijakan !== undefined) await persetujuanLayanan.pastikanVersiBerlaku(versi_kebijakan);
 
   const dipakai = await penggunaRepo.cekNamaPenggunaDipakai(nama_pengguna);
   if (dipakai) {
@@ -100,6 +103,7 @@ async function daftar({ nama_pengguna, kata_sandi, nama_tampilan, email, kelas, 
     prodiTujuan,
     dibuatPada,
   });
+  if (versi_kebijakan !== undefined) await persetujuanLayanan.terimaKebijakan(id, versi_kebijakan);
 
   return buatSesiDanBentukRespons(id);
 }

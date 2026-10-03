@@ -1,0 +1,121 @@
+{
+  "_catatan": "LANJUT_047. DRAF — wajib direview ahli hukum sebelum dipakai. Satu-satunya sumber teks kebijakan privasi di app (ringkasan di layar Daftar dan halaman lengkap /kebijakan-privasi). docs/kebijakan-privasi-DRAF.md memuat teks yang sama persis (dijaga server/tests/kebijakan-privasi.test.js). Menaikkan `versi` wajib dibarengi migrasi yang menaikkan persetujuan_versi_kebijakan di server. Bagian [ISI: ...] menunggu keputusan Khalifa.",
+  "versi": 1,
+  "status": "DRAF — belum berlaku. Wajib direview ahli hukum sebelum dipakai.",
+  "ringkasan": [
+    "Kami menyimpan data akunmu (nama pengguna, kelas, jenis sekolah, prodi impian, gaya belajar, dan email kalau kamu isi) dan yang kamu buat di LANJUT (centang Daftar Periksa, kartu, dan hasil latihan) supaya kemajuanmu tidak hilang.",
+    "Kata sandimu disimpan dalam bentuk acak, bukan teks aslinya.",
+    "Obrolan di Ngobrol Bareng LANJUT belum dikirim ke mana pun. Fitur AI sungguhan nanti memakai penyedia pihak ketiga yang mungkin berada di luar negeri, dan baru aktif setelah orang tua atau walimu memberi persetujuan lewat sekolah.",
+    "Kamu dan orang tua atau walimu berhak melihat, membetulkan, dan meminta penghapusan datamu, serta mencabut persetujuan."
+  ],
+  "isi": [
+    {
+      "judul": "Tentang kebijakan ini",
+      "paragraf": [
+        "Kebijakan ini menjelaskan data apa yang dikumpulkan LANJUT, untuk apa, siapa yang bisa melihatnya, dan apa hakmu serta hak orang tua atau walimu.",
+        "LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya]."
+      ]
+    },
+    {
+      "judul": "Data yang kami simpan di server",
+      "butir": [
+        "Akun: nama pengguna, nama tampilan, email (kalau kamu isi), dan kata sandi. Kata sandi disimpan dalam bentuk acak (hash), jadi tidak bisa dibaca, termasuk oleh tim LANJUT.",
+        "Jalur belajarmu: kelas, jenis sekolah (SMP, SMA, SMK, atau MA), prodi impian, dan gaya belajar yang kamu pilih.",
+        "Kemajuan: butir Daftar Periksa yang kamu centang, dan butir yang kamu simpan dari Pilih Mapel atau Eksplorasi Tujuan.",
+        "Arsip Belajar: kartu yang kamu tulis (mapel, judul, isi, dan jawaban). Isinya teks bebas, jadi sebaiknya jangan menulis data pribadi di kartu.",
+        "Latihan: kapan sesi latihan dimulai dan selesai, mapel yang dilatih, kartu yang kamu jawab, benar atau salahnya jawabanmu, dan seberapa yakin kamu (kalau kamu mengisinya).",
+        "Persetujuan: kapan kamu membaca kebijakan ini (dan versinya), serta kapan orang tua atau walimu memberi atau mencabut persetujuan lewat sekolah, termasuk nomor atau tanggal suratnya.",
+        "Keamanan akun: kapan akun dibuat, kapan terakhir kamu masuk, status akun (aktif atau nonaktif), sesi masuk yang masih aktif, dan jumlah percobaan masuk yang gagal (supaya akun bisa dikunci sementara kalau ada yang mencoba menebak kata sandi).",
+        "Catatan teknis server: setiap permintaan ke server mencatat fitur yang dibuka, hasilnya, lama prosesnya, dan ID akunmu (bukan namamu). Alamat IP perangkatmu dipakai sementara untuk membatasi permintaan yang terlalu sering, dan tidak disimpan di basis data. [ISI: berapa lama catatan teknis disimpan oleh server dan penyedianya.]",
+        "Kartu atau butir Daftar Periksa yang kamu hapus disembunyikan dari aplikasi, tetapi saat ini masih tersimpan di server. [ISI: kapan data yang dihapus benar-benar dihapus permanen.]"
+      ]
+    },
+    {
+      "judul": "Data yang hanya ada di HP atau browsermu",
+      "butir": [
+        "Tanda masuk dan salinan data akunmu, supaya kamu tidak perlu masuk ulang setiap membuka aplikasi.",
+        "Kelas dan jalur yang kamu pilih di Daftar Periksa.",
+        "Obrolan di Ngobrol Bareng LANJUT: hanya ada selama aplikasi terbuka, lalu hilang saat aplikasi ditutup atau kamu keluar. Obrolan ini tidak dikirim ke server LANJUT maupun ke pihak lain."
+      ]
+    },
+    {
+      "judul": "Yang tidak kami kumpulkan",
+      "butir": [
+        "Lokasi, kontak, foto, rekaman suara, nomor HP, nama sekolah, dan nama lengkap aslimu (kecuali kalau kamu sendiri menulisnya sebagai nama tampilan atau di kartu).",
+        "Saat ini LANJUT tidak memakai layanan analitik atau iklan dari pihak ketiga."
+      ]
+    },
+    {
+      "judul": "Untuk apa datanya dipakai",
+      "butir": [
+        "Menampilkan isi yang sesuai kelas dan jenis sekolahmu, misalnya jadwal SNBP, SNBT, dan TKA hanya untuk kelas 12.",
+        "Menyimpan kemajuan, kartu, dan hasil latihanmu supaya tidak hilang saat ganti HP.",
+        "Memberi saran mapel dan latihan dari prodi impian dan hasil latihanmu.",
+        "Menjaga keamanan akun.",
+        "[ISI: tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.]"
+      ]
+    },
+    {
+      "judul": "Siapa yang bisa melihat datamu",
+      "butir": [
+        "Kamu sendiri, lewat aplikasi. Akun lain tidak bisa melihat datamu.",
+        "Tim pengelola LANJUT yang mengurus server. [ISI: siapa saja dan untuk keperluan apa.]",
+        "Penyedia server dan basis data tempat LANJUT berjalan. [ISI: nama penyedia dan lokasi servernya.]",
+        "Sekolah hanya mencatat persetujuan orang tua atau wali ke akunmu. Saat ini tidak ada fitur bagi sekolah atau guru untuk melihat data siswa. [ISI: konfirmasi apakah ini akan berubah.]"
+      ]
+    },
+    {
+      "judul": "Fitur AI (belum aktif)",
+      "paragraf": [
+        "Ngobrol Bareng LANJUT sekarang masih versi uji coba: balasannya contoh, bukan dari AI sungguhan.",
+        "Nanti, balasan AI sungguhan memakai penyedia AI pihak ketiga [ISI: nama penyedia AI]. Pesan yang kamu tulis, dan [ISI: data akun mana yang ikut dikirim, misalnya kelas dan gaya belajar], akan dikirim ke penyedia itu untuk dibuatkan balasan. Penyedia itu kemungkinan memproses datanya di luar negeri [ISI: negara atau wilayahnya, dan dasar pengirimannya].",
+        "Fitur AI hanya aktif kalau orang tua atau walimu sudah memberi persetujuan lewat sekolah, dan kamu sudah membaca kebijakan versi yang berlaku. Tanpa itu, data akunmu tidak dikirim ke penyedia AI.",
+        "[ISI: apakah isi obrolan dengan AI disimpan, di mana, dan berapa lama.]"
+      ]
+    },
+    {
+      "judul": "Persetujuan orang tua atau wali",
+      "paragraf": [
+        "Banyak pengguna LANJUT berusia di bawah 18 tahun. Untuk data anak, persetujuan harus datang dari orang tua atau wali, bukan dari centang di aplikasi.",
+        "Orang tua atau wali memberi persetujuan lewat surat yang dibagikan sekolah. Sekolah lalu mencatatnya ke akunmu. Status persetujuannya bisa kamu lihat di Jalur Saya.",
+        "[ISI: apakah membuat akun dan memakai fitur dasar juga butuh persetujuan orang tua atau wali lebih dulu. Menunggu keputusan pengelola dan ahli hukum.]"
+      ]
+    },
+    {
+      "judul": "Hak kamu dan orang tua atau walimu",
+      "butir": [
+        "Melihat data apa saja yang tersimpan tentangmu.",
+        "Membetulkan data yang salah. Nama tampilan, kelas, jenis sekolah, prodi impian, dan gaya belajar bisa kamu ubah sendiri di Jalur Saya.",
+        "Meminta datamu dihapus. Fitur hapus akun di aplikasi belum ada, jadi ajukan lewat kontak di bawah.",
+        "Mencabut persetujuan. Setelah persetujuan orang tua atau wali dicabut, fitur AI langsung tertutup untuk akunmu. Pencabutan diajukan lewat sekolah atau kontak di bawah.",
+        "[ISI: berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.]"
+      ]
+    },
+    {
+      "judul": "Berapa lama data disimpan",
+      "paragraf": [
+        "[ISI: masa simpan data akun, data latihan, catatan persetujuan, dan catatan teknis server, serta apa yang terjadi pada data akun yang lama tidak dipakai.]"
+      ]
+    },
+    {
+      "judul": "Keamanan",
+      "paragraf": [
+        "Kata sandi dan tanda masuk disimpan dalam bentuk acak (hash). Setiap akun hanya bisa membuka datanya sendiri.",
+        "[ISI: perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) dan pencadangan.]"
+      ]
+    },
+    {
+      "judul": "Perubahan kebijakan",
+      "paragraf": [
+        "Kalau kebijakan ini berubah, nomor versinya naik. Persetujuan untuk versi lama tidak dianggap berlaku untuk fitur yang membutuhkan versi baru, termasuk fitur AI.",
+        "[ISI: cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.]"
+      ]
+    },
+    {
+      "judul": "Kontak",
+      "paragraf": [
+        "[ISI: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.]"
+      ]
+    }
+  ]
+}

@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { View } from 'react-native';
+import { Modal, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import type { DataDaftar } from '../../../api/auth';
 import { useAuth } from '../../../hooks/useAuth';
+import { RINGKASAN_KEBIJAKAN, VERSI_KEBIJAKAN } from '../../../lib/kebijakanPrivasi';
+import { color, font, radius, spacing, teks } from '../../../theme/tokens';
+import { IsiKebijakan } from '../KebijakanPrivasiScreen';
 import {
   JENIS_SEKOLAH_MENENGAH,
   KELAS_OPSI,
@@ -19,6 +23,7 @@ import {
   Field,
   Input,
   Keterangan,
+  KotakCentang,
   OpsiPil,
   PesanGalat,
   PilihProdi,
@@ -37,6 +42,13 @@ const NAMA_PENGGUNA_REGEX = /^[a-z0-9._]{3,32}$/;
 const KALIMAT_DATA_PRIBADI =
   'Kami menyimpan nama pengguna, nama tampilan, email (kalau kamu isi), kelas, prodi impian, dan centang Daftar Periksamu untuk menjalankan LANJUT, yaitu menampilkan jalur dan kemajuanmu.';
 
+// Salinan teks §4.13 (LANJUT_047) — DRAF belum disetujui Khalifa. Isi ringkasan
+// & kebijakan lengkap dari lib/kebijakan-privasi.json.
+const JUDUL_KEBIJAKAN = 'Kebijakan privasi (ringkas)';
+const TAUTAN_KEBIJAKAN = 'Baca kebijakan privasi lengkap';
+const LABEL_SUDAH_BACA = 'Saya sudah membaca kebijakan privasi LANJUT.';
+const PETUNJUK_BELUM_CENTANG = 'Centang kotak kebijakan privasi di atas dulu supaya bisa mendaftar.';
+
 // Medan & salinan teks mengikuti MVP-PWA/daftar.html: nama pengguna, email
 // (opsional), kata sandi, prodi impian (wajib, "belum" jawaban sah).
 // Kelas (LANJUT_035) wajib di form ini: menentukan apakah Linimasa, Daftar
@@ -54,8 +66,12 @@ export function RegisterScreen() {
   const tanyaJenis = tanyaJenisSekolah(kelas);
   const [prodi, setProdi] = useState<string | null>(null);
   const [galatLokal, setGalatLokal] = useState<Record<string, string>>({});
+  // LANJUT_047: Daftar baru aktif setelah kebijakan privasi dicentang.
+  const [sudahBaca, setSudahBaca] = useState(false);
+  const [bukaKebijakan, setBukaKebijakan] = useState(false);
 
   const kirim = () => {
+    if (!sudahBaca) return;
     const nama = namaPengguna.trim().toLowerCase();
     const cek: Record<string, string> = {};
     if (!NAMA_PENGGUNA_REGEX.test(nama)) {
@@ -68,7 +84,7 @@ export function RegisterScreen() {
     setGalatLokal(cek);
     if (Object.keys(cek).length || !kelas) return;
 
-    const data: DataDaftar = { nama_pengguna: nama, kata_sandi: kataSandi, kelas };
+    const data: DataDaftar = { nama_pengguna: nama, kata_sandi: kataSandi, kelas, versi_kebijakan: VERSI_KEBIJAKAN };
     if (tanyaJenis && jenis) data.jenis_sekolah = jenis;
     if (email.trim()) data.email = email.trim();
     if (prodi && prodi !== BELUM) data.prodi_impian = prodi;
@@ -133,11 +149,66 @@ export function RegisterScreen() {
         <Field label="Prodi impian" hint="Boleh dijawab “belum”." galat={galat('prodi_impian')}>
           <PilihProdi nilai={prodi} onPilih={setProdi} />
         </Field>
+        <View style={s.kebijakan}>
+          <Text style={s.kebijakanJudul}>{JUDUL_KEBIJAKAN}</Text>
+          {RINGKASAN_KEBIJAKAN.map((t) => (
+            <View key={t} style={s.butir}>
+              <Text style={s.butirTeks}>•</Text>
+              <Text style={[s.butirTeks, s.flex]}>{t}</Text>
+            </View>
+          ))}
+          <Text style={s.tautan} onPress={() => setBukaKebijakan(true)} accessibilityRole="link">
+            {TAUTAN_KEBIJAKAN}
+          </Text>
+          <KotakCentang label={LABEL_SUDAH_BACA} tercentang={sudahBaca} onAlih={() => setSudahBaca((v) => !v)} />
+        </View>
         <PesanGalat teks={error} />
-        <TombolUtama label="Daftar" labelProses="Mendaftarkan…" proses={loading} onPress={kirim} />
+        <TombolUtama label="Daftar" labelProses="Mendaftarkan…" proses={loading} nonaktif={!sudahBaca} onPress={kirim} />
+        {sudahBaca ? null : <Keterangan>{PETUNJUK_BELUM_CENTANG}</Keterangan>}
         <Keterangan>{KALIMAT_DATA_PRIBADI}</Keterangan>
         <TautanBawah teks="Sudah punya akun?" tautan="Masuk" onPress={() => router.replace('/masuk')} />
       </View>
+      <ModalKebijakan buka={bukaKebijakan} onTutup={() => setBukaKebijakan(false)} />
     </AuthLayout>
   );
 }
+
+/**
+ * Kebijakan lengkap sebagai modal, bukan pindah halaman: grup (auth) memakai
+ * <Slot/>, jadi pindah ke /kebijakan-privasi akan mengosongkan formulir.
+ */
+function ModalKebijakan({ buka, onTutup }: { buka: boolean; onTutup: () => void }) {
+  const { top, bottom } = useSafeAreaInsets();
+  return (
+    <Modal visible={buka} animationType="slide" onRequestClose={onTutup}>
+      <View style={[s.modal, { paddingTop: top, paddingBottom: bottom }]}>
+        <ScrollView contentContainerStyle={s.modalIsi}>
+          <Text style={s.modalJudul} role="heading" aria-level={1}>
+            Kebijakan Privasi
+          </Text>
+          <IsiKebijakan />
+          <TombolUtama label="Tutup" labelProses="Tutup" proses={false} onPress={onTutup} />
+        </ScrollView>
+      </View>
+    </Modal>
+  );
+}
+
+const s = StyleSheet.create({
+  kebijakan: {
+    gap: spacing.s3,
+    padding: spacing.s4,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: color.borderSoft,
+    backgroundColor: color.white,
+  },
+  kebijakanJudul: { ...teks.bodySm, fontFamily: font.semibold, color: color.textBody },
+  butir: { flexDirection: 'row', gap: spacing.s2 },
+  butirTeks: { ...teks.caption, color: color.ink700 },
+  flex: { flex: 1 },
+  tautan: { ...teks.bodySm, fontFamily: font.semibold, color: color.textLink, textDecorationLine: 'underline' },
+  modal: { flex: 1, backgroundColor: color.surfacePage },
+  modalIsi: { padding: spacing.gutter, gap: spacing.s4, width: '100%', maxWidth: 520, alignSelf: 'center' },
+  modalJudul: { ...teks.h2, color: color.textBody },
+});

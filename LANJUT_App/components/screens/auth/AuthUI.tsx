@@ -136,20 +136,29 @@ export function TombolUtama({
   label,
   labelProses,
   proses,
+  nonaktif = false,
   onPress,
 }: {
   label: string;
   labelProses: string;
   proses: boolean;
+  /** LANJUT_047: mis. Daftar sebelum kebijakan privasi dicentang. */
+  nonaktif?: boolean;
   onPress: () => void;
 }) {
   return (
     <Pressable
       onPress={onPress}
-      disabled={proses}
+      disabled={proses || nonaktif}
       accessibilityRole="button"
+      aria-disabled={proses || nonaktif}
       style={({ pressed }) =>
-        StyleSheet.flatten([styles.tombol, pressed && styles.tombolTekan, proses && styles.tombolProses])
+        StyleSheet.flatten([
+          styles.tombol,
+          pressed && styles.tombolTekan,
+          proses && styles.tombolProses,
+          nonaktif && styles.tombolNonaktif,
+        ])
       }
     >
       {proses && <ActivityIndicator color={color.white} />}
@@ -174,6 +183,18 @@ export function TautanBawah({
         {tautan}
       </Text>
     </Text>
+  );
+}
+
+/** Kotak centang (LANJUT_047, mis. "Saya sudah membaca kebijakan privasi"). */
+export function KotakCentang({ label, tercentang, onAlih }: { label: string; tercentang: boolean; onAlih: () => void }) {
+  return (
+    <Pressable onPress={onAlih} accessibilityRole="checkbox" aria-checked={tercentang} style={styles.centangBaris}>
+      <View style={StyleSheet.flatten([styles.centangKotak, tercentang && styles.centangKotakAktif])}>
+        {tercentang ? <Text style={styles.centangTanda}>✓</Text> : null}
+      </View>
+      <Text style={styles.centangLabel}>{label}</Text>
+    </Pressable>
   );
 }
 
@@ -291,6 +312,23 @@ const styles = StyleSheet.create({
   },
   tombolTekan: { backgroundColor: color.textMuted, transform: [{ scale: 0.97 }] },
   tombolProses: { opacity: 0.7 },
+  // Nonaktif: abu-abu, bukan sekadar pudar, supaya jelas belum bisa ditekan.
+  tombolNonaktif: { backgroundColor: color.ink300, boxShadow: 'none' },
+  centangBaris: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.s3 },
+  centangKotak: {
+    width: 24,
+    height: 24,
+    marginTop: 1,
+    borderRadius: radius.xs,
+    borderWidth: 2,
+    borderColor: color.blue600,
+    backgroundColor: color.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  centangKotakAktif: { backgroundColor: color.blue600 },
+  centangTanda: { fontFamily: font.semibold, fontSize: 15, lineHeight: 18, color: color.white },
+  centangLabel: { ...teksToken.bodySm, flex: 1, color: color.textBody },
   tombolTeks: { fontFamily: font.semibold, fontSize: 18, lineHeight: 24, color: color.white },
   tautanBaris: { ...teksToken.body, textAlign: 'center', color: color.textBody },
   tautan: { fontFamily: font.semibold, color: color.textLink, textDecorationLine: 'underline' },

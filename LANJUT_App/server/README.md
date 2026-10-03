@@ -237,6 +237,87 @@ tanggal riset disusun, jadi semua profil mulai sebagai belum terverifikasi.
   yang belum dipetakan tetap masuk lembar, di bagian "Belum dipetakan".
   Tes: `tests/lembar-review-teks.test.js` (tanpa basis data).
 
+## 2b. Persetujuan orang tua/wali & gerbang AI (LANJUT_047)
+
+Pengguna LANJUT banyak yang di bawah 18 tahun. Untuk data anak (UU PDP Pasal
+25), persetujuan harus datang dari orang tua/wali, bukan dari centang di app.
+
+### Aturan wajib untuk setiap endpoint AI di masa depan
+
+> **Setiap endpoint yang mengirim data pengguna ke penyedia AI WAJIB memanggil
+> `bolehPakaiAi(req.pengguna.id)` di server, sebelum mengirim apa pun, dan
+> menolak bila hasilnya `false`.** Jangan mengandalkan app (layar, tombol,
+> atau `boleh_pakai_ai` dari `GET /persetujuan/saya`), karena itu hanya
+> tampilan dan bisa dilewati.
+
+`bolehPakaiAi` (`src/modul/persetujuan/persetujuan.layanan.js`) adalah
+satu-satunya penentu. Hasilnya `true` hanya kalau:
+
+1. catatan `ortu_wali` terakhir akun itu `setuju` (tidak dicabut) dengan
+   versi ≥ `persetujuan_versi_min_ortu`, **dan**
+2. catatan `kebijakan_privasi` terakhir `setuju` dengan versi ≥
+   `persetujuan_versi_kebijakan`.
+
+Gagal-tertutup: konfigurasi hilang atau tidak sah → `false`. Saat ini belum
+ada endpoint AI; Ngobrol masih stub di app tanpa panggilan jaringan.
+
+### Data
+
+- Tabel `persetujuan` (migrasi 012): `id` (urutan), `pengguna_id`, `jenis`
+  (`kebijakan_privasi` / `ortu_wali`), `versi`, `status` (`setuju` / `cabut`),
+  `sumber` (`mandiri` / `surat_sekolah` / `admin`), `catatan` (mis. nomor
+  surat), `dicatat_pada`. **Riwayat tidak ditimpa**: setuju baru dan pencabutan
+  sama-sama baris baru; status berlaku = baris terakhir per jenis. Repo hanya
+  membaca dan menambah.
+- Konfigurasi di tabel `konfigurasi_levelin` (tabel konfigurasi yang sudah
+  ada), kunci `persetujuan_versi_kebijakan` dan `persetujuan_versi_min_ortu`,
+  diisi migrasi 012. Endpoint publik `/konfigurasi/levelin` hanya mengirim
+  kunci Level-In.
+- **Menaikkan versi kebijakan:** ubah `versi` dan teks di
+  `LANJUT_App/lib/kebijakan-privasi.json`, jalankan `npm run dokumen-kebijakan`,
+  lalu buat migrasi baru yang menaikkan `persetujuan_versi_kebijakan`
+  (dan `persetujuan_versi_min_ortu` bila orang tua/wali perlu menyetujui ulang).
+  Tes menolak bila versi di app berbeda dari konfigurasi.
+
+### Endpoint (wajib login, hanya akun sendiri)
+
+| Metode | Jalur | Isi |
+|---|---|---|
+| GET | `/api/v1/persetujuan/saya` | Status akun sendiri: catatan terakhir per jenis (tanpa `catatan` internal), `versi_kebijakan_berlaku`, `kebijakan_terkini`, `ortu_wali_aktif`, `boleh_pakai_ai`. |
+| POST | `/api/v1/persetujuan` | `{ jenis: "kebijakan_privasi", versi }` → 201 (atau 200 bila versi itu sudah diterima). Versi bukan yang berlaku → 409 `KEBIJAKAN_USANG`. `jenis: "ortu_wali"` → **403** `TIDAK_BERHAK`: akun siswa tidak pernah bisa mencatat persetujuan orang tua/wali. |
+
+`POST /auth/daftar` menerima `versi_kebijakan` (opsional untuk APK lama); app
+terbaru selalu mengirimnya setelah kotak kebijakan dicentang, dan server
+mencatatnya sebagai `kebijakan_privasi` / `mandiri`. Versi usang → 409, dan
+akun tidak dibuat.
+
+### Mencatat persetujuan orang tua/wali (lewat sekolah)
+
+Sekolah membagikan surat (`docs/surat-persetujuan-ortu-wali-DRAF.md`),
+mengumpulkan yang ditandatangani, lalu petugas mencatat:
+
+```bash
+npm run persetujuan-ortu -- --status --pengguna=budi.smk12,ani.12          # lihat status (hanya membaca)
+npm run persetujuan-ortu -- --pengguna=budi.smk12,ani.12 --catatan="Surat 012/SMKN4/X/2026, 3 Okt 2026"        # pratinjau
+npm run persetujuan-ortu -- --pengguna=budi.smk12,ani.12 --catatan="Surat 012/SMKN4/X/2026, 3 Okt 2026" --ya   # mencatat
+npm run persetujuan-ortu -- --berkas=kelas-12a.txt --catatan="..." --ya     # satu nama pengguna per baris, # = komentar
+npm run persetujuan-ortu -- --pengguna=budi.smk12 --cabut --catatan="Surat pencabutan, 5 Okt 2026" --ya
+```
+
+Tanpa `--ya` hanya pratinjau. `--catatan` wajib. Satu nama tidak ditemukan →
+tidak ada yang dicatat. Yang sudah setuju dengan versi sama, atau `--cabut`
+untuk akun tanpa persetujuan aktif, dilewati. Pilihan: `--sumber=admin`,
+`--versi=N` (bawaan: versi kebijakan yang berlaku). Tidak ada panel admin web.
+
+### Dokumen untuk ahli hukum (DRAF)
+
+- `docs/kebijakan-privasi-DRAF.md`: teks kebijakan (ditulis dari
+  `lib/kebijakan-privasi.json` dengan `npm run dokumen-kebijakan`), inventaris
+  data per tabel/kolom, daftar `[ISI: ...]`, dan pertanyaan terbuka.
+- `docs/surat-persetujuan-ortu-wali-DRAF.md`: surat yang bisa dicetak sekolah.
+
+Tes: `tests/persetujuan.test.js`, `tests/kebijakan-privasi.test.js`.
+
 ## 3. Menjalankan server
 
 ```bash

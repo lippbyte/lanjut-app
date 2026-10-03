@@ -4,6 +4,7 @@
 
 const { z } = require('zod');
 const { KELAS, JENIS_SEKOLAH } = require('../../util/kelas');
+const { versiKebijakan } = require('../persetujuan/persetujuan.skema');
 
 // 3–32 karakter, a-z 0-9 . _ ; disimpan huruf kecil semua.
 const NAMA_PENGGUNA_REGEX = /^[a-z0-9._]{3,32}$/;
@@ -50,6 +51,10 @@ const daftarSkema = z.object({
   // LANJUT_038: hanya untuk kelas 10–12; kelas 7–9 diisi SMP oleh server.
   jenis_sekolah: z.enum(JENIS_SEKOLAH).optional(),
   prodi_impian: z.string().trim().max(64).optional(),
+  // LANJUT_047: versi kebijakan privasi yang dibaca & dicentang di form Daftar.
+  // Opsional di server (APK lama & tes lama mendaftar tanpanya); bila dikirim,
+  // harus versi yang berlaku dan langsung dicatat sebagai persetujuan mandiri.
+  versi_kebijakan: versiKebijakan.optional(),
 });
 
 const masukSkema = z.object({

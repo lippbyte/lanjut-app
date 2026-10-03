@@ -39,6 +39,8 @@ export type DataDaftar = {
   // Hanya untuk kelas 10–12; kelas 7–9 diisi SMP oleh server (LANJUT_038).
   jenis_sekolah?: JenisSekolah;
   prodi_impian?: string;
+  // LANJUT_047: versi kebijakan privasi yang dibaca & dicentang (lib/kebijakanPrivasi.ts).
+  versi_kebijakan?: number;
 };
 
 export async function masuk(nama_pengguna: string, kata_sandi: string): Promise<Sesi> {

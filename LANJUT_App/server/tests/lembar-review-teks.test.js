@@ -24,6 +24,7 @@ function hitungLangsung() {
     if (BUTIR.test(baris[i]) || !/\bDRAF\b/.test(baris[i])) continue;
     let j = i + 1;
     while (j < baris.length && baris[j].trim() !== '' && !BUTIR.test(baris[j])) j++; // sisa paragraf kepala
+    const kepalaSelesai = j - 1; // "DRAF" yang muncul lagi di paragraf yang sama bukan blok baru
     const butir = [];
     for (; j < baris.length; j++) {
       const b = baris[j];
@@ -32,6 +33,7 @@ function hitungLangsung() {
       else if (b.trim() !== '' && !/^\s/.test(b) && butir.length) break;
     }
     blok.push({ baris: i + 1, butir });
+    i = kepalaSelesai;
   }
   return blok;
 }

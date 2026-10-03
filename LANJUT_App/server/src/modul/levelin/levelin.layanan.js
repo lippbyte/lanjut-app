@@ -12,7 +12,7 @@ const { keIso, keDbDariKlien, sekarangIso } = require('../../util/waktu');
 const repo = require('./levelin.repo');
 const kartuRepo = require('../kartu/kartu.repo');
 const keputusan = require('./keputusan');
-const { bentukKonfig } = require('./konfigurasi');
+const { bentukKonfig, KUNCI_KONFIG } = require('./konfigurasi');
 
 /** Konfigurasi berlaku + versinya (versi tertinggi di antara baris tabel). */
 async function muatKonfig() {
@@ -192,6 +192,9 @@ async function konfigurasi() {
   const baris = await repo.ambilSemuaKonfigurasi();
   const hasil = {};
   for (const b of baris) {
+    // Tabel yang sama juga menyimpan kunci persetujuan_* (LANJUT_047); endpoint
+    // publik ini hanya mengirim kunci Level-In.
+    if (!Object.hasOwn(KUNCI_KONFIG, b.kunci)) continue;
     hasil[b.kunci] = {
       nilai: b.nilai,
       versi: b.versi,

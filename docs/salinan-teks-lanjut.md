@@ -406,6 +406,30 @@ satu layar dengannya. Kelas 7–9 tidak pernah melihatnya.
 - **Medan:** Jenis sekolah · pilihan: SMA · SMK · MA (Madrasah Aliyah) · galat: Pilih jenis sekolahmu.
 - **Tombol:** sama dengan langkah 1.
 
+### 4.13 Kebijakan privasi & persetujuan orang tua/wali
+
+**LANJUT_047 — DRAF belum disetujui Khalifa.** Isi lengkap kebijakan privasi
+ada di `docs/kebijakan-privasi-DRAF.md` (DRAF, wajib direview ahli hukum) dan
+dipakai app dari `LANJUT_App/lib/kebijakan-privasi.json`. Ringkasan di bawah
+sama persis dengan berkas itu (dijaga `server/tests/kebijakan-privasi.test.js`).
+Kalimat data pribadi §4.10 yang sudah disetujui tetap tampil apa adanya di
+bawah tombol Daftar.
+
+- **Layar Daftar — judul blok kebijakan:** Kebijakan privasi (ringkas)
+- **Ringkasan 1:** Kami menyimpan data akunmu (nama pengguna, kelas, jenis sekolah, prodi impian, gaya belajar, dan email kalau kamu isi) dan yang kamu buat di LANJUT (centang Daftar Periksa, kartu, dan hasil latihan) supaya kemajuanmu tidak hilang.
+- **Ringkasan 2:** Kata sandimu disimpan dalam bentuk acak, bukan teks aslinya.
+- **Ringkasan 3:** Obrolan di Ngobrol Bareng LANJUT belum dikirim ke mana pun. Fitur AI sungguhan nanti memakai penyedia pihak ketiga yang mungkin berada di luar negeri, dan baru aktif setelah orang tua atau walimu memberi persetujuan lewat sekolah.
+- **Ringkasan 4:** Kamu dan orang tua atau walimu berhak melihat, membetulkan, dan meminta penghapusan datamu, serta mencabut persetujuan.
+- **Tautan ke kebijakan lengkap:** Baca kebijakan privasi lengkap
+- **Kotak centang:** Saya sudah membaca kebijakan privasi LANJUT.
+- **Petunjuk selama belum dicentang (tombol Daftar nonaktif):** Centang kotak kebijakan privasi di atas dulu supaya bisa mendaftar.
+- **Galat versi kebijakan usang (dari server):** Kebijakan privasi sudah diperbarui. Muat ulang aplikasi, lalu baca dan centang versi terbaru.
+- **Kebijakan lengkap (modal di Daftar & halaman /kebijakan-privasi):** judul Kebijakan Privasi · pengantar halaman: Data apa yang disimpan LANJUT, untuk apa, dan apa hakmu. · penanda: DRAF — belum berlaku. Wajib direview ahli hukum sebelum dipakai. · Versi [n] · tombol Tutup (modal) / Kembali (halaman)
+- **Jalur Saya — baris:** Persetujuan orang tua/wali · nilai: Sudah / Belum (Belum bisa dimuat bila gagal)
+- **Jalur Saya — penjelas:** Orang tua atau walimu memberi persetujuan lewat surat dari sekolah. Persetujuan ini dibutuhkan untuk fitur AI nanti; fitur lain tetap bisa kamu pakai seperti biasa.
+- **Jalur Saya — tautan:** Baca kebijakan privasi
+- **Ngobrol — info:** Balasan AI sungguhan nanti aktif setelah orang tua atau walimu memberi persetujuan.
+
 ---
 
 ## 5. Notifikasi

@@ -205,3 +205,20 @@ export type SesiLatihan = {
 // Satu catatan POST /riwayat-latihan (levelin.skema.js `catatanRiwayatSkema`),
 // tanpa keyakinan — F7 versi ini tidak memakai Level-In.
 export type CatatanLatihan = { id: string; sesi_id: string; kartu_id: string; benar: boolean; waktu: string };
+
+// LANJUT_047 — GET /persetujuan/saya (persetujuan.layanan.js `statusSaya`).
+// Status = catatan terakhir per jenis; riwayat lengkap tidak dikirim.
+export type CatatanPersetujuan = {
+  status: 'setuju' | 'cabut';
+  versi: number;
+  sumber: 'mandiri' | 'surat_sekolah' | 'admin';
+  dicatat_pada: string;
+};
+export type StatusPersetujuan = {
+  kebijakan_privasi: CatatanPersetujuan | null;
+  ortu_wali: CatatanPersetujuan | null;
+  versi_kebijakan_berlaku: number | null;
+  kebijakan_terkini: boolean;
+  ortu_wali_aktif: boolean;
+  boleh_pakai_ai: boolean;
+};

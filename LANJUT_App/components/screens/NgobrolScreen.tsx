@@ -21,6 +21,11 @@ import { Ikon, Tombol } from '../ui';
 
 const PANJANG_MAKS = 500;
 
+// Salinan teks §4.13 (LANJUT_047) — DRAF belum disetujui Khalifa. Info saja:
+// stub tetap jalan untuk semua akun; gerbang AI sungguhan ada di server
+// (bolehPakaiAi), bukan di layar ini.
+const INFO_PERSETUJUAN_AI = 'Balasan AI sungguhan nanti aktif setelah orang tua atau walimu memberi persetujuan.';
+
 /**
  * Ngobrol Bareng LANJUT (LANJUT_032) — UI chat untuk uji UX.
  *
@@ -65,7 +70,7 @@ export function NgobrolScreen() {
         <Ikon nama="info" ukuran={18} />
         <Text style={s.ujiTeks}>
           <Text style={s.ujiTebal}>Versi uji coba.</Text> Balasan belum dari AI sungguhan, dan obrolan ini tidak
-          disimpan.
+          disimpan. {INFO_PERSETUJUAN_AI}
         </Text>
       </View>
 

@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { pesanUntuk, type DataUbahProfil, type GayaBelajar, type Pengguna } from '../../api/auth';
 import { ApiError } from '../../api/client';
 import { useSesi } from '../../providers/AuthProvider';
+import { usePersetujuan } from '../../hooks/usePersetujuan';
 import { useProdi } from '../../hooks/useProdi';
 import { useProgresDaftarPeriksa, useSaringDaftarPeriksa } from '../../hooks/useProgresDaftarPeriksa';
 import { useUbahProfil } from '../../hooks/useUbahProfil';
@@ -58,7 +59,12 @@ export function AkunScreen() {
         <View style={s.daftar}>
           <Baris label="Nama pengguna" nilai={pengguna.nama_pengguna} />
           <Baris label="Email" nilai={pengguna.email || '—'} />
+          <BarisPersetujuan />
         </View>
+        <Text style={s.penjelas}>{PENJELAS_PERSETUJUAN}</Text>
+        <Text style={s.tautan} onPress={() => router.push('/kebijakan-privasi')} accessibilityRole="link">
+          Baca kebijakan privasi
+        </Text>
       </Kartu>
       <Penafian>Catatan yang sudah tersimpan ke akunmu tetap ada setelah keluar.</Penafian>
       <Tombol label={proses ? 'Mengeluarkan…' : 'Keluar'} varian="garis" besar penuh proses={proses} onPress={onKeluar} />
@@ -255,6 +261,21 @@ function RingkasanKemajuanKelas12() {
   );
 }
 
+// Salinan teks §4.13 (LANJUT_047) — DRAF belum disetujui Khalifa.
+const PENJELAS_PERSETUJUAN =
+  'Orang tua atau walimu memberi persetujuan lewat surat dari sekolah. Persetujuan ini dibutuhkan untuk fitur AI nanti; fitur lain tetap bisa kamu pakai seperti biasa.';
+
+/**
+ * Status persetujuan orang tua/wali, hanya baca (LANJUT_047). "Sudah" =
+ * persetujuan aktif menurut server (tidak dicabut, versi ≥ minimum); dicabut
+ * atau versi lama → "Belum". Fitur AI tetap diputuskan server, bukan di sini.
+ */
+function BarisPersetujuan() {
+  const { data, isPending, isError } = usePersetujuan();
+  const nilai = isPending ? '…' : isError || !data ? 'Belum bisa dimuat' : data.ortu_wali_aktif ? 'Sudah' : 'Belum';
+  return <Baris label="Persetujuan orang tua/wali" nilai={nilai} />;
+}
+
 /** `nilai` null → "Belum diisi" dengan gaya redup, bukan teks kosong. */
 function Baris({ label, nilai }: { label: string; nilai: string | null }) {
   return (
@@ -281,4 +302,6 @@ const s = StyleSheet.create({
   aksiForm: { flexDirection: 'row', justifyContent: 'flex-end', gap: spacing.s2 },
   angka: { ...teks.body, fontFamily: font.semibold, color: color.textBody },
   nilaiKosong: { ...teks.bodySm, color: color.textMuted, flexShrink: 1, textAlign: 'right' },
+  penjelas: { ...teks.caption, color: color.textMuted, marginTop: spacing.s3 },
+  tautan: { ...teks.bodySm, fontFamily: font.semibold, color: color.textLink, textDecorationLine: 'underline', marginTop: spacing.s2 },
 });
