@@ -1,6 +1,6 @@
 # Lembar Review Konten LANJUT
 
-Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/server`) dari basis data `lanjut_test` dan berkas `MVP-PWA/data/`. Lembar ini **hanya bacaan**: membuat atau mengisinya tidak mengubah apa pun di aplikasi.
+Dibuat otomatis 2026-10-03 dengan `npm run lembar-review` (folder `LANJUT_App/server`) dari basis data `lanjut_test` dan berkas `MVP-PWA/data/`. Lembar ini **hanya bacaan**: membuat atau mengisinya tidak mengubah apa pun di aplikasi.
 
 ## Cara memakai lembar ini
 
@@ -46,7 +46,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Yang akan kamu pelajari** _(status data: Perkiraan)_: Higiene Industri; Keselamatan Kerja; K3 Lingkungan; Pengendalian Proses; Instrumentasi; Pertolongan Pertama
 - **Ke mana lulusannya** _(status data: Terverifikasi)_: Safety Officer / HSE Officer; Safety Inspector; Environmental Specialist; Auditor K3
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UNS (PTN Akademik; jalur SNBP, SNBT); PPNS (Politeknik Perkapalan Negeri Surabaya) (PTN Vokasi; jalur SNBT); UNAIR (PTN Akademik; jalur SNBP, SNBT); Universitas Binawan (PTS; jalur Mandiri)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 
@@ -80,7 +80,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Yang akan kamu pelajari** _(status data: Perkiraan)_: Korespondensi Bisnis; Administrasi Perkantoran Digital (E-Office); Digital Marketing; Manajemen SDM; Komunikasi Organisasi
 - **Ke mana lulusannya** _(status data: Terverifikasi)_: Administration Officer; Digital Marketer; Asisten Manajer; Wirausaha
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UB (PTN Akademik; jalur SNBT); Polban (PTN Vokasi; jalur SNBT); PNJ (PTN Vokasi; jalur SNBT); Polmed (PTN Vokasi; jalur SNBT); Politeknik LP3I Bandung (PTS; jalur Mandiri)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 
@@ -115,7 +115,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Catatan studi:** Jenjang D4 berbobot 144 SKS dan bergelar S.Tr.Kom / S.ST.
 - **Ke mana lulusannya** _(status data: Terverifikasi)_: Software Engineer / Programmer; Database Administrator; System Analyst; QA / Software Tester
 - **Kampus yang cocok** _(status data: Terverifikasi)_: PNJ (PTN Vokasi; jalur SNBT); Polban (PTN Vokasi; jalur SNBT); Polinema (PTN Vokasi; jalur SNBT)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Isi profil ini dicek ke sumber resmi pada [tanggal saat ditandai]."
 
 **Sumber yang tercatat:**
 
@@ -149,7 +149,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Yang akan kamu pelajari** _(status data: Perkiraan)_: Gambar Teknik; Proses Manufaktur (Konvensional & CNC); Material Teknik & Pengujian Bahan; Elemen Mesin; Perawatan & Perbaikan Mesin; Otomasi Industri
 - **Ke mana lulusannya** _(status data: Terverifikasi)_: Supervisor / Teknisi Pemesinan; Teknisi Perawatan Mesin; Operator CNC; Quality Control Manufaktur
 - **Kampus yang cocok** _(status data: Terverifikasi)_: Polban (PTN Vokasi; jalur SNBT); PNJ (PTN Vokasi; jalur SNBT); Polibatam (PTN Vokasi; jalur SNBT); ITPLN (PTS; jalur Mandiri)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 
@@ -184,7 +184,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Catatan studi:** Perlu lulus uji kompetensi dan punya STR sebelum praktik penuh.
 - **Ke mana lulusannya** _(status data: Perkiraan)_: Perawat pelaksana rumah sakit; Perawat klinik; Perawat puskesmas
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UNAIR (PTN Akademik; jalur SNBT); Poltekkes Kemenkes (PTN Vokasi; jalur SNBT, Mandiri)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 
@@ -218,7 +218,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Yang akan kamu pelajari** _(status data: Perkiraan)_: Pengantar Pajak; PPh I & PPh II; PPN; Akuntansi Keuangan; Akuntansi Biaya; Hukum Pajak
 - **Ke mana lulusannya** _(status data: Terverifikasi)_: Staf / Konsultan Pajak; Pegawai Ditjen Pajak atau Bea Cukai; Tax Officer perusahaan
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UNAIR (Fakultas Vokasi) (PTN Akademik; jalur SNBT); ULM (PTN Akademik; jalur SNBP, SNBT); Universitas Pancasila (PTS; jalur Mandiri)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 
@@ -253,7 +253,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Catatan studi:** Perlu registrasi profesi penata anestesi sebelum praktik.
 - **Ke mana lulusannya** _(status data: Perkiraan)_: Penata anestesi rumah sakit; Asisten anestesi kamar operasi
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UNS (PTN Akademik; jalur SNBT)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 
@@ -287,7 +287,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Yang akan kamu pelajari** _(status data: Perkiraan)_: Kehumasan (Public Relations); Media Digital; Manajemen Media Sosial
 - **Ke mana lulusannya** _(status data: Perkiraan)_: Public Relations; Digital Content Specialist; Social Media Officer; Media Relations
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UNJ (PTN Akademik; jalur SNBT)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 
@@ -321,7 +321,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Yang akan kamu pelajari** _(status data: Perkiraan)_: Manajemen Operasional; Manajemen Keuangan; Manajemen Pemasaran; Administrasi & Korespondensi Bisnis
 - **Ke mana lulusannya** _(status data: Perkiraan)_: Staf / Asisten Manajer Bisnis; Business Development; Wirausaha
 - **Kampus yang cocok** _(status data: Terverifikasi)_: Polmed (PTN Vokasi; jalur SNBT)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 
@@ -355,7 +355,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Yang akan kamu pelajari** _(status data: Perkiraan)_: Algoritma & Pemrograman; Struktur Data; Basis Data; Jaringan Komputer; Kecerdasan Buatan; Rekayasa Perangkat Lunak
 - **Ke mana lulusannya** _(status data: Terverifikasi)_: Software Developer / Programmer; Data Scientist; Cyber Security Analyst; IT Consultant
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UNS (PTN Akademik; jalur SNBP); ITB (PTN Akademik; jalur SNBP, SNBT); UPI (PTN Akademik; jalur SNBP, SNBT); Telkom University (PTS; jalur Mandiri)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 
@@ -389,7 +389,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Yang akan kamu pelajari** _(status data: Perkiraan)_: Manajemen SDM; Manajemen Keuangan; Manajemen Pemasaran; Manajemen Operasional; Manajemen Strategi; Kewirausahaan
 - **Ke mana lulusannya** _(status data: Perkiraan)_: Staf / Manajer HRD; Marketing; Business Development; Analis Keuangan
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UNPAD (PTN Akademik; jalur SNBP, SNBT); UI (PTN Akademik; jalur SNBP, SNBT); UGM (PTN Akademik; jalur SNBP, SNBT); Telkom University (PTS; jalur Mandiri)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 
@@ -423,7 +423,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Yang akan kamu pelajari** _(status data: Terverifikasi)_: Pengantar Ilmu Hukum; Pengantar Hukum Indonesia; Hukum Pidana; Hukum Perdata; Hukum Tata Negara; Hukum Administrasi Negara
 - **Ke mana lulusannya** _(status data: Terverifikasi)_: Advokat (perlu PKPA); Hakim atau Jaksa (lewat pendidikan khusus); Legal Officer perusahaan; PNS Kemenkumham atau Kejaksaan
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UNDIP (PTN Akademik; jalur SNBT); UNPAD (PTN Akademik; jalur SNBP, SNBT); UI (PTN Akademik; jalur SNBP, SNBT); UK Parahyangan (PTS; jalur Mandiri)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Isi profil ini dicek ke sumber resmi pada [tanggal saat ditandai]."
 
 **Sumber yang tercatat:**
 
@@ -457,7 +457,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Yang akan kamu pelajari** _(status data: Perkiraan)_: Geologi Pertambangan; Teknik Pengeboran & Peledakan; Desain Tambang; Pemrosesan Mineral; Ekonomi Pertambangan; K3 Pertambangan
 - **Ke mana lulusannya** _(status data: Terverifikasi)_: Mine Plan Engineer; Ahli Geologi / Hidrogeologi Tambang; Konsultan Tambang; Karyawan BUMN tambang
 - **Kampus yang cocok** _(status data: Terverifikasi)_: ITB (PTN Akademik; jalur SNBP, SNBT); UPN Veteran Yogyakarta (PTN Akademik; jalur SNBP, SNBT); Universitas Trisakti (PTS; jalur Mandiri)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 
@@ -492,7 +492,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Catatan studi:** Tahap akademik sekitar 3,5 tahun (kurikulum berbasis kompetensi/SKDI), lalu tahap profesi (koas) sekitar 2 tahun. Wajib lulus UKMPPD sebelum praktik.
 - **Ke mana lulusannya** _(status data: Terverifikasi)_: Dokter umum (setelah UKMPPD & STR); Dokter layanan primer; Dosen atau peneliti kedokteran
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UI (PTN Akademik; jalur SNBP); UNPAD (PTN Akademik; jalur SNBP, SNBT); UGM (PTN Akademik; jalur SNBP); UK Maranatha (PTS; jalur Mandiri)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 
@@ -527,7 +527,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Catatan studi:** Lulus S1 dulu (S.Farm.), baru lanjut pendidikan profesi Apoteker.
 - **Ke mana lulusannya** _(status data: Terverifikasi)_: Apoteker (setelah pendidikan profesi); Tenaga Teknis Kefarmasian; QA / QC industri farmasi; PNS BPOM atau Kemenkes
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UNPAD (PTN Akademik; jalur SNBP); UNSOED (PTN Akademik; jalur SNBP, SNBT); UGM (PTN Akademik; jalur SNBP); IIK Bhakti Wiyata (PTS; jalur Mandiri)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Isi profil ini dicek ke sumber resmi pada [tanggal saat ditandai]."
 
 **Sumber yang tercatat:**
 
@@ -562,7 +562,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Catatan studi:** S1 Keperawatan dilanjutkan pendidikan profesi Ners; perlu STR untuk praktik.
 - **Ke mana lulusannya** _(status data: Terverifikasi)_: Perawat profesional (setelah profesi Ners & STR); Perawat rumah sakit, ICU, atau IGD; Perawat home care; Dosen atau instruktur klinis
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UNPAD (PTN Akademik; jalur SNBP); UI (PTN Akademik; jalur SNBP); UGM (PTN Akademik; jalur SNBP)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 
@@ -596,7 +596,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Yang akan kamu pelajari** _(status data: Terverifikasi)_: Pengantar Ilmu Komunikasi; Teori Komunikasi; Psikologi Komunikasi; Komunikasi Massa dan Media; Komunikasi Digital; Perencanaan Komunikasi
 - **Ke mana lulusannya** _(status data: Terverifikasi)_: Public Relations / Digital PR; Jurnalis; Content Creator / Social Media Specialist; Produser atau kru broadcasting
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UPI (PTN Akademik; jalur SNBP); UNPAD (PTN Akademik; jalur SNBP, SNBT); UNS (PTN Akademik; jalur SNBP); Telkom University (PTS; jalur Mandiri)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Isi profil ini dicek ke sumber resmi pada [tanggal saat ditandai]."
 
 **Sumber yang tercatat:**
 
@@ -630,7 +630,7 @@ Dibuat otomatis 2026-10-02 dengan `npm run lembar-review` (folder `LANJUT_App/se
 - **Yang akan kamu pelajari** _(status data: Perkiraan)_: Akuntansi Keuangan Menengah; Akuntansi Biaya; Perpajakan; Auditing; Sistem Informasi Akuntansi; Anggaran Perusahaan
 - **Ke mana lulusannya** _(status data: Terverifikasi)_: Akuntan Publik; Auditor Internal; Konsultan Pajak; Analis Keuangan
 - **Kampus yang cocok** _(status data: Terverifikasi)_: UNPAD (PTN Akademik; jalur SNBP); UI (PTN Akademik; jalur SNBP); UGM (PTN Akademik; jalur SNBP); Telkom University (PTS; jalur Mandiri)
-- **Kaki halaman:** "Diperbarui dari laman resmi SNPMB · dicek [tanggal saat ditandai]"
+- **Kaki halaman:** "Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal saat ditandai]. Bagian bertanda Perkiraan belum dicek ke sumber resmi."
 
 **Sumber yang tercatat:**
 

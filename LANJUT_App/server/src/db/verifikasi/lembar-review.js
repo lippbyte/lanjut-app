@@ -122,6 +122,13 @@ function lembagaSumber(url) {
   if (u.includes('snpmb')) return 'laman resmi SNPMB';
   return 'laman resmi';
 }
+/** Kaki profil F10 per bagian — sama dengan kalimatKakiProfil di lib/eksplorasi.ts (LANJUT_045). */
+function kalimatKakiProfil(status, tanggal) {
+  const nilai = ['peminat', 'mata_kuliah', 'profesi', 'kampus'].map((k) => status[k]);
+  if (nilai.every((v) => v === 'Terverifikasi')) return `Isi profil ini dicek ke sumber resmi pada ${tanggal}.`;
+  const dicek = `Bagian bertanda Terverifikasi dicek ke sumber resmi pada ${tanggal}.`;
+  return nilai.includes('Perkiraan') ? `${dicek} Bagian bertanda Perkiraan belum dicek ke sumber resmi.` : dicek;
+}
 
 const terverifikasi = (b) => b.status_verifikasi === 'terverifikasi' && Boolean(b.diperiksa_pada);
 const tautan = (url) => (url ? url : '— (tidak tercatat)');
@@ -203,9 +210,7 @@ async function bagianProfil() {
           ...(p.catatan_studi ? [`**Catatan studi:** ${aman(p.catatan_studi)}`] : []),
           `**Ke mana lulusannya** _(status data: ${aman(status.profesi ?? '—')})_: ${daftar(json(p.profesi))}`,
           `**Kampus yang cocok** _(status data: ${aman(status.kampus ?? '—')})_: ${kampus.length ? kampus.join('; ') : '— (kosong)'}`,
-          `**Kaki halaman:** "Diperbarui dari ${lembagaSumber(p.url_sumber)} · dicek ${
-            p.diperiksa_pada ? tanggalPanjang(p.diperiksa_pada) : '[tanggal saat ditandai]'
-          }"`,
+          `**Kaki halaman:** "${kalimatKakiProfil(status, p.diperiksa_pada ? tanggalPanjang(p.diperiksa_pada) : '[tanggal saat ditandai]')}"`,
         ],
         sumber: [`Tempat memverifikasi (url_sumber): ${tautan(p.url_sumber)}`, `Asal isi: ${aman(p.asal)}`],
         catatan: catatanData.get(p.id) ? aman(catatanData.get(p.id)) : null,

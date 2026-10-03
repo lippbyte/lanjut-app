@@ -6,9 +6,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { ProfilProdi, StatusSumber } from '../../api/types';
 import { useButirPribadi, useSimpanButirPribadi } from '../../hooks/useButirPribadi';
 import { useEksplorasiTujuan } from '../../hooks/useEksplorasiTujuan';
-import { angkaRibuan, rasioKeketatan } from '../../lib/eksplorasi';
+import { angkaRibuan, kalimatKakiProfil, rasioKeketatan } from '../../lib/eksplorasi';
 import { formatTanggal } from '../../lib/linimasa';
-import { lembagaSumber } from '../../lib/sumber';
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { Ikon, Kartu, KeadaanGalat, Kosong, Lencana, Memuat, Penafian, SeksiJudul, Sumber, Tombol, gaya } from '../ui';
 
@@ -110,9 +109,9 @@ function LencanaStatus({ status }: { status?: StatusSumber }) {
 }
 
 /**
- * LANJUT_044: lencana "Perkiraan" saja tidak menjelaskan artinya, dan kaki
- * halaman "dicek [tanggal]" berlaku untuk seluruh profil. Satu kalimat di
- * bawah lencana supaya siswa tidak membaca isi perkiraan sebagai fakta.
+ * LANJUT_044: lencana "Perkiraan" saja tidak menjelaskan artinya. Satu
+ * kalimat di bawah lencana supaya siswa tidak membaca isi perkiraan sebagai
+ * fakta. Kaki halaman ikut dibedakan per bagian sejak LANJUT_045.
  */
 function PenjelasStatus({ status }: { status?: StatusSumber }) {
   return status === 'Perkiraan' ? <Text style={gaya.teksKecil}>{PENJELAS_PERKIRAAN}</Text> : null;
@@ -204,9 +203,8 @@ function Profil({ profil: p, onLainnya }: { profil: ProfilProdi; onLainnya: () =
       </Seksi>
 
       <Penafian>{DISCLAIMER}</Penafian>
-      <Sumber>
-        Diperbarui dari {lembagaSumber(p.url_sumber)} · dicek {formatTanggal(p.diperiksa_pada)}
-      </Sumber>
+      {/* LANJUT_045: per bagian — tidak menyiratkan bagian "Perkiraan" sudah dicek. */}
+      <Sumber>{kalimatKakiProfil(p.status_sumber, formatTanggal(p.diperiksa_pada))}</Sumber>
       <SimpanRisetKampus prodiId={p.id} />
       <Tombol label="Lihat prodi lain" varian="garis" besar penuh onPress={onLainnya} />
     </View>

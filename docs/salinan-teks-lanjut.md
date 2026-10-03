@@ -324,6 +324,21 @@ yang "Terverifikasi":
 
 - **Penjelas Perkiraan:** Perkiraan artinya bagian ini disusun dari sumber umum, belum dari sumber resmi, jadi cek lagi ke kampus tujuanmu.
 
+**LANJUT_045 — kaki halaman profil per bagian, DRAF belum disetujui Khalifa.**
+Menggantikan kaki lama "Diperbarui dari [lembaga] · dicek [tanggal]", yang
+berlaku untuk seluruh profil sehingga bisa dibaca seolah bagian "Perkiraan"
+juga sudah dicek. Frasa "[lembaga]" (selalu "laman resmi SNPMB" karena
+`url_sumber` profil satu untuk seluruh berkas) ikut dilepas: bagian yang
+terverifikasi dicek ke sumber resmi yang berbeda-beda (kepala
+`profil-prodi.json`: SNPMB, dokumen kurikulum resmi kampus, laman resmi
+kampus), bukan semuanya ke SNPMB. Sumber per bagian tetap terlihat di
+baris "Sumber: SNPMB …" pada kartu peminat dan di penafian.
+`[tanggal]` = `diperiksa_pada`, mis. "3 Oktober 2026".
+
+- **Keempat bagian "Terverifikasi":** Isi profil ini dicek ke sumber resmi pada [tanggal].
+- **Ada bagian "Perkiraan":** Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal]. Bagian bertanda Perkiraan belum dicek ke sumber resmi.
+- **Ada bagian tanpa status di data** (tidak terjadi di data sekarang; aman-gagal): Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal].
+
 ### 4.10 Daftar (buat akun)
 
 Berlaku untuk **LANJUT_App** (layar Daftar Expo, `RegisterScreen`). Belum
