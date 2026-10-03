@@ -9,9 +9,17 @@ Status implementasi & batasan yang perlu diketahui ada di bagian
 
 ## Dependensi
 
-Persis 8, sesuai §2.1 SDD: `express`, `mysql2`, `bcryptjs`, `zod`,
-`express-rate-limit`, `helmet`, `cors`, `dotenv`. Jangan menambah dependensi
-baru tanpa mencatat alasannya di sini.
+8 sesuai §2.1 SDD: `express`, `mysql2`, `bcryptjs`, `zod`,
+`express-rate-limit`, `helmet`, `cors`, `dotenv`. Ditambah 2 di LANJUT_049
+untuk unggah modul: `multer` (menerima berkas) dan `pdfjs-dist` (ekstraksi
+teks PDF, dipin 4.10.38). Alasannya ada di bagian 2c. Jangan menambah
+dependensi baru tanpa mencatat alasannya di sini.
+
+**Audit keamanan (LANJUT_050, 3 Oktober 2026):** `npm audit` = 0 kerentanan,
+baik penuh maupun `--omit=dev`. Tiga temuan sedang (`qs` < 6.16.0, lewat
+`express` dan `body-parser`) diperbaiki dengan naik patch: express 4.22.3,
+body-parser 1.20.8, qs 6.16.0. Tanpa `overrides`, tanpa kenaikan mayor.
+Jalankan `npm audit` lagi sebelum setiap deploy.
 
 ## 1. Menyiapkan lingkungan
 
@@ -438,6 +446,12 @@ npm run migrasi
 npm run benih     # opsional, sebagian test kartu memakai mapel/kartu resmi
 npm test
 ```
+
+**Windows + Node 20:** `npm test` gagal dengan "Could not find
+'...tests\*.test.js'". Di Windows, npm menjalankan skrip lewat cmd.exe yang
+tidak mengembangkan pola `*`, dan baru Node 21+ yang bisa mengembangkannya
+sendiri. Di Node 20, jalankan dari Git Bash: `node --test tests/*.test.js`.
+Di Linux (server produksi) dan di Node 22+, `npm test` berjalan normal.
 
 `NODE_ENV=test` menaikkan batas `express-rate-limit` (§8.2) supaya rangkaian
 test yang memanggil endpoint `/auth/*` berkali-kali dari mesin yang sama tidak

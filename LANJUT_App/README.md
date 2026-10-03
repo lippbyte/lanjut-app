@@ -51,6 +51,25 @@ npx eas-cli build --platform android --profile preview   # hasil: .apk (bukan .a
 - **Penyimpanan APK:** simpan unduhan di `LANJUT_App/build/`. Folder ini diabaikan git.
 - **Aturan abaikan untuk EAS wajib di `.gitignore` root repo.** Saat mengemas proyek, EAS hanya membaca `.gitignore` root; aturan di `LANJUT_App/.gitignore` tidak berlaku untuk upload EAS (tanpa aturan root, APK di `build/` ikut terunggah dan arsip jadi ±220 MB). Cek isi arsip tanpa upload: `npx eas-cli build:inspect -p android -s archive -e preview -o <folder> --force`.
 
+## Audit dependensi (`npm audit`)
+
+Per LANJUT_050 (3 Oktober 2026), `npm audit` di folder ini melaporkan 29
+temuan: 19 tinggi dan 10 sedang. Jumlahnya sama dengan atau tanpa
+`--omit=dev`, karena perkakas Expo/Metro tercatat sebagai dependensi biasa.
+Semua temuan berasal dari 4 paket akar, dan sengaja **belum diperbaiki**:
+
+| Paket akar | Advisori | Dipakai di | Kenapa belum diperbaiki |
+|---|---|---|---|
+| `braces` 3.0.3 (tinggi) | GHSA-vfj7-8cjw-p6xm | Metro (pemantau berkas) di komputer pengembang | belum ada versi perbaikan di registri |
+| `node-forge` 1.4.0 (tinggi) | GHSA-86w9-cpqp-85rv | `@expo/cli` (sertifikat code signing) | belum ada versi perbaikan; app tidak memakai code signing/expo-updates |
+| `uuid` 7.0.3 (sedang) | GHSA-w5hq-g745-h8pq | `xcode` saat prebuild iOS | perbaikan di 11.1.1 (naik mayor); `xcode` hanya memakai `v4`, padahal celahnya di v3/v5/v6 |
+| `decode-uri-component` 0.2.2 (sedang) | GHSA-vcc3-ghjq-m6fr | `query-string` di expo-router, ikut ke HP/web | perbaikan 0.5.0 hanya ESM (merusak `require`); hilang di Expo SDK 58 |
+
+**Jangan jalankan `npm audit fix` di folder ini,** dengan atau tanpa
+`--force`. Tanpa `--force`, perintah itu menyelipkan paket SDK 58
+(expo-router 58, expo-constants 58) ke proyek SDK 57. Saran `--force`
+malah menurunkan ke expo 44. Tinjau ulang saat naik ke Expo SDK 58.
+
 ## Tampilan
 
 Tampilan meniru `MVP-PWA/` (port, bukan desain ulang):
