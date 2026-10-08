@@ -65,8 +65,8 @@ const env = {
   // Ngobrol Bareng LANJUT (LANJUT_051): AI lewat OpenRouter. Kunci KOSONG =
   // fitur AI mati (503 AI_TIDAK_TERSEDIA), server tetap menyala. Kunci hanya
   // ada di server: tidak pernah dikirim ke app dan tidak dicatat di log.
+  // Model & pengaturan penyedia ada di tabel konfigurasi (ai_*, LANJUT_053).
   OPENROUTER_API_KEY: opsional('OPENROUTER_API_KEY', null),
-  OPENROUTER_MODEL: opsional('OPENROUTER_MODEL', 'anthropic/claude-sonnet-5.5'),
   // Hanya diganti untuk uji (server tiruan di localhost).
   OPENROUTER_BASE_URL: opsional('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1').replace(/\/$/, ''),
 };

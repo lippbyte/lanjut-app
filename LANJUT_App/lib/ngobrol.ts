@@ -10,6 +10,13 @@ export const TEKS_NGOBROL = {
   belumBisaDimuat: 'Status fitur AI belum bisa dimuat. Coba lagi sebentar lagi.',
   cobaLagi: 'Coba lagi',
   placeholder: 'Tulis pesanmu…',
+  // Salinan teks §4.16 (LANJUT_053) — DRAF belum disetujui Khalifa.
+  labelUjiCoba: 'Uji coba, bukan jawaban AI',
+  peringatanDataPribadi: 'Jangan tulis nama lengkap, nomor HP, alamat, atau data pribadi lain di sini.',
+  tautanBantuan: 'Butuh bicara dengan orang?',
+  sembunyikanBantuan: 'Sembunyikan',
+  dataDisamarkan: 'Data pribadi di pesanmu disamarkan sebelum dikirim ke AI.',
+  kartuGagalDimuat: 'Kartu bantuan belum bisa dimuat. Kalau kamu dalam bahaya, hubungi 112 atau orang dewasa yang kamu percaya.',
 };
 
 // Batas di app = batas server (ngobrol.skema.js).

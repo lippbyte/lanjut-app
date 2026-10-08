@@ -270,5 +270,12 @@ tidak diunduh dari Google saat app berjalan.
       tercatat dan kebijakan diterima. Selama belum ada persetujuan
       sungguhan, tidak ada siswa yang terkena.
 
+    - **Pembaruan LANJUT_053:** sebelum dikirim, nomor telepon, email, dan
+      16 angka mirip NIK di pesan dan riwayat diganti `[disamarkan]`. Pesan
+      yang memuat tanda bahaya akut tidak dikirim ke AI sama sekali; server
+      menjawab dengan kartu layanan bantuan. Log hanya mencatat tingkat
+      tanda bahaya dan waktunya, tanpa isi pesan. Model dan pengaturan
+      penyedia (`data_collection`, `zdr`, `only`) bisa diubah di konfigurasi.
+
     Sebelum mencatat persetujuan orang tua/wali sungguhan: perbarui teks
     kebijakan dan surat orang tua/wali, lalu naikkan versi (lihat butir 10).

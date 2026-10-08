@@ -4,8 +4,9 @@
 // dipanggil ngobrol.layanan.js, SESUDAH gerbang bolehPakaiAi lolos.
 //
 // - Kunci API hanya dari env server; tidak dikirim ke app, tidak dicatat.
-// - provider.data_collection = 'deny': OpenRouter hanya meneruskan ke
-//   penyedia model yang tidak menyimpan data untuk dipakai melatih model.
+// - Model dan objek `provider` (data_collection, zdr, only) datang dari
+//   konfigurasi lewat ngobrol.layanan.js (LANJUT_053). Nama parameter sesuai
+//   dokumentasi OpenRouter "Provider Routing".
 // - Isi pesan dan balasan tidak pernah dicatat di log. Galat hanya membawa
 //   jenis dan status HTTP, bukan isi respons penyedia.
 
@@ -23,10 +24,10 @@ class GalatPenyedia extends Error {
 }
 
 /**
- * `pesan` = [{ role: 'system' | 'user' | 'assistant', content }].
+ * `pesan` = [{ role: 'system' | 'user', content }]; `pengaturan` = { model, provider }.
  * Mengembalikan { teks, terpotong }. Melempar GalatPenyedia.
  */
-async function mintaBalasan(pesan) {
+async function mintaBalasan(pesan, pengaturan) {
   const kendali = new AbortController();
   const timer = setTimeout(() => kendali.abort(), BATAS_WAKTU_MS);
   try {
@@ -40,11 +41,11 @@ async function mintaBalasan(pesan) {
           'X-Title': 'LANJUT',
         },
         body: JSON.stringify({
-          model: env.OPENROUTER_MODEL,
+          model: pengaturan.model,
           messages: pesan,
           max_tokens: TOKEN_BALASAN_MAKS,
           temperature: 0.7,
-          provider: { data_collection: 'deny' },
+          provider: pengaturan.provider,
         }),
         signal: kendali.signal,
       });

@@ -2,13 +2,24 @@ import React, { createContext, useCallback, useContext, useEffect, useRef, useSt
 import { useQueryClient } from '@tanstack/react-query';
 
 import { ApiError, apiFetch } from '../api/client';
-import type { BalasanNgobrol, PesanNgobrol } from '../api/types';
+import type { BalasanNgobrol, KartuBantuan, PesanNgobrol } from '../api/types';
 import { KUNCI_PERSETUJUAN } from '../hooks/usePersetujuan';
 import { RIWAYAT_MAKS, pesanGalatNgobrol } from '../lib/ngobrol';
 import { useSesi } from './AuthProvider';
 
-/** `galat` = pemberitahuan gagal kirim; tampil di layar, TIDAK ikut dikirim ke AI. */
-export type Pesan = { id: number; dari: 'pengguna' | 'bot' | 'galat'; teks: string };
+/**
+ * `galat` = pemberitahuan gagal kirim; tampil di layar, TIDAK ikut dikirim ke AI.
+ * LANJUT_053: `kartu` = kartu bantuan dari server; `ujiCoba` = balasan saat AI
+ * dimatikan; `disamarkan` = data pribadi di pesan siswa ini disamarkan server.
+ */
+export type Pesan = {
+  id: number;
+  dari: 'pengguna' | 'bot' | 'galat';
+  teks: string;
+  kartu?: KartuBantuan;
+  ujiCoba?: boolean;
+  disamarkan?: boolean;
+};
 
 type NilaiObrolan = {
   pesan: Pesan[];
@@ -60,9 +71,19 @@ export function ObrolanProvider({ namaTampilan, children }: { namaTampilan?: str
         .slice(-RIWAYAT_MAKS)
         .map((m) => ({ peran: m.dari, teks: m.teks }));
       try {
-        const { balasan } = await apiFetch<BalasanNgobrol>('/ngobrol', { method: 'POST', body: { pesan: dikirim }, token: token! });
+        const hasil = await apiFetch<BalasanNgobrol>('/ngobrol', { method: 'POST', body: { pesan: dikirim }, token: token! });
         if (!terpasang.current) return;
-        setPesan((p) => [...p, { id: penghitung.current++, dari: 'bot', teks: balasan }]);
+        const idSiswa = riwayat[riwayat.length - 1].id;
+        setPesan((p) => [
+          ...p.map((m) => (m.id === idSiswa && hasil.data_pribadi_disamarkan ? { ...m, disamarkan: true } : m)),
+          {
+            id: penghitung.current++,
+            dari: 'bot',
+            teks: hasil.balasan,
+            ...(hasil.kartu_bantuan ? { kartu: hasil.kartu_bantuan } : {}),
+            ...(hasil.uji_coba ? { ujiCoba: true } : {}),
+          },
+        ]);
       } catch (err) {
         if (!terpasang.current) return;
         setPesan((p) => [...p, { id: penghitung.current++, dari: 'galat', teks: pesanGalatNgobrol(err) }]);

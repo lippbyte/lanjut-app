@@ -8,7 +8,8 @@ const PANJANG_PESAN_SISWA = 1000;
 const PANJANG_BALASAN = 6000;
 
 const pesanSkema = z.object({
-  peran: z.enum(['pengguna', 'bot']),
+  // Hanya dua peran. Pesan galat tidak menggemakan nilai yang dikirim (LANJUT_053).
+  peran: z.enum(['pengguna', 'bot'], { errorMap: () => ({ message: 'Peran pesan tidak dikenal.' }) }),
   teks: z.string().trim().min(1, 'Pesan kosong.').max(PANJANG_BALASAN, 'Pesan terlalu panjang.'),
 });
 

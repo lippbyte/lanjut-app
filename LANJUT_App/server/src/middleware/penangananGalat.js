@@ -12,6 +12,12 @@ function penangananGalat(err, req, res, next) {
   if (err && err.type === 'entity.too.large') {
     return galat(res, 'BERKAS_TERLALU_BESAR', 'Data yang dikirim terlalu besar.');
   }
+  // JSON rusak (LANJUT_053): 400, dan pesan galatnya TIDAK dicetak — pesan
+  // galat parser JSON bisa memuat cuplikan isi permintaan (audit LANJUT_052).
+  if (err && err.type === 'entity.parse.failed') {
+    console.warn('[galat] JSON tidak valid', req.method, req.originalUrl.split('?')[0]);
+    return galat(res, 'VALIDASI_GAGAL', 'Data yang dikirim bukan JSON yang valid.');
+  }
 
   // Log server: metode, jalur, status, durasi (ditangani logger akses di
   // app.js), pengguna_id — TIDAK PERNAH kata sandi/token/isi kartu (§8.5).

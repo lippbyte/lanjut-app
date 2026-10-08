@@ -242,4 +242,15 @@ export type HasilCariModul = {
 
 // LANJUT_051 — Ngobrol dengan AI (POST /ngobrol)
 export type PesanNgobrol = { peran: 'pengguna' | 'bot'; teks: string };
-export type BalasanNgobrol = { balasan: string };
+// LANJUT_053 — kartu bantuan dibuat server dari berkas konfigurasi (hanya layanan terverifikasi).
+export type LayananBantuan = { nama: string; nomor_atau_alamat: string; keterangan: string };
+export type KartuBantuan = { judul: string; layanan: LayananBantuan[]; penutup: string };
+export type BalasanNgobrol = {
+  balasan: string;
+  /** Ada bila server mendeteksi tanda bahaya (atau model menandainya). */
+  kartu_bantuan: KartuBantuan | null;
+  /** Saklar ai_aktif = 0: balasan uji coba, bukan dari AI. */
+  uji_coba: boolean;
+  /** Data pribadi di pesan terbaru disamarkan sebelum dikirim ke AI. */
+  data_pribadi_disamarkan: boolean;
+};

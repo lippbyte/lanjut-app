@@ -13,6 +13,8 @@ import {
   type TextInputKeyPressEventData,
 } from 'react-native';
 
+import type { KartuBantuan } from '../../api/types';
+import { useKartuBantuan } from '../../hooks/useKartuBantuan';
 import { usePersetujuan } from '../../hooks/usePersetujuan';
 import { labelGayaBelajar } from '../../lib/gayaBelajar';
 import { keadaanKebijakan } from '../../lib/kebijakanPrivasi';
@@ -49,7 +51,7 @@ export function NgobrolScreen() {
   return <Obrolan />;
 }
 
-/** Fitur AI belum aktif: jelaskan syaratnya, tanpa kotak tulis. */
+/** Fitur AI belum aktif: jelaskan syaratnya, tanpa kotak tulis. Kartu bantuan tetap bisa dibuka. */
 function Terkunci() {
   const router = useRouter();
   const { data: persetujuan } = usePersetujuan();
@@ -65,7 +67,43 @@ function Terkunci() {
           </Text>
         </Pressable>
       ) : null}
+      <PanelBantuan />
     </ScrollView>
+  );
+}
+
+/** Kartu layanan bantuan dari server (LANJUT_053). Isinya tidak pernah ditulis AI. */
+function KartuBantuanView({ kartu }: { kartu: KartuBantuan }) {
+  return (
+    <View style={s.kartu} role="note" aria-label={kartu.judul}>
+      <Text style={s.kartuJudul}>{kartu.judul}</Text>
+      {kartu.layanan.map((l) => (
+        <View key={l.nama} style={s.kartuLayanan}>
+          <Text style={s.kartuNama}>{l.nama}</Text>
+          <Text style={s.kartuNomor} selectable>
+            {l.nomor_atau_alamat}
+          </Text>
+          <Text style={s.kartuKeterangan}>{l.keterangan}</Text>
+        </View>
+      ))}
+      <Text style={s.kartuKeterangan}>{kartu.penutup}</Text>
+    </View>
+  );
+}
+
+/** Tautan "Butuh bicara dengan orang?" yang selalu ada; kartu dimuat dari server saat dibuka. */
+function PanelBantuan() {
+  const [buka, setBuka] = useState(false);
+  const { data: kartu, isError } = useKartuBantuan(buka);
+  return (
+    <View style={s.panelBantuan}>
+      <Pressable onPress={() => setBuka((b) => !b)} style={s.gaya} accessibilityRole="button" aria-expanded={buka}>
+        <Text style={s.gayaTeks}>
+          <Text style={s.gayaTautan}>{buka ? TEKS_NGOBROL.sembunyikanBantuan : TEKS_NGOBROL.tautanBantuan}</Text>
+        </Text>
+      </Pressable>
+      {buka ? kartu ? <KartuBantuanView kartu={kartu} /> : isError ? <Peringatan>{TEKS_NGOBROL.kartuGagalDimuat}</Peringatan> : <Memuat /> : null}
+    </View>
   );
 }
 
@@ -109,6 +147,9 @@ function Obrolan() {
         aria-live="polite"
       >
         <Text style={s.catatan}>{TEKS_NGOBROL.catatanAi}</Text>
+        <Text style={s.catatan}>{TEKS_NGOBROL.peringatanDataPribadi}</Text>
+
+        <PanelBantuan />
 
         <Pressable onPress={() => router.push('/gaya-belajar')} style={s.gaya} accessibilityRole="link">
           <Text style={s.gayaTeks}>
@@ -131,11 +172,14 @@ function Obrolan() {
             </View>
           ) : (
             <View key={m.id} style={m.dari === 'pengguna' ? s.barisKanan : s.barisKiri}>
+              {m.ujiCoba ? <Text style={s.labelUjiCoba}>{TEKS_NGOBROL.labelUjiCoba}</Text> : null}
               <View style={m.dari === 'pengguna' ? s.gelembungPengguna : s.gelembungBot}>
                 <Text style={m.dari === 'pengguna' ? s.teksPengguna : s.teksBot} selectable>
                   {m.teks}
                 </Text>
               </View>
+              {m.disamarkan ? <Text style={s.disamarkan}>{TEKS_NGOBROL.dataDisamarkan}</Text> : null}
+              {m.kartu ? <KartuBantuanView kartu={m.kartu} /> : null}
             </View>
           )
         )}
@@ -218,6 +262,24 @@ const s = StyleSheet.create({
     borderColor: color.borderSoft,
     backgroundColor: color.statusIdleBg,
   },
+  // LANJUT_053 — kartu bantuan, label uji coba, penanda disamarkan.
+  panelBantuan: { gap: spacing.s2 },
+  kartu: {
+    width: '100%',
+    gap: spacing.s3,
+    padding: spacing.s4,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: color.borderBrand,
+    backgroundColor: color.white,
+  },
+  kartuJudul: { ...teks.bodySm, fontFamily: font.semibold, color: color.ink900 },
+  kartuLayanan: { gap: 2 },
+  kartuNama: { ...teks.bodySm, fontFamily: font.semibold, color: color.textBody },
+  kartuNomor: { ...teks.bodySm, color: color.textLink, fontFamily: font.semibold },
+  kartuKeterangan: { ...teks.caption, color: color.textMuted },
+  labelUjiCoba: { ...teks.caption, color: color.textMuted, fontFamily: font.semibold },
+  disamarkan: { ...teks.caption, color: color.textMuted, maxWidth: '85%', textAlign: 'right' },
   teksBot: { ...teks.bodySm, color: color.textBody },
   teksPengguna: { ...teks.bodySm, color: color.white },
   teksGalat: { ...teks.bodySm, color: color.textMuted },
