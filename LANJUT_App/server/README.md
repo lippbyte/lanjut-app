@@ -341,9 +341,11 @@ Tes: `tests/persetujuan.test.js`, `tests/kebijakan-privasi.test.js`.
 Siswa mengunggah materi pelajaran (.txt, .md, PDF berisi teks, atau teks yang
 ditempel). **Yang disimpan hanya teks hasil ekstraksi**; berkas asli diterima
 di memori (multer `memoryStorage`), diekstrak, lalu dibuang, tanpa pernah
-ditulis ke disk, dieksekusi, atau disajikan ulang. **Tidak ada layanan luar**:
-ekstraksi dan pencarian berjalan di server sendiri, dan isi modul tidak
-dikirim ke mana pun. Pengambilan konteks untuk AI belum dibangun.
+ditulis ke disk, dieksekusi, atau disajikan ulang. **Tidak ada layanan luar**
+untuk unggah, ekstraksi, dan pencarian: semuanya berjalan di server sendiri.
+Sejak LANJUT_055, untuk pertanyaan materi di Ngobrol, hingga 3 potongan modul
+milik penanya (disamarkan) ikut dikirim ke penyedia AI; lihat bagian
+"Materi: modul Arsip, pencarian web, sitasi".
 
 ### Data
 
@@ -434,12 +436,13 @@ uji coba berlabel, penyedia tidak dipanggil. Nyalakan lagi dengan `'1'`.
 Nilai selain `'1'` dianggap mati (gagal-tertutup). Tanda bahaya akut tetap
 dijawab dengan kartu bantuan walau AI mati.
 
-> **Sebelum siswa sungguhan memakainya:** kebijakan privasi versi 1 masih
-> menyebut obrolan "belum dikirim ke mana pun" dan Ngobrol "versi uji coba",
-> dan surat orang tua/wali menyebut fitur AI "belum aktif". Perbarui
-> keduanya, naikkan versi kebijakan (bagian 2b), dan baru catat persetujuan
-> orang tua/wali sungguhan. Selama belum ada persetujuan yang tercatat, tidak
-> ada akun yang bisa memakai AI.
+> **Sebelum siswa sungguhan memakainya:** teks kebijakan privasi dan surat
+> orang tua/wali sudah diperbarui menjadi draf v2 (LANJUT_056; bukti per
+> klaim di `docs/kebijakan-v2-klaim-vs-kode.md`), tetapi nomor versinya
+> sengaja masih 1. Isi dulu bagian `[ISI: ...]`, rilis app dengan teks itu,
+> naikkan versi kebijakan (bagian 2b), dan baru catat persetujuan orang
+> tua/wali sungguhan. Selama belum ada persetujuan yang tercatat, tidak ada
+> akun yang bisa memakai AI.
 
 ### Menyalakan
 

@@ -134,10 +134,10 @@ const PETA = [
           klaim: [
             'Daftar data yang disimpan (akun, jalur, Daftar Periksa, kartu, latihan) dan tujuannya.',
             'Kata sandi disimpan dalam bentuk acak (hash).',
-            'Obrolan belum dikirim ke mana pun; AI nanti memakai penyedia pihak ketiga yang mungkin di luar negeri dan baru aktif setelah persetujuan orang tua/wali.',
+            'Fitur AI mengirim pesan, riwayat, profil belajar, dan (pertanyaan pelajaran) potongan modul ke penyedia AI pihak ketiga yang dapat memproses di luar Indonesia; tanpa nama, nama pengguna, email; isi obrolan tidak disimpan server; aktif setelah persetujuan orang tua/wali (draf v2, LANJUT_056).',
             'Hak siswa dan orang tua/wali: melihat, membetulkan, meminta penghapusan, mencabut persetujuan.',
           ][i - 1],
-          sumber: 'Inventaris data di docs/kebijakan-privasi-DRAF.md (Lampiran A) dan review ahli hukum (UU PDP).',
+          sumber: 'Inventaris data di docs/kebijakan-privasi-DRAF.md (Lampiran A), bukti per klaim di docs/kebijakan-v2-klaim-vs-kode.md, dan review ahli hukum (UU PDP).',
         },
       })),
       { task: 'LANJUT_047', awal: '**Tautan ke kebijakan lengkap:**', nama: 'Kebijakan — tautan lengkap', di: 'Layar Daftar, membuka kebijakan lengkap sebagai modal.', oleh: 'Semua pendaftar baru.' },

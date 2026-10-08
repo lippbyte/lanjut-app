@@ -1,9 +1,14 @@
 # Kebijakan Privasi LANJUT
 
 > **DRAF — wajib direview ahli hukum sebelum dipakai.**
-> Disusun LANJUT_047 (3 Oktober 2026) sebagai bahan review, bukan dokumen
-> yang berlaku. Bagian bertanda `[ISI: ...]` menunggu keputusan Khalifa. Nama
-> badan, alamat, kontak, penyedia, dan masa simpan sengaja tidak diisi.
+> Disusun LANJUT_047 (3 Oktober 2026), diperbarui menjadi **draf v2** di
+> LANJUT_056 (8 Oktober 2026) karena fitur AI, modul, dan pencarian web sudah
+> dibangun. Bahan review, bukan dokumen yang berlaku, dan bukan nasihat hukum:
+> tetap perlu ditinjau orang yang paham UU PDP. Bagian bertanda `[ISI: ...]`
+> menunggu diisi; siapa pengisinya ada di
+> [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md). Nama
+> badan, alamat, kontak, negara pemrosesan, dan masa simpan sengaja tidak
+> diisi.
 
 ## Catatan untuk peninjau (bukan bagian kebijakan)
 
@@ -21,10 +26,19 @@
   Menaikkan versi = teks baru di JSON + migrasi server yang menaikkan
   `persetujuan_versi_kebijakan`. Persetujuan untuk versi lama tidak membuka
   fitur AI.
+- **Isi v2, nomor versi masih 1.** Teks di bawah adalah draf v2, tetapi
+  `versi` di JSON **sengaja belum dinaikkan** (LANJUT_056 hanya teks). App
+  mengirim nomor versinya saat daftar, dan server menolak nomor yang tidak
+  sama dengan `persetujuan_versi_kebijakan`; menaikkan salah satunya saja
+  membuat pendaftaran gagal. Urutan rilis: app dengan teks ini dirilis dulu,
+  lalu nomor di JSON dan di server dinaikkan bersama (migrasi baru), lalu
+  surat orang tua/wali diisi nomor versi itu.
 - **Isi data diambil dari kode, bukan perkiraan.** Daftar data di kebijakan
-  dicocokkan dengan skema basis data dan kode app per 3 Oktober 2026 (Lampiran
-  A). Kalau ada fitur baru yang menyimpan data, kebijakan dan lampiran ini
-  wajib diperbarui.
+  dicocokkan dengan skema basis data dan kode app per 8 Oktober 2026 (Lampiran
+  A). Setiap klaim tentang data punya bukti berkas:baris atau tes di
+  [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md). Kalau ada
+  fitur baru yang menyimpan atau mengirim data, kebijakan, lampiran ini, dan
+  tabel klaim wajib diperbarui.
 
 ## Isi kebijakan
 
@@ -37,12 +51,12 @@
 
 - Kami menyimpan data akunmu (nama pengguna, kelas, jenis sekolah, prodi impian, gaya belajar, dan email kalau kamu isi) dan yang kamu buat di LANJUT (centang Daftar Periksa, kartu, modul yang kamu unggah, dan hasil latihan) supaya kemajuanmu tidak hilang.
 - Kata sandimu disimpan dalam bentuk acak, bukan teks aslinya.
-- Obrolan di Ngobrol Bareng LANJUT belum dikirim ke mana pun. Fitur AI sungguhan nanti memakai penyedia pihak ketiga yang mungkin berada di luar negeri, dan baru aktif setelah orang tua atau walimu memberi persetujuan lewat sekolah.
+- Fitur AI di Ngobrol Bareng LANJUT mengirim pesanmu, riwayat obrolan, dan profil belajarmu (kelas, jenis sekolah, prodi impian, gaya belajar) ke penyedia AI pihak ketiga yang dapat memproses data di luar Indonesia. Untuk pertanyaan pelajaran, potongan modulmu yang berkaitan bisa ikut dikirim. Nama, nama pengguna, dan email dari akunmu tidak ikut dikirim, dan isi obrolan tidak disimpan di server LANJUT. Fitur AI baru aktif setelah orang tua atau walimu memberi persetujuan lewat sekolah.
 - Kamu dan orang tua atau walimu berhak melihat, membetulkan, dan meminta penghapusan datamu, serta mencabut persetujuan.
 
 ### Tentang kebijakan ini
 
-Kebijakan ini menjelaskan data apa yang dikumpulkan LANJUT, untuk apa, siapa yang bisa melihatnya, dan apa hakmu serta hak orang tua atau walimu.
+Kebijakan ini menjelaskan data apa yang dikumpulkan LANJUT, untuk apa, ke mana data itu dikirim, siapa yang bisa melihatnya, dan apa hakmu serta hak orang tua atau walimu.
 
 LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya].
 
@@ -52,7 +66,7 @@ LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya].
 - Jalur belajarmu: kelas, jenis sekolah (SMP, SMA, SMK, atau MA), prodi impian, dan gaya belajar yang kamu pilih.
 - Kemajuan: butir Daftar Periksa yang kamu centang, dan butir yang kamu simpan dari Pilih Mapel atau Eksplorasi Tujuan.
 - Arsip Belajar: kartu yang kamu tulis (mapel, judul, isi, dan jawaban). Isinya teks bebas, jadi sebaiknya jangan menulis data pribadi di kartu.
-- Modul: teks materi pelajaran yang kamu unggah ke Arsip Belajar (dari berkas .txt, .md, atau PDF, atau yang kamu tempel), beserta judul, mapel, nama berkas, dan waktu unggah. Berkas aslinya tidak disimpan, hanya teksnya. Teks itu juga dibelah menjadi potongan supaya bisa kamu cari. Modul bisa kamu hapus permanen kapan saja; teks dan semua potongannya ikut terhapus.
+- Modul: teks materi pelajaran yang kamu unggah ke Arsip Belajar (dari berkas .txt, .md, atau PDF, atau yang kamu tempel), beserta judul, mapel, nama berkas, dan waktu unggah. Berkas aslinya tidak disimpan, hanya teksnya. Teks itu juga dibelah menjadi potongan supaya bisa kamu cari dan supaya potongan yang berkaitan bisa dipakai fitur AI. Modul bisa kamu hapus permanen kapan saja; teks dan semua potongannya ikut terhapus.
 - Latihan: kapan sesi latihan dimulai dan selesai, mapel yang dilatih, kartu yang kamu jawab, benar atau salahnya jawabanmu, dan seberapa yakin kamu (kalau kamu mengisinya).
 - Persetujuan: kapan kamu membaca kebijakan ini (dan versinya), serta kapan orang tua atau walimu memberi atau mencabut persetujuan lewat sekolah, termasuk nomor atau tanggal suratnya.
 - Keamanan akun: kapan akun dibuat, kapan terakhir kamu masuk, status akun (aktif atau nonaktif), sesi masuk yang masih aktif, dan jumlah percobaan masuk yang gagal (supaya akun bisa dikunci sementara kalau ada yang mencoba menebak kata sandi).
@@ -63,11 +77,11 @@ LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya].
 
 - Tanda masuk dan salinan data akunmu, supaya kamu tidak perlu masuk ulang setiap membuka aplikasi.
 - Kelas dan jalur yang kamu pilih di Daftar Periksa.
-- Obrolan di Ngobrol Bareng LANJUT: hanya ada selama aplikasi terbuka, lalu hilang saat aplikasi ditutup atau kamu keluar. Obrolan ini tidak dikirim ke server LANJUT maupun ke pihak lain.
+- Riwayat obrolan di Ngobrol Bareng LANJUT: hanya ada di memori aplikasi selama aplikasi terbuka, lalu hilang saat aplikasi ditutup, kamu keluar, atau berganti akun. Riwayat ini tidak disimpan di HP-mu maupun di server LANJUT. Tetapi setiap kali kamu mengirim pesan, riwayat ini ikut dikirim ke penyedia AI (lihat bagian Fitur AI).
 
 ### Yang tidak kami kumpulkan
 
-- Lokasi, kontak, foto, rekaman suara, nomor HP, nama sekolah, dan nama lengkap aslimu (kecuali kalau kamu sendiri menulisnya sebagai nama tampilan, di kartu, atau di modul).
+- Lokasi, kontak, foto, rekaman suara, nomor HP, tanggal lahir atau usia, nama sekolah, dan nama lengkap aslimu (kecuali kalau kamu sendiri menulisnya sebagai nama tampilan, di kartu, di modul, atau di pesan Ngobrol).
 - Saat ini LANJUT tidak memakai layanan analitik atau iklan dari pihak ketiga.
 
 ### Untuk apa datanya dipakai
@@ -75,67 +89,135 @@ LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya].
 - Menampilkan isi yang sesuai kelas dan jenis sekolahmu, misalnya jadwal SNBP, SNBT, dan TKA hanya untuk kelas 12.
 - Menyimpan kemajuan, kartu, dan hasil latihanmu supaya tidak hilang saat ganti HP.
 - Memberi saran mapel dan latihan dari prodi impian dan hasil latihanmu.
+- Menjawab pesanmu di Ngobrol Bareng LANJUT lewat penyedia AI (lihat bagian Fitur AI).
 - Menjaga keamanan akun.
 - [ISI: tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.]
 
 ### Siapa yang bisa melihat datamu
 
-- Kamu sendiri, lewat aplikasi. Akun lain tidak bisa melihat datamu.
+- Kamu sendiri, lewat aplikasi. Akun lain tidak bisa melihat datamu, termasuk modulmu.
 - Tim pengelola LANJUT yang mengurus server. [ISI: siapa saja dan untuk keperluan apa.]
 - Penyedia server dan basis data tempat LANJUT berjalan. [ISI: nama penyedia dan lokasi servernya.]
+- Penyedia AI pihak ketiga, tetapi hanya data yang dikirim untuk fitur AI (lihat bagian Fitur AI).
 - Sekolah hanya mencatat persetujuan orang tua atau wali ke akunmu. Saat ini tidak ada fitur bagi sekolah atau guru untuk melihat data siswa. [ISI: konfirmasi apakah ini akan berubah.]
 
-### Fitur AI (belum aktif)
+### Fitur AI: siapa penyedianya
 
-Ngobrol Bareng LANJUT sekarang masih versi uji coba: balasannya contoh, bukan dari AI sungguhan.
+Balasan di Ngobrol Bareng LANJUT dibuat oleh AI, bukan oleh manusia, dan bisa keliru.
 
-Nanti, balasan AI sungguhan memakai penyedia AI pihak ketiga [ISI: nama penyedia AI]. Pesan yang kamu tulis, potongan modul di Arsip Belajarmu yang berkaitan dengan pertanyaanmu, dan [ISI: data akun lain yang ikut dikirim, misalnya kelas dan gaya belajar], akan dikirim ke penyedia itu untuk dibuatkan balasan. Penyedia itu kemungkinan memproses datanya di luar negeri [ISI: negara atau wilayahnya, dan dasar pengirimannya].
+Untuk membuat balasan itu, server LANJUT mengirim data ke OpenRouter, layanan perantara pihak ketiga yang meneruskan permintaan ke perusahaan yang menjalankan model AI. Model AI yang dipakai saat ini buatan Anthropic. Perusahaan yang menjalankan model itu dipilih oleh OpenRouter, dan pilihan ini bisa dibatasi lewat pengaturan di server LANJUT. [ISI: penyedia model yang benar-benar menerima data menurut pengaturan di server, dan lokasinya.]
 
-Fitur AI hanya aktif kalau orang tua atau walimu sudah memberi persetujuan lewat sekolah, dan kamu sudah membaca kebijakan versi yang berlaku. Tanpa itu, data akunmu tidak dikirim ke penyedia AI.
+Penyedia AI itu dapat memproses datamu di luar Indonesia. [ISI: negara atau wilayah pemrosesan, dan dasar pengirimannya ke luar negeri.]
 
-[ISI: apakah isi obrolan dengan AI disimpan, di mana, dan berapa lama.]
+Kami mengirim data ke penyedia AI hanya untuk dibuatkan balasan atas pesanmu.
+
+### Fitur AI: apa yang dikirim
+
+Setiap kali kamu mengirim pesan di Ngobrol Bareng LANJUT, yang dikirim ke penyedia AI adalah:
+
+- Pesan terbarumu, setelah sebagian data pribadi disamarkan (lihat bagian berikut).
+- Riwayat obrolan di sesi itu, hingga 20 pesan terakhir, termasuk balasan sebelumnya. Riwayat juga disamarkan dulu. Salam pembuka yang memuat nama tampilanmu tidak ikut dikirim.
+- Profil belajarmu dari akun: kelas, jenis sekolah, nama prodi impian, dan gaya belajar (kalau sudah kamu isi).
+- Untuk pertanyaan materi pelajaran: potongan modul yang berkaitan, dan hasil pencarian web bila fitur itu diaktifkan (lihat bagian Pertanyaan pelajaran).
+
+### Fitur AI: apa yang tidak dikirim
+
+- Nama tampilan, nama pengguna, email, kata sandi, dan ID akunmu.
+- Nama sekolahmu, karena LANJUT memang tidak menyimpannya.
+- Data lain di akunmu, seperti kartu, hasil latihan, dan centang Daftar Periksa.
+- Tetapi apa pun yang kamu tulis sendiri di pesan ikut terkirim, termasuk nama, alamat, atau nama sekolah, kecuali bagian yang disamarkan. Karena itu, jangan menulis data pribadimu atau data orang lain di Ngobrol.
+
+### Data pribadi disamarkan
+
+Sebelum dikirim, server LANJUT mengganti nomor telepon, alamat email, dan deretan 16 angka seperti NIK dengan tulisan [disamarkan]. Ini berlaku untuk pesanmu, riwayat obrolan, potongan modul, dan hasil pencarian web. Kalau ada yang disamarkan di pesanmu, aplikasi memberi tahu kamu.
+
+Penyamaran ini otomatis dan tidak sempurna. Nama, alamat rumah, nama sekolah, dan data pribadi lain yang bukan nomor atau email tidak disamarkan.
+
+### Pertanyaan pelajaran: modul dan pencarian web
+
+- Kalau pesanmu dikenali sebagai pertanyaan materi pelajaran, server mencari potongan yang berkaitan di modul milikmu sendiri. Saat ini paling banyak 3 potongan, masing-masing sekitar 800–1.200 karakter, ikut dikirim ke penyedia AI setelah disamarkan. Modul milik akun lain tidak pernah dipakai. [ISI: aturan untuk modul dari guru atau penerbit (hak cipta) yang potongannya dikirim ke penyedia AI.]
+- Pencarian web, berlaku bila fitur ini diaktifkan (bawaannya mati): untuk pertanyaan materi, server mengirim permintaan terpisah yang hanya berisi pertanyaan terbarumu yang sudah disamarkan, tanpa profil, riwayat, atau modul. OpenRouter meneruskannya ke mesin pencari pihak ketiga. Ada batas jumlah pencarian web per akun per hari. [ISI: hasil pengecekan Khalifa: mesin pencari mana yang menerima pertanyaan, dan apakah permintaan agar data tidak dikumpulkan juga berlaku di sana.]
+- Tautan sumber web di bawah jawaban membuka situs pihak ketiga di luar LANJUT. Kebijakan ini tidak berlaku di situs itu.
+- Obrolan biasa dan pertanyaan tentang jalur masuk kuliah tidak memakai modul maupun pencarian web.
+
+### Apa yang disimpan dari obrolanmu
+
+- Server LANJUT tidak menyimpan isi obrolan, potongan modul yang dikirim, maupun pertanyaan pencarian web, dan tidak mencatatnya di catatan teknis server.
+- Yang tercatat di catatan teknis server hanya: permintaan ke Ngobrol (seperti fitur lain: hasil, lama proses, dan ID akun), jumlah potongan modul dan hasil web yang dipakai, jenis gangguan bila penyedia AI gagal, serta tingkat tanda bahaya beserta waktunya, tanpa isi pesan.
+- Untuk membatasi pemakaian, server menghitung jumlah pesan dan pencarian web per akun. Hitungan ini hanya ada di memori server dan hilang saat server dinyalakan ulang.
+- Di sisi penyedia AI: kami meminta OpenRouter hanya memakai penyedia model yang tidak mengumpulkan data pengguna (pengaturan data_collection: deny). Apa yang tetap disimpan OpenRouter dan penyedia model, dan berapa lama, mengikuti kebijakan mereka. [ISI: hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model: apa yang disimpan dan berapa lama.]
+
+### Keselamatan
+
+Server LANJUT memeriksa setiap pesan terbarumu untuk tanda bahaya, misalnya keinginan menyakiti diri atau mengalami kekerasan. Pemeriksaan ini dilakukan di server LANJUT, bukan oleh penyedia AI.
+
+Kalau tanda bahayanya serius, pesan itu tidak diteruskan ke penyedia AI. Server langsung membalas dengan pesan tetap dan kartu layanan bantuan yang sudah dicek, juga saat fitur AI sedang dimatikan. Kalau kamu lalu melanjutkan obrolan, pesan itu ikut terkirim sebagai bagian dari riwayat obrolan bersama pesan berikutnya.
+
+Untuk tanda tekanan yang lebih ringan, misalnya cemas atau capek belajar, pesan tetap dikirim ke penyedia AI, disertai catatan dari aplikasi agar AI menanggapi perasaanmu lebih dulu. AI juga bisa menilai bahwa kamu mungkin butuh bantuan; aplikasi lalu menampilkan kartu layanan bantuan.
+
+Daftar tanda bahaya masih draf yang menunggu tinjauan guru BK, dan daftar kartu bantuan juga masih draf. Pemeriksaan otomatis bisa keliru. Kalau kamu dalam bahaya, segera hubungi orang dewasa yang kamu percaya.
+
+### Fitur AI bisa dimatikan dan ada batasnya
+
+- Tim LANJUT bisa mematikan fitur AI kapan saja. Selama mati, Ngobrol membalas dengan pesan uji coba yang ditandai, dan pesanmu tidak dikirim ke penyedia AI.
+- Pemakaian modul dan pencarian web juga bisa dimatikan secara terpisah.
+- Ada batas jumlah pesan per akun dalam 5 menit dan dalam 24 jam, serta batas pencarian web per akun per hari.
 
 ### Persetujuan orang tua atau wali
 
 Banyak pengguna LANJUT berusia di bawah 18 tahun. Untuk data anak, persetujuan harus datang dari orang tua atau wali, bukan dari centang di aplikasi.
 
-Orang tua atau wali memberi persetujuan lewat surat yang dibagikan sekolah. Sekolah lalu mencatatnya ke akunmu. Status persetujuannya bisa kamu lihat di Jalur Saya.
+Orang tua atau wali memberi persetujuan lewat surat yang dibagikan sekolah. Setelah surat dikumpulkan, persetujuan itu dicatat ke akunmu. Statusnya bisa kamu lihat di Jalur Saya.
 
-[ISI: apakah membuat akun dan memakai fitur dasar juga butuh persetujuan orang tua atau wali lebih dulu. Menunggu keputusan pengelola dan ahli hukum.]
+Fitur AI hanya aktif kalau persetujuan orang tua atau wali sudah tercatat dan tidak dicabut, dan kamu sudah menerima kebijakan privasi versi yang berlaku. Karena LANJUT tidak menanyakan usia, aturan ini berlaku untuk semua akun.
+
+Tanpa persetujuan itu, layar Ngobrol terkunci dan tidak ada data akunmu yang dikirim ke penyedia AI. Fitur LANJUT lainnya tetap bisa kamu pakai.
+
+[ISI: apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.]
 
 ### Hak kamu dan orang tua atau walimu
 
 - Melihat data apa saja yang tersimpan tentangmu.
 - Membetulkan data yang salah. Nama tampilan, kelas, jenis sekolah, prodi impian, dan gaya belajar bisa kamu ubah sendiri di Jalur Saya.
-- Meminta datamu dihapus. Modul bisa kamu hapus sendiri secara permanen di Arsip Belajar. Untuk data lain, fitur hapus akun di aplikasi belum ada, jadi ajukan lewat kontak di bawah.
-- Mencabut persetujuan. Setelah persetujuan orang tua atau wali dicabut, fitur AI langsung tertutup untuk akunmu. Pencabutan diajukan lewat sekolah atau kontak di bawah.
+- Meminta datamu dihapus. Modul bisa kamu hapus sendiri secara permanen di Arsip Belajar, satu per satu atau semuanya sekaligus. Untuk data lain, fitur hapus akun di aplikasi belum ada, jadi ajukan lewat kontak di bawah.
+- Isi obrolan tidak perlu dihapus dari server LANJUT karena memang tidak disimpan di sana. Untuk data yang sudah dikirim ke penyedia AI: [ISI: cara meminta penghapusan di OpenRouter dan penyedia model, bila ada.]
+- Mencabut persetujuan. Orang tua atau wali cukup memberi tahu sekolah atau kontak di bawah bahwa persetujuannya dicabut. Setelah pencabutan dicatat, fitur AI tertutup untuk akunmu mulai pesan berikutnya, dan fitur lain tetap bisa dipakai. Pencabutan tidak menghapus data yang sudah pernah dikirim ke penyedia AI.
 - [ISI: berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.]
 
 ### Berapa lama data disimpan
 
 [ISI: masa simpan data akun, data latihan, catatan persetujuan, dan catatan teknis server, serta apa yang terjadi pada data akun yang lama tidak dipakai.]
 
+[ISI: masa simpan modul bila akunnya lama tidak dipakai.]
+
 ### Keamanan
 
 Kata sandi dan tanda masuk disimpan dalam bentuk acak (hash). Setiap akun hanya bisa membuka datanya sendiri.
 
-[ISI: perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) dan pencadangan.]
+Data untuk fitur AI dikirim ke penyedia AI oleh server LANJUT, bukan langsung dari HP-mu, lewat koneksi terenkripsi (HTTPS). Kunci akses ke penyedia AI hanya ada di server.
+
+[ISI: perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) antara aplikasi dan server, dan pencadangan.]
 
 ### Perubahan kebijakan
 
 Kalau kebijakan ini berubah, nomor versinya naik. Persetujuan untuk versi lama tidak dianggap berlaku untuk fitur yang membutuhkan versi baru, termasuk fitur AI.
 
+Saat versinya naik, aplikasi memintamu membaca ringkasan versi baru lalu menerimanya. Kamu boleh memilih "Nanti saja" dan tetap memakai fitur lain, tetapi fitur AI tertutup sampai kamu menerima versi yang berlaku.
+
+Sistem juga bisa mewajibkan persetujuan orang tua atau wali yang baru setelah kebijakan berubah. [ISI: kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.]
+
 [ISI: cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.]
 
 ### Kontak
 
-[ISI: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.]
+[ISI: kontak resmi tim LANJUT: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.]
 <!-- KEBIJAKAN:SELESAI -->
 
 ## Lampiran A — Inventaris data teknis (untuk peninjau)
 
-Sumber: migrasi `LANJUT_App/server/src/db/migrasi/001`–`012` dan kode app.
-"Siswa" = pemilik akun.
+Sumber: migrasi `LANJUT_App/server/src/db/migrasi/001`–`016` dan kode app
+(diperbarui LANJUT_056, 8 Oktober 2026). "Siswa" = pemilik akun. Bukti per
+klaim ada di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md).
 
 ### Di server (basis data MySQL)
 
@@ -175,7 +257,24 @@ tidak memakainya.
 | Alamat IP | Memori proses server (pembatas laju `express-rate-limit`) | Tidak ditulis ke basis data. Hilang setelah jendela 15–60 menit atau saat server dinyalakan ulang. |
 | Token & salinan profil | Perangkat siswa (AsyncStorage; `localStorage` di web) | Kunci `auth_token`, `auth_pengguna`. |
 | Kelas & jalur Daftar Periksa | Perangkat siswa | Kunci `lanjut.profil.lokal.v1:<id akun>`. |
-| Riwayat Ngobrol | Memori app saja | Tidak dikirim ke server, tidak ditulis ke perangkat. |
+| Riwayat Ngobrol | Memori app saja (`providers/ObrolanProvider.tsx`) | Tidak ditulis ke perangkat dan tidak disimpan server. **Dikirim** ke server di setiap `POST /ngobrol` (maks. 20 pesan terakhir) dan diteruskan ke penyedia AI bila akun lolos gerbang (lihat tabel berikut). |
+| Log Ngobrol & keselamatan | Keluaran konsol server | `[ngobrol] materi modul=<n> web=<n> [web_habis]`, jenis galat penyedia, `[keselamatan] tingkat=<akut/ringan/model> waktu=<…>`. Tanpa isi pesan, potongan, kueri, atau alamat web. Baris keselamatan tidak memuat ID akun, tetapi baris log akses permintaan yang sama memuatnya, jadi keduanya bisa dikaitkan lewat waktu. |
+| Hitungan batas Ngobrol & kuota web | Memori proses server | Per ID akun: jumlah pesan per 5 menit / 24 jam (`express-rate-limit`) dan jumlah pencarian web per tanggal WIB. Hilang saat server dinyalakan ulang. |
+
+### Dikirim ke luar sistem: penyedia AI (LANJUT_051, 053, 055)
+
+Hanya `src/modul/ngobrol/penyedia-ai.js` yang mengirim data ke luar, ke
+OpenRouter (`OPENROUTER_BASE_URL`, wajib `https://`), dan hanya sesudah gerbang
+persetujuan, saklar `ai_aktif`, dan penyamaran.
+
+| Data | Kapan | Catatan |
+|---|---|---|
+| Pesan terbaru + riwayat sesi (maks. 20) | Setiap pesan dari akun yang lolos gerbang, saklar `ai_aktif=1` | Disamarkan (telepon, email, 16 angka mirip NIK). Salam pembuka bot (memuat nama tampilan) dibuang. Pesan bertanda bahaya **akut** tidak diteruskan saat itu, tetapi tetap ada di riwayat app dan ikut terkirim bersama pesan berikutnya. |
+| Profil belajar | Sama | Kelas, jenis sekolah, nama prodi impian, gaya belajar. |
+| Potongan modul (maks. `ai_modul_potongan_maks`, bawaan 3) | Pertanyaan materi, `ai_modul_aktif=1` (bawaan) | Hanya milik akun penanya; disamarkan. |
+| Pertanyaan terbaru (permintaan web terpisah) | Pertanyaan materi, `ai_web_aktif=1` (bawaan **0**), kuota harian tersisa, tanpa tanda bahaya | Hanya pertanyaan tersamarkan, tanpa profil/riwayat/modul; diteruskan OpenRouter ke mesin pencari pihak ketiga. |
+| Pengaturan `provider` | Setiap permintaan | `data_collection` (bawaan `deny`), `zdr` (bawaan mati), `only` (bawaan kosong). |
+| **Tidak dikirim** | — | Nama tampilan, nama pengguna, email, kata sandi, ID akun, kartu, hasil latihan, kemajuan. Nama sekolah tidak disimpan LANJUT. |
 
 ### Yang tidak dikumpulkan app
 
@@ -187,8 +286,13 @@ tidak diunduh dari Google saat app berjalan.
 
 ## Lampiran B — Bagian `[ISI: ...]` yang menunggu keputusan
 
+Daftar ini dibuat otomatis dari JSON. Siapa yang mengisi tiap butir (Khalifa,
+guru BK, atau peninjau hukum), termasuk `[ISI]` di surat orang tua/wali, ada
+di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md) bagian
+"Yang harus dilengkapi manusia".
+
 <!-- ISI:MULAI -->
-17 bagian menunggu keputusan Khalifa:
+21 bagian menunggu keputusan Khalifa:
 
 1. **Tentang kebijakan ini** — nama badan pengelola dan alamatnya
 2. **Data yang kami simpan di server** — berapa lama catatan teknis disimpan oleh server dan penyedianya.
@@ -197,16 +301,20 @@ tidak diunduh dari Google saat app berjalan.
 5. **Siapa yang bisa melihat datamu** — siapa saja dan untuk keperluan apa.
 6. **Siapa yang bisa melihat datamu** — nama penyedia dan lokasi servernya.
 7. **Siapa yang bisa melihat datamu** — konfirmasi apakah ini akan berubah.
-8. **Fitur AI (belum aktif)** — nama penyedia AI
-9. **Fitur AI (belum aktif)** — data akun lain yang ikut dikirim, misalnya kelas dan gaya belajar
-10. **Fitur AI (belum aktif)** — negara atau wilayahnya, dan dasar pengirimannya
-11. **Fitur AI (belum aktif)** — apakah isi obrolan dengan AI disimpan, di mana, dan berapa lama.
-12. **Persetujuan orang tua atau wali** — apakah membuat akun dan memakai fitur dasar juga butuh persetujuan orang tua atau wali lebih dulu. Menunggu keputusan pengelola dan ahli hukum.
-13. **Hak kamu dan orang tua atau walimu** — berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.
-14. **Berapa lama data disimpan** — masa simpan data akun, data latihan, catatan persetujuan, dan catatan teknis server, serta apa yang terjadi pada data akun yang lama tidak dipakai.
-15. **Keamanan** — perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) dan pencadangan.
-16. **Perubahan kebijakan** — cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.
-17. **Kontak** — nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.
+8. **Fitur AI: siapa penyedianya** — penyedia model yang benar-benar menerima data menurut pengaturan di server, dan lokasinya.
+9. **Fitur AI: siapa penyedianya** — negara atau wilayah pemrosesan, dan dasar pengirimannya ke luar negeri.
+10. **Pertanyaan pelajaran: modul dan pencarian web** — aturan untuk modul dari guru atau penerbit (hak cipta) yang potongannya dikirim ke penyedia AI.
+11. **Pertanyaan pelajaran: modul dan pencarian web** — hasil pengecekan Khalifa: mesin pencari mana yang menerima pertanyaan, dan apakah permintaan agar data tidak dikumpulkan juga berlaku di sana.
+12. **Apa yang disimpan dari obrolanmu** — hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model: apa yang disimpan dan berapa lama.
+13. **Persetujuan orang tua atau wali** — apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.
+14. **Hak kamu dan orang tua atau walimu** — cara meminta penghapusan di OpenRouter dan penyedia model, bila ada.
+15. **Hak kamu dan orang tua atau walimu** — berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.
+16. **Berapa lama data disimpan** — masa simpan data akun, data latihan, catatan persetujuan, dan catatan teknis server, serta apa yang terjadi pada data akun yang lama tidak dipakai.
+17. **Berapa lama data disimpan** — masa simpan modul bila akunnya lama tidak dipakai.
+18. **Keamanan** — perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) antara aplikasi dan server, dan pencadangan.
+19. **Perubahan kebijakan** — kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.
+20. **Perubahan kebijakan** — cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.
+21. **Kontak** — kontak resmi tim LANJUT: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.
 <!-- ISI:SELESAI -->
 
 ## Lampiran C — Pertanyaan terbuka untuk Khalifa dan ahli hukum
@@ -227,13 +335,15 @@ tidak diunduh dari Google saat app berjalan.
    persetujuan/pencabutan perlu disimpan lebih lama?
 5. **Hapus lunak.** Kartu dan butir yang dihapus siswa masih tersimpan.
    Perlukah penghapusan permanen, dan kapan?
-6. **Pengiriman ke luar negeri.** Fitur AI nanti mengirim pesan siswa ke
-   penyedia AI pihak ketiga yang kemungkinan memproses di luar negeri. Dasar
-   dan syarat pengirimannya perlu ditetapkan sebelum fitur AI aktif.
+6. **Pengiriman ke luar negeri.** Fitur AI (sudah dibangun, LANJUT_051)
+   mengirim pesan siswa ke OpenRouter dan penyedia model, yang dapat
+   memproses di luar Indonesia. Negara pemrosesan, dasar, dan syarat
+   pengirimannya perlu ditetapkan sebelum persetujuan orang tua/wali
+   sungguhan dicatat.
 7. **Kalimat data pribadi di form Daftar** (salinan teks §4.10, disetujui
    28 Sep 2026) belum menyebut jenis sekolah, gaya belajar, kartu, hasil
-   latihan, dan modul. Kalimat itu tidak diubah di LANJUT_047/049; perlu
-   ditinjau ulang bersama kebijakan ini.
+   latihan, modul, dan pengiriman ke penyedia AI. Kalimat itu tidak diubah di
+   LANJUT_047/049/056; perlu ditinjau ulang bersama kebijakan ini.
 8. **Modul unggahan (LANJUT_049).** Siswa bisa mengunggah materi apa pun
    sebagai teks. Peringatan di formulir meminta tidak mengunggah data pribadi
    dan hanya materi yang boleh dipakai untuk belajar pribadi, tetapi isinya
@@ -241,44 +351,34 @@ tidak diunduh dari Google saat app berjalan.
    melanggar hak cipta; (b) apakah data pribadi orang lain yang terbawa di
    materi diperlakukan khusus; (c) masa simpan modul bila akun lama tidak
    dipakai.
-9. **Modul dan fitur AI.** Kebijakan ini sudah menyebut bahwa potongan modul
-   yang berkaitan dengan pertanyaan akan dikirim ke penyedia AI saat fitur AI
-   aktif (sesuai spek AI, Keputusan 1). Rincian data yang dikirim tetap
-   `[ISI]` sampai backend AI dirancang.
+9. **Modul dan fitur AI.** Sudah dibangun (LANJUT_055) dan sudah dirinci di
+   draf v2 (bagian "Pertanyaan pelajaran"). Yang tersisa: hak cipta modul
+   (butir 12a) dan masa simpan modul (butir 8c).
 10. **Versi kebijakan.** Penambahan data modul mengubah isi kebijakan, tetapi
     versinya **sengaja belum dinaikkan** (masih 1) di LANJUT_049. Karena
     seluruh teks masih DRAF dan belum berlaku, keputusan menaikkan versi ada
     di Khalifa. Bila dinaikkan: rilis app dengan teks baru dulu, baru naikkan
     `persetujuan_versi_kebijakan` lewat migrasi.
-11. **Fitur AI sudah dibangun (LANJUT_051), teks kebijakan belum diubah.**
-    Bagian "Fitur AI (belum aktif)" dan Ringkasan 3 sekarang **tidak sesuai**
-    dengan kode untuk akun yang lolos gerbang. Fakta teknis untuk mengisi
-    `[ISI]` di atas:
-    - **Penyedia:** OpenRouter (perantara), yang meneruskan ke penyedia model;
-      model bawaan `anthropic/claude-sonnet-5.5` (Anthropic). Keduanya
-      perusahaan Amerika Serikat; lokasi pemrosesan mengikuti mereka.
-    - **Yang dikirim:** pesan siswa dan balasan AI di sesi itu (maks. 20 pesan
-      terakhir), ditambah kelas, jenis sekolah, nama prodi impian, dan gaya
-      belajar. **Tidak dikirim:** nama, nama pengguna, email, id akun. Potongan
-      modul belum dikirim (belum dibangun).
-    - **Penyimpanan:** server LANJUT tidak menyimpan isi obrolan dan tidak
-      mencatatnya di log; obrolan hilang saat app ditutup. Permintaan memakai
-      `data_collection: deny` (OpenRouter hanya memilih penyedia yang tidak
-      memakai data untuk pelatihan). Masa simpan di sisi OpenRouter dan
-      penyedia model mengikuti kebijakan mereka dan perlu dicek.
-    - **Gerbang:** AI hanya jalan untuk akun dengan persetujuan orang tua/wali
-      tercatat dan kebijakan diterima. Selama belum ada persetujuan
-      sungguhan, tidak ada siswa yang terkena.
+11. **Fitur AI sudah dibangun (LANJUT_051); teks diperbarui di draf v2
+    (LANJUT_056).** Ringkasan 3, bagian "Data yang hanya ada di HP", dan
+    bagian Fitur AI sekarang mengikuti kode; bukti per kalimat ada di
+    `kebijakan-v2-klaim-vs-kode.md`. Catatan teknis yang masih relevan:
+    - **Penyedia:** OpenRouter (perantara) meneruskan ke penyedia model;
+      model bawaan `anthropic/claude-sonnet-5.5` (migrasi 015). Dengan
+      `ai_penyedia_only` kosong, OpenRouter bebas memilih perusahaan yang
+      menjalankan model itu. Negara kedudukan dan lokasi pemrosesan
+      OpenRouter dan penyedia model **belum dicek dari sumber resmi** dan
+      ditulis sebagai `[ISI]`.
+    - **`data_collection: deny`:** dikirim di setiap permintaan (bawaan).
+      Artinya menurut dokumentasi OpenRouter "Provider Routing": hanya
+      penyedia yang tidak mengumpulkan data pengguna. Apa yang tetap disimpan
+      OpenRouter sendiri dan penyedia model, dan berapa lama, perlu dicek.
+    - **Tanda bahaya akut:** pesan itu tidak diteruskan ke AI saat itu, tetapi
+      app menyimpannya di riwayat sesi dan mengirimnya lagi bersama pesan
+      berikutnya; server meneruskan riwayat itu ke AI (lihat butir 13).
 
-    - **Pembaruan LANJUT_053:** sebelum dikirim, nomor telepon, email, dan
-      16 angka mirip NIK di pesan dan riwayat diganti `[disamarkan]`. Pesan
-      yang memuat tanda bahaya akut tidak dikirim ke AI sama sekali; server
-      menjawab dengan kartu layanan bantuan. Log hanya mencatat tingkat
-      tanda bahaya dan waktunya, tanpa isi pesan. Model dan pengaturan
-      penyedia (`data_collection`, `zdr`, `only`) bisa diubah di konfigurasi.
-
-    Sebelum mencatat persetujuan orang tua/wali sungguhan: perbarui teks
-    kebijakan dan surat orang tua/wali, lalu naikkan versi (lihat butir 10).
+    Sebelum mencatat persetujuan orang tua/wali sungguhan: isi `[ISI]` yang
+    tersisa, rilis app dengan teks ini, lalu naikkan versi (lihat butir 10).
 12. **Materi, modul, dan pencarian web (LANJUT_055).** Rincian alur data ada
     di `docs/alur-data-ai-materi.md`. Perlu diputuskan:
     - **(a) Hak cipta modul.** Untuk pertanyaan materi, hingga 3 potongan
@@ -294,5 +394,24 @@ tidak diunduh dari Google saat app berjalan.
       dicek. Siapa yang menanggung, dan berapa batas kredit bulanannya?
     - **(d) Mesin pencari pihak ketiga.** Saat web aktif, pertanyaan siswa
       (disamarkan, tanpa profil dan riwayat) dikirim ke mesin pencari lewat
-      OpenRouter: Exa, atau pencarian bawaan penyedia model. Ini perlu
-      disebut di kebijakan v2.
+      OpenRouter: Exa, atau pencarian bawaan penyedia model. Sudah disebut di
+      draf v2; mesin pencari yang sebenarnya dan berlaku tidaknya
+      `data_collection: deny` di sana tetap `[ISI]`.
+13. **Temuan LANJUT_056: pesan bertanda bahaya akut ikut di riwayat
+    berikutnya.** `tanganiTandaBahaya` (rute) hanya memeriksa pesan terbaru.
+    Pesan akut tidak diteruskan saat itu, tetapi app (`ObrolanProvider.tsx`)
+    menyimpannya di riwayat, dan server (`susunPermintaan`) meneruskan seluruh
+    riwayat (disamarkan) bersama pesan berikutnya. Draf v2 menuliskannya apa
+    adanya. Perlu diputuskan bersama guru BK: dibiarkan (AI mendapat konteks
+    untuk menanggapi dengan hangat) atau pesan akut dibuang dari riwayat
+    sebelum dikirim (perubahan kode, task terpisah).
+14. **Temuan LANJUT_056: teks lain yang belum menyebut AI.** (a) Peringatan
+    di formulir unggah modul (`lib/modul.ts`) belum menyebut bahwa potongan
+    modul bisa dikirim ke penyedia AI; catatan itu baru ada di layar Ngobrol.
+    (b) Salinan teks §4.13 (Jalur Saya) dan §4.14 (jendela terima kebijakan)
+    masih menyebut "fitur AI nanti". (c) Penafian layar Gaya Belajar
+    ("Disimpan di akunmu dan dipakai untuk menyesuaikan tips belajar di
+    LANJUT.") belum menyebut bahwa gaya belajar juga dikirim ke penyedia AI.
+    Ketiganya bukan klaim yang salah tentang data, tetapi belum lengkap;
+    sebaiknya diperbarui bersama rilis teks v2 (di luar LANJUT_056, yang hanya
+    mengubah teks kebijakan).

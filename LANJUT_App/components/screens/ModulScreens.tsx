@@ -23,8 +23,9 @@ import { DaftarOpsi, Field, Input, OpsiPil, PesanGalat } from './auth/AuthUI';
 /**
  * LANJUT_049 — modul di Arsip Belajar: materi yang diunggah siswa, disimpan
  * sebagai TEKS saja (berkas asli tidak disimpan server). Teks salinan §4.5
- * (LANJUT_049), DRAF. Tidak ada AI di sini; isi modul tidak dikirim ke mana pun
- * selain server LANJUT.
+ * (LANJUT_049), DRAF. Tidak ada AI di layar ini, tetapi sejak LANJUT_055
+ * potongan modul yang berkaitan bisa dikirim ke penyedia AI saat siswa
+ * bertanya materi di Ngobrol (lihat docs/alur-data-ai-materi.md).
  */
 
 /** Bagian "Modul" di layar Arsip Belajar. */
