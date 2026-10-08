@@ -567,6 +567,44 @@ localhost, dan selama tes alamat penyedia menunjuk ke `127.0.0.1:9` supaya
 tes yang lupa memakai mock gagal di tempat. Tes pengaman murni (deteksi,
 penyamaran, kartu, instruksi sistem) ada di `tests/ngobrol-keselamatan.test.js`.
 
+### Materi: modul Arsip, pencarian web, sitasi (LANJUT_055)
+
+Alur data lengkap ada di `docs/alur-data-ai-materi.md`. Ringkasnya:
+
+- **Kapan aktif.** Hanya untuk pertanyaan materi (`src/modul/ngobrol/materi.js`,
+  aturan di `config/materi.json`). Obrolan biasa, pertanyaan jalur masuk, dan
+  tanda bahaya akut tidak memicu pengambilan modul maupun web.
+- **Potongan modul.**
+  - Hanya milik akun yang bertanya (`modul.repo.js` → `kandidatUntukAi`,
+    filter `pengguna_id` di kedua tabel), dipersempit ke mapel bila disebut.
+  - Penyaring tahap 1 di server: pemotong imbuhan, lalu skor FULLTEXT ≥
+    `ai_modul_skor_min` **dan** kata bermakna yang sama ≥ `ai_modul_kata_min`.
+  - Maksimal `ai_modul_potongan_maks` potongan, berlabel M1, M2, dan
+    seterusnya.
+  - Tahap 2: model menilai dan mengabaikan potongan yang tidak menjawab.
+- **Web.**
+  - `ai_web_aktif` (bawaan **0**) dan `ai_web_batas_harian` dibaca tiap
+    permintaan.
+  - Pencarian memakai plugin `web` OpenRouter (`plugins: [{ id: "web",
+    max_results }]`), dalam **permintaan terpisah** yang hanya berisi
+    pertanyaan terbaru yang sudah disamarkan.
+  - Sumber diambil dari `message.annotations` (`url_citation`). Hasilnya
+    masuk ke permintaan jawaban sebagai data berlabel W1, W2, dan seterusnya.
+  - Alamat web di balasan yang tidak ada di anotasi dibuang server, dan
+    daftar sumber (`sumber.modul`, `sumber.web`) disusun server dari label
+    yang dipakai.
+- **Kuota web harian** disimpan di memori proses: hilang saat restart, dan
+  tidak dibagi antarproses.
+
+```sql
+UPDATE konfigurasi_levelin SET nilai = '1' WHERE kunci = 'ai_web_aktif';        -- nyalakan web
+UPDATE konfigurasi_levelin SET nilai = '0' WHERE kunci = 'ai_modul_aktif';      -- jangan kirim modul
+```
+
+Tes: `tests/ngobrol-materi.test.js` (rute, isolasi antarakun, web, sitasi)
+dan `tests/ngobrol-materi-murni.test.js` (imbuhan, pengenal pesan, perapian
+sumber).
+
 ### Skenario uji AI (LANJUT_054)
 
 ±50 percakapan fiktif di `tests/skenario-ai/skenario.json`, dalam dua lapis.

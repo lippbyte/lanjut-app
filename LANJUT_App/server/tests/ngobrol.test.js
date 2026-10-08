@@ -164,6 +164,8 @@ test('diizinkan → 200; ke penyedia hanya [system, user]: aturan + profil, lalu
     kartu_bantuan: null,
     uji_coba: false,
     data_pribadi_disamarkan: false,
+    sumber: { modul: [], web: [] },
+    web_habis: false,
   });
   assert.equal(mock.mock.callCount(), 1);
   const { pesan, pengaturan, sistem, data } = dikirim(mock);
@@ -400,7 +402,14 @@ test('saklar ai_aktif=0 → balasan uji coba, penyedia TIDAK dipanggil; kembali 
     await aturKonfig('ai_aktif', '0');
     const mati = await panggil('POST', '/ngobrol', a.token, obrolan());
     assert.equal(mati.status, 200);
-    assert.deepEqual(mati.json.data, { balasan: TEKS.stub_uji_coba, kartu_bantuan: null, uji_coba: true, data_pribadi_disamarkan: false });
+    assert.deepEqual(mati.json.data, {
+      balasan: TEKS.stub_uji_coba,
+      kartu_bantuan: null,
+      uji_coba: true,
+      data_pribadi_disamarkan: false,
+      sumber: { modul: [], web: [] },
+      web_habis: false,
+    });
     await aturKonfig('ai_aktif', 'ya'); // nilai tidak sah → tetap mati (gagal-tertutup)
     assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan())).json.data.uji_coba, true);
     assert.equal(mock.mock.callCount(), 0);
@@ -512,7 +521,7 @@ test('klien OpenRouter: permintaan benar (kunci di header, model & provider dari
     (res) => jsonRes(res, 200, { choices: [{ message: { role: 'assistant', content: '  Halo juga!  ' }, finish_reason: 'stop' }] }),
     async (diterima) => {
       const hasil = await penyedia.mintaBalasan([{ role: 'system', content: 'aturan' }, { role: 'user', content: 'halo' }], PENGATURAN_UJI);
-      assert.deepEqual(hasil, { teks: 'Halo juga!', terpotong: false });
+      assert.deepEqual(hasil, { teks: 'Halo juga!', terpotong: false, anotasi: [] });
       assert.equal(diterima.length, 1);
       const [r] = diterima;
       assert.equal(r.metode, 'POST');
@@ -568,9 +577,16 @@ test('hanya penyedia-ai.js yang mengirim data ke luar; hanya ngobrol.layanan.js 
   assert.deepEqual(memanggilKeluar, ['modul/ngobrol/penyedia-ai.js']);
   const pemakai = berkas.filter((p) => /require\(['"]\.\/penyedia-ai['"]\)|penyedia-ai'\)/.test(tanpaKomentar(p))).map(relatif);
   assert.deepEqual(pemakai, ['modul/ngobrol/ngobrol.layanan.js']);
+  // Di dalam balas(): gerbang dan saklar sebelum pengambilan modul, web, atau penyedia.
   const layanan = tanpaKomentar(path.join(src, 'modul/ngobrol/ngobrol.layanan.js'));
-  const iPenyedia = layanan.indexOf('penyedia.mintaBalasan(');
-  for (const sebelum of ['bolehPakaiAi(', 'cfg.aiAktif', 'samarkan(m.teks)']) {
-    assert.ok(layanan.indexOf(sebelum) > -1 && layanan.indexOf(sebelum) < iPenyedia, `${sebelum} sebelum penyedia dipanggil`);
+  const isiBalas = layanan.slice(layanan.indexOf('async function balas('));
+  const iPertama = Math.min(...['ambilPotongan(', 'cariWeb(', 'penyedia.mintaBalasan('].map((s) => isiBalas.indexOf(s)).filter((i) => i > -1));
+  for (const sebelum of ['bolehPakaiAi(', 'cfg.aiAktif', 'OPENROUTER_API_KEY']) {
+    assert.ok(isiBalas.indexOf(sebelum) > -1 && isiBalas.indexOf(sebelum) < iPertama, `${sebelum} sebelum modul/web/penyedia`);
+  }
+  // Semua yang dikirim lewat penyusun yang menyamarkan data pribadi.
+  for (const penyusun of ['function susunPermintaan(', 'function susunPermintaanWeb(']) {
+    const isi = layanan.slice(layanan.indexOf(penyusun), layanan.indexOf('\n}\n', layanan.indexOf(penyusun)));
+    assert.ok(isi.includes('samarkan('), `${penyusun} menyamarkan data pribadi`);
   }
 });

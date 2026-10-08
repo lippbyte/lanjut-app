@@ -37,8 +37,9 @@ async function daftarPenggunaBaru(baseUrl, override) {
 
 /**
  * Kunci lintas proses (MySQL GET_LOCK) untuk berkas tes yang MENGUBAH atau
- * BERGANTUNG pada konfigurasi global gerbang AI: persetujuan_*, ngobrol_*,
- * ai_* (LANJUT_054). `node --test` menjalankan berkas secara paralel, jadi
+ * BERGANTUNG pada konfigurasi global: persetujuan_*, ngobrol_*, ai_*
+ * (LANJUT_054) dan modul_* (LANJUT_055: tes AI ikut mengunggah modul).
+ * `node --test` menjalankan berkas secara paralel, jadi
  * tanpa kunci ini, mis. persetujuan.test.js yang sementara menaikkan versi
  * kebijakan bisa membuat tes Ngobrol di proses lain gagal acak.
  * Pakai di before() dan lepaskan di after(). Mengembalikan fungsi pelepas.

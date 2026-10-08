@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useRouter } from 'expo-router';
 import {
   KeyboardAvoidingView,
+  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -20,7 +21,7 @@ import { labelGayaBelajar } from '../../lib/gayaBelajar';
 import { keadaanKebijakan } from '../../lib/kebijakanPrivasi';
 import { PANJANG_PESAN_MAKS, TEKS_NGOBROL } from '../../lib/ngobrol';
 import { useSesi } from '../../providers/AuthProvider';
-import { useObrolan } from '../../providers/ObrolanProvider';
+import { useObrolan, type Pesan } from '../../providers/ObrolanProvider';
 import { color, font, layout, radius, spacing, teks } from '../../theme/tokens';
 import { Ikon, Memuat, Peringatan, Tombol } from '../ui';
 
@@ -91,6 +92,39 @@ function KartuBantuanView({ kartu }: { kartu: KartuBantuan }) {
   );
 }
 
+/**
+ * Sumber jawaban materi (LANJUT_055), disusun SERVER: modul dari label [M..]
+ * dan halaman web dari anotasi penyedia [W..]. Model tidak bisa menambah tautan.
+ */
+function SumberJawaban({ sumber }: { sumber: NonNullable<Pesan['sumber']> }) {
+  return (
+    <View style={s.sumber}>
+      {sumber.modul.length ? (
+        <View style={s.sumberBagian}>
+          <Text style={s.sumberJudul}>{TEKS_NGOBROL.dariModul}</Text>
+          {sumber.modul.map((m) => (
+            <Text key={m.label} style={s.sumberIsi}>
+              {m.label} · {m.judul}
+            </Text>
+          ))}
+        </View>
+      ) : null}
+      {sumber.web.length ? (
+        <View style={s.sumberBagian}>
+          <Text style={s.sumberJudul}>{TEKS_NGOBROL.dariWeb}</Text>
+          {sumber.web.map((w) => (
+            <Pressable key={w.label} onPress={() => Linking.openURL(w.url)} accessibilityRole="link" accessibilityHint={w.url}>
+              <Text style={s.sumberIsi}>
+                {w.label} · <Text style={s.sumberTautan}>{w.judul}</Text>
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
 /** Tautan "Butuh bicara dengan orang?" yang selalu ada; kartu dimuat dari server saat dibuka. */
 function PanelBantuan() {
   const [buka, setBuka] = useState(false);
@@ -148,6 +182,7 @@ function Obrolan() {
       >
         <Text style={s.catatan}>{TEKS_NGOBROL.catatanAi}</Text>
         <Text style={s.catatan}>{TEKS_NGOBROL.peringatanDataPribadi}</Text>
+        <Text style={s.catatan}>{TEKS_NGOBROL.catatanMateri}</Text>
 
         <PanelBantuan />
 
@@ -179,6 +214,8 @@ function Obrolan() {
                 </Text>
               </View>
               {m.disamarkan ? <Text style={s.disamarkan}>{TEKS_NGOBROL.dataDisamarkan}</Text> : null}
+              {m.sumber ? <SumberJawaban sumber={m.sumber} /> : null}
+              {m.webHabis ? <Text style={s.catatanKecil}>{TEKS_NGOBROL.webHabis}</Text> : null}
               {m.kartu ? <KartuBantuanView kartu={m.kartu} /> : null}
             </View>
           )
@@ -279,6 +316,13 @@ const s = StyleSheet.create({
   kartuNomor: { ...teks.bodySm, color: color.textLink, fontFamily: font.semibold },
   kartuKeterangan: { ...teks.caption, color: color.textMuted },
   labelUjiCoba: { ...teks.caption, color: color.textMuted, fontFamily: font.semibold },
+  // LANJUT_055 — sumber jawaban materi.
+  sumber: { maxWidth: '85%', gap: spacing.s2, paddingLeft: spacing.s2 },
+  sumberBagian: { gap: 2 },
+  sumberJudul: { ...teks.caption, color: color.textMuted, fontFamily: font.semibold },
+  sumberIsi: { ...teks.caption, color: color.textBody },
+  sumberTautan: { color: color.textLink, textDecorationLine: 'underline' },
+  catatanKecil: { ...teks.caption, color: color.textMuted, maxWidth: '85%' },
   disamarkan: { ...teks.caption, color: color.textMuted, maxWidth: '85%', textAlign: 'right' },
   teksBot: { ...teks.bodySm, color: color.textBody },
   teksPengguna: { ...teks.bodySm, color: color.white },

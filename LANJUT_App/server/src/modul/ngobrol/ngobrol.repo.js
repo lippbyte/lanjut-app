@@ -12,6 +12,14 @@ const KUNCI_KONFIG = [
   'ai_data_collection',
   'ai_zdr',
   'ai_penyedia_only',
+  // LANJUT_055 — materi: modul Arsip & web
+  'ai_modul_aktif',
+  'ai_modul_potongan_maks',
+  'ai_modul_skor_min',
+  'ai_modul_kata_min',
+  'ai_web_aktif',
+  'ai_web_batas_harian',
+  'ai_web_hasil_maks',
 ];
 
 async function ambilKonfigurasi() {

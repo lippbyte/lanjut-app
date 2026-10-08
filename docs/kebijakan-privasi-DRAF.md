@@ -279,3 +279,20 @@ tidak diunduh dari Google saat app berjalan.
 
     Sebelum mencatat persetujuan orang tua/wali sungguhan: perbarui teks
     kebijakan dan surat orang tua/wali, lalu naikkan versi (lihat butir 10).
+12. **Materi, modul, dan pencarian web (LANJUT_055).** Rincian alur data ada
+    di `docs/alur-data-ai-materi.md`. Perlu diputuskan:
+    - **(a) Hak cipta modul.** Untuk pertanyaan materi, hingga 3 potongan
+      modul siswa (±800–1.200 karakter per potongan) dikirim ke penyedia AI
+      di luar negeri. Modul bisa berupa materi dari guru atau penerbit.
+      Bolehkah dikirim? Perlukah izin, atau pembatasan jenis modul? Saklar
+      `ai_modul_aktif` bisa mematikannya.
+    - **(b) Batas harian pencarian web.** Bawaannya 10 per akun per hari
+      (`ai_web_batas_harian`), dengan `ai_web_aktif` mati sampai
+      dinyalakan. Berapa angka akhirnya?
+    - **(c) Biaya per pertanyaan.** Perkiraan tanpa web ±US$0,01–0,02, dengan
+      web ±US$0,02–0,04, ditambah biaya pencarian bawaan penyedia yang perlu
+      dicek. Siapa yang menanggung, dan berapa batas kredit bulanannya?
+    - **(d) Mesin pencari pihak ketiga.** Saat web aktif, pertanyaan siswa
+      (disamarkan, tanpa profil dan riwayat) dikirim ke mesin pencari lewat
+      OpenRouter: Exa, atau pencarian bawaan penyedia model. Ini perlu
+      disebut di kebijakan v2.

@@ -504,6 +504,19 @@ tanda bahaya ada di `server/config/kartu-bantuan.json` dan
 - **Ngobrol — penanda data disamarkan:** Data pribadi di pesanmu disamarkan sebelum dikirim ke AI.
 - **Ngobrol — kartu bantuan belum bisa dimuat:** Kartu bantuan belum bisa dimuat. Kalau kamu dalam bahaya, hubungi 112 atau orang dewasa yang kamu percaya.
 
+### 4.17 Ngobrol: materi dari modul Arsip dan web
+
+**LANJUT_055 — DRAF belum disetujui Khalifa.** Untuk pertanyaan materi
+pelajaran, AI memakai potongan modul dari Arsip Belajar siswa sendiri dan,
+bila pencarian web dinyalakan, hasil web. Daftar sumber di bawah balasan
+disusun server: modul dari label [M1], [M2], dan seterusnya; halaman web dari
+anotasi penyedia [W1], [W2], dan seterusnya.
+
+- **Ngobrol — catatan materi:** Kalau kamu bertanya soal materi pelajaran, pertanyaanmu dan potongan modul yang berkaitan dari Arsip Belajarmu ikut dikirim ke penyedia AI.
+- **Ngobrol — judul sumber modul:** Dari modulmu · isi: [label] · [judul modul]
+- **Ngobrol — judul sumber web:** Dari web · isi: [label] · [judul halaman] (tautan ke alamat dari penyedia)
+- **Ngobrol — kuota web habis:** Kuota pencarian web hari ini sudah habis, jadi jawaban ini tanpa pencarian web.
+
 ---
 
 ## 5. Notifikasi

@@ -17,6 +17,11 @@ export const TEKS_NGOBROL = {
   sembunyikanBantuan: 'Sembunyikan',
   dataDisamarkan: 'Data pribadi di pesanmu disamarkan sebelum dikirim ke AI.',
   kartuGagalDimuat: 'Kartu bantuan belum bisa dimuat. Kalau kamu dalam bahaya, hubungi 112 atau orang dewasa yang kamu percaya.',
+  // Salinan teks §4.17 (LANJUT_055) — DRAF belum disetujui Khalifa.
+  catatanMateri: 'Kalau kamu bertanya soal materi pelajaran, pertanyaanmu dan potongan modul yang berkaitan dari Arsip Belajarmu ikut dikirim ke penyedia AI.',
+  dariModul: 'Dari modulmu',
+  dariWeb: 'Dari web',
+  webHabis: 'Kuota pencarian web hari ini sudah habis, jadi jawaban ini tanpa pencarian web.',
 };
 
 // Batas di app = batas server (ngobrol.skema.js).

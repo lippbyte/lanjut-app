@@ -276,6 +276,20 @@ const PETA = [
       { task: 'LANJUT_053', awal: '**Ngobrol — tautan kartu bantuan:**', nama: 'Tautan "Butuh bicara dengan orang?"', di: 'Ngobrol, selalu tampil di atas obrolan dan di layar terkunci.', oleh: 'Semua akun yang membuka Ngobrol.' },
       { task: 'LANJUT_053', awal: '**Ngobrol — penanda data disamarkan:**', nama: 'Penanda data disamarkan', di: 'Ngobrol, di bawah pesan siswa yang data pribadinya disamarkan.', oleh: 'Akun dengan fitur AI aktif.' },
       {
+        task: 'LANJUT_055',
+        awal: '**Ngobrol — catatan materi:**',
+        nama: 'Catatan: materi & modul dikirim ke penyedia AI',
+        di: 'Ngobrol, catatan di atas obrolan.',
+        oleh: 'Akun dengan fitur AI aktif.',
+        faktual: {
+          klaim: 'Pertanyaan materi dan potongan modul yang berkaitan dikirim ke penyedia AI.',
+          sumber: 'Kode server (ngobrol.layanan.js, LANJUT_055) dan docs/alur-data-ai-materi.md; perlu masuk kebijakan privasi v2.',
+        },
+      },
+      { task: 'LANJUT_055', awal: '**Ngobrol — judul sumber modul:**', nama: 'Bagian "Dari modulmu"', di: 'Ngobrol, di bawah balasan yang memakai modul.', oleh: 'Akun dengan fitur AI aktif yang punya modul.' },
+      { task: 'LANJUT_055', awal: '**Ngobrol — judul sumber web:**', nama: 'Bagian "Dari web"', di: 'Ngobrol, di bawah balasan yang memakai hasil web (saat pencarian web aktif).', oleh: 'Akun dengan fitur AI aktif.' },
+      { task: 'LANJUT_055', awal: '**Ngobrol — kuota web habis:**', nama: 'Kuota pencarian web habis', di: 'Ngobrol, di bawah balasan saat kuota web harian akun habis.', oleh: 'Akun dengan fitur AI aktif, saat pencarian web aktif.' },
+      {
         task: 'LANJUT_053',
         awal: '**Ngobrol — kartu bantuan belum bisa dimuat:**',
         nama: 'Kartu bantuan gagal dimuat',

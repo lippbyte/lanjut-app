@@ -101,6 +101,27 @@ async function cariMilik(penggunaId, q, batas) {
   return baris;
 }
 
+/**
+ * Kandidat potongan untuk AI (LANJUT_055): HANYA milik akun yang bertanya
+ * (filter pemilik di kedua tabel), opsional dipersempit ke satu mapel.
+ * Penyaring relevansi dijalankan sesudahnya (ngobrol/materi.js).
+ */
+async function kandidatUntukAi(penggunaId, q, mapelId, batas) {
+  const [baris] = await pool.query(
+    `SELECT p.modul_id, m.judul, m.mapel_id, p.urutan, p.isi,
+            MATCH(p.isi) AGAINST (? IN NATURAL LANGUAGE MODE) AS skor
+       FROM potongan_modul p
+       JOIN modul m ON m.id = p.modul_id
+      WHERE p.pengguna_id = ? AND m.pengguna_id = ?
+        AND (? IS NULL OR m.mapel_id = ?)
+        AND MATCH(p.isi) AGAINST (? IN NATURAL LANGUAGE MODE)
+      ORDER BY skor DESC, p.modul_id, p.urutan
+      LIMIT ?`,
+    [q, penggunaId, penggunaId, mapelId, mapelId, q, batas]
+  );
+  return baris;
+}
+
 /** Hapus permanen satu modul milik sendiri (potongan dihapus eksplisit, juga ikut CASCADE). */
 async function hapusMilik(penggunaId, id) {
   const koneksi = await pool.getConnection();
@@ -149,6 +170,7 @@ module.exports = {
   ambilKonfigurasi,
   mapelAda,
   jumlahMilik,
+  kandidatUntukAi,
   simpanDenganBatas,
   daftarMilik,
   ambilMilik,

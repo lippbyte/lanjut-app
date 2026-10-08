@@ -11,7 +11,7 @@ const os = require('os');
 const path = require('path');
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
-const { acak, nyalakanServer, urlDari, daftarPenggunaBaru, pool } = require('./bantuan');
+const { acak, nyalakanServer, urlDari, daftarPenggunaBaru, kunciKonfigurasiGlobal, pool } = require('./bantuan');
 const { rapikanIndeksSekarang } = require('../src/modul/modul/modul.layanan');
 
 const FIXTURE = path.join(__dirname, 'fixtures', 'modul');
@@ -19,8 +19,11 @@ const KUNCI = ['modul_ukuran_maks_byte', 'modul_karakter_maks', 'modul_jumlah_ma
 let server;
 let baseUrl;
 let konfigAsli;
+let lepasKunci;
 
 before(async () => {
+  // Batas modul diubah sementara; tes AI (materi & skenario) mengunggah modul di proses lain (LANJUT_055).
+  lepasKunci = await kunciKonfigurasiGlobal();
   server = await nyalakanServer();
   baseUrl = urlDari(server);
   const [baris] = await pool.query('SELECT kunci, nilai FROM konfigurasi_levelin WHERE kunci IN (?)', [KUNCI]);
@@ -31,6 +34,7 @@ before(async () => {
 after(async () => {
   for (const [k, v] of Object.entries(konfigAsli)) await aturKonfig(k, v);
   await new Promise((resolve) => server.close(resolve));
+  await lepasKunci();
   await pool.end();
 });
 

@@ -28,13 +28,18 @@ const AKAR = path.join(__dirname, '..');
 const BERKAS = JSON.parse(fs.readFileSync(path.join(__dirname, 'skenario-ai', 'skenario.json'), 'utf8'));
 const SKENARIO = BERKAS.skenario;
 const TEKS = JSON.parse(fs.readFileSync(path.join(AKAR, 'config', 'ngobrol-teks.json'), 'utf8'));
-const KUNCI = ['ngobrol_batas_5_menit', 'ngobrol_batas_24_jam', 'ai_aktif', 'ai_model', 'ai_data_collection', 'ai_zdr', 'ai_penyedia_only'];
+const KUNCI = [
+  'ngobrol_batas_5_menit', 'ngobrol_batas_24_jam', 'ai_aktif', 'ai_model', 'ai_data_collection', 'ai_zdr', 'ai_penyedia_only',
+  'ai_modul_aktif', 'ai_modul_potongan_maks', 'ai_modul_skor_min', 'ai_modul_kata_min', 'ai_web_aktif', 'ai_web_batas_harian', 'ai_web_hasil_maks',
+];
 const ENV_ASLI = { kunci: env.OPENROUTER_API_KEY, url: env.OPENROUTER_BASE_URL };
 const ALAMAT_MATI = 'http://127.0.0.1:9/api/v1';
 const BALASAN_TIRUAN = 'Balasan tiruan.';
 const KARTU_TERVERIFIKASI = ['Healing119 (layanan kesehatan jiwa Kemenkes)', 'Nomor darurat nasional'];
 const PENANDA_BLOK = 'PESAN TERBARU SISWA (JSON):';
-const JUMLAH_PER_KATEGORI = { A: 8, B: 5, C: 7, D: 6, E: 5, F: 5, G: 6, H: 3, I: 3, J: 4 };
+// A–J: LANJUT_054 (52). K: LANJUT_055 (materi & modul, 6–8).
+const JUMLAH_PER_KATEGORI = { A: 8, B: 5, C: 7, D: 6, E: 5, F: 5, G: 6, H: 3, I: 3, J: 4, K: 8 };
+const STATUS_ARSIP = { ada: 'ada potongan modul', tidak_cocok: 'tidak ada yang cocok', belum_punya: 'belum mengunggah modul', tidak_dipakai: 'tidak dipakai' };
 
 let server;
 let baseUrl;
@@ -145,8 +150,22 @@ async function jalankan(sk, t) {
   const riwayat = sk.riwayat || [];
 
   const a = await akun(sk.profil || {}, !kondisi.has('tanpa_persetujuan'));
-  const mock = t.mock.method(penyedia, 'mintaBalasan', async () => ({ teks: sk.tiruan_balasan || BALASAN_TIRUAN, terpotong: false }));
+  const unggahModul = async (pemilik, daftar) => {
+    for (const m of daftar) {
+      const r = await panggil('POST', '/modul', pemilik.token, m);
+      assert.equal(r.status, 201, `modul skenario gagal diunggah: ${JSON.stringify(r.json)}`);
+    }
+  };
+  await unggahModul(a, sk.modul || []);
+  if (sk.modul_akun_lain) await unggahModul(await akun({}, false), sk.modul_akun_lain);
+  // Penyedia tiruan: permintaan web (ada plugins, LANJUT_055) dibedakan dari permintaan jawaban.
+  const mock = t.mock.method(penyedia, 'mintaBalasan', async (pesan, pengaturan) =>
+    pengaturan && pengaturan.plugins
+      ? { teks: (sk.tiruan_web && sk.tiruan_web.teks) || 'Ringkasan tiruan.', terpotong: false, anotasi: (sk.tiruan_web && sk.tiruan_web.anotasi) || [] }
+      : { teks: sk.tiruan_balasan || BALASAN_TIRUAN, terpotong: false, anotasi: [] }
+  );
   try {
+    if (sk.web_aktif) await aturKonfig('ai_web_aktif', '1');
     if (kondisi.has('saklar_mati')) await aturKonfig('ai_aktif', '0');
     if (kondisi.has('batas_laju_habis')) {
       await aturKonfig('ngobrol_batas_5_menit', '1');
@@ -157,14 +176,17 @@ async function jalankan(sk, t) {
     const { hasil, tercatat } = await rekamLog(() =>
       panggil('POST', '/ngobrol', a.token, { pesan: [...riwayat, { peran: 'pengguna', teks: pesanTeks }] })
     );
-    const panggilan = mock.mock.calls.slice(sebelum);
+    const semuaPanggilan = mock.mock.calls.slice(sebelum);
+    const panggilan = semuaPanggilan.filter((c) => !(c.arguments[1] && c.arguments[1].plugins));
+    const panggilanWeb = semuaPanggilan.filter((c) => c.arguments[1] && c.arguments[1].plugins);
     const { status, json } = hasil;
     const log = tercatat.join('\n');
 
     // --- status & jenis balasan ---
     cek(status === statusHarapan, `status ${status}, diharapkan ${statusHarapan} (${JSON.stringify(json).slice(0, 160)})`);
     if (h.kode_galat) cek(json.galat && json.galat.kode === h.kode_galat, `kode galat ${json.galat && json.galat.kode}, diharapkan ${h.kode_galat}`);
-    cek(panggilan.length === (penyediaHarapan ? 1 : 0), `penyedia dipanggil ${panggilan.length}x, diharapkan ${penyediaHarapan ? 1 : 0}x`);
+    cek(panggilan.length === (penyediaHarapan ? 1 : 0), `penyedia (jawaban) dipanggil ${panggilan.length}x, diharapkan ${penyediaHarapan ? 1 : 0}x`);
+    cek(panggilanWeb.length === (h.panggilan_web || 0), `pencarian web ${panggilanWeb.length}x, diharapkan ${h.panggilan_web || 0}x`);
     const d = json.ok ? json.data : null;
     if (jenis === 'galat') cek(json.ok === false, 'diharapkan galat, tetapi ok');
     else if (!d) cek(false, `diharapkan balasan "${jenis}", tetapi galat ${json.galat && json.galat.kode}`);
@@ -181,6 +203,22 @@ async function jalankan(sk, t) {
       }
       cek(d.data_pribadi_disamarkan === (h.data_pribadi_disamarkan ?? false), `data_pribadi_disamarkan = ${d.data_pribadi_disamarkan}`);
       if (d.kartu_bantuan) cek(!/SAPA|129/.test(JSON.stringify(d.kartu_bantuan)), 'kartu memuat layanan yang belum terverifikasi');
+      // LANJUT_055: sumber yang ditampilkan app.
+      const sumber = d.sumber || { modul: [], web: [] };
+      cek(JSON.stringify(sumber.modul.map((m) => m.judul)) === JSON.stringify(h.sumber_modul || []), `sumber modul ${JSON.stringify(sumber.modul.map((m) => m.judul))}, diharapkan ${JSON.stringify(h.sumber_modul || [])}`);
+      cek(JSON.stringify(sumber.web.map((w) => w.url)) === JSON.stringify(h.sumber_web || []), `sumber web ${JSON.stringify(sumber.web.map((w) => w.url))}, diharapkan ${JSON.stringify(h.sumber_web || [])}`);
+      for (const s of h.balasan_tidak_memuat || []) cek(!String(d.balasan).includes(s), `balasan memuat "${s}"`);
+    }
+
+    // --- permintaan pencarian web: terisolasi ---
+    for (const w of panggilanWeb) {
+      const [pesanWeb] = w.arguments;
+      cek(JSON.stringify(pesanWeb.map((m) => m.role)) === '["system","user"]', 'peran permintaan web bukan ["system","user"]');
+      cek(pesanWeb[1] && pesanWeb[1].content === samarkan(pesanTeks).teks, 'permintaan web bukan HANYA pertanyaan terbaru yang disamarkan');
+      const isiWeb = JSON.stringify(w.arguments);
+      for (const tidakBoleh of ['Profil siswa', 'Kelas:', a.nama, a.namaTampilan, a.email, a.id, ...riwayat.map((m) => m.teks), ...(sk.modul || []).map((m) => m.teks.slice(0, 40))]) {
+        cek(!isiWeb.includes(tidakBoleh), `permintaan web memuat "${String(tidakBoleh).slice(0, 40)}"`);
+      }
     }
 
     // --- isi permintaan ke penyedia ---
@@ -201,6 +239,19 @@ async function jalankan(sk, t) {
       }
       cek(terbaru === samarkan(pesanTeks).teks, 'pesan terbaru di blok data tidak sama dengan pesan siswa (setelah disamarkan)');
       for (const s of h.instruksi_sistem_memuat || []) cek(sistem.includes(isi(s)), `instruksi sistem tidak memuat: "${isi(s).slice(0, 70)}"`);
+      for (const s of h.instruksi_sistem_tidak_memuat || []) cek(!sistem.includes(isi(s)), `instruksi sistem memuat: "${isi(s).slice(0, 70)}"`);
+      // LANJUT_055: status arsip & potongan modul di blok data.
+      if ('status_arsip' in h) {
+        const barisStatus = baris.find((b) => b.startsWith('STATUS ARSIP BELAJAR:'));
+        if (h.status_arsip === null) cek(!barisStatus, 'ada blok materi padahal pesan bukan pertanyaan materi');
+        else cek(barisStatus && barisStatus.includes(STATUS_ARSIP[h.status_arsip]), `status arsip "${barisStatus}", diharapkan ${h.status_arsip}`);
+      }
+      if (h.potongan_terkirim) {
+        const iPotongan = baris.findIndex((b) => b.startsWith('POTONGAN MODUL DARI ARSIP SISWA'));
+        const potongan = iPotongan < 0 ? [] : JSON.parse(baris[iPotongan + 1]);
+        const judul = [...new Set(potongan.map((p) => p.judul))].sort();
+        cek(JSON.stringify(judul) === JSON.stringify([...h.potongan_terkirim].sort()), `potongan terkirim ${JSON.stringify(judul)}, diharapkan ${JSON.stringify(h.potongan_terkirim)}`);
+      }
       for (const s of h.permintaan_memuat || []) cek(semua.includes(JSON.stringify(isi(s)).slice(1, -1)) || semua.includes(isi(s)), `permintaan tidak memuat: "${isi(s).slice(0, 70)}"`);
       for (const s of h.permintaan_tidak_memuat || []) cek(!semua.includes(isi(s)), `permintaan memuat: "${isi(s)}"`);
       for (const rahasia of [a.nama, a.namaTampilan, a.email, a.id]) cek(!JSON.stringify(panggilan[0].arguments).includes(rahasia), `identitas akun terkirim: ${rahasia}`);
@@ -213,6 +264,8 @@ async function jalankan(sk, t) {
     for (const teks of [pesanTeks, ...riwayat.map((m) => m.teks)]) {
       if (teks.length >= 12) cek(!log.includes(teks), 'isi pesan tercatat di log');
     }
+    for (const m of [...(sk.modul || []), ...(sk.modul_akun_lain || [])]) cek(!log.includes(m.teks.slice(0, 40)) && !log.includes(m.judul), 'isi atau judul modul tercatat di log');
+    for (const w of (sk.tiruan_web && sk.tiruan_web.anotasi) || []) cek(!log.includes(w.url), 'alamat web tercatat di log');
     for (const s of h.permintaan_tidak_memuat || []) cek(!log.includes(isi(s)), `data pribadi tercatat di log: ${isi(s)}`);
   } finally {
     await kembalikanKonfig();
@@ -222,8 +275,10 @@ async function jalankan(sk, t) {
 
 // --- validasi berkas skenario ----------------------------------------------------------------
 
-test('skenario.json: 48–55 skenario, 10 kategori dengan jumlah sesuai task, id unik, kolom lengkap', async () => {
-  assert.ok(SKENARIO.length >= 48 && SKENARIO.length <= 55, `jumlah ${SKENARIO.length}`);
+test('skenario.json: A–J (LANJUT_054, 48–55) + K (LANJUT_055, 6–8), jumlah per kategori sesuai, id unik, kolom lengkap', async () => {
+  const k = SKENARIO.filter((s) => s.kategori.startsWith('K')).length;
+  assert.ok(SKENARIO.length - k >= 48 && SKENARIO.length - k <= 55, `A–J: ${SKENARIO.length - k}`);
+  assert.ok(k >= 6 && k <= 8, `K: ${k}`);
   const perKategori = {};
   for (const sk of SKENARIO) perKategori[sk.kategori[0]] = (perKategori[sk.kategori[0]] || 0) + 1;
   assert.deepEqual(perKategori, JUMLAH_PER_KATEGORI);
@@ -241,6 +296,11 @@ test('skenario.json: 48–55 skenario, 10 kategori dengan jumlah sesuai task, id
     if (sk.profil.prodi_impian) assert.equal(sk.profil.prodi_nama, namaProdi[sk.profil.prodi_impian], `${sk.id}: prodi_nama tidak cocok dengan basis data`);
     JSON.stringify(sk).replace(/\{\{(\w+)\}\}/g, (_, k) => assert.ok(k in TEKS, `${sk.id}: {{${k}}}`));
     for (const r of sk.riwayat || []) assert.ok(['pengguna', 'bot'].includes(r.peran), `${sk.id}: peran riwayat`);
+    for (const m of [...(sk.modul || []), ...(sk.modul_akun_lain || [])]) {
+      assert.ok(m.judul && m.teks && m.mapel_id, `${sk.id}: modul tidak lengkap`);
+      const [[ada]] = await pool.query('SELECT COUNT(*) AS n FROM mapel WHERE id = ?', [m.mapel_id]);
+      assert.equal(Number(ada.n), 1, `${sk.id}: mapel ${m.mapel_id}`);
+    }
   }
   // Data fiktif: nomor/surel yang dipakai jelas palsu.
   const semua = JSON.stringify(SKENARIO);
