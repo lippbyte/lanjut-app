@@ -567,6 +567,40 @@ localhost, dan selama tes alamat penyedia menunjuk ke `127.0.0.1:9` supaya
 tes yang lupa memakai mock gagal di tempat. Tes pengaman murni (deteksi,
 penyamaran, kartu, instruksi sistem) ada di `tests/ngobrol-keselamatan.test.js`.
 
+### Skenario uji AI (LANJUT_054)
+
+±50 percakapan fiktif di `tests/skenario-ai/skenario.json`, dalam dua lapis.
+Daftar lengkap dan rubriknya ada di `docs/skenario-ai.md`; tabelnya ditulis
+ulang dengan `npm run dokumen-skenario-ai`.
+
+- **Lapis 1** ikut `npm test` (`tests/skenario-ai.test.js`), dengan penyedia
+  tiruan dan satu tes per skenario. Skenario bertanda `diketahui_gagal`
+  tampil sebagai TODO, dan tidak membuat tes merah.
+- **Lapis 2** memanggil **model sungguhan** dan **berbiaya**. Ia tidak pernah
+  ikut `npm test` dan hanya dijalankan manual:
+
+  ```powershell
+  # PowerShell; kunci di server/.env; pasang batas kredit di OpenRouter dulu
+  $env:EVALUASI_AI_IZIN = 'ya'
+  npm run evaluasi-ai -- --ya-panggil-penyedia
+  ```
+
+  Skrip menolak berjalan tanpa `EVALUASI_AI_IZIN=ya`, flag
+  `--ya-panggil-penyedia`, dan `OPENROUTER_API_KEY`, atau bila
+  `NODE_ENV=production`. Sebelum memanggil, skrip menampilkan jumlah
+  panggilan (sekitar 40 untuk set sekarang) dan modelnya, lalu menunggu 5
+  detik. Skrip berhenti di kegagalan pertama (mis. 402 kredit habis, atau
+  429) tanpa mengulang. Hasilnya ditulis ke
+  `docs/hasil-evaluasi-ai-<tanggal>.md` (diabaikan git), untuk dinilai Khalifa
+  dan guru BK.
+
+  Perkiraan biaya: setiap panggilan mengirim ±1.000–1.500 token instruksi
+  ditambah pesan, dan menerima ≤800 token. Hitung dengan harga model di
+  OpenRouter sebelum menjalankan.
+
+  Untuk melihat rencana tanpa memanggil apa pun dan tanpa biaya:
+  `npm run evaluasi-ai -- --kering`.
+
 ## 3. Menjalankan server
 
 ```bash

@@ -48,3 +48,7 @@ scratch/
 LANJUT_App/build/
 # Cache & status server pengembangan Expo — sama alasannya, bukan bagian build.
 LANJUT_App/.expo/
+
+# Hasil evaluasi AI lapis 2 (LANJUT_054): memuat jawaban model sungguhan.
+# Tidak ikut ter-commit otomatis; simpan/commit secara sadar (git add -f).
+docs/hasil-evaluasi-ai-*.md

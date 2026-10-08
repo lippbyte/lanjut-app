@@ -35,4 +35,25 @@ async function daftarPenggunaBaru(baseUrl, override) {
   return { status: res.status, json, namaPengguna, kataSandi: body.kata_sandi };
 }
 
-module.exports = { acak, nyalakanServer, urlDari, daftarPenggunaBaru, pool };
+/**
+ * Kunci lintas proses (MySQL GET_LOCK) untuk berkas tes yang MENGUBAH atau
+ * BERGANTUNG pada konfigurasi global gerbang AI: persetujuan_*, ngobrol_*,
+ * ai_* (LANJUT_054). `node --test` menjalankan berkas secara paralel, jadi
+ * tanpa kunci ini, mis. persetujuan.test.js yang sementara menaikkan versi
+ * kebijakan bisa membuat tes Ngobrol di proses lain gagal acak.
+ * Pakai di before() dan lepaskan di after(). Mengembalikan fungsi pelepas.
+ */
+async function kunciKonfigurasiGlobal() {
+  const koneksi = await pool.getConnection();
+  const [[{ dapat }]] = await koneksi.query("SELECT GET_LOCK('lanjut_tes_konfigurasi_ai', 600) AS dapat");
+  if (dapat !== 1) {
+    koneksi.release();
+    throw new Error('Tidak mendapat kunci konfigurasi tes dalam 10 menit.');
+  }
+  return async () => {
+    await koneksi.query("SELECT RELEASE_LOCK('lanjut_tes_konfigurasi_ai')");
+    koneksi.release();
+  };
+}
+
+module.exports = { acak, nyalakanServer, urlDari, daftarPenggunaBaru, kunciKonfigurasiGlobal, pool };

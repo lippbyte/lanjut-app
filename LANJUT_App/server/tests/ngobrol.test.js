@@ -16,7 +16,7 @@ const http = require('http');
 const path = require('path');
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
-const { acak, nyalakanServer, urlDari, daftarPenggunaBaru, pool } = require('./bantuan');
+const { acak, nyalakanServer, urlDari, daftarPenggunaBaru, kunciKonfigurasiGlobal, pool } = require('./bantuan');
 const env = require('../src/config/env');
 const penyedia = require('../src/modul/ngobrol/penyedia-ai');
 const { pesanSistem } = require('../src/modul/ngobrol/ngobrol.layanan');
@@ -30,8 +30,10 @@ let server;
 let baseUrl;
 let konfigAsli;
 let versiKebijakan;
+let lepasKunci;
 
 before(async () => {
+  lepasKunci = await kunciKonfigurasiGlobal(); // tidak berbarengan dengan persetujuan/skenario-ai
   server = await nyalakanServer();
   baseUrl = urlDari(server);
   const [baris] = await pool.query('SELECT kunci, nilai FROM konfigurasi_levelin WHERE kunci IN (?)', [KUNCI]);
@@ -48,6 +50,7 @@ after(async () => {
   env.OPENROUTER_API_KEY = ENV_ASLI.kunci;
   env.OPENROUTER_BASE_URL = ENV_ASLI.url;
   await new Promise((resolve) => server.close(resolve));
+  await lepasKunci();
   await pool.end();
 });
 

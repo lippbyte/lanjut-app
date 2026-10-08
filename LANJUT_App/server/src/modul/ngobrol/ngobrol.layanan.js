@@ -73,7 +73,12 @@ const CATATAN_RINGAN =
 /** Teks profil dari akun: satu baris, tanpa baris baru, dibatasi panjangnya. */
 const bersih = (nilai, maks = 100) => String(nilai).replace(/\s+/g, ' ').trim().slice(0, maks);
 
-function pesanSistem(profil, namaProdi, { ringan = false } = {}) {
+/**
+ * `dataTerverifikasi`: baris data yang sudah dicek (boleh berlabel "Perkiraan").
+ * Produksi belum mengisinya (selalu kosong); evaluasi lapis 2 (LANJUT_054)
+ * memakainya untuk skenario fakta jalur masuk.
+ */
+function pesanSistem(profil, namaProdi, { ringan = false, dataTerverifikasi = [] } = {}) {
   const p = profil || {};
   const baris = [
     `- Kelas: ${p.kelas ? bersih(p.kelas, 4) : 'belum diisi'}`,
@@ -81,12 +86,15 @@ function pesanSistem(profil, namaProdi, { ringan = false } = {}) {
     `- Prodi impian: ${namaProdi ? bersih(namaProdi) : 'belum ditentukan'}`,
     `- Gaya belajar pilihannya: ${GAYA_BELAJAR[p.gaya_belajar] || 'belum dipilih'}`,
   ];
+  const data = dataTerverifikasi.length
+    ? dataTerverifikasi.map((d) => `- ${bersih(d, 300)}`)
+    : ['- (belum ada data terverifikasi yang diberikan untuk percakapan ini)'];
   return [
     ATURAN,
     ...(ringan ? ['', CATATAN_RINGAN] : []),
     '',
     'DATA TERVERIFIKASI:',
-    '- (belum ada data terverifikasi yang diberikan untuk percakapan ini)',
+    ...data,
     '',
     'Profil siswa (dari akun LANJUT):',
     ...baris,
@@ -115,6 +123,25 @@ function blokPercakapan(riwayat) {
     '',
     'Balas pesan terbaru siswa sesuai instruksi sistem.',
   ].join('\n');
+}
+
+/**
+ * Pesan untuk penyedia dari profil + riwayat: deteksi tingkat ringan,
+ * penyamaran data pribadi, instruksi sistem, dan blok data. Tanpa basis data
+ * dan tanpa jaringan; dipakai `balas()` dan evaluasi lapis 2 (LANJUT_054)
+ * supaya keduanya lewat jalur yang sama.
+ */
+function susunPermintaan({ profil, namaProdi, riwayat, dataTerverifikasi = [] }) {
+  const ringan = keselamatan.deteksi(riwayat[riwayat.length - 1].teks).tingkat === 'ringan';
+  const disamarkan = riwayat.map((m) => ({ peran: m.peran, ...samarkan(m.teks) }));
+  return {
+    pesan: [
+      { role: 'system', content: pesanSistem(profil, namaProdi, { ringan, dataTerverifikasi }) },
+      { role: 'user', content: blokPercakapan(disamarkan) },
+    ],
+    ringan,
+    disamarkanTerbaru: disamarkan[disamarkan.length - 1].disamarkan,
+  };
 }
 
 // --- konfigurasi -------------------------------------------------------------------------
@@ -191,17 +218,10 @@ async function balas(penggunaId, riwayat) {
     throw new GalatApi('AI_TIDAK_TERSEDIA', 'Fitur AI belum disiapkan di server.');
   }
 
-  const terbaru = riwayat[riwayat.length - 1].teks;
-  const ringan = keselamatan.deteksi(terbaru).tingkat === 'ringan';
-  if (ringan) keselamatan.catat('ringan');
-
-  const disamarkan = riwayat.map((m) => ({ peran: m.peran, ...samarkan(m.teks) }));
   const profil = await penggunaRepo.cariProfil(penggunaId);
   const prodi = profil && profil.prodi_tujuan ? await repo.namaProdi(profil.prodi_tujuan) : null;
-  const pesan = [
-    { role: 'system', content: pesanSistem(profil, prodi, { ringan }) },
-    { role: 'user', content: blokPercakapan(disamarkan) },
-  ];
+  const { pesan, ringan, disamarkanTerbaru } = susunPermintaan({ profil, namaProdi: prodi, riwayat });
+  if (ringan) keselamatan.catat('ringan');
 
   let teks;
   try {
@@ -216,8 +236,8 @@ async function balas(penggunaId, riwayat) {
   if (bahayaMenurutModel) keselamatan.catat('model');
   return balasan(tanpaPenanda || TEKS.empati_akut, {
     kartu_bantuan: bahayaMenurutModel ? keselamatan.kartuBantuan() : null,
-    data_pribadi_disamarkan: disamarkan[disamarkan.length - 1].disamarkan,
+    data_pribadi_disamarkan: disamarkanTerbaru,
   });
 }
 
-module.exports = { balas, balasanAkut, batas, pesanSistem, blokPercakapan, pengaturanPenyedia };
+module.exports = { balas, balasanAkut, batas, pesanSistem, blokPercakapan, susunPermintaan, pengaturanPenyedia };

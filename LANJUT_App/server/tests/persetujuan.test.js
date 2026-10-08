@@ -10,7 +10,7 @@ const os = require('os');
 const path = require('path');
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
-const { acak, nyalakanServer, urlDari, daftarPenggunaBaru, pool } = require('./bantuan');
+const { acak, nyalakanServer, urlDari, daftarPenggunaBaru, kunciKonfigurasiGlobal, pool } = require('./bantuan');
 const repo = require('../src/modul/persetujuan/persetujuan.repo');
 const { bolehPakaiAi } = require('../src/modul/persetujuan/persetujuan.layanan');
 const skrip = require('../src/db/persetujuan/persetujuan-ortu');
@@ -18,6 +18,7 @@ const skrip = require('../src/db/persetujuan/persetujuan-ortu');
 let server;
 let baseUrl;
 let konfigAsli;
+let lepasKunci;
 
 const KUNCI_VERSI = 'persetujuan_versi_kebijakan';
 const KUNCI_MIN = 'persetujuan_versi_min_ortu';
@@ -36,6 +37,8 @@ async function denganKonfig(perubahan, fn) {
 }
 
 before(async () => {
+  // Versi persetujuan diubah sementara di beberapa tes; tes Ngobrol bergantung padanya.
+  lepasKunci = await kunciKonfigurasiGlobal();
   server = await nyalakanServer();
   baseUrl = urlDari(server);
   const [baris] = await pool.query('SELECT kunci, nilai FROM konfigurasi_levelin WHERE kunci IN (?, ?)', [KUNCI_VERSI, KUNCI_MIN]);
@@ -46,6 +49,7 @@ before(async () => {
 after(async () => {
   for (const [k, v] of Object.entries(konfigAsli)) await aturKonfig(k, v);
   await new Promise((resolve) => server.close(resolve));
+  await lepasKunci();
   await pool.end();
 });
 
