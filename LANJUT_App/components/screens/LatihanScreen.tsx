@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { CatatanLatihan, Kartu as DataKartu, Mapel } from '../../api/types';
+import type { CatatanLatihan, Kartu as DataKartu, Mapel, SesiLatihan } from '../../api/types';
 import { useKartuSaya } from '../../hooks/useKartu';
 import { useMulaiSesi, useSimpanHasilSesi } from '../../hooks/useLatihan';
 import { useMapel } from '../../hooks/useMapel';
@@ -10,11 +10,16 @@ import { jenisKartu, mapelBerkartu, namaMapel } from '../../lib/arsip';
 import {
   BATAS_SESI,
   BATAS_SINGKAT,
+  KEYAKINAN,
+  TEKS_KEYAKINAN,
   buatId,
   kartuUntukLatihan,
+  nilaiKeyakinan,
   perkiraanMenit,
   susunAntrian,
+  type KodeKeyakinan,
 } from '../../lib/latihan';
+import { TEKS_LEVELIN } from '../../lib/levelin';
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Kartu, KeadaanGalat, Kepala, Kosong, Memuat, Tombol, gaya } from '../ui';
 import { DaftarOpsi, OpsiPil, PesanGalat } from './auth/AuthUI';
@@ -32,15 +37,25 @@ type Sesi = { id: string; mapelId: string | null; batas: number; antrian: DataKa
  *   selesai → ringkasan; jawaban dikirim sekaligus ke /riwayat-latihan, lalu
  *             sesi ditutup (bukan per kartu, SDD §6.4)
  * Kartu kurasi tidak pernah ikut: useKartuSaya meminta ?sumber=pengguna.
+ * LANJUT_058: tiap kartu bertanya "Seberapa yakin kamu?" (boleh dilewati);
+ * keyakinan ikut di catatan yang sama, jadi ikut terkirim ulang lewat
+ * "Coba lagi". `?mapel=&asal=saran` (dari saran Level-In) memilih mapelnya.
  */
 export function LatihanScreen() {
   const kartuQuery = useKartuSaya();
   const mapelQuery = useMapel();
   const mulaiSesi = useMulaiSesi();
   const simpan = useSimpanHasilSesi();
-  const [pilihanMapel, setPilihanMapel] = useState<string>(SEMUA);
+  const param = useLocalSearchParams<{ mapel?: string; asal?: string }>();
+  const [pilihanMapel, setPilihanMapel] = useState<string>(param.mapel || SEMUA);
   const [sesi, setSesi] = useState<Sesi | null>(null);
   const [hasil, setHasil] = useState<CatatanLatihan[] | null>(null);
+  const asalMula: SesiLatihan['asal_mula'] = param.asal === 'saran' ? 'beranda_saran' : 'arsip';
+
+  // Layar yang sama dibuka lagi dengan mapel lain (mis. dari saran Level-In).
+  useEffect(() => {
+    if (param.mapel) setPilihanMapel(param.mapel);
+  }, [param.mapel]);
 
   if (kartuQuery.isPending || mapelQuery.isPending) return <View style={gaya.layarIsiRapat}><Memuat /></View>;
   if (kartuQuery.isError) return <View style={gaya.layarIsiRapat}><KeadaanGalat /></View>;
@@ -52,7 +67,7 @@ export function LatihanScreen() {
     if (!antrian.length) return;
     const id = buatId();
     mulaiSesi.mutate(
-      { id, mapel_fokus_id: mapelId, jumlah_kartu_direncanakan: antrian.length },
+      { id, mapel_fokus_id: mapelId, jumlah_kartu_direncanakan: antrian.length, asal_mula: asalMula },
       {
         onSuccess: () => {
           setHasil(null);
@@ -156,6 +171,7 @@ function LangkahPilih({
         </>
       )}
       <Tombol label="Riwayat latihan" varian="garis" penuh onPress={() => router.push('/latihan-riwayat')} />
+      <Tombol label={TEKS_LEVELIN.lihatLevelIn} varian="garis" penuh onPress={() => router.push('/level-in')} />
     </View>
   );
 }
@@ -164,6 +180,7 @@ function LangkahSesi({ sesi, mapel, onSelesai }: { sesi: Sesi; mapel: Mapel[]; o
   const [indeks, setIndeks] = useState(0);
   const [terbuka, setTerbuka] = useState(false);
   const [benar, setBenar] = useState<boolean | null>(null);
+  const [keyakinan, setKeyakinan] = useState<KodeKeyakinan | null>(null);
   const [catatan, setCatatan] = useState<CatatanLatihan[]>([]);
   const [ingatkan, setIngatkan] = useState(false);
 
@@ -174,14 +191,20 @@ function LangkahSesi({ sesi, mapel, onSelesai }: { sesi: Sesi; mapel: Mapel[]; o
 
   const berikutnya = () => {
     if (benar === null) return setIngatkan(true);
-    const baru = [...catatan, { id: buatId(), sesi_id: sesi.id, kartu_id: k.id, benar, waktu: new Date().toISOString() }];
+    const nilai = nilaiKeyakinan(keyakinan); // dilewati → tidak dikirim (kompatibel dengan server & app lama)
+    const baru = [
+      ...catatan,
+      { id: buatId(), sesi_id: sesi.id, kartu_id: k.id, benar, waktu: new Date().toISOString(), ...(nilai ? { keyakinan: nilai } : {}) },
+    ];
     if (terakhir) return onSelesai(baru);
     setCatatan(baru);
     setIndeks(indeks + 1);
     setTerbuka(false);
     setBenar(null);
+    setKeyakinan(null);
     setIngatkan(false);
   };
+  const labelKeyakinan = KEYAKINAN.find((x) => x.kode === keyakinan)?.label;
 
   return (
     <View style={gaya.layarIsiRapat}>
@@ -206,6 +229,7 @@ function LangkahSesi({ sesi, mapel, onSelesai }: { sesi: Sesi; mapel: Mapel[]; o
 
       {terbuka ? (
         <>
+          <Text style={gaya.teksKecil}>{labelKeyakinan ? TEKS_KEYAKINAN.terpilih(labelKeyakinan) : TEKS_KEYAKINAN.dilewati}</Text>
           <View style={s.jawaban}>
             <Text style={s.labelJawaban}>{soal ? 'Jawaban' : 'Isi catatan'}</Text>
             <Text style={gaya.teksBody}>{soal ? k.jawaban : k.isi}</Text>
@@ -219,7 +243,19 @@ function LangkahSesi({ sesi, mapel, onSelesai }: { sesi: Sesi; mapel: Mapel[]; o
           <Tombol label={terakhir ? 'Lihat hasil' : 'Berikutnya'} besar penuh onPress={berikutnya} />
         </>
       ) : (
-        <Tombol label={soal ? 'Lihat jawaban' : 'Lihat isi'} besar penuh onPress={() => setTerbuka(true)} />
+        <>
+          {/* LANJUT_058 — keyakinan SEBELUM jawaban dibuka; boleh dilewati, ketuk lagi untuk membatalkan. */}
+          <View style={s.keyakinan}>
+            <Text style={s.label}>{TEKS_KEYAKINAN.tanya}</Text>
+            <DaftarOpsi>
+              {KEYAKINAN.map((x) => (
+                <OpsiPil key={x.kode} label={x.label} aktif={keyakinan === x.kode} onPress={() => setKeyakinan(keyakinan === x.kode ? null : x.kode)} />
+              ))}
+            </DaftarOpsi>
+            <Text style={gaya.teksKecil}>{TEKS_KEYAKINAN.petunjuk}</Text>
+          </View>
+          <Tombol label={soal ? 'Lihat jawaban' : 'Lihat isi'} besar penuh onPress={() => setTerbuka(true)} />
+        </>
       )}
 
       <Tombol label="Selesai sekarang" varian="hantu" onPress={() => onSelesai(catatan)} />
@@ -275,6 +311,7 @@ function LangkahSelesai({
 
       <Tombol label="Ulangi" besar penuh proses={sedangMulai} onPress={onUlangi} />
       <Tombol label="Lihat riwayat latihan" varian="garis" penuh onPress={() => router.push('/latihan-riwayat')} />
+      <Tombol label={TEKS_LEVELIN.lihatLevelIn} varian="garis" penuh onPress={() => router.push('/level-in')} />
       <Tombol label="Kembali ke Arsip" varian="hantu" onPress={() => router.replace('/arsip')} />
     </View>
   );
@@ -292,4 +329,5 @@ const s = StyleSheet.create({
   angka: { ...teks.h2, color: color.textBody },
   ringkas: { ...teks.bodySm, color: color.textMuted, marginTop: spacing.s1 },
   tumpuk: { gap: spacing.s2 },
+  keyakinan: { gap: spacing.s2 },
 });

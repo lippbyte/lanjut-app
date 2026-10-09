@@ -58,6 +58,15 @@ export function LinimasaScreen() {
         onPress={() => router.push('/arsip')}
       />
 
+      {/* LANJUT_058 — hasil latihan per mapel (dihitung server), semua kelas.
+          Tepat di bawah Arsip Belajar: Level-In adalah hasil Latihan dari arsip itu. */}
+      <KartuPintu
+        ikon="ok"
+        judul="Level-In"
+        keterangan="Seberapa kuat kamu di tiap mapel, dari latihanmu."
+        onPress={() => router.push('/level-in')}
+      />
+
       {/* LANJUT_032; dijawab AI lewat server sejak LANJUT_051 (di balik gerbang persetujuan). */}
       <KartuPintu
         ikon="obrolan"

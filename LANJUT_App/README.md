@@ -84,7 +84,7 @@ Perbedaan yang disengaja dari PWA:
 | Layar | Beda | Alasan |
 |---|---|---|
 | Beranda | Tahapan tanpa `diperiksa_pada` tidak ditampilkan (PWA menampilkannya dengan peringatan "Contoh"). Layar kosongnya mengarah ke laman resmi SNPMB. | PRD F1; keputusan PM 26 Sep 2026. |
-| Beranda | Tidak ada kartu "Latihan Hari Ini" dan pintu "Latihan & Arsip Belajar". | Fitur Latihan/Arsip belum ada di Expo. |
+| Beranda | Tidak ada kartu "Latihan Hari Ini". Ada pintu Arsip Belajar (Latihan dibuka dari sana) dan pintu Level-In; saran harian tampil di layar Level-In, bukan di Beranda. | LANJUT_039/041/058: satu pintu per fitur; Level-In untuk semua kelas 7–12. |
 | Jenjang Saya (dulu Khusus SMK) | Semua kartu tertutup saat layar dibuka (PWA membuka kartu pertama). | Kartu pertama yang terbuka menutupi judul lain di layar HP; permintaan user 27 Sep 2026. |
 | Pilih Mapel | Tidak ada kartu "Lihat prospek & kampus" (F10). "Simpan ke Daftar Periksa" mencentang butir `mapel-tka` di akun, tidak membuat butir baru. | F10 belum ada di Expo; backend belum mendukung butir buatan pengguna. |
 | Pilih Mapel | Rangkuman umum memakai `GET /konten/mapel/agregasi-lintas-prodi` (jumlah prodi), PWA menjumlah bobot di klien. | Endpoint backend sudah ada. |
@@ -138,11 +138,13 @@ server/                backend Express + MySQL (lihat server/README.md)
 - **Ringkasan kemajuan di Jalur Saya memakai `hooks/useProgresDaftarPeriksa`, hook yang sama dengan layar Daftar Periksa** — saringan kelas/jalur dan hitungan X/Y hanya ada di satu tempat, jadi angkanya selalu cocok.
 - **Pilihan kelas/jalur di perangkat disimpan per akun** (`lanjut.profil.lokal.v1:<id pengguna>`) — HP yang dipakai bergantian tidak membawa saringan akun lain.
 - **`DELETE /kemajuan/:id` tidak menghapus baris**, hanya mengosongkan `selesai_pada`; klien menganggap butir tercentang hanya kalau `selesai_pada` terisi.
-- **Cache data milik akun (`['kemajuan']`, `['butir_pribadi']`) dibuang di `AuthProvider` setiap sesi berganti** — keluar, masuk akun lain, atau sesi ditolak server — supaya data akun A tidak pernah tampil di akun B pada perangkat yang sama.
+- **Cache data milik akun (`['kemajuan']`, `['butir_pribadi']`, `['levelin']`, dan lainnya di `KUNCI_DATA_AKUN`) dibuang di `AuthProvider` setiap sesi berganti** — keluar, masuk akun lain, atau sesi ditolak server — supaya data akun A tidak pernah tampil di akun B pada perangkat yang sama.
+- **Keyakinan di Latihan (LANJUT_058) memakai tiga pilihan yang dipetakan ke skala server 1–5** (`lib/latihan.ts` `KEYAKINAN`: yakin 4, ragu 2, tebak 1, sesuai label PWA) — tidak ada kolom atau ambang baru; dilewati berarti tidak dikirim.
+- **Layar Level-In (`/level-in`) hanya menampilkan hasil server** (`/kalibrasi/ringkasan`, `/saran-harian`); angka "berapa kartu lagi" dan batas persen diambil dari `/konfigurasi/levelin`, tidak ditulis di app (`lib/levelin.ts`).
 
 ## Yang belum ada
 
 - Pilihan jalur di Daftar Periksa masih tersimpan per perangkat (`useProfilLokal`), karena akun belum punya medan jalur.
-- Latihan, Arsip Belajar, dan Eksplorasi Tujuan (F10).
+- Antrean luring untuk hasil Latihan: hasil dikirim sekaligus di akhir sesi, dengan "Coba lagi" bila gagal (keyakinan ikut terkirim ulang).
 - Data konten (Linimasa, Khusus SMK, dll.) masih data contoh (`asal: mockup`, `diperiksa_pada: null`) dan perlu diverifikasi tim konten.
 - Lupa sandi dan ubah sandi.

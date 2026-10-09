@@ -1,5 +1,6 @@
 // Uji F7 Latihan (LANJUT_041): POST/GET/PATCH /sesi-latihan dan
-// POST /riwayat-latihan — tanpa Level-In (catatan dikirim tanpa keyakinan).
+// POST /riwayat-latihan. LANJUT_058: keyakinan opsional (skala PWA 1–5; app
+// mengirim 4 "yakin", 2 "ragu", 1 "tebak") — tes di bagian akhir berkas.
 //
 // Aturan yang diuji:
 //   - semuanya wajib login; sesi & riwayat hanya milik sendiri (404, §8.4);
@@ -170,7 +171,7 @@ test('catat riwayat: 201, terhitung di sesi (dijawab & benar), idempoten per id,
 
   const [baris] = await pool.execute('SELECT mapel_id, keyakinan FROM riwayat_latihan WHERE id = ?', [batch[0].id]);
   assert.equal(baris[0].mapel_id, 'fisika', 'mapel dari kartu, bukan dari kiriman');
-  assert.equal(baris[0].keyakinan, null, 'tanpa Level-In');
+  assert.equal(baris[0].keyakinan, null, 'tanpa keyakinan → null');
 });
 
 test('riwayat dengan rujukan tak sah → 4xx (bukan 500), dan satu catatan salah menggagalkan seluruh kiriman', async () => {
@@ -235,4 +236,110 @@ test('LINTAS AKUN: sesi & riwayat A tidak terbaca, tertutup, tertimpa, maupun te
   assert.equal(s.jumlah_dijawab, 1, 'riwayat B ikut terhitung di sesi A');
   assert.equal(s.jumlah_benar, 1);
   assert.equal((await daftarSesi(a)).some((x) => x.id === sesiB.id), false, 'sesi B bocor ke GET A');
+});
+
+// --- LANJUT_058: keyakinan ---------------------------------------------------------------------
+
+const barisRiwayat = async (ids) => {
+  const [baris] = await pool.query('SELECT id, keyakinan, kelas_gap, gap_numerik FROM riwayat_latihan WHERE id IN (?)', [ids]);
+  return Object.fromEntries(baris.map((b) => [b.id, b]));
+};
+
+test('LANJUT_058: keyakinan tersimpan bila dikirim (4/2/1 dari app), kosong bila dilewati; kelas dihitung server', async () => {
+  const token = await akunBaru();
+  const k = await kartu(token);
+  const { body } = await mulai(token, { jumlah_kartu_direncanakan: 5 });
+  const batch = [
+    catatan({ sesi_id: body.id, kartu_id: k, benar: false, keyakinan: 4 }), // yakin, salah
+    catatan({ sesi_id: body.id, kartu_id: k, benar: true, keyakinan: 2 }), // ragu, benar
+    catatan({ sesi_id: body.id, kartu_id: k, benar: true, keyakinan: 1 }), // tebak, benar
+    catatan({ sesi_id: body.id, kartu_id: k, benar: true }), // dilewati (app baru) / app lama
+    catatan({ sesi_id: body.id, kartu_id: k, benar: false, keyakinan: null }),
+  ];
+  const res = await panggil('POST', '/riwayat-latihan', token, batch);
+  assert.equal(res.status, 201, JSON.stringify(res.json));
+  const b = await barisRiwayat(batch.map((c) => c.id));
+  assert.deepEqual(batch.map((c) => b[c.id].keyakinan), [4, 2, 1, null, null]);
+  assert.deepEqual(batch.map((c) => b[c.id].kelas_gap), ['overconfident', 'underconfident', 'underconfident', null, null]);
+  assert.equal(Number(b[batch[0].id].gap_numerik), 0.75);
+  assert.equal((await sesi(token, body.id)).jumlah_dijawab, 5);
+});
+
+test('LANJUT_058: keyakinan di luar 1–5 / bukan bilangan bulat → 400, dan tidak ada yang tersimpan', async () => {
+  const token = await akunBaru();
+  const k = await kartu(token);
+  const { body } = await mulai(token);
+  for (const salah of [0, 6, -1, 2.5, 'yakin', '4', true, {}]) {
+    const sah = catatan({ sesi_id: body.id, kartu_id: k, keyakinan: 4 });
+    const res = await panggil('POST', '/riwayat-latihan', token, [sah, catatan({ sesi_id: body.id, kartu_id: k, keyakinan: salah })]);
+    assert.equal(res.status, 400, JSON.stringify(salah));
+    assert.equal(res.json.galat.kode, 'VALIDASI_GAGAL');
+    assert.deepEqual(await barisRiwayat([sah.id]), {}, `catatan sah ikut tersimpan bersama ${JSON.stringify(salah)}`);
+  }
+  assert.equal((await sesi(token, body.id)).jumlah_dijawab, 0);
+});
+
+test('LANJUT_058: data lama tanpa keyakinan tetap terbaca; ringkasan 200 dan menggabungkan keduanya dengan benar', async () => {
+  const token = await akunBaru();
+  const k = await kartu(token, 'kimia');
+  const lama = (await mulai(token, { mapel_fokus_id: 'kimia', jumlah_kartu_direncanakan: 10 })).body;
+  const t0 = Date.now() - 60 * 60 * 1000;
+  const catatanLama = Array.from({ length: 10 }, (_, i) => catatan({ sesi_id: lama.id, kartu_id: k, benar: i < 8, waktu: new Date(t0 + i * 1000).toISOString() }));
+  assert.equal((await panggil('POST', '/riwayat-latihan', token, catatanLama)).status, 201);
+
+  // Sebelum ada keyakinan: ringkasan & saran tetap 200, kalibrasi belum ada datanya.
+  let r = await panggil('GET', '/kalibrasi/ringkasan', token);
+  assert.equal(r.status, 200);
+  let kimia = r.json.data.find((x) => x.mapel_id === 'kimia');
+  assert.equal(kimia.kartu_dikerjakan, 0);
+  assert.equal(kimia.status_data, 'belum_cukup_data');
+  assert.equal(kimia.level_akurasi.kartu_dijawab, 10);
+  assert.equal((await panggil('GET', '/saran-harian', token)).status, 200);
+
+  // Sesi baru dengan keyakinan (5 kartu, semua "yakin" dan benar).
+  const baru = (await mulai(token, { mapel_fokus_id: 'kimia', jumlah_kartu_direncanakan: 5 })).body;
+  const catatanBaru = Array.from({ length: 5 }, () => catatan({ sesi_id: baru.id, kartu_id: k, benar: true, keyakinan: 4 }));
+  assert.equal((await panggil('POST', '/riwayat-latihan', token, catatanBaru)).status, 201);
+
+  r = await panggil('GET', '/kalibrasi/ringkasan', token);
+  assert.equal(r.status, 200);
+  kimia = r.json.data.find((x) => x.mapel_id === 'kimia');
+  assert.equal(kimia.level_akurasi.kartu_dijawab, 15, 'level menghitung jawaban lama & baru');
+  assert.equal(kimia.kartu_dikerjakan, 5, 'kalibrasi hanya jawaban berkeyakinan');
+  assert.equal(kimia.status_data, 'cukup_data');
+  assert.equal(kimia.pola, 'selaras');
+
+  const daftar = await daftarSesi(token);
+  assert.deepEqual(
+    daftar.filter((x) => [lama.id, baru.id].includes(x.id)).map((x) => [x.id, x.jumlah_dijawab]).sort(),
+    [[lama.id, 10], [baru.id, 5]].sort()
+  );
+});
+
+test('LANJUT_058 LINTAS AKUN: keyakinan B tidak bisa ditautkan ke sesi/kartu A dan tidak masuk Level-In A', async () => {
+  const a = await akunBaru();
+  const b = await akunBaru();
+  const kartuA = await kartu(a, 'ekonomi', 'Milik A');
+  const sesiA = (await mulai(a, { mapel_fokus_id: 'ekonomi' })).body;
+
+  const keSesiA = catatan({ sesi_id: sesiA.id, benar: false, keyakinan: 4 });
+  const keKartuA = catatan({ kartu_id: kartuA, benar: false, keyakinan: 4 });
+  assert.equal((await panggil('POST', '/riwayat-latihan', b, [keSesiA])).status, 404);
+  assert.equal((await panggil('POST', '/riwayat-latihan', b, [keKartuA])).status, 404);
+  assert.deepEqual(await barisRiwayat([keSesiA.id, keKartuA.id]), {});
+
+  // B menjawab 6 kartu ekonomi miliknya dengan "yakin" tapi salah → pola B overconfident.
+  const kartuB = await kartu(b, 'ekonomi', 'Milik B');
+  const sesiB = (await mulai(b, { mapel_fokus_id: 'ekonomi', jumlah_kartu_direncanakan: 6 })).body;
+  const catatanB = Array.from({ length: 6 }, () => catatan({ sesi_id: sesiB.id, kartu_id: kartuB, benar: false, keyakinan: 4 }));
+  assert.equal((await panggil('POST', '/riwayat-latihan', b, catatanB)).status, 201);
+
+  const rb = (await panggil('GET', '/kalibrasi/ringkasan', b)).json.data.find((x) => x.mapel_id === 'ekonomi');
+  assert.equal(rb.pola, 'overconfident');
+  const ra = (await panggil('GET', '/kalibrasi/ringkasan', a)).json.data.find((x) => x.mapel_id === 'ekonomi');
+  assert.equal(ra.kartu_dikerjakan, 0, 'keyakinan B ikut terhitung di A');
+  assert.equal(ra.level_akurasi.kartu_dijawab, 0);
+  assert.equal((await sesi(a, sesiA.id)).jumlah_dijawab, 0);
+  const saranA = (await panggil('GET', '/saran-harian', a)).json.data;
+  assert.notEqual(saranA.jenis, 'saran', 'pola B jadi saran A');
 });

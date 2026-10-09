@@ -904,6 +904,16 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
   (400); `mapel_id` diambil dari kartunya. Dulu rujukan tak dikenal jatuh ke
   FK (500) dan akun lain bisa menautkan catatan ke sesi/kartu orang lain.
   Tes: `tests/latihan.test.js`.
+  - **Keyakinan (LANJUT_058, tanpa migrasi):** setiap catatan `POST
+    /riwayat-latihan` boleh membawa `keyakinan` bilangan bulat **1–5**
+    (opsional, boleh `null`; kolom `riwayat_latihan.keyakinan` sudah ada sejak
+    005). Nilai lain (0, 6, pecahan, teks) → 400 `VALIDASI_GAGAL` dan seluruh
+    kiriman tidak tersimpan. App Expo menanyakan tiga pilihan dan mengirim
+    yakin = 4, ragu = 2, tebak = 1 (label PWA); dilewati = tidak dikirim, jadi
+    app lama tetap sah. `gap_numerik`/`kelas_gap` tetap dihitung server.
+    Pemeriksaan kontrak lengkap: `docs/levelin-pemeriksaan-kontrak-058.md`.
+  - `POST /sesi-latihan` `asal_mula`: app memakai `arsip` (bawaan) dan
+    `beranda_saran` bila sesi dimulai dari kartu saran di layar Level-In.
 - **Saringan kartu kurasi di server (LANJUT_040)**: `GET /kartu` (dengan atau
   tanpa parameter) hanya mengirim kartu resmi yang `status_verifikasi =
   'terverifikasi'` DAN `diperiksa_pada` terisi — syarat yang sama dengan F10 —
@@ -955,7 +965,11 @@ Ditulis apa adanya supaya tidak dianggap kelalaian. Tahap mengacu ke §9.3
     `kelas_gap`, dan `aturan_versi` dengan ambang yang berlaku (dulu 500).
   - Ketersediaan kartu untuk saran: milik sendiri + kurasi terverifikasi
     (syarat LANJUT_040).
-  Tes: `tests/levelin-keputusan.test.js`, `tests/levelin-kalibrasi.test.js`.
+  - **Layar Level-In di app (LANJUT_058)** memakai ketiga endpoint ini apa
+    adanya; tidak ada logika atau ambang yang diubah. Sejak app mengirim
+    keyakinan, kalibrasi dan saran harian punya bahan dari F7.
+  Tes: `tests/levelin-keputusan.test.js`, `tests/levelin-kalibrasi.test.js`,
+  `tests/latihan.test.js` (keyakinan, LANJUT_058).
 - **B7 selesai**: `POST /sinkron/klaim` — idempoten, menolak baris milik
   pengguna lain (`TIDAK_BERHAK`), tidak pernah memindahkan kepemilikan. Diuji
   di `tests/sinkron.test.js`. **Audit LANJUT_042**: rujukan di dalam baris

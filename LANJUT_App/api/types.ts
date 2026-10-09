@@ -202,9 +202,37 @@ export type SesiLatihan = {
   jumlah_dijawab: number;
   jumlah_benar: number;
 };
-// Satu catatan POST /riwayat-latihan (levelin.skema.js `catatanRiwayatSkema`),
-// tanpa keyakinan — F7 versi ini tidak memakai Level-In.
-export type CatatanLatihan = { id: string; sesi_id: string; kartu_id: string; benar: boolean; waktu: string };
+// Satu catatan POST /riwayat-latihan (levelin.skema.js `catatanRiwayatSkema`).
+// LANJUT_058: `keyakinan` opsional, skala PWA 1–5 (pemetaan di lib/latihan.ts).
+export type CatatanLatihan = { id: string; sesi_id: string; kartu_id: string; benar: boolean; waktu: string; keyakinan?: number };
+
+// LANJUT_058 — GET /kalibrasi/ringkasan (levelin.layanan.js `ringkasanKalibrasi`):
+// satu baris per mapel yang dikenal. Kalibrasi = jawaban BERKEYAKINAN saja;
+// level_akurasi = semua jawaban.
+export type LevelAkurasi = 'belum_cukup_data' | 'perlu_penguatan_dasar' | 'cukup_lanjut_latihan' | 'sudah_kuat';
+export type RingkasanMapel = {
+  mapel_id: string;
+  kartu_dikerjakan: number;
+  n_overconfident: number;
+  n_underconfident: number;
+  n_selaras: number;
+  n_netral: number;
+  n_benar: number;
+  rate_overconfident: number | null;
+  status_data: 'cukup_data' | 'belum_cukup_data';
+  pola: 'overconfident' | 'selaras' | 'belum_cukup_data';
+  level_akurasi: { kartu_dijawab: number; n_benar: number; rate_benar: number | null; level: LevelAkurasi };
+  dihitung_pada: string;
+  konfig_versi: number;
+};
+// GET /saran-harian — rantai fallback PWA §6.1f.
+export type SaranHarian = {
+  jenis: 'arsip_kosong' | 'saran' | 'kalibrasi_selaras' | 'belum_cukup_data' | 'pengguna_baru';
+  mapel_id: string | null;
+  alasan: { rate_overconfident: number; kartu_dikerjakan: number } | null;
+};
+// GET /konfigurasi/levelin (publik) — nilai teks per kunci.
+export type KonfigurasiLevelIn = Record<string, { nilai: string; versi: number; dasar: string; diubah_pada: string | null }>;
 
 // LANJUT_047 — GET /persetujuan/saya (persetujuan.layanan.js `statusSaya`).
 // Status = catatan terakhir per jenis; riwayat lengkap tidak dikirim.

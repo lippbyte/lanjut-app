@@ -37,6 +37,8 @@ const HALAMAN_ANAK: Record<string, string> = {
   // F7 (LANJUT_041) — dibuka dari Arsip Belajar.
   '/latihan': 'Latihan',
   '/latihan-riwayat': 'Riwayat Latihan',
+  // LANJUT_058 — dari Beranda dan Latihan.
+  '/level-in': 'Level-In',
   // LANJUT_048 — dari Jalur Saya dan Ngobrol.
   '/terima-kebijakan': 'Kebijakan Privasi',
 };

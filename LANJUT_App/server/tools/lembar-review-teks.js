@@ -553,6 +553,43 @@ const PETA = [
       { task: 'LANJUT_041', awal: '**Tombol akhir:**', nama: 'Tombol akhir', di: 'Latihan, ringkasan akhir sesi.', oleh: 'Semua akun yang berlatih.' },
       { task: 'LANJUT_041', awal: '**Galat mulai:**', nama: 'Galat mulai', di: 'Latihan, bila sesi gagal dimulai.', oleh: 'Semua akun.' },
       { task: 'LANJUT_041', awal: '**Riwayat Latihan:**', nama: 'Riwayat Latihan', di: 'Riwayat Latihan.', oleh: 'Semua akun.' },
+      { task: 'LANJUT_058', awal: '**Latihan — pertanyaan keyakinan:**', nama: 'Pertanyaan keyakinan', di: 'Latihan, tiap kartu sebelum jawaban dibuka.', oleh: 'Semua akun yang berlatih.' },
+      { task: 'LANJUT_058', awal: '**Latihan — setelah jawaban dibuka:**', nama: 'Keyakinan setelah jawaban dibuka', di: 'Latihan, di atas jawaban.', oleh: 'Semua akun yang berlatih.' },
+      { task: 'LANJUT_058', awal: '**Latihan — tombol ke Level-In:**', nama: 'Tombol ke Level-In', di: 'Latihan, sebelum mulai dan ringkasan akhir sesi.', oleh: 'Semua akun.' },
+    ],
+  },
+  {
+    kelompok: 'Level-In',
+    butir: [
+      { task: 'LANJUT_058', awal: '**Beranda — pintu Level-In:**', nama: 'Pintu di Beranda', di: 'Beranda, di bawah Arsip Belajar.', oleh: 'Semua akun (kelas 7–12).' },
+      { task: 'LANJUT_058', awal: '**Level-In — judul & pengantar:**', nama: 'Judul & pengantar', di: 'Level-In (/level-in).', oleh: 'Semua akun.' },
+      { task: 'LANJUT_058', awal: '**Level-In — belum pernah latihan:**', nama: 'Belum pernah latihan', di: 'Level-In, akun tanpa jawaban latihan.', oleh: 'Akun yang belum pernah berlatih.' },
+      { task: 'LANJUT_058', awal: '**Level-In — galat:**', nama: 'Galat', di: 'Level-In, bila server tidak bisa dihubungi.', oleh: 'Semua akun.' },
+      { task: 'LANJUT_058', awal: '**Level-In — per mapel:**', nama: 'Per mapel', di: 'Level-In, satu kartu per mapel yang sudah dilatih.', oleh: 'Akun yang sudah berlatih.' },
+      {
+        task: 'LANJUT_058',
+        awal: '**Level-In — level dan artinya:**',
+        nama: 'Level dan artinya',
+        di: 'Level-In, kartu mapel dengan level.',
+        oleh: 'Akun dengan jawaban cukup di satu mapel.',
+        faktual: {
+          klaim: 'Arti level menyebut batas persen jawaban benar.',
+          sumber: 'Konfigurasi Level-In (level_batas_bawah, level_batas_atas; tabel fallback LANJUT_042) dan levelAkurasiPerMapel di server.',
+        },
+      },
+      { task: 'LANJUT_058', awal: '**Level-In — belum cukup data:**', nama: 'Belum cukup data', di: 'Level-In, kartu mapel tanpa level.', oleh: 'Akun dengan jawaban sedikit di satu mapel.' },
+      {
+        task: 'LANJUT_058',
+        awal: '**Level-In — keyakinan:**',
+        nama: 'Keyakinan',
+        di: 'Level-In, seksi Keyakinanmu.',
+        oleh: 'Akun yang sudah berlatih.',
+        faktual: {
+          klaim: 'Terlalu yakin = sering memilih "Yakin" tapi jawabannya salah.',
+          sumber: 'Pola kalibrasi server (agregatPerMapel, salinan PWA; ambang_overconfident, minimum_kartu).',
+        },
+      },
+      { task: 'LANJUT_058', awal: '**Level-In — saran hari ini:**', nama: 'Saran hari ini', di: 'Level-In, kartu saran.', oleh: 'Akun yang sudah berlatih.' },
     ],
   },
 ];

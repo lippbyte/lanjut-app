@@ -1,8 +1,8 @@
 # Lembar Review Draf Teks LANJUT
 
-Disusun otomatis dengan `npm run lembar-review-teks` (folder `LANJUT_App/server`) dari `docs/salinan-teks-lanjut.md` (sidik `64b3fd1c590f`). Lembar ini **hanya bacaan**: mengisinya tidak mengubah teks apa pun di app. Bunyi teks disalin persis dari berkas sumber.
+Disusun otomatis dengan `npm run lembar-review-teks` (folder `LANJUT_App/server`) dari `docs/salinan-teks-lanjut.md` (sidik `406e64ec9a56`). Lembar ini **hanya bacaan**: mengisinya tidak mengubah teks apa pun di app. Bunyi teks disalin persis dari berkas sumber.
 
-**122 butir** dari 18 blok DRAF menunggu keputusan. 4 baris lain di blok DRAF tidak dijadikan butir karena sudah disetujui atau bukan teks yang tampil (lihat Lampiran).
+**134 butir** dari 19 blok DRAF menunggu keputusan. 4 baris lain di blok DRAF tidak dijadikan butir karena sudah disetujui atau bukan teks yang tampil (lihat Lampiran).
 
 ## Cara memakai lembar ini
 
@@ -43,6 +43,8 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 | 94 | Kaki halaman — ada bagian Perkiraan (§4.9, LANJUT_045) | Janji bahwa bagian bertanda Terverifikasi "dicek ke sumber resmi"; bagian Perkiraan belum. | Sama dengan butir di atasnya. |
 | 95 | Kaki halaman — ada bagian tanpa status (§4.9, LANJUT_045) | Janji bahwa bagian bertanda Terverifikasi "dicek ke sumber resmi". | Sama dengan butir di atasnya. |
 | 110 | Peringatan sebelum unggah (§4.5, LANJUT_049) | Yang disimpan hanya teks, bukan berkas asli; modul bisa dihapus permanen. Juga larangan mengunggah data pribadi dan materi yang tidak boleh dipakai (hak cipta). | Perilaku server (LANJUT_049: berkas tidak ditulis ke disk, hapus permanen + perapian indeks); aspek hak cipta perlu ditinjau ahli hukum. |
+| 131 | Level dan artinya (§4.18, LANJUT_058) | Arti level menyebut batas persen jawaban benar. | Konfigurasi Level-In (level_batas_bawah, level_batas_atas; tabel fallback LANJUT_042) dan levelAkurasiPerMapel di server. |
+| 133 | Keyakinan (§4.18, LANJUT_058) | Terlalu yakin = sering memilih "Yakin" tapi jawabannya salah. | Pola kalibrasi server (agregatPerMapel, salinan PWA; ambang_overconfident, minimum_kartu). |
 
 ## Ringkasan per layar
 
@@ -58,7 +60,8 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 | Eksplorasi Tujuan (F10) | 9 | 87–95 |
 | Arsip Belajar | 8 | 96–103 |
 | Arsip Belajar — Modul (materi unggahan) | 10 | 104–113 |
-| Latihan | 9 | 114–122 |
+| Latihan | 12 | 114–125 |
+| Level-In | 9 | 126–134 |
 
 ## Daftar akun & gerbang awal
 
@@ -2792,6 +2795,274 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ---
 
+### 123. Pertanyaan keyakinan
+
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 528
+- **Tampil di:** Latihan, tiap kartu sebelum jawaban dibuka.
+- **Dilihat oleh:** Semua akun yang berlatih.
+
+**Bunyi teks (persis dari berkas):**
+
+> **Latihan — pertanyaan keyakinan:** Seberapa yakin kamu? · pilihan: Yakin · Ragu · Tebak · petunjuk: Pilih sebelum membuka jawaban. Boleh dilewati.
+
+**Keputusan:**
+
+- [ ] Setuju
+- [ ] Ubah
+- [ ] Tolak
+
+**Revisi (kalau Ubah):** ……
+
+**Catatan:** ……
+
+---
+
+### 124. Keyakinan setelah jawaban dibuka
+
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 529
+- **Tampil di:** Latihan, di atas jawaban.
+- **Dilihat oleh:** Semua akun yang berlatih.
+
+**Bunyi teks (persis dari berkas):**
+
+> **Latihan — setelah jawaban dibuka:** Keyakinanmu: [pilihan]. · bila dilewati: Keyakinan dilewati.
+
+**Keputusan:**
+
+- [ ] Setuju
+- [ ] Ubah
+- [ ] Tolak
+
+**Revisi (kalau Ubah):** ……
+
+**Catatan:** ……
+
+---
+
+### 125. Tombol ke Level-In
+
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 530
+- **Tampil di:** Latihan, sebelum mulai dan ringkasan akhir sesi.
+- **Dilihat oleh:** Semua akun.
+
+**Bunyi teks (persis dari berkas):**
+
+> **Latihan — tombol ke Level-In:** Lihat Level-In (di layar sebelum mulai dan di ringkasan akhir sesi)
+
+**Keputusan:**
+
+- [ ] Setuju
+- [ ] Ubah
+- [ ] Tolak
+
+**Revisi (kalau Ubah):** ……
+
+**Catatan:** ……
+
+---
+
+## Level-In
+
+### 126. Pintu di Beranda
+
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 531
+- **Tampil di:** Beranda, di bawah Arsip Belajar.
+- **Dilihat oleh:** Semua akun (kelas 7–12).
+
+**Bunyi teks (persis dari berkas):**
+
+> **Beranda — pintu Level-In:** Level-In · Seberapa kuat kamu di tiap mapel, dari latihanmu.
+
+**Keputusan:**
+
+- [ ] Setuju
+- [ ] Ubah
+- [ ] Tolak
+
+**Revisi (kalau Ubah):** ……
+
+**Catatan:** ……
+
+---
+
+### 127. Judul & pengantar
+
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 532
+- **Tampil di:** Level-In (/level-in).
+- **Dilihat oleh:** Semua akun.
+
+**Bunyi teks (persis dari berkas):**
+
+> **Level-In — judul & pengantar:** Level-In · Seberapa kuat kamu di tiap mapel, dihitung dari latihanmu sendiri.
+
+**Keputusan:**
+
+- [ ] Setuju
+- [ ] Ubah
+- [ ] Tolak
+
+**Revisi (kalau Ubah):** ……
+
+**Catatan:** ……
+
+---
+
+### 128. Belum pernah latihan
+
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 533
+- **Tampil di:** Level-In, akun tanpa jawaban latihan.
+- **Dilihat oleh:** Akun yang belum pernah berlatih.
+
+**Bunyi teks (persis dari berkas):**
+
+> **Level-In — belum pernah latihan:** Belum ada latihan. · Level-In muncul setelah kamu menjawab kartu di Latihan. Mulai dari 5 kartu saja. · tombol: Mulai latihan
+
+**Keputusan:**
+
+- [ ] Setuju
+- [ ] Ubah
+- [ ] Tolak
+
+**Revisi (kalau Ubah):** ……
+
+**Catatan:** ……
+
+---
+
+### 129. Galat
+
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 534
+- **Tampil di:** Level-In, bila server tidak bisa dihubungi.
+- **Dilihat oleh:** Semua akun.
+
+**Bunyi teks (persis dari berkas):**
+
+> **Level-In — galat:** Level-In belum bisa dimuat. Periksa sambungan internetmu, lalu coba lagi. · tombol: Coba lagi
+
+**Keputusan:**
+
+- [ ] Setuju
+- [ ] Ubah
+- [ ] Tolak
+
+**Revisi (kalau Ubah):** ……
+
+**Catatan:** ……
+
+---
+
+### 130. Per mapel
+
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 535
+- **Tampil di:** Level-In, satu kartu per mapel yang sudah dilatih.
+- **Dilihat oleh:** Akun yang sudah berlatih.
+
+**Bunyi teks (persis dari berkas):**
+
+> **Level-In — per mapel:** judul seksi: Per mapel · [n] kartu dijawab
+
+**Keputusan:**
+
+- [ ] Setuju
+- [ ] Ubah
+- [ ] Tolak
+
+**Revisi (kalau Ubah):** ……
+
+**Catatan:** ……
+
+---
+
+### 131. Level dan artinya ⚠
+
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 536
+- **Tampil di:** Level-In, kartu mapel dengan level.
+- **Dilihat oleh:** Akun dengan jawaban cukup di satu mapel.
+- **⚠ Klaim faktual:** lihat daftar di awal lembar.
+
+**Bunyi teks (persis dari berkas):**
+
+> **Level-In — level dan artinya:** Perlu penguatan dasar: Jawaban benarmu masih di bawah [batas bawah]. Ulangi dasar-dasarnya dulu, pelan-pelan saja. · Cukup, lanjut latihan: Jawaban benarmu [batas bawah]–[batas atas]. Terus latihan supaya makin mantap. · Sudah kuat: Jawaban benarmu di atas [batas atas]. Pertahankan, sesekali ulangi. · tanpa angka: Jawaban benarmu masih sedikit. … / Jawaban benarmu sudah lumayan. … / Hampir semua jawabanmu benar. …
+
+**Keputusan:**
+
+- [ ] Setuju
+- [ ] Ubah
+- [ ] Tolak
+
+**Revisi (kalau Ubah):** ……
+
+**Catatan:** ……
+
+---
+
+### 132. Belum cukup data
+
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 537
+- **Tampil di:** Level-In, kartu mapel tanpa level.
+- **Dilihat oleh:** Akun dengan jawaban sedikit di satu mapel.
+
+**Bunyi teks (persis dari berkas):**
+
+> **Level-In — belum cukup data:** Belum cukup data · Jawab [n] kartu lagi di mapel ini supaya levelnya muncul. · tanpa angka: Jawab beberapa kartu lagi di mapel ini supaya levelnya muncul.
+
+**Keputusan:**
+
+- [ ] Setuju
+- [ ] Ubah
+- [ ] Tolak
+
+**Revisi (kalau Ubah):** ……
+
+**Catatan:** ……
+
+---
+
+### 133. Keyakinan ⚠
+
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 538
+- **Tampil di:** Level-In, seksi Keyakinanmu.
+- **Dilihat oleh:** Akun yang sudah berlatih.
+- **⚠ Klaim faktual:** lihat daftar di awal lembar.
+
+**Bunyi teks (persis dari berkas):**
+
+> **Level-In — keyakinan:** judul seksi: Keyakinanmu · belum ada data: Saat latihan, pilih "Seberapa yakin kamu?" sebelum membuka jawaban. Dari situ Level-In bisa melihat apakah keyakinanmu sudah pas dengan hasilmu. · kurang: Isi keyakinan di [n] kartu lagi dalam satu mapel supaya polanya kelihatan. · terlalu yakin: Kamu cenderung terlalu yakin di [mapel]: sering yakin, tapi jawabannya salah. · pas: Keyakinanmu sudah pas dengan hasilmu di [mapel].
+
+**Keputusan:**
+
+- [ ] Setuju
+- [ ] Ubah
+- [ ] Tolak
+
+**Revisi (kalau Ubah):** ……
+
+**Catatan:** ……
+
+---
+
+### 134. Saran hari ini
+
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 539
+- **Tampil di:** Level-In, kartu saran.
+- **Dilihat oleh:** Akun yang sudah berlatih.
+
+**Bunyi teks (persis dari berkas):**
+
+> **Level-In — saran hari ini:** judul seksi: Saran hari ini · saran: Latih [mapel] hari ini. Dari [n] kartu terakhir yang kamu isi keyakinannya, [p]% kamu yakin tapi jawabannya salah. (tombol: Latihan [mapel]) · selaras: Keyakinanmu sudah pas dengan hasilmu. Lanjutkan latihan rutin di mapel mana saja. (tombol: Mulai latihan) · belum cukup data: Lanjut latihan [mapel] dan isi keyakinanmu, supaya saran berikutnya lebih tepat. (tombol: Latihan [mapel]) · pengguna baru: Mulai dari [mapel]. Isi juga seberapa yakin kamu di tiap kartu. (tombol: Latihan [mapel]) · arsip kosong: Belum ada kartu untuk dilatih. Tulis kartu dulu di Arsip Belajar. (tombol: Tulis kartu)
+
+**Keputusan:**
+
+- [ ] Setuju
+- [ ] Ubah
+- [ ] Tolak
+
+**Revisi (kalau Ubah):** ……
+
+**Catatan:** ……
+
+---
+
 ## Lampiran: baris di blok DRAF yang tidak dijadikan butir
 
 - §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 146 — Memakai pembuka lama §4.2 yang bukan DRAF; kepala blok menyebutnya dikecualikan.
@@ -2837,4 +3108,5 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 | §4.15 Ngobrol Bareng LANJUT dengan AI | LANJUT_051 | 473 | 6 |
 | §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi | LANJUT_053 | 488 | 11 |
 | §4.17 Ngobrol: materi dari modul Arsip dan web | LANJUT_055 | 509 | 4 |
-| **Jumlah** | | | **126** (122 butir keputusan + 4 di lampiran) |
+| §4.18 Level-In dan keyakinan di Latihan | LANJUT_058 | 522 | 12 |
+| **Jumlah** | | | **138** (134 butir keputusan + 4 di lampiran) |

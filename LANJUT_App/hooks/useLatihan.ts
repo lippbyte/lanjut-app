@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '../api/client';
 import type { CatatanLatihan, SesiLatihan } from '../api/types';
 import { useSesi } from '../providers/AuthProvider';
+import { KUNCI_LEVELIN } from './useLevelIn';
 
 // Data milik akun: AuthProvider membuang kunci ini saat keluar/ganti akun.
 const KUNCI = ['sesi_latihan'] as const;
@@ -17,16 +18,22 @@ export function useRiwayatLatihan() {
   });
 }
 
-type MulaiSesi = { id: string; mapel_fokus_id: string | null; jumlah_kartu_direncanakan: number };
+type MulaiSesi = {
+  id: string;
+  mapel_fokus_id: string | null;
+  jumlah_kartu_direncanakan: number;
+  /** LANJUT_058: 'beranda_saran' bila dimulai dari saran harian Level-In. */
+  asal_mula?: SesiLatihan['asal_mula'];
+};
 
 /** POST /sesi-latihan — id buatan klien, jadi aman dikirim ulang. */
 export function useMulaiSesi() {
   const { token } = useSesi();
   return useMutation({
-    mutationFn: (sesi: MulaiSesi) =>
+    mutationFn: ({ asal_mula = 'arsip', ...sesi }: MulaiSesi) =>
       apiFetch<{ id: string }>('/sesi-latihan', {
         method: 'POST',
-        body: { ...sesi, dimulai_pada: new Date().toISOString(), asal_mula: 'arsip' },
+        body: { ...sesi, dimulai_pada: new Date().toISOString(), asal_mula },
         token: token!,
       }),
   });
@@ -51,6 +58,9 @@ export function useSimpanHasilSesi() {
         token: token!,
       });
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: KUNCI }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: KUNCI });
+      queryClient.invalidateQueries({ queryKey: KUNCI_LEVELIN }); // LANJUT_058: Level-In dihitung ulang server
+    },
   });
 }

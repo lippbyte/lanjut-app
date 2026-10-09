@@ -3,9 +3,36 @@ import type { Kartu } from '../api/types';
 /**
  * F7 Latihan (LANJUT_041) — antrian sederhana TANPA Level-In: kartu milik
  * sendiri (Arsip Belajar), diacak, dipotong ke batas sesi. Tidak ada spaced
- * repetition, skor kesulitan, maupun keyakinan — itu wilayah Level-In yang
- * sengaja tidak dipakai versi ini. Logika murni, pola lib/arsip.ts.
+ * repetition atau skor kesulitan. LANJUT_058: tiap kartu boleh diberi
+ * keyakinan (bahan kalibrasi Level-In di server). Logika murni, pola lib/arsip.ts.
  */
+
+/**
+ * Keyakinan (LANJUT_058) — tiga pilihan, dipetakan ke skala 1–5 yang sudah
+ * dipakai server dan PWA (levelin.skema.js, keputusan.js). Angka mengikuti
+ * label PWA (MVP-PWA/latihan.html): 4 "Yakin", 2 "Ragu", 1 "Ragu banget".
+ * Dengan ambang bawaan (tinggi ≥ 4, rendah ≤ 2): yakin lalu salah = terlalu
+ * yakin; ragu/tebak lalu benar = terlalu ragu. Boleh dilewati (tidak dikirim).
+ * Salinan teks §4.18 — DRAF.
+ */
+export const KEYAKINAN = [
+  { kode: 'yakin', label: 'Yakin', nilai: 4 },
+  { kode: 'ragu', label: 'Ragu', nilai: 2 },
+  { kode: 'tebak', label: 'Tebak', nilai: 1 },
+] as const;
+export type KodeKeyakinan = (typeof KEYAKINAN)[number]['kode'];
+
+export const TEKS_KEYAKINAN = {
+  tanya: 'Seberapa yakin kamu?',
+  petunjuk: 'Pilih sebelum membuka jawaban. Boleh dilewati.',
+  terpilih: (label: string) => `Keyakinanmu: ${label}.`,
+  dilewati: 'Keyakinan dilewati.',
+};
+
+/** Kode pilihan → nilai skala server; `null` (dilewati) → tidak dikirim. */
+export function nilaiKeyakinan(kode: KodeKeyakinan | null): number | undefined {
+  return KEYAKINAN.find((k) => k.kode === kode)?.nilai;
+}
 
 // Salinan §4.7 (disetujui): "12 kartu, kira-kira 8 menit" dan "Lagi padat?
 // Ambil 5 kartu saja." — jadi satu sesi paling banyak 12 kartu, pilihan
