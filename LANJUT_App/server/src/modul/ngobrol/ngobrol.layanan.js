@@ -213,24 +213,87 @@ function susunPermintaanWeb(pertanyaan) {
 /** Hapus alamat web dari teks ringkasan web (model bisa mengarang tautan). */
 const tanpaAlamat = (teks) => String(teks).replace(/\[([^\]]*)\]\((?:https?:\/\/|www\.)[^)]*\)/gi, '$1').replace(/(?:https?:\/\/|www\.)[^\s)\]]+/gi, '').replace(/[ \t]{2,}/g, ' ').trim();
 
+// Bekas tautan/label yang dibuang ditandai dulu dengan BEKAS (LANJUT_057),
+// supaya kata pengantar yang kini menggantung ("Lihat juga", "Sumber:") ikut
+// dibuang. Kalimat bekas tautan dibuang bila SEMUA kata sisanya kata pengantar.
+const BEKAS = '\u0000';
+const KATA_PENGANTAR = new Set(
+  (
+    'lihat baca cek kunjungi buka simak klik cari tonton coba juga saja aja lagi lebih lanjut selengkapnya lengkap ' +
+    'lengkapnya info infonya informasi penjelasan penjelasannya keterangan detail detailnya sumber sumbernya referensi ' +
+    'rujukan tautan tautannya link linknya bacaan situs laman halaman artikel video web website ini itu berikut tersebut ' +
+    'di ke pada dari sini situ untuk ada bisa dapat kamu kalian dan atau serta lain lainnya tambahan yang resmi'
+  ).split(' ')
+);
+
+/** true bila teks tidak berisi apa pun selain kata pengantar (atau kosong). */
+const hanyaPengantar = (teks) => (String(teks).toLowerCase().match(/[a-z0-9]+/g) || []).every((k) => KATA_PENGANTAR.has(k));
+
+/** Satu kalimat berisi BEKAS → kalimat tanpa bekas, atau '' bila yang tersisa hanya kata pengantar. */
+function rapikanKalimat(kalimat) {
+  if (!kalimat.includes(BEKAS)) return kalimat;
+  const sisa = kalimat
+    .replace(/\s*\(([^()]*)\)/g, (utuh, isi) => (isi.includes(BEKAS) && hanyaPengantar(isi.replace(/\u0000/g, '')) ? '' : utuh)) // "(lihat ◊)"
+    .replace(/\u0000(?:\s*(?:,|\bdan\b|\batau\b|\bserta\b|&)?\s*\u0000)+/gi, BEKAS) // deretan bekas → satu
+    .replace(/\u0000\s*(?:\bdan\b|\batau\b|\bserta\b|&)\s+/gi, '') // "◊ dan X" → "X"
+    .replace(/\s+(?:\bdan\b|\batau\b|\bserta\b|&)\s*\u0000/gi, '') // "X serta ◊" → "X"
+    .replace(/(?:\s*[:\-–—]|\s+(?:di|ke|pada|dari|lewat|melalui|yaitu|yakni))*\s*\u0000(?=[\s.,;:!?)]*$)/i, '') // "ada di ◊." → "ada."
+    .replace(/\u0000/g, '');
+  return hanyaPengantar(sisa) ? '' : sisa;
+}
+
+/** Teks berisi BEKAS → bekas dibuang; kalimat, butir daftar, dan judul daftar yang kini menggantung ikut dibuang. */
+function rapikanBekas(teks) {
+  if (!teks.includes(BEKAS)) return teks;
+  const DAFTAR = /^\s*(?:[-*•]|\d+[.)])\s+/;
+  const baris = teks.split('\n').map((b) => {
+    if (!b.includes(BEKAS)) return { teks: b, daftar: DAFTAR.test(b) };
+    const awal = (b.match(DAFTAR) || [''])[0];
+    const sisa = b.slice(awal.length).split(/(?<=[.!?])\s+/).map(rapikanKalimat).filter((k) => k.trim()).join(' ');
+    return sisa.trim() ? { teks: awal + sisa, daftar: Boolean(awal) } : null; // null = baris habis dibuang
+  });
+  const hasil = [];
+  baris.forEach((b, i) => {
+    if (!b) return;
+    if (!b.daftar && /:\s*$/.test(b.teks) && hanyaPengantar(b.teks)) {
+      // Judul "Referensi:" / "Lihat juga:" yang butir daftarnya habis dibuang ikut dibuang.
+      let adaHilang = false;
+      let berikut = null;
+      for (const x of baris.slice(i + 1)) {
+        if (x === null) adaHilang = true;
+        else if (x.teks.trim()) {
+          berikut = x;
+          break;
+        }
+      }
+      if (adaHilang && !(berikut && berikut.daftar)) return;
+    }
+    hasil.push(b.teks);
+  });
+  return hasil.join('\n').replace(/\n{3,}/g, '\n\n');
+}
+
 /**
  * Rapikan balasan model: alamat web yang TIDAK ada di anotasi dibuang (juga
- * tautan Markdown), label sumber yang tidak dikenal dibuang, dan daftar
- * sumber disusun server dari label yang benar-benar dipakai.
+ * tautan Markdown), label sumber yang tidak dikenal dibuang, kata pengantar
+ * yang menggantung karenanya ikut dibuang (LANJUT_057), dan daftar sumber
+ * disusun server dari label yang benar-benar dipakai.
  */
 function rapikanBalasan(teks, { potongan = [], web = [] } = {}) {
   const diizinkan = new Set(web.map((w) => w.url));
   const label = new Map([...potongan.map((p) => [p.label, p]), ...web.map((w) => [w.label, w])]);
-  let hasil = String(teks)
-    .replace(/\[([^\]]*)\]\(((?:https?:\/\/|www\.)[^)\s]*)\)/gi, (_, t, url) => (diizinkan.has(url) ? `${t} (${url})` : t))
+  const bertanda = String(teks)
+    .replace(/\u0000/g, '') // penanda tidak boleh datang dari model
+    .replace(/\[([^\]]*)\]\(((?:https?:\/\/|www\.)[^)\s]*)\)/gi, (_, t, url) => (diizinkan.has(url) ? `${t} (${url})` : hanyaPengantar(t) ? BEKAS : t))
     .replace(/(?:https?:\/\/|www\.)[^\s)\]]+/gi, (url) => {
       const bersihUrl = url.replace(/[.,;:!?]+$/, '');
-      return diizinkan.has(bersihUrl) ? url : '';
+      return diizinkan.has(bersihUrl) ? url : BEKAS + url.slice(bersihUrl.length); // tanda baca akhir kalimat tetap
     })
-    .replace(/\[(M|W)(\d+)\]/g, (cocok) => (label.has(cocok.slice(1, -1)) ? cocok : ''))
-    .replace(/[ \t]{2,}/g, ' ')
-    .replace(/ +([.,;:!?])/g, '$1')
-    .trim();
+    .replace(/\[(M|W)(\d+)\]/g, (cocok) => (label.has(cocok.slice(1, -1)) ? cocok : BEKAS));
+  const rapikanSpasi = (s) => s.replace(/[ \t]{2,}/g, ' ').replace(/ +([.,;:!?])/g, '$1').trim();
+  // Seluruh balasan hanya pengantar tautan: jangan sampai kosong (pemanggil akan memakai teks cadangan
+  // tanda bahaya); pakai cara lama, bekas dibuang tanpa membuang kalimatnya.
+  const hasil = rapikanSpasi(rapikanBekas(bertanda)) || rapikanSpasi(bertanda.replace(/\u0000/g, ''));
   const dipakai = new Set([...hasil.matchAll(/\[((?:M|W)\d+)\]/g)].map((x) => x[1]));
   return {
     teks: hasil,
@@ -274,18 +337,26 @@ const bulat = (v, min, max) => {
   return Number.isInteger(n) && n >= min && n <= max ? n : null;
 };
 
-/** Pengaturan modul & web (LANJUT_055). Nilai tidak sah → fitur itu mati (gagal-tertutup). */
+// Mesin pencari web yang sah (LANJUT_057): '' = bawaan OpenRouter (tanpa
+// `engine`), 'exa' = plugins.web.engine "exa". Nama parameter dan nilainya
+// sesuai dokumentasi OpenRouter "Web Search"
+// (openrouter.ai/docs/guides/features/plugins/web-search, dicek 9 Okt 2026).
+const MESIN_WEB = ['', 'exa'];
+
+/** Pengaturan modul & web (LANJUT_055, mesin LANJUT_057). Nilai tidak sah → fitur itu mati (gagal-tertutup). */
 function pengaturanMateri(nilai) {
   const maks = bulat(nilai.ai_modul_potongan_maks, 1, 5);
   const skorMin = Number(String(nilai.ai_modul_skor_min ?? '').trim());
   const kataMin = bulat(nilai.ai_modul_kata_min, 1, 10);
   const batasHarian = bulat(nilai.ai_web_batas_harian, 0, 1000);
   const hasilMaks = bulat(nilai.ai_web_hasil_maks, 1, 10);
+  // Kunci hilang (migrasi 017 belum jalan) juga tidak sah: web mati, bukan diam-diam memakai bawaan.
+  const mesin = nilai.ai_web_mesin === undefined || nilai.ai_web_mesin === null ? null : String(nilai.ai_web_mesin).trim();
   const modulSah = maks !== null && Number.isFinite(skorMin) && skorMin >= 0 && kataMin !== null;
-  const webSah = batasHarian !== null && hasilMaks !== null;
+  const webSah = batasHarian !== null && hasilMaks !== null && MESIN_WEB.includes(mesin);
   return {
     modul: { aktif: modulSah && String(nilai.ai_modul_aktif ?? '').trim() === '1', maks, skorMin, kataMin },
-    web: { aktif: webSah && String(nilai.ai_web_aktif ?? '').trim() === '1', batasHarian, hasilMaks },
+    web: { aktif: webSah && String(nilai.ai_web_aktif ?? '').trim() === '1', batasHarian, hasilMaks, mesin: webSah ? mesin : null },
   };
 }
 
@@ -362,7 +433,7 @@ async function cariWeb(pertanyaan, cfg) {
   try {
     const { teks, anotasi } = await penyedia.mintaBalasan(susunPermintaanWeb(pertanyaan), {
       ...cfg.penyedia,
-      plugins: [{ id: 'web', max_results: cfg.web.hasilMaks }],
+      plugins: [{ id: 'web', max_results: cfg.web.hasilMaks, ...(cfg.web.mesin ? { engine: cfg.web.mesin } : {}) }],
       max_tokens: TOKEN_WEB_MAKS,
     });
     return {
@@ -444,4 +515,5 @@ module.exports = {
   rapikanBalasan,
   pengaturanPenyedia,
   pengaturanMateri,
+  MESIN_WEB,
 };

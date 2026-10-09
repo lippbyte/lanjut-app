@@ -20,6 +20,7 @@ const KUNCI_KONFIG = [
   'ai_web_aktif',
   'ai_web_batas_harian',
   'ai_web_hasil_maks',
+  'ai_web_mesin', // LANJUT_057
 ];
 
 async function ambilKonfigurasi() {

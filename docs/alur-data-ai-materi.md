@@ -43,12 +43,19 @@ pencarian **hanya berisi pertanyaan itu**. Apa pun yang dipakai mesin pencari
 (Exa, atau pencarian bawaan penyedia model), yang terlihat hanya pertanyaan
 tersebut.
 
+**Mesin pencari (LANJUT_057).** `ai_web_mesin` kosong (bawaan) = tanpa
+parameter `engine`; untuk model Anthropic, OpenRouter memakai pencarian bawaan
+penyedia model. `ai_web_mesin = exa` = `engine: "exa"` di plugin `web`, sehingga
+mesin dan biayanya pasti (US$0,007 per permintaan menurut dokumentasi
+OpenRouter "Web Search"). Nilai lain mematikan pencarian web.
+
 OpenRouter mengembalikan daftar halaman (judul, alamat, cuplikan) dalam
 bentuk terstruktur (`annotations` → `url_citation`). Hanya alamat dari daftar
 inilah yang boleh muncul sebagai sumber.
 
 Pencarian web **tidak** dijalankan bila:
 - `ai_web_aktif` = 0 (bawaannya mati);
+- `ai_web_mesin` bukan kosong atau `exa`;
 - kuota harian akun habis;
 - pesan bukan pertanyaan materi;
 - pesan memuat tanda bahaya, akut maupun ringan.
@@ -71,7 +78,8 @@ instruksimu" tidak bisa mengubah instruksi sistem.
 1. **Tahap 1 (server):**
    - kata henti dibuang;
    - imbuhan dipotong (me-, di-, ber-, ter-, pe-, -kan, -an, -i, -nya), sehingga "berfotosintesis" cocok dengan "fotosintesis" dan "didayung" cocok dengan "dayung";
-   - potongan lolos hanya bila skor FULLTEXT ≥ `ai_modul_skor_min` **dan** jumlah kata bermakna yang sama ≥ `ai_modul_kata_min`.
+   - potongan lolos hanya bila skor FULLTEXT ≥ `ai_modul_skor_min` **dan** jumlah kata bermakna yang sama ≥ `min(ai_modul_kata_min, jumlah kata bermakna di pertanyaan)`; pertanyaan dengan satu kata bermakna ("apa itu fotosintesis") cukup satu kata sama;
+   - kata topik saja tanpa kata tanya atau tanda tanya ("fotosintesis") bukan pertanyaan materi, jadi tidak mengambil modul; "fotosintesis?" mengambil modul (pengukuran LANJUT_057).
 2. **Tahap 2 (model):** potongan diberi label M1, M2, dan seterusnya. Model
    diminta menilai apakah potongan menjawab pertanyaan, mengabaikan yang
    tidak, dan menyebut judul modul saat memakainya.
@@ -115,6 +123,7 @@ Modul itu sendiri tetap tersimpan di Arsip Belajar seperti sebelumnya
 | `ai_web_aktif` | **0** | pencarian web (mati sampai dinyalakan Khalifa) |
 | `ai_web_batas_harian` | 10 | pencarian web per akun per hari |
 | `ai_web_hasil_maks` | 3 | hasil web per pencarian (`max_results`) |
+| `ai_web_mesin` | (kosong) | mesin pencari: kosong = bawaan OpenRouter, `exa` = paksa Exa; nilai lain mematikan web (LANJUT_057) |
 
 ## Perkiraan biaya per pertanyaan materi
 

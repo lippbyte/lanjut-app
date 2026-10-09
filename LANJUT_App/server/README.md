@@ -581,7 +581,15 @@ Alur data lengkap ada di `docs/alur-data-ai-materi.md`. Ringkasnya:
   - Hanya milik akun yang bertanya (`modul.repo.js` → `kandidatUntukAi`,
     filter `pengguna_id` di kedua tabel), dipersempit ke mapel bila disebut.
   - Penyaring tahap 1 di server: pemotong imbuhan, lalu skor FULLTEXT ≥
-    `ai_modul_skor_min` **dan** kata bermakna yang sama ≥ `ai_modul_kata_min`.
+    `ai_modul_skor_min` **dan** kata bermakna yang sama ≥
+    `min(ai_modul_kata_min, jumlah kata bermakna di pertanyaan)`. Jadi
+    "apa itu fotosintesis" (satu kata bermakna) cukup satu kata sama.
+  - Kata topik saja tanpa kata tanya atau tanda tanya ("fotosintesis",
+    "newton") dianggap obrolan, bukan pertanyaan materi, sehingga tidak
+    mengambil modul (pengukuran LANJUT_057). "newton?" atau "apa itu
+    newton" mengambil modul.
+  - Kata umum ("energi?") bisa meloloskan potongan dari beberapa mapel;
+    tahap 2 yang menyaring, atau siswa menyebut mapelnya.
   - Maksimal `ai_modul_potongan_maks` potongan, berlabel M1, M2, dan
     seterusnya.
   - Tahap 2: model menilai dan mengabaikan potongan yang tidak menjawab.
@@ -595,14 +603,39 @@ Alur data lengkap ada di `docs/alur-data-ai-materi.md`. Ringkasnya:
     masuk ke permintaan jawaban sebagai data berlabel W1, W2, dan seterusnya.
   - Alamat web di balasan yang tidak ada di anotasi dibuang server, dan
     daftar sumber (`sumber.modul`, `sumber.web`) disusun server dari label
-    yang dipakai.
+    yang dipakai. Kata pengantar yang menggantung karenanya ("Lihat juga",
+    "Sumber:", butir daftar dan judul "Referensi:" yang isinya habis) ikut
+    dibuang (LANJUT_057).
+- **Mesin pencari (`ai_web_mesin`, LANJUT_057).** Nilai yang sah:
+  - kosong (bawaan): tanpa parameter `engine`. Menurut dokumentasi
+    OpenRouter, model Anthropic, OpenAI, Google, Perplexity, dan SpaceXAI
+    memakai pencarian bawaan penyedia model (harga diteruskan dari penyedia),
+    model lain memakai Exa;
+  - `exa`: `plugins: [{ id: "web", max_results, engine: "exa" }]`. Menurut
+    dokumentasi OpenRouter, Exa mode bawaan (auto) US$0,007 per permintaan,
+    termasuk hingga 10 hasil.
+
+  Nilai lain (juga huruf besar, `native`, atau kunci yang hilang) membuat
+  pencarian web **tidak dipakai**, bukan diabaikan. Sumber nama parameter:
+  OpenRouter, "Web Search",
+  `https://openrouter.ai/docs/guides/features/plugins/web-search` (dicek
+  9 Oktober 2026).
+
+  > **Peringatan:** biarkan `ai_web_aktif` tetap `0` sampai kebijakan data
+  > mesin pencari yang dipilih (Exa atau pencarian bawaan penyedia) sudah
+  > dicek, termasuk apakah `data_collection: deny` berlaku di sana. Dokumentasi
+  > Web Search OpenRouter tidak menyebut `data_collection` untuk pencarian
+  > web. Ini masih `[ISI]` di kebijakan privasi draf v2.
 - **Kuota web harian** disimpan di memori proses: hilang saat restart, dan
   tidak dibagi antarproses.
 
 ```sql
-UPDATE konfigurasi_levelin SET nilai = '1' WHERE kunci = 'ai_web_aktif';        -- nyalakan web
+UPDATE konfigurasi_levelin SET nilai = 'exa' WHERE kunci = 'ai_web_mesin';      -- paksa Exa ('' = bawaan)
+UPDATE konfigurasi_levelin SET nilai = '1' WHERE kunci = 'ai_web_aktif';        -- nyalakan web (lihat peringatan)
 UPDATE konfigurasi_levelin SET nilai = '0' WHERE kunci = 'ai_modul_aktif';      -- jangan kirim modul
 ```
+
+Evaluasi lapis 2 memakai mesin yang sama lewat `--web --web-mesin=exa`.
 
 Tes: `tests/ngobrol-materi.test.js` (rute, isolasi antarakun, web, sitasi)
 dan `tests/ngobrol-materi-murni.test.js` (imbuhan, pengenal pesan, perapian

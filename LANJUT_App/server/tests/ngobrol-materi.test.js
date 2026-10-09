@@ -13,7 +13,7 @@ const penyedia = require('../src/modul/ngobrol/penyedia-ai');
 const modulRepo = require('../src/modul/modul/modul.repo');
 const skrip = require('../src/db/persetujuan/persetujuan-ortu');
 
-const KUNCI = ['ngobrol_batas_5_menit', 'ngobrol_batas_24_jam', 'ai_aktif', 'ai_modul_aktif', 'ai_modul_potongan_maks', 'ai_modul_skor_min', 'ai_modul_kata_min', 'ai_web_aktif', 'ai_web_batas_harian', 'ai_web_hasil_maks'];
+const KUNCI = ['ngobrol_batas_5_menit', 'ngobrol_batas_24_jam', 'ai_aktif', 'ai_modul_aktif', 'ai_modul_potongan_maks', 'ai_modul_skor_min', 'ai_modul_kata_min', 'ai_web_aktif', 'ai_web_batas_harian', 'ai_web_hasil_maks', 'ai_web_mesin'];
 const ENV_ASLI = { kunci: env.OPENROUTER_API_KEY, url: env.OPENROUTER_BASE_URL };
 const PENANDA = 'PESAN TERBARU SISWA (JSON):';
 let server;
@@ -28,7 +28,7 @@ before(async () => {
   baseUrl = urlDari(server);
   const [baris] = await pool.query('SELECT kunci, nilai FROM konfigurasi_levelin WHERE kunci IN (?)', [KUNCI]);
   konfigAsli = Object.fromEntries(baris.map((b) => [b.kunci, b.nilai]));
-  assert.equal(Object.keys(konfigAsli).length, KUNCI.length, 'jalankan npm run migrasi (016_ai_materi)');
+  assert.equal(Object.keys(konfigAsli).length, KUNCI.length, 'jalankan npm run migrasi (016_ai_materi, 017_ai_web_mesin)');
   const [[v]] = await pool.query("SELECT nilai FROM konfigurasi_levelin WHERE kunci = 'persetujuan_versi_kebijakan'");
   versiKebijakan = Number(v.nilai);
   env.OPENROUTER_API_KEY = 'kunci-uji-palsu';
@@ -175,6 +175,47 @@ test('imbuhan: "berfotosintesis" dan "didayung" menemukan modul yang tepat', asy
   assert.ok(potonganDari(dayung).some((p) => p.isi.includes('dayung')));
 });
 
+test('LANJUT_057: pertanyaan satu kata bermakna — dengan kata tanya/tanda tanya menemukan modulnya; kata saja = obrolan; kekekalan energi tetap kosong', async (t) => {
+  const a = await akun({ modul: [FISIKA, BIOLOGI, EKONOMI] });
+  const mock = tiruan(t);
+  const kandidat = t.mock.method(modulRepo, 'kandidatUntukAi');
+  // [pesan, judul modul yang lolos; null = obrolan (tanpa blok materi, tanpa pengambilan modul)]
+  const harapan = [
+    ['fotosintesis', null],
+    ['apa itu fotosintesis', ['Biologi: Fotosintesis']],
+    ['jelaskan inflasi', ['Ekonomi: Inflasi']],
+    ['newton', null],
+    ['energi', null],
+    ['apa itu hukum newton', ['Fisika: Hukum Newton']],
+    ['newton?', ['Fisika: Hukum Newton']],
+    ['energi?', ['Biologi: Fotosintesis']], // hanya modul yang memuat "energi"
+    ['jelaskan hukum kekekalan energi', []], // positif palsu LANJUT_049 tetap tidak terkirim
+  ];
+  for (const [q] of harapan) assert.equal((await tanya(a, q)).status, 200, q);
+  const panggilan = panggilanJawaban(mock);
+  assert.equal(panggilan.length, harapan.length);
+  harapan.forEach(([q, judul], i) => {
+    if (judul === null) assert.equal(statusDari(panggilan[i]), null, `${q}: tanpa blok materi`);
+    else assert.deepEqual(potonganDari(panggilan[i]).map((p) => p.judul), judul, q);
+  });
+  assert.equal(kandidat.mock.callCount(), harapan.filter(([, j]) => j !== null).length, 'kata tanpa kata tanya/tanda tanya tidak mengambil modul');
+});
+
+test('LANJUT_057: kata umum ("energi?") boleh meloloskan potongan dari dua mapel; menyebut mapel mempersempit', async (t) => {
+  const a = await akun({
+    modul: [
+      { judul: 'Fisika: Energi', mapel_id: 'fisika', teks: 'Energi kinetik adalah energi gerak benda, sedangkan energi potensial adalah energi karena kedudukan benda.' },
+      { judul: 'Biologi: Energi Tumbuhan', mapel_id: 'biologi', teks: 'Tumbuhan mengubah energi cahaya menjadi energi kimia, dan energi itu tersimpan sebagai glukosa sebagai energi cadangan.' },
+    ],
+  });
+  const mock = tiruan(t);
+  await tanya(a, 'energi?');
+  await tanya(a, 'energi di fisika?');
+  const [umum, fisika] = panggilanJawaban(mock);
+  assert.deepEqual(potonganDari(umum).map((p) => p.judul).sort(), ['Biologi: Energi Tumbuhan', 'Fisika: Energi'], 'kompromi: tahap 2 (model) yang menyaring');
+  assert.deepEqual(potonganDari(fisika).map((p) => p.judul), ['Fisika: Energi']);
+});
+
 test('mapel di pertanyaan mempersempit pencarian ke mapel itu', async (t) => {
   const a = await akun({
     modul: [
@@ -304,6 +345,32 @@ test('web: ai_web_aktif=0 → tidak ada permintaan web; batas harian habis → t
   } finally {
     await kembalikanKonfig();
   }
+});
+
+test('LANJUT_057: ai_web_mesin — kosong tanpa engine, exa menambah engine; nilai tidak sah mematikan web; tanpa restart', async (t) => {
+  const a = await akun({ modul: [BIOLOGI] });
+  const mock = tiruan(t, { web: { teks: 'Ringkasan.', anotasi: ANOTASI } });
+  let salah;
+  try {
+    await aturKonfig('ai_web_aktif', '1');
+    await aturKonfig('ai_web_mesin', '');
+    await tanya(a, 'apa hasil fotosintesis?');
+    await aturKonfig('ai_web_mesin', 'exa');
+    await tanya(a, 'apa hasil fotosintesis?');
+    await aturKonfig('ai_web_mesin', 'google');
+    salah = await tanya(a, 'apa hasil fotosintesis?');
+  } finally {
+    await kembalikanKonfig();
+  }
+  const web = panggilanWeb(mock);
+  assert.equal(web.length, 2, 'nilai tidak sah: tidak ada permintaan web');
+  assert.deepEqual(web[0].arguments[1].plugins, [{ id: 'web', max_results: 3 }], 'kosong = mesin bawaan OpenRouter, tanpa engine');
+  assert.deepEqual(web[1].arguments[1].plugins, [{ id: 'web', max_results: 3, engine: 'exa' }]);
+  assert.equal(web[1].arguments[1].provider.data_collection, 'deny', 'pengaturan provider tetap ikut');
+  assert.equal(web[1].arguments[0][1].content, 'apa hasil fotosintesis?', 'tetap hanya pertanyaan');
+  assert.equal(salah.status, 200, 'tetap dijawab tanpa web');
+  assert.equal(salah.json.data.web_habis, false);
+  assert.equal(panggilanJawaban(mock).length, 3);
 });
 
 test('web tidak dipakai untuk tanda bahaya (akut maupun ringan), jalur masuk, dan obrolan biasa', async (t) => {

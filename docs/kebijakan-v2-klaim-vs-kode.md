@@ -14,7 +14,9 @@ diganti atau dihapus tercatat di bagian "Klaim yang diganti atau dihapus".
 **Singkatan jalur.** `srv/` = `LANJUT_App/server/src/` · `mig/` =
 `LANJUT_App/server/src/db/migrasi/` · `cfg/` = `LANJUT_App/server/config/` ·
 `tes/` = `LANJUT_App/server/tests/` · `app/` = `LANJUT_App/` (app Expo).
-Nomor baris per 8 Oktober 2026.
+Nomor baris per 8 Oktober 2026, yaitu commit `b20db57`. Bila kode sudah
+berubah (mis. LANJUT_057 menambah baris di `ngobrol.layanan.js`), buka
+versi itu dengan `git show b20db57:<berkas>`.
 
 **Status.**
 - **terbukti**: kode dan/atau tes otomatis menunjukkan perilaku itu.

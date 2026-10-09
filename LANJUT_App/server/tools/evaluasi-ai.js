@@ -23,6 +23,7 @@
 //   EVALUASI_AI_IZIN=ya npm run evaluasi-ai -- --ya-panggil-penyedia [--web]
 //   npm run evaluasi-ai -- --kering [--simpan-rencana=rencana.json]
 // Pilihan: --model=<id> --data-collection=allow|deny --zdr --hanya=A01,B02 --tanpa-jeda --web
+//          --web-mesin=exa (LANJUT_057; kosong = mesin bawaan OpenRouter, sama dengan ai_web_mesin)
 
 const fs = require('fs');
 const path = require('path');
@@ -78,6 +79,9 @@ const pengaturan = layanan.pengaturanPenyedia({
   ai_penyedia_only: '',
 });
 if (!pengaturan) tolak('pilihan --model / --data-collection tidak sah.');
+const WEB_MESIN = (pilihan('web-mesin') ?? '').trim();
+if (!layanan.MESIN_WEB.includes(WEB_MESIN)) tolak(`pilihan --web-mesin tidak sah (boleh: ${layanan.MESIN_WEB.map((m) => m || 'kosong').join(', ')}).`);
+const PLUGIN_WEB = { id: 'web', max_results: WEB_HASIL_MAKS, ...(WEB_MESIN ? { engine: WEB_MESIN } : {}) };
 
 const hanya = pilihan('hanya') ? new Set(pilihan('hanya').split(',').map((s) => s.trim())) : null;
 const SKENARIO = BERKAS.skenario.filter((sk) => !hanya || hanya.has(sk.id));
@@ -150,7 +154,7 @@ function tulisHasil(hasil, keterangan) {
   const md = [
     `# Hasil Evaluasi AI — ${tgl}`,
     '',
-    `> Lapis 2 (LANJUT_054). Model: \`${pengaturan.model}\` · provider: \`${JSON.stringify(pengaturan.provider)}\`. ${keterangan}`,
+    `> Lapis 2 (LANJUT_054). Model: \`${pengaturan.model}\` · provider: \`${JSON.stringify(pengaturan.provider)}\`${PAKAI_WEB ? ` · mesin web: \`${WEB_MESIN || 'bawaan OpenRouter'}\`` : ''}. ${keterangan}`,
     '> Isi kolom **Penilaian** (Lulus / Sebagian / Gagal) dan **Catatan**: Khalifa dan guru BK. Berkas ini diabaikan git; simpan atau commit secara sadar.',
     '',
     '| ID | Judul | Ditangani | Cek otomatis | Penilaian (Lulus/Sebagian/Gagal) | Catatan |',
@@ -192,7 +196,7 @@ function tulisHasil(hasil, keterangan) {
   const keModel = rencana.filter((r) => r.ditangani.startsWith('model'));
   const keWeb = rencana.filter((r) => r.cariWeb);
   console.log(`[evaluasi-ai] ${SKENARIO.length} skenario: ${keModel.length} panggilan ke model, ${SKENARIO.length - keModel.length} ditangani server tanpa model.`);
-  console.log(`[evaluasi-ai] pencarian web: ${keWeb.length}${PAKAI_WEB ? '' : ' (tambahkan --web untuk skenario web; berbiaya)'}`);
+  console.log(`[evaluasi-ai] pencarian web: ${keWeb.length}${PAKAI_WEB ? ` · mesin: ${WEB_MESIN || 'bawaan OpenRouter'}` : ' (tambahkan --web untuk skenario web; berbiaya)'}`);
   console.log(`[evaluasi-ai] model: ${pengaturan.model} · provider: ${JSON.stringify(pengaturan.provider)}`);
 
   if (KERING) {
@@ -228,7 +232,7 @@ function tulisHasil(hasil, keterangan) {
       const materiData = r.materiData ? { ...r.materiData } : null;
       if (r.cariWeb) {
         // Sama dengan produksi: permintaan web terisolasi, hanya pertanyaan yang disamarkan.
-        const web = await penyedia.mintaBalasan(layanan.susunPermintaanWeb(r.pesanTeks), { ...pengaturan, plugins: [{ id: 'web', max_results: WEB_HASIL_MAKS }], max_tokens: 400 });
+        const web = await penyedia.mintaBalasan(layanan.susunPermintaanWeb(r.pesanTeks), { ...pengaturan, plugins: [PLUGIN_WEB], max_tokens: 400 });
         materiData.web = web.anotasi.slice(0, WEB_HASIL_MAKS).map((a, i) => ({ label: `W${i + 1}`, ...a }));
         materiData.ringkasanWeb = web.teks.replace(/(?:https?:\/\/|www\.)\S+/gi, '').slice(0, 800);
         pesan = r.susun(materiData);

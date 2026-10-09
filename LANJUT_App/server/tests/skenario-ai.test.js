@@ -31,6 +31,7 @@ const TEKS = JSON.parse(fs.readFileSync(path.join(AKAR, 'config', 'ngobrol-teks.
 const KUNCI = [
   'ngobrol_batas_5_menit', 'ngobrol_batas_24_jam', 'ai_aktif', 'ai_model', 'ai_data_collection', 'ai_zdr', 'ai_penyedia_only',
   'ai_modul_aktif', 'ai_modul_potongan_maks', 'ai_modul_skor_min', 'ai_modul_kata_min', 'ai_web_aktif', 'ai_web_batas_harian', 'ai_web_hasil_maks',
+  'ai_web_mesin', // LANJUT_057
 ];
 const ENV_ASLI = { kunci: env.OPENROUTER_API_KEY, url: env.OPENROUTER_BASE_URL };
 const ALAMAT_MATI = 'http://127.0.0.1:9/api/v1';
@@ -60,7 +61,7 @@ before(async () => {
   baseUrl = urlDari(server);
   const [baris] = await pool.query('SELECT kunci, nilai FROM konfigurasi_levelin WHERE kunci IN (?)', [KUNCI]);
   konfigAsli = Object.fromEntries(baris.map((b) => [b.kunci, b.nilai]));
-  assert.equal(Object.keys(konfigAsli).length, KUNCI.length, 'jalankan npm run migrasi (014, 015)');
+  assert.equal(Object.keys(konfigAsli).length, KUNCI.length, 'jalankan npm run migrasi (014–017)');
   const [[v]] = await pool.query("SELECT nilai FROM konfigurasi_levelin WHERE kunci = 'persetujuan_versi_kebijakan'");
   versiKebijakan = Number(v.nilai);
   env.OPENROUTER_API_KEY = 'kunci-uji-palsu';

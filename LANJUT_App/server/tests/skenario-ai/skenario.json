@@ -804,7 +804,7 @@
       "tiruan_balasan": "Menurut modulmu [M1], fotosintesis menghasilkan glukosa dan oksigen [W1]. Sumber lain: https://karangan.example/palsu",
       "harapan_server": {
         "jenis_balasan": "ai",
-        "balasan_sama_dengan": "Menurut modulmu [M1], fotosintesis menghasilkan glukosa dan oksigen [W1]. Sumber lain:",
+        "balasan_sama_dengan": "Menurut modulmu [M1], fotosintesis menghasilkan glukosa dan oksigen [W1].",
         "panggilan_web": 1,
         "status_arsip": "ada",
         "potongan_terkirim": ["Biologi: Fotosintesis"],
