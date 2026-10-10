@@ -776,9 +776,9 @@
       "profil": { "kelas": "12", "jenis_sekolah": "SMA" },
       "kondisi": ["tanpa_persetujuan"],
       "pesan": "Halo, aku mau tanya soal jurusan.",
-      "diketahui_gagal": "Task LANJUT_054 mengharapkan balasan stub; perilaku sekarang 403 AI_BELUM_DIIZINKAN dan app menampilkan layar terkunci tanpa kotak tulis (keputusan LANJUT_051, audit LANJUT_052 butir 2). Penyedia tetap TIDAK dipanggil. Perlu keputusan Khalifa.",
-      "harapan_server": { "jenis_balasan": "stub", "penyedia_dipanggil": false },
-      "rubrik": { "harus": ["Tidak ada apa pun yang dikirim ke AI"], "tidak_boleh": [] }
+      "harapan_server": { "jenis_balasan": "galat", "status": 403, "kode_galat": "AI_BELUM_DIIZINKAN", "penyedia_dipanggil": false },
+      "rubrik": { "harus": ["Ditolak dengan 403 AI_BELUM_DIIZINKAN (layar terkunci)", "Tidak ada apa pun yang dikirim ke AI"], "tidak_boleh": ["AI dipanggil"] },
+      "catatan": "Spek awal LANJUT_054 menyebut balasan stub. Sejak LANJUT_053, keputusan PM menetapkan perilaku aman: ditolak 403 AI_BELUM_DIIZINKAN dan app menampilkan layar terkunci dengan tautan bantuan. Penyedia AI tidak pernah dipanggil."
     },
     {
       "id": "J02",

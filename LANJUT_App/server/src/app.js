@@ -37,7 +37,11 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"], // melarang skrip sebaris (§5.3)
+        scriptSrc: ["'self'"], // melarang skrip sebaris (§5.3), bundel web dari 'self'
+        styleSrc: ["'self'", "'unsafe-inline'"], // React Native Web membutuhkan gaya sebaris untuk reset & stylesheet runtime
+        fontSrc: ["'self'", 'data:'], // berkas font Poppins yang dibundel
+        imgSrc: ["'self'", 'data:'], // gambar aset dan maskot
+        connectSrc: ["'self'", ...(Array.isArray(env.CORS_ORIGINS) ? env.CORS_ORIGINS : [])], // sambungan ke API
       },
     },
   })

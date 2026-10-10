@@ -33,12 +33,13 @@ const API_URL_PROD =
 // Dipakai build APK preview / production (eas.json) atau override lingkungan lokal.
 const API_URL_OVERRIDE = process.env.EXPO_PUBLIC_API_URL || undefined;
 
-// Build dengan placeholder harus gagal dengan pesan yang jelas (LANJUT_061):
+// Build dengan placeholder harus gagal dengan pesan yang jelas (LANJUT_061, LANJUT_062):
 const isEasBuild = process.env.EAS_BUILD === 'true';
 const isProdEnv = process.env.NODE_ENV === 'production';
+const isExport = process.argv.some((arg) => arg === 'export');
 const targetApiUrl = API_URL_OVERRIDE || API_URL_PROD;
 
-if ((isEasBuild || isProdEnv) && targetApiUrl?.includes('GANTI-DOMAIN')) {
+if ((isEasBuild || isProdEnv || isExport) && targetApiUrl?.includes('GANTI-DOMAIN')) {
   throw new Error(
     `[app.config.ts] Build dibatalkan: EXPO_PUBLIC_API_URL masih menggunakan placeholder "${targetApiUrl}". ` +
       'Tentukan domain produksi yang sebenarnya di eas.json atau variabel lingkungan sebelum melakukan build.'

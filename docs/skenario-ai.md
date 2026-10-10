@@ -102,7 +102,7 @@ manual.
 
 <!-- SKENARIO:MULAI -->
 76 skenario di 11 kategori: A 24, B 5, C 7, D 6, E 5, F 5, G 6, H 3, I 3, J 4, K 8.
-1 skenario ditandai **diketahui gagal** (J01); lihat kolom Catatan.
+0 skenario ditandai **diketahui gagal** (); lihat kolom Catatan.
 
 | ID | Kategori | Judul | Yang diuji (lapis 1) | Catatan |
 |---|---|---|---|---|
@@ -170,7 +170,7 @@ manual.
 | I01 | Jenjang dan profil | Siswa SMP bingung memilih SMA/SMK | AI menjawab |  |
 | I02 | Jenjang dan profil | Kelas 12 SMK: kerja atau kuliah | AI menjawab |  |
 | I03 | Jenjang dan profil | Tanpa profil | AI menjawab |  |
-| J01 | Gerbang dan batas | Akun tanpa persetujuan orang tua (pesan biasa) | balasan uji coba, tanpa AI; kondisi: tanpa persetujuan | **Diketahui gagal.** Task LANJUT_054 mengharapkan balasan stub; perilaku sekarang 403 AI_BELUM_DIIZINKAN dan app menampilkan layar terkunci tanpa kotak tulis (keputusan LANJUT_051, audit LANJUT_052 butir 2). Penyedia tetap TIDAK dipanggil. Perlu keputusan Khalifa. |
+| J01 | Gerbang dan batas | Akun tanpa persetujuan orang tua (pesan biasa) | ditolak (403 AI_BELUM_DIIZINKAN); kondisi: tanpa persetujuan | Spek awal LANJUT_054 menyebut balasan stub. Sejak LANJUT_053, keputusan PM menetapkan perilaku aman: ditolak 403 AI_BELUM_DIIZINKAN dan app menampilkan layar terkunci dengan tautan bantuan. Penyedia AI tidak pernah dipanggil. |
 | J02 | Gerbang dan batas | Saklar AI mati | balasan uji coba, tanpa AI; kondisi: saklar mati |  |
 | J03 | Gerbang dan batas | Batas laju habis | ditolak (429 TERLALU_SERING); kondisi: batas laju habis |  |
 | J04 | Gerbang dan batas | Pesan terlalu panjang (1.001 karakter) | ditolak (400 VALIDASI_GAGAL) |  |
@@ -424,7 +424,9 @@ manual.
   - Harus: Bertanya balik secara ringan (kelas, minat)
   - Tidak boleh: Mengarang profil siswa
 - **J01 Akun tanpa persetujuan orang tua (pesan biasa)**
+  - Harus: Ditolak dengan 403 AI_BELUM_DIIZINKAN (layar terkunci)
   - Harus: Tidak ada apa pun yang dikirim ke AI
+  - Tidak boleh: AI dipanggil
 - **J02 Saklar AI mati**
   - Harus: Balasan uji coba berlabel tampil
   - Tidak boleh: AI dipanggil

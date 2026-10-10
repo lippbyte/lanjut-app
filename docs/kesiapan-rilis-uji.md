@@ -11,8 +11,11 @@
 > kunci tarif (1.3, 1.4), daftar periksa keselamatan (3), hal teknis yang
 > sudah beres (4), dan pemantauan dengan tabel `pemakaian_ai_harian` (5).
 >
-> Acuan teknis yang lebih rinci: `LANJUT_App/server/README.md` §6
-> (Deployment), `LANJUT_App/server/DEPLOYMENT-RUMAHWEB.md`,
+> **Diperbarui LANJUT_062 (10 Oktober 2026)**:
+> Build web produksi (`npm run build:web` → `dist/`) siap dan lolos uji alur inti lokal sebagai jalur rilis uji tercepat (1.3, 1.5); guard placeholder `EXPO_PUBLIC_API_URL` diperluas ke `expo export`; uji asap pasca-deploy aman untuk server remote (tidak menyentuh basis data lokal); tes skenario AI J01 aktif (403, 0 `todo`); panduan lengkap di `docs/deploy-web.md`.
+>
+> Acuan teknis yang lebih rinci: `docs/deploy-web.md`, `docs/deploy-produksi.md`,
+> `LANJUT_App/server/README.md` §6, `LANJUT_App/server/DEPLOYMENT-RUMAHWEB.md`,
 > `docs/LANJUT_024_Checklist-Hari-Deploy.md`.
 
 ## 1. Urutan deploy
@@ -97,7 +100,27 @@ Tabel env di `server/README.md` §6 sudah mencantumkan `OPENROUTER_API_KEY`
 
 **App:**
 - **APK/AAB:** `LANJUT_App/eas.json` telah dibersihkan dari IP LAN `10.141.5.75` (LANJUT_061). Profil `preview` dan `production` kini memakai placeholder `https://api.GANTI-DOMAIN/api/v1`. Khalifa mengganti placeholder tersebut ke URL domain produksi sebelum menjalankan `eas build` (lihat panduan `docs/deploy-produksi.md`). Proteksi build gagal-cepat di `app.config.ts` akan menolak build bila placeholder belum diganti.
-- **Web:** ikuti `DEPLOYMENT-RUMAHWEB.md` dan `docs/deploy-produksi.md` (app di root, landing page di `/tentang`).
+- **Web:** **Jalur rilis uji tercepat** untuk pilot sekolah tanpa ketergantungan EAS/APK. Build via `npm run build:web` menghasilkan `dist/` SPA murni dengan guard placeholder `EXPO_PUBLIC_API_URL`. Konfigurasi fallback rute SPA `try_files` di Nginx / hosting statis, cache header, dan CSP dijelaskan lengkap di `docs/deploy-web.md`. Status pengujian dan batasan web dirangkum di bagian 1.5.
+
+### 1.5 Status Kesiapan Jalur Web Produksi (LANJUT_062)
+
+Jalur Web SPA adalah wahana tercepat membawa LANJUT ke siswa dan guru tanpa perlu instalasi APK maupun kuota EAS Build.
+
+**Yang sudah lolos uji pada build web produksi (`dist/`):**
+- Pendaftaran akun baru (`/daftar`) & penerimaan kebijakan privasi v1.
+- Masuk sesi (`/masuk`) dan keluar sesi (`/akun`).
+- Alur Latihan: pembuatan kartu baru, sesi latihan dengan pemilih tingkat keyakinan (Yakin, Ragu, Tebak), pembukaan jawaban, dan evaluasi diri.
+- Level-In (`/level-in`): pemuatan status dan modul diagnostik.
+- Arsip (`/arsip`): daftar kartu tersimpan dan navigasi pengunggah modul (`/arsip-modul-unggah`) dengan pemilih berkas web native (`<input type="file">`) dan penempelan teks.
+- Ngobrol (`/ngobrol`): tampilan layar terkunci yang jelas (HTTP 403 `AI_BELUM_DIIZINKAN`) dengan tombol bantuan ("Butuh bicara dengan orang?").
+- Deep linking & refresh (SPA fallback) berfungsi saat server mengembalikan `index.html`.
+- CSP Helmet di server Express telah disesuaikan (`styleSrc: ['self', 'unsafe-inline']`, `fontSrc`, `imgSrc`, `connectSrc`) sehingga aset web tidak diblokir.
+
+**Yang belum diuji atau menjadi batasan pada jalur Web:**
+1. **Bukan PWA Terpasang (Add to Home Screen):** Bundel web belum memuat `manifest.json` PWA lengkap dan Service Worker offline. Aplikasi berjalan murni sebagai web browser tab, belum bisa dipasang sebagai aplikasi beranda mandiri.
+2. **Penyimpanan Token Sesi:** `@react-native-async-storage/async-storage` pada peramban menyimpan token JWT di `window.localStorage`. Dilindungi oleh CSP ketat di backend, namun tetap perlu disadari perbedaannya dengan penyimpanan aman di mobile native (Keystore/EncryptedSharedPreferences).
+3. **Perilaku Peramban Ponsel Fisik:** Alur di atas diuji pada simulasi peramban Chromium desktop/responsive. Perilaku khusus peramban HP fisik (seperti pergeseran viewport saat keyboard virtual muncul di Chrome Android / Safari iOS, dan navigasi gesture kembali) belum diuji pada HP fisik siswa.
+4. **Pemilih Berkas Mobile:** Pemilih berkas web di peramban ponsel (apakah memicu file picker Android/iOS dengan lancar untuk PDF/TXT modul) belum diuji di perangkat fisik.
 
 ### 1.4 Tabel konfigurasi `konfigurasi_levelin` (33 kunci)
 
@@ -205,6 +228,7 @@ cukup dengan `ai_aktif = 0` dan tidak mencatat persetujuan orang tua/wali.
 | Skrip E2E | **Selesai (LANJUT_060):** tersimpan di `LANJUT_App/e2e/` beserta README cara menjalankan | Jalankan ulang sebelum rilis (butuh Playwright dan export web) | Khalifa |
 | README env | **Selesai (LANJUT_060):** `OPENROUTER_API_KEY` ada di tabel env `server/README.md` §6 | — | — |
 | Landing page | Tombol ke `https://edilakso.my.id/`; penempatan `/tentang` belum dicek | Cek setelah DNS beres | Khalifa |
+| Build Web Produksi | **Selesai (LANJUT_062):** `dist/` teruji alur inti lokal, CSP dan fallback Nginx siap | Deploy ke hosting/VPS sesuai `docs/deploy-web.md`; uji di peramban ponsel siswa | Khalifa |
 
 ## 5. Rencana pemantauan minimal saat pilot
 

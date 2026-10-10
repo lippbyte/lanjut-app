@@ -248,9 +248,11 @@ npm run smoke -- --url=https://api.GANTI-DOMAIN
 3. `POST /api/v1/auth/masuk` → Melakukan autentikasi dan memvalidasi token sesi.
 4. `GET /api/v1/auth/saya` → Membaca profil pengguna menggunakan Bearer token.
 5. `POST /api/v1/auth/keluar` → Mengakhiri sesi (logout) dengan aman.
-6. Pembersihan DB → Menghapus akun uji sementara dari tabel `pengguna`.
+6. **Pembersihan Akun Uji:**
+   - **Pada target localhost (bawaan):** Skrip secara otomatis menghapus baris akun uji sementara dari basis data lokal (`DELETE FROM pengguna WHERE id = ...`) dan mencetak `LULUS`.
+   - **Pada target URL non-localhost / remote (`--url=...`):** Demi keamanan dan integritas basis data, skrip **tidak menyentuh basis data lokal**. Langkah pembersihan ditandai `DILEWATI` dan skrip mencetak peringatan serta instruksi query pembersihan manual yang perlu dieksekusi di server target (`DELETE FROM pengguna WHERE id = '<id>';`).
 
-Semua 6 langkah harus mencetak `LULUS`.
+Semua langkah harus mencetak `LULUS` (atau `DILEWATI` dengan peringatan jelas untuk langkah 6 pada target remote).
 
 ---
 

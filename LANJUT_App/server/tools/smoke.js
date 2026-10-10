@@ -4,8 +4,6 @@
 // Memeriksa kesehatan API dan alur autentikasi dasar secara end-to-end tanpa memanggil AI.
 // Penggunaan: node tools/smoke.js [--url=http://...]
 
-const pool = require('../src/db/koneksi');
-
 function parseArgs() {
   const urlArg = process.argv.find((a) => a.startsWith('--url='));
   if (urlArg) {
@@ -15,7 +13,28 @@ function parseArgs() {
   return 'http://localhost:4000';
 }
 
+function isLocalhost(urlStr) {
+  try {
+    const u = new URL(urlStr);
+    return (
+      u.hostname === 'localhost' ||
+      u.hostname === '127.0.0.1' ||
+      u.hostname === '::1' ||
+      u.hostname === '[::1]'
+    );
+  } catch (_e) {
+    return false;
+  }
+}
+
 const baseUrl = parseArgs();
+const targetLocalhost = isLocalhost(baseUrl);
+
+// Basis data lokal hanya dihubungkan jika target adalah localhost (LANJUT_062).
+let pool = null;
+if (targetLocalhost) {
+  pool = require('../src/db/koneksi');
+}
 
 async function main() {
   console.log(`=======================================================`);
@@ -143,16 +162,30 @@ async function main() {
     console.log('LULUS (sesi ditutup)');
 
     // ------------------------------------------------------------------
-    // Langkah 6: Pembersihan akun uji sementara dari basis data
+    // Langkah 6: Pembersihan akun uji sementara
     // ------------------------------------------------------------------
-    process.stdout.write('[6/6] Menghapus akun uji sementara dari basis data... ');
-    if (userId) {
-      const [hasil] = await pool.execute('DELETE FROM pengguna WHERE id = ?', [userId]);
-      if (hasil.affectedRows > 0) {
-        console.log(`LULUS (terhapus: ${userId})`);
-      } else {
-        console.log(`PERINGATAN (baris tidak ditemukan di basis data lokal)`);
+    if (targetLocalhost) {
+      process.stdout.write('[6/6] Menghapus akun uji sementara dari basis data lokal... ');
+      if (userId && pool) {
+        const [hasil] = await pool.execute('DELETE FROM pengguna WHERE id = ?', [userId]);
+        if (hasil.affectedRows > 0) {
+          console.log(`LULUS (terhapus: ${userId})`);
+        } else {
+          console.log(`PERINGATAN (baris tidak ditemukan di basis data lokal)`);
+        }
       }
+    } else {
+      process.stdout.write('[6/6] Pembersihan akun uji... ');
+      console.log('DILEWATI (Target bukan localhost)');
+      console.log(`\n=======================================================`);
+      console.log(`[PERINGATAN] Target uji adalah server jarak jauh (${baseUrl}).`);
+      console.log(`Basis data lokal TIDAK disentuh.`);
+      console.log(`Akun uji sementara tertinggal di basis data target:`);
+      console.log(`  ID Pengguna:   ${userId}`);
+      console.log(`  Nama Pengguna: ${username}`);
+      console.log(`Petunjuk pembersihan manual di server target:`);
+      console.log(`  DELETE FROM pengguna WHERE id = '${userId}';`);
+      console.log(`=======================================================\n`);
     }
 
     console.log('\n-------------------------------------------------------');
@@ -163,8 +196,8 @@ async function main() {
     console.log('GAGAL');
     console.error(`\n[galat] Uji asap terhenti:`, err.message);
 
-    // Upaya pembersihan jika akun sempat dibuat
-    if (userId) {
+    // Upaya pembersihan jika akun sempat dibuat pada localhost
+    if (userId && targetLocalhost && pool) {
       try {
         await pool.execute('DELETE FROM pengguna WHERE id = ?', [userId]);
         console.log(`[pembersihan] Akun sementara ${userId} telah dibersihkan.`);
@@ -178,12 +211,18 @@ async function main() {
     console.log('-------------------------------------------------------\n');
     process.exit(1);
   } finally {
-    try {
-      await pool.end();
-    } catch (_pErr) {
-      // Abaikan
+    if (pool) {
+      try {
+        await pool.end();
+      } catch (_pErr) {
+        // Abaikan
+      }
     }
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = { isLocalhost, parseArgs };
