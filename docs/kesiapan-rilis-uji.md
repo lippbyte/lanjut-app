@@ -14,9 +14,12 @@
 > **Diperbarui LANJUT_062 (10 Oktober 2026)**:
 > Build web produksi (`npm run build:web` → `dist/`) siap dan lolos uji alur inti lokal sebagai jalur rilis uji tercepat (1.3, 1.5); guard placeholder `EXPO_PUBLIC_API_URL` diperluas ke `expo export`; uji asap pasca-deploy aman untuk server remote (tidak menyentuh basis data lokal); tes skenario AI J01 aktif (403, 0 `todo`); panduan lengkap di `docs/deploy-web.md`.
 >
-> Acuan teknis yang lebih rinci: `docs/deploy-web.md`, `docs/deploy-produksi.md`,
-> `LANJUT_App/server/README.md` §6, `LANJUT_App/server/DEPLOYMENT-RUMAHWEB.md`,
-> `docs/LANJUT_024_Checklist-Hari-Deploy.md`.
+> **Diperbarui LANJUT_063 (10 Oktober 2026)**:
+> PWA Minimal siap dipasang ke layar utama ponsel (iOS Safari & Android Chrome): manifest web dan ikon lengkap (192/512 any + maskable) di `dist/`, meta Apple di `<head>`, CSP `manifestSrc: ['self']`, opsi `layani-web.js --lan` untuk uji di HP via Wi-Fi lokal, serta panduan uji di `docs/uji-di-hp-lewat-wifi.md` (1.5, 4).
+>
+> Acuan teknis yang lebih rinci: `docs/deploy-web.md`, `docs/uji-di-hp-lewat-wifi.md`,
+> `docs/deploy-produksi.md`, `LANJUT_App/server/README.md` §6,
+> `LANJUT_App/server/DEPLOYMENT-RUMAHWEB.md`, `docs/LANJUT_024_Checklist-Hari-Deploy.md`.
 
 ## 1. Urutan deploy
 
@@ -102,11 +105,11 @@ Tabel env di `server/README.md` §6 sudah mencantumkan `OPENROUTER_API_KEY`
 - **APK/AAB:** `LANJUT_App/eas.json` telah dibersihkan dari IP LAN `10.141.5.75` (LANJUT_061). Profil `preview` dan `production` kini memakai placeholder `https://api.GANTI-DOMAIN/api/v1`. Khalifa mengganti placeholder tersebut ke URL domain produksi sebelum menjalankan `eas build` (lihat panduan `docs/deploy-produksi.md`). Proteksi build gagal-cepat di `app.config.ts` akan menolak build bila placeholder belum diganti.
 - **Web:** **Jalur rilis uji tercepat** untuk pilot sekolah tanpa ketergantungan EAS/APK. Build via `npm run build:web` menghasilkan `dist/` SPA murni dengan guard placeholder `EXPO_PUBLIC_API_URL`. Konfigurasi fallback rute SPA `try_files` di Nginx / hosting statis, cache header, dan CSP dijelaskan lengkap di `docs/deploy-web.md`. Status pengujian dan batasan web dirangkum di bagian 1.5.
 
-### 1.5 Status Kesiapan Jalur Web Produksi (LANJUT_062)
+### 1.5 Status Kesiapan Jalur Web Produksi & PWA Minimal (LANJUT_062, LANJUT_063)
 
 Jalur Web SPA adalah wahana tercepat membawa LANJUT ke siswa dan guru tanpa perlu instalasi APK maupun kuota EAS Build.
 
-**Yang sudah lolos uji pada build web produksi (`dist/`):**
+**Yang sudah siap dan lolos uji pada build web produksi (`dist/`):**
 - Pendaftaran akun baru (`/daftar`) & penerimaan kebijakan privasi v1.
 - Masuk sesi (`/masuk`) dan keluar sesi (`/akun`).
 - Alur Latihan: pembuatan kartu baru, sesi latihan dengan pemilih tingkat keyakinan (Yakin, Ragu, Tebak), pembukaan jawaban, dan evaluasi diri.
@@ -114,13 +117,20 @@ Jalur Web SPA adalah wahana tercepat membawa LANJUT ke siswa dan guru tanpa perl
 - Arsip (`/arsip`): daftar kartu tersimpan dan navigasi pengunggah modul (`/arsip-modul-unggah`) dengan pemilih berkas web native (`<input type="file">`) dan penempelan teks.
 - Ngobrol (`/ngobrol`): tampilan layar terkunci yang jelas (HTTP 403 `AI_BELUM_DIIZINKAN`) dengan tombol bantuan ("Butuh bicara dengan orang?").
 - Deep linking & refresh (SPA fallback) berfungsi saat server mengembalikan `index.html`.
-- CSP Helmet di server Express telah disesuaikan (`styleSrc: ['self', 'unsafe-inline']`, `fontSrc`, `imgSrc`, `connectSrc`) sehingga aset web tidak diblokir.
+- **Kesiapan PWA Minimal (LANJUT_063):**
+  - Web App Manifest (`/manifest.webmanifest` & `/manifest.json`) valid dan lengkap (nama, tema `#456A8C`, display `standalone`, background `#FFFFFF`).
+  - Ikon aplikasi lengkap: 192×192 (any & maskable), 512×512 (any & maskable), dan `apple-touch-icon.png`.
+  - Tautan manifest dan meta Apple (`apple-mobile-web-app-capable`, `apple-touch-icon`) tersuntik di `<head>`.
+  - CSP Helmet di server Express mengizinkan `manifestSrc: ['self']`, `imgSrc: ['self', 'data:']`, dan `styleSrc: ['self', 'unsafe-inline']`.
+  - Server statis `server/tools/layani-web.js --lan` siap untuk pengujian perangkat ponsel fisik di jaringan Wi-Fi lokal, dengan panduan di `docs/uji-di-hp-lewat-wifi.md`.
 
 **Yang belum diuji atau menjadi batasan pada jalur Web:**
-1. **Bukan PWA Terpasang (Add to Home Screen):** Bundel web belum memuat `manifest.json` PWA lengkap dan Service Worker offline. Aplikasi berjalan murni sebagai web browser tab, belum bisa dipasang sebagai aplikasi beranda mandiri.
-2. **Penyimpanan Token Sesi:** `@react-native-async-storage/async-storage` pada peramban menyimpan token JWT di `window.localStorage`. Dilindungi oleh CSP ketat di backend, namun tetap perlu disadari perbedaannya dengan penyimpanan aman di mobile native (Keystore/EncryptedSharedPreferences).
-3. **Perilaku Peramban Ponsel Fisik:** Alur di atas diuji pada simulasi peramban Chromium desktop/responsive. Perilaku khusus peramban HP fisik (seperti pergeseran viewport saat keyboard virtual muncul di Chrome Android / Safari iOS, dan navigasi gesture kembali) belum diuji pada HP fisik siswa.
-4. **Pemilih Berkas Mobile:** Pemilih berkas web di peramban ponsel (apakah memicu file picker Android/iOS dengan lancar untuk PDF/TXT modul) belum diuji di perangkat fisik.
+1. **Pemasangan di Browser HP Fisik (Perlu Pengujian Nyata):**
+   - **iOS Safari:** Memenuhi seluruh syarat pemasangan "Add to Home Screen" via menu Share.
+   - **Android Chrome:** Metadata dan ikon lengkap. Namun kemunculan banner otomatis *beforeinstallprompt* biasanya mensyaratkan Service Worker dengan *fetch handler* aktif. Siswa tetap dapat memasangnya secara manual melalui menu titik tiga Chrome ("Install App" / "Tambahkan ke Layar Utama"), namun banner otomatis belum tentu muncul di semua versi Android.
+2. **Belum Ada Mode Offline:** Belum dipasang Service Worker caching offline. Aplikasi membutuhkan koneksi aktif ke server.
+3. **Penyimpanan Token Sesi:** `@react-native-async-storage/async-storage` pada peramban menyimpan token JWT di `window.localStorage`. Dilindungi oleh CSP ketat di backend, namun tetap perlu disadari perbedaannya dengan penyimpanan aman di mobile native (Keystore/EncryptedSharedPreferences).
+4. **Perilaku Peramban Ponsel Fisik & Keyboard:** Alur di atas telah diuji di browser desktop/Chromium simulasi. Uji kenyamanan pengetikan (apakah keyboard virtual menutupi tombol pada HP Android/iOS tertentu) dan file picker HP perlu diverifikasi langsung menggunakan checklist di `docs/uji-di-hp-lewat-wifi.md`.
 
 ### 1.4 Tabel konfigurasi `konfigurasi_levelin` (33 kunci)
 

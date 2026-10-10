@@ -82,6 +82,14 @@ const config: ExpoConfig = {
   },
   web: {
     favicon: './assets/favicon.png',
+    name: 'LANJUT',
+    shortName: 'LANJUT',
+    lang: 'id',
+    display: 'standalone',
+    startUrl: '/',
+    scope: '/',
+    themeColor: '#456A8C',
+    backgroundColor: '#FFFFFF',
   },
   extra: {
     eas: { projectId: 'cbb2972d-24a7-450e-8604-6360aee3d190' },

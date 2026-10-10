@@ -203,10 +203,33 @@ Pada LANJUT_062, konfigurasi CSP Helmet disesuaikan agar kompatibel dengan React
 - `connectSrc: ["'self'", ...env.CORS_ORIGINS]`  
   Mengizinkan koneksi AJAX/Fetch ke endpoint API backend.
 
-### 7.3 Status Kesiapan PWA (Progressive Web App)
-Hasil audit `expo export --platform web`:
-- **Status Saat Ini:** Aplikasi beroperasi sebagai **Single Page Application (SPA) murni**, **belum memenuhi kriteria PWA penuh**.
-- **Manifest:** Belum terdapat `manifest.json` bawaan dengan konfigurasi PWA (`short_name`, `theme_color`, `display: standalone`).
-- **Service Worker:** Belum ada service worker terdaftar untuk *offline caching* atau *background sync*.
-- **Pemasangan ("Add to Home Screen"):** Peramban mobile tidak akan menampilkan banner otomatis "Install App" / pasang ke layar utama sebagai aplikasi mandiri.
-- **Kesimpulan:** Siswa dapat mengakses aplikasi dengan lancar melalui peramban web modern, namun aplikasi belum bisa dipasang secara native sebagai PWA tanpa konfigurasi tambahan di masa mendatang.
+### 7.3 Status Kesiapan PWA (Progressive Web App) — PWA Minimal (LANJUT_063)
+Pada LANJUT_063, aplikasi telah dilengkapi konfigurasi **PWA Minimal** (dapat dipasang ke layar utama ponsel tanpa fitur offline):
+- **Web App Manifest (`/manifest.webmanifest` & `/manifest.json`):**  
+  Telah disediakan di `dist/` dengan spesifikasi lengkap: `name: "LANJUT"`, `short_name: "LANJUT"`, `start_url: "/"`, `scope: "/"`, `display: "standalone"`, `theme_color: "#456A8C"`, `background_color: "#FFFFFF"`, dan `lang: "id"`.
+- **Ikon Aplikasi:**  
+  Tersedia lengkap dalam berbagai ukuran dan peruntukan:
+  - `icon-192.png` (192×192, purpose: any)
+  - `icon-192-maskable.png` (192×192, purpose: maskable)
+  - `icon-512.png` (512×512, purpose: any)
+  - `icon-512-maskable.png` (512×512, purpose: maskable)
+  - `apple-touch-icon.png` (192×192)
+- **Tautan & Meta Tag di `<head>`:**  
+  Disuntikkan melalui template `LANJUT_App/public/index.html` dan `LANJUT_App/app/+html.tsx`:
+  - `<link rel="manifest" href="/manifest.webmanifest">`
+  - `<meta name="theme-color" content="#456A8C">`
+  - `<meta name="apple-mobile-web-app-capable" content="yes">`
+  - `<meta name="apple-mobile-web-app-status-bar-style" content="default">`
+  - `<meta name="apple-mobile-web-app-title" content="LANJUT">`
+  - `<link rel="apple-touch-icon" href="/apple-touch-icon.png">`
+- **Dukungan Content Security Policy (CSP):**  
+  Header Helmet di backend telah mengizinkan `manifestSrc: ["'self'"]` dan `imgSrc: ["'self'", 'data:']`.
+
+#### Kriteria Pemasangan Browser & Yang Belum Dibuktikan:
+1. **iOS Safari:**  
+   **Dapat dipasang.** Safari pada iPhone/iPad tidak mewajibkan Service Worker untuk pemasangan ke layar utama. Pengguna dapat membuka menu "Share" (Bagikan) -> "Add to Home Screen" (Tambahkan ke Layar Utama). Berkat tag `apple-mobile-web-app-capable` dan `apple-touch-icon`, aplikasi akan terbuka tanpa bilah URL peramban (mode mandiri/standalone).
+2. **Android Google Chrome & Browser Berbasis Chromium:**  
+   - Kriteria metadata manifest dan ikon telah terpenuhi 100%.
+   - **Yang belum dibuktikan:** Kemunculan otomatis banner *"Add to Home screen"* / event `beforeinstallprompt`. Chrome Desktop/Android secara ketat mensyaratkan Service Worker dengan *fetch event handler* aktif agar memenuhi syarat kelayakan pemasangan otomatis (*installability heuristics*). Karena Service Worker sengaja tidak ditambahkan pada task ini, pemasangan otomatis via banner mungkin tidak terpicu di Chrome versi tertentu, meskipun opsi manual "Install App" / "Tambahkan ke Layar Utama" di menu titik tiga peramban Chrome tetap tersedia.
+3. **Mode Offline:**  
+   **Belum aktif.** Aplikasi belum memiliki Service Worker untuk menyimpan cache aset secara luring. Aplikasi memerlukan koneksi internet/jaringan aktif untuk memuat konten dan rute baru.

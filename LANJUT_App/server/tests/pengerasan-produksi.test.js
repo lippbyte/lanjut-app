@@ -103,6 +103,15 @@ describe('Pengerasan Dasar Produksi (LANJUT_061)', () => {
     assert.equal(res.headers.get('x-content-type-options'), 'nosniff');
   });
 
+  test('Header keamanan: CSP mengizinkan aset PWA (manifest, ikon, gaya sebaris)', async () => {
+    const res = await fetch(`${baseUrl}/health`);
+    const csp = res.headers.get('content-security-policy') || '';
+    assert.ok(csp.includes("manifest-src 'self'"), 'CSP harus mengizinkan manifest-src self');
+    assert.ok(csp.includes("img-src 'self' data:"), 'CSP harus mengizinkan img-src self data:');
+    assert.ok(csp.includes("style-src 'self' 'unsafe-inline'"), 'CSP harus mengizinkan style-src inline');
+    assert.ok(csp.includes("script-src 'self'"), 'CSP harus membatasi script-src ke self');
+  });
+
   test('Penanganan galat 500: klien menerima GALAT_SERVER dan TIDAK ADA stack trace', async () => {
     // Panggil jalur tak terduga dengan memicu rute pengujian internal atau handler langsung
     const penangananGalat = require('../src/middleware/penangananGalat');

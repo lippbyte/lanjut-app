@@ -41,6 +41,7 @@ app.use(
         styleSrc: ["'self'", "'unsafe-inline'"], // React Native Web membutuhkan gaya sebaris untuk reset & stylesheet runtime
         fontSrc: ["'self'", 'data:'], // berkas font Poppins yang dibundel
         imgSrc: ["'self'", 'data:'], // gambar aset dan maskot
+        manifestSrc: ["'self'"], // berkas web app manifest PWA
         connectSrc: ["'self'", ...(Array.isArray(env.CORS_ORIGINS) ? env.CORS_ORIGINS : [])], // sambungan ke API
       },
     },
