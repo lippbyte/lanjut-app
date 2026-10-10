@@ -89,13 +89,15 @@ Tabel env di `server/README.md` §6 sudah mencantumkan `OPENROUTER_API_KEY`
    sebelum daftar periksa bagian 3 beres. Cek dengan
    `SELECT nilai FROM konfigurasi_levelin WHERE kunci = 'ai_aktif';`.
 7. `npm start`, lalu cek:
-   - `GET /api/v1/sehat` (proses hidup, tidak memeriksa basis data);
+   - `GET /health` (membalas `{ ok: true }` dan ping basis data ringan, tanpa data sensitif; LANJUT_061);
+   - `GET /api/v1/sehat` (proses hidup, kompatibilitas);
    - `GET /api/v1/konten/prodi` (basis data & benih);
-   - `GET /api/v1/konfigurasi/levelin` (harus 11 kunci).
+   - `GET /api/v1/konfigurasi/levelin` (harus 11 kunci);
+   - `npm run smoke -- --url=<alamat>` (uji asap pasca-deploy otomatis; LANJUT_061).
 
 **App:**
-- **APK:** isi `EXPO_PUBLIC_API_URL` di `LANJUT_App/eas.json` → `build.preview.env` dengan alamat produksi `https://…/api/v1` (sekarang masih `http://10.141.5.75:4000/api/v1`, IP LAN), lalu `eas build`. Kode diunggah ke Expo, jadi ini keputusan Khalifa.
-- **Web:** ikuti `DEPLOYMENT-RUMAHWEB.md` dan `docs/keputusan-topologi-hosting.md` (app di root, landing page di `/tentang`).
+- **APK/AAB:** `LANJUT_App/eas.json` telah dibersihkan dari IP LAN `10.141.5.75` (LANJUT_061). Profil `preview` dan `production` kini memakai placeholder `https://api.GANTI-DOMAIN/api/v1`. Khalifa mengganti placeholder tersebut ke URL domain produksi sebelum menjalankan `eas build` (lihat panduan `docs/deploy-produksi.md`). Proteksi build gagal-cepat di `app.config.ts` akan menolak build bila placeholder belum diganti.
+- **Web:** ikuti `DEPLOYMENT-RUMAHWEB.md` dan `docs/deploy-produksi.md` (app di root, landing page di `/tentang`).
 
 ### 1.4 Tabel konfigurasi `konfigurasi_levelin` (33 kunci)
 
@@ -194,7 +196,7 @@ cukup dengan `ai_aktif = 0` dan tidak mencatat persetujuan orang tua/wali.
 
 | Hal | Keadaan | Yang perlu dilakukan | Penanggung jawab |
 |---|---|---|---|
-| IP lama di `eas.json` | Profil `preview` menunjuk `http://10.141.5.75:4000/api/v1` | Ganti ke URL produksi `https://`, build ulang | Khalifa |
+| IP lama di `eas.json` | **Selesai (LANJUT_061):** dibersihkan dari `10.141.5.75`, profil `preview` & `production` memakai `https://api.GANTI-DOMAIN/api/v1` dengan validasi gagal-cepat | Khalifa mengganti placeholder sebelum `eas build` | Khalifa |
 | Dev client untuk pemilih berkas | `expo-document-picker` masuk 3 Okt (`9488647`), sesudah dev client 27 Sep (`cc023e4`) | Build ulang dev client. Kode diunggah ke Expo, butuh persetujuan Khalifa | Khalifa |
 | Uji di HP Android | Fitur LANJUT_039–058 hanya diuji di web 360 px dan tes server | Uji di HP fisik: Arsip, modul, Latihan + keyakinan, Level-In, F10, Ngobrol, terima kebijakan | Khalifa |
 | Kerentanan app | 29 temuan `npm audit` (4 paket akar) sengaja ditinggal | **Jangan** `npm audit fix` di `LANJUT_App/` (menyelipkan paket SDK 58 atau menurunkan ke Expo 44). Tinjau saat naik SDK 58 | Khalifa |

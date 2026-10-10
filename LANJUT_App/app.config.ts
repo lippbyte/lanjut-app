@@ -23,18 +23,31 @@ const API_URL_DEV_ANDROID =
 const API_URL_DEV_WEB =
   process.env.EXPO_PUBLIC_API_URL_DEV_WEB || 'http://localhost:4000/api/v1';
 
-// Placeholder — domain rilis produksi belum ada (docs/prd-sdd-lanjut.md
-// Bagian 11 "Nama domain final" masih pertanyaan terbuka, tidak menghambat).
-const API_URL_PROD = process.env.EXPO_PUBLIC_API_URL_PROD || 'https://api.lanjut.id/api/v1';
+// Placeholder domain produksi (LANJUT_061) — WAJIB diganti sebelum rilis produksi.
+const API_URL_PROD =
+  process.env.EXPO_PUBLIC_API_URL_PROD ||
+  process.env.EXPO_PUBLIC_API_URL ||
+  'https://api.GANTI-DOMAIN/api/v1';
 
 // Satu URL yang mengalahkan ketiga kandidat di atas, di semua platform & mode.
-// Dipakai build APK preview (eas.json) supaya HP fisik menunjuk IP LAN
-// komputer backend; ganti nilainya di eas.json/env, bukan di kode.
+// Dipakai build APK preview / production (eas.json) atau override lingkungan lokal.
 const API_URL_OVERRIDE = process.env.EXPO_PUBLIC_API_URL || undefined;
 
+// Build dengan placeholder harus gagal dengan pesan yang jelas (LANJUT_061):
+const isEasBuild = process.env.EAS_BUILD === 'true';
+const isProdEnv = process.env.NODE_ENV === 'production';
+const targetApiUrl = API_URL_OVERRIDE || API_URL_PROD;
+
+if ((isEasBuild || isProdEnv) && targetApiUrl?.includes('GANTI-DOMAIN')) {
+  throw new Error(
+    `[app.config.ts] Build dibatalkan: EXPO_PUBLIC_API_URL masih menggunakan placeholder "${targetApiUrl}". ` +
+      'Tentukan domain produksi yang sebenarnya di eas.json atau variabel lingkungan sebelum melakukan build.'
+  );
+}
+
 // Build release Android memblokir http:// polos; hanya dibuka kalau build ini
-// memang diarahkan ke backend http (mis. IP LAN), bukan untuk rilis https.
-const IZINKAN_HTTP = API_URL_OVERRIDE?.startsWith('http://') ?? false;
+// memang diarahkan ke backend http (mis. IP LAN saat pengujian dev), bukan untuk rilis https.
+const IZINKAN_HTTP = targetApiUrl?.startsWith('http://') ?? false;
 
 const config: ExpoConfig = {
   name: 'LANJUT',

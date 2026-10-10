@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 
 const env = require('./config/env');
+const { pingBasisData } = require('./db/ping');
 const autentikasi = require('./middleware/autentikasi');
 const { batasGlobal } = require('./middleware/batasLaju');
 const penangananGalat = require('./middleware/penangananGalat');
@@ -26,9 +27,11 @@ const ngobrolRute = require('./modul/ngobrol/ngobrol.rute');
 const app = express();
 
 app.disable('x-powered-by');
-// Di belakang reverse proxy, req.ip diambil dari X-Forwarded-For sebanyak
-// JUMLAH_PROXY lompatan (lihat config/env.js). 0 = perilaku bawaan Express.
-if (env.JUMLAH_PROXY > 0) app.set('trust proxy', env.JUMLAH_PROXY);
+// Di belakang reverse proxy, req.ip diambil sesuai TRUST_PROXY (lihat config/env.js).
+// 0 / false = perilaku bawaan Express (hanya soket langsung).
+if (env.TRUST_PROXY !== undefined && env.TRUST_PROXY !== false && env.TRUST_PROXY !== 0) {
+  app.set('trust proxy', env.TRUST_PROXY);
+}
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -41,11 +44,25 @@ app.use(
 );
 app.use(
   cors({
-    origin: env.ASAL_DIIZINKAN,
+    origin: env.CORS_ORIGINS,
     credentials: false,
   })
 );
 app.use(express.json({ limit: '1mb' }));
+app.use(express.urlencoded({ extended: false, limit: '1mb' }));
+
+// Endpoint kesehatan (LANJUT_061):
+// GET /health: balas { ok: true } dan ping basis data ringan (SELECT 1).
+// Tanpa data sensitif, tanpa versi paket, tanpa stack.
+app.get('/health', async (req, res) => {
+  try {
+    await pingBasisData();
+    return res.status(200).json({ ok: true });
+  } catch (_err) {
+    // Tanpa data sensitif, tanpa versi paket, tanpa stack
+    return res.status(503).json({ ok: false });
+  }
+});
 
 // Log akses minimal: metode, jalur, status, durasi — TANPA badan permintaan
 // (§8.5 — rahasia tidak pernah masuk log).
@@ -62,8 +79,17 @@ app.use((req, res, next) => {
 app.use(batasGlobal);
 app.use(autentikasi);
 
+// Kompatibilitas endpoint lama
 app.get('/api/v1/sehat', (req, res) => {
   sukses(res, { status: 'ok', waktu: new Date().toISOString() });
+});
+app.get('/api/v1/health', async (req, res) => {
+  try {
+    await pingBasisData();
+    return res.status(200).json({ ok: true });
+  } catch (_err) {
+    return res.status(503).json({ ok: false });
+  }
 });
 
 app.use('/api/v1/auth', authRute);

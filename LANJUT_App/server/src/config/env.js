@@ -36,6 +36,58 @@ function angka(nama, bawaan) {
 
 const NODE_ENV = opsional('NODE_ENV', 'development');
 
+// CORS: dukung CORS_ORIGINS (nama standar LANJUT_061) atau ASAL_DIIZINKAN (nama awal).
+const asalMentah = process.env.CORS_ORIGINS || process.env.ASAL_DIIZINKAN;
+if (!asalMentah || String(asalMentah).trim() === '') {
+  throw new Error(
+    'Variabel lingkungan wajib "CORS_ORIGINS" (atau "ASAL_DIIZINKAN") kosong. Salin server/.env.example ' +
+      'menjadi server/.env dan isi nilainya sebelum menyalakan server.'
+  );
+}
+const corsOrigins = String(asalMentah)
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+if (corsOrigins.length === 0) {
+  throw new Error('CORS_ORIGINS (atau ASAL_DIIZINKAN) tidak boleh kosong.');
+}
+
+if (corsOrigins.includes('*')) {
+  throw new Error(
+    'CORS_ORIGINS / ASAL_DIIZINKAN tidak boleh berisi "*" (docs/SDD-Backend-Foundation.md §8.5). ' +
+      'Sebutkan asal secara eksplisit, dipisah koma.'
+  );
+}
+
+// Pengerasan produksi (LANJUT_061): di produksi, asal CORS harus berupa https:// yang valid (atau localhost untuk uji)
+if (NODE_ENV === 'production') {
+  for (const origin of corsOrigins) {
+    if (!/^https:\/\/|^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+      throw new Error(
+        `Di lingkungan produksi, setiap asal CORS harus berupa URL https:// yang valid (atau localhost untuk uji), dapat: "${origin}".`
+      );
+    }
+  }
+}
+
+// TRUST_PROXY: dukung TRUST_PROXY (LANJUT_061) atau JUMLAH_PROXY (nama awal).
+// Bisa berupa angka (jumlah lompatan proxy), boolean (true/false), atau string ('loopback', dsb.).
+const proxyMentah = process.env.TRUST_PROXY ?? process.env.JUMLAH_PROXY;
+let trustProxy = 0;
+if (proxyMentah !== undefined && proxyMentah !== null && String(proxyMentah).trim() !== '') {
+  const str = String(proxyMentah).trim();
+  if (str.toLowerCase() === 'true') {
+    trustProxy = true;
+  } else if (str.toLowerCase() === 'false') {
+    trustProxy = false;
+  } else if (/^\d+$/.test(str)) {
+    trustProxy = parseInt(str, 10);
+  } else {
+    trustProxy = str;
+  }
+}
+
 const env = {
   NODE_ENV,
   PORT: angka('PORT', 3000),
@@ -47,17 +99,11 @@ const env = {
   // tersandung `undefined`.
   DB_PASSWORD: process.env.DB_PASSWORD !== undefined ? process.env.DB_PASSWORD : '',
   DB_NAME: wajib('DB_NAME'),
-  ASAL_DIIZINKAN: wajib('ASAL_DIIZINKAN')
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean),
+  CORS_ORIGINS: corsOrigins,
+  ASAL_DIIZINKAN: corsOrigins, // alias kompatibilitas
   SESI_UMUR_HARI: angka('SESI_UMUR_HARI', 90),
-  // Jumlah reverse proxy tepercaya di depan Node (cPanel/Passenger, Railway,
-  // dst.). 0 = tidak ada (lokal). Tanpa ini di belakang proxy, semua
-  // pengguna terlihat ber-IP sama (IP proxy) dan batas laju per-IP (§8.2)
-  // berlaku untuk SEMUA orang sekaligus. Jangan diisi lebih besar dari
-  // jumlah proxy sebenarnya: header X-Forwarded-For bisa dipalsukan klien.
-  JUMLAH_PROXY: angka('JUMLAH_PROXY', 0),
+  TRUST_PROXY: trustProxy,
+  JUMLAH_PROXY: typeof trustProxy === 'number' ? trustProxy : (trustProxy ? 1 : 0), // alias kompatibilitas
   // Folder berisi *.json konten untuk `npm run benih` (LANJUT_023). Kosong =
   // bawaan ../../MVP-PWA/data dari folder server/. Absolut, atau relatif
   // terhadap folder server/. Hanya dipakai benih, bukan oleh API.
@@ -74,17 +120,6 @@ const env = {
 // Kunci API tidak boleh terkirim lewat HTTP polos, kecuali ke server tiruan lokal.
 if (!/^https:\/\/|^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/.test(env.OPENROUTER_BASE_URL)) {
   throw new Error(`OPENROUTER_BASE_URL harus https:// (atau http://localhost untuk uji), dapat: "${env.OPENROUTER_BASE_URL}".`);
-}
-
-if (!Number.isInteger(env.JUMLAH_PROXY) || env.JUMLAH_PROXY < 0) {
-  throw new Error(`JUMLAH_PROXY harus bilangan bulat ≥ 0, dapat: "${env.JUMLAH_PROXY}".`);
-}
-
-if (env.ASAL_DIIZINKAN.includes('*')) {
-  throw new Error(
-    'ASAL_DIIZINKAN tidak boleh berisi "*" (docs/SDD-Backend-Foundation.md §8.5). ' +
-      'Sebutkan asal secara eksplisit, dipisah koma.'
-  );
 }
 
 module.exports = env;

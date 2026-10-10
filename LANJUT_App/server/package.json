@@ -19,6 +19,9 @@
     "dokumen-skenario-ai": "node tools/dokumen-skenario-ai.js",
     "evaluasi-ai": "node tools/evaluasi-ai.js",
     "pemakaian-ai": "node tools/pemakaian-ai.js",
+    "smoke": "node tools/smoke.js",
+    "cadangan-db": "node tools/cadangan-db.js",
+    "pulihkan-db": "node tools/pulihkan-db.js",
     "test": "node --test tests/*.test.js",
     "periksa-sql": "node tools/periksa-sql.js"
   },

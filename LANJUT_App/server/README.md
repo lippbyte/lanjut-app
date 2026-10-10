@@ -772,8 +772,20 @@ node --watch src/index.js
 Cek server hidup:
 
 ```bash
-curl http://localhost:3000/api/v1/sehat
+curl http://localhost:4000/health
+# { "ok": true }
+
+# atau endpoint kompatibilitas:
+curl http://localhost:4000/api/v1/sehat
 # { "ok": true, "data": { "status": "ok", "waktu": "..." } }
+```
+
+Uji asap otomatis pasca-deploy (LANJUT_061):
+
+```bash
+npm run smoke
+# atau ke domain tertentu:
+npm run smoke -- --url=https://api.GANTI-DOMAIN
 ```
 
 ## 4. Menjalankan test
@@ -851,9 +863,9 @@ sama dengan `.env.example`:
 | `DB_USER` | **ya** | `akun_lanjut` | Di cPanel biasanya berawalan nama akun |
 | `DB_PASSWORD` | ya (boleh kosong hanya di lokal) | *(rahasia)* | |
 | `DB_NAME` | **ya** | `akun_lanjut` | |
-| `ASAL_DIIZINKAN` | **ya** | `https://edilakso.my.id` | Asal web yang boleh memanggil API, dipisah koma, **tidak pernah** `*` |
+| `CORS_ORIGINS` (atau `ASAL_DIIZINKAN`) | **ya** | `https://app.GANTI-DOMAIN` | Asal web yang boleh memanggil API, dipisah koma, **tidak pernah** `*` |
 | `SESI_UMUR_HARI` | tidak (bawaan `90`) | `90` | Umur sesi login (hari, bergulir) |
-| `JUMLAH_PROXY` | tidak (bawaan `0`) | `1` | Jumlah reverse proxy di depan server — lihat di bawah |
+| `TRUST_PROXY` (atau `JUMLAH_PROXY`) | tidak (bawaan `0`) | `1` | Jumlah reverse proxy tepercaya di depan server — lihat di bawah |
 | `LOKASI_DATA_KONTEN` | tidak (bawaan `../../MVP-PWA/data`) | `data-konten` | Folder berisi berkas `*.json` konten untuk `npm run benih` — lihat di bawah |
 | `OPENROUTER_API_KEY` | tidak (bawaan kosong) | *(rahasia, biarkan kosong dulu)* | Kunci AI Ngobrol (§2d). Kosong = AI tidak tersedia (`503 AI_TIDAK_TERSEDIA`), atau balasan uji coba selama `ai_aktif = 0`; server tetap jalan. Hanya di `.env` server, jangan di app. Isi sesudah daftar periksa keselamatan di `docs/kesiapan-rilis-uji.md` beres, dengan batas kredit di dasbor OpenRouter |
 
@@ -862,15 +874,16 @@ Koneksi basis data memakai **lima variabel terpisah** (`DB_HOST`, `DB_PORT`,
 memberi satu URL (mis. `mysql://user:sandi@host:port/nama`) perlu dipecah ke
 lima variabel itu.
 
-**`ASAL_DIIZINKAN` (CORS).** Isi dengan alamat web yang membuka aplikasi,
+**`CORS_ORIGINS` (atau `ASAL_DIIZINKAN`).** Isi dengan alamat web yang membuka aplikasi,
 persis termasuk `https://` dan tanpa garis miring di akhir (mis.
-`https://edilakso.my.id`). Variabel ini wajib walau web dan API satu
-domain — server menolak menyala bila kosong. **Aplikasi Android (APK) tidak
+`https://app.GANTI-DOMAIN`). Variabel ini wajib walau web dan API satu
+domain — server menolak menyala bila kosong. Di produksi, setiap asal diperiksa
+ketat (harus https:// yang valid). **Aplikasi Android (APK) tidak
 terkena CORS** — CORS hanya berlaku untuk peramban — jadi APK tidak perlu
 dimasukkan ke daftar ini.
 
-**`JUMLAH_PROXY`.** Di hosting, server biasanya berada di belakang reverse
-proxy. Tanpa variabel ini, semua pengguna terlihat ber-IP sama (IP proxy),
+**`TRUST_PROXY` (atau `JUMLAH_PROXY`).** Di hosting, server biasanya berada di belakang reverse
+proxy (Nginx, PM2, Cloudflare, cPanel). Tanpa variabel ini, semua pengguna terlihat ber-IP sama (IP proxy),
 sehingga batas laju per-IP berlaku untuk **semua orang sekaligus** (mis.
 hanya 5 pendaftaran per jam untuk seluruh pengguna). Isi dengan jumlah proxy
 di depan server — biasanya `1`, tapi **pastikan ke dokumentasi hostingnya**.
