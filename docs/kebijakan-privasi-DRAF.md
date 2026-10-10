@@ -145,13 +145,14 @@ Penyamaran ini otomatis dan tidak sempurna. Nama, alamat rumah, nama sekolah, da
 - Server LANJUT tidak menyimpan isi obrolan, potongan modul yang dikirim, maupun pertanyaan pencarian web, dan tidak mencatatnya di catatan teknis server.
 - Yang tercatat di catatan teknis server hanya: permintaan ke Ngobrol (seperti fitur lain: hasil, lama proses, dan ID akun), jumlah potongan modul dan hasil web yang dipakai, jenis gangguan bila penyedia AI gagal, serta tingkat tanda bahaya beserta waktunya, tanpa isi pesan.
 - Untuk membatasi pemakaian, server menghitung jumlah pesan dan pencarian web per akun. Hitungan ini hanya ada di memori server dan hilang saat server dinyalakan ulang.
+- Untuk memantau biaya dan keselamatan, server menyimpan hitungan harian gabungan untuk semua pengguna, misalnya jumlah permintaan ke penyedia AI, jumlah token, jumlah tanda bahaya, dan jumlah gangguan. Hitungan ini tidak memuat ID akun maupun isi pesan.
 - Di sisi penyedia AI: kami meminta OpenRouter hanya memakai penyedia model yang tidak mengumpulkan data pengguna (pengaturan data_collection: deny). Apa yang tetap disimpan OpenRouter dan penyedia model, dan berapa lama, mengikuti kebijakan mereka. [ISI: hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model: apa yang disimpan dan berapa lama.]
 
 ### Keselamatan
 
 Server LANJUT memeriksa setiap pesan terbarumu untuk tanda bahaya, misalnya keinginan menyakiti diri atau mengalami kekerasan. Pemeriksaan ini dilakukan di server LANJUT, bukan oleh penyedia AI.
 
-Kalau tanda bahayanya serius, pesan itu tidak diteruskan ke penyedia AI. Server langsung membalas dengan pesan tetap dan kartu layanan bantuan yang sudah dicek, juga saat fitur AI sedang dimatikan. Kalau kamu lalu melanjutkan obrolan, pesan itu ikut terkirim sebagai bagian dari riwayat obrolan bersama pesan berikutnya.
+Kalau tanda bahayanya serius, pesan itu tidak diteruskan ke penyedia AI. Server langsung membalas dengan pesan tetap dan kartu layanan bantuan yang sudah dicek, juga saat fitur AI sedang dimatikan. Kalau kamu lalu melanjutkan obrolan, isi pesan itu tetap tidak ikut terkirim: setiap kali riwayat obrolan dikirim ke penyedia AI, server memeriksa ulang pesan-pesanmu, dan pesan yang tanda bahayanya serius diganti catatan singkat dari aplikasi bahwa kamu menyampaikan hal yang sangat berat dan kartu bantuan sudah ditampilkan. Balasan aplikasi untuk pesan itu tetap ada di riwayat.
 
 Untuk tanda tekanan yang lebih ringan, misalnya cemas atau capek belajar, pesan tetap dikirim ke penyedia AI, disertai catatan dari aplikasi agar AI menanggapi perasaanmu lebih dulu. AI juga bisa menilai bahwa kamu mungkin butuh bantuan; aplikasi lalu menampilkan kartu layanan bantuan.
 
@@ -215,8 +216,8 @@ Sistem juga bisa mewajibkan persetujuan orang tua atau wali yang baru setelah ke
 
 ## Lampiran A — Inventaris data teknis (untuk peninjau)
 
-Sumber: migrasi `LANJUT_App/server/src/db/migrasi/001`–`016` dan kode app
-(diperbarui LANJUT_056, 8 Oktober 2026). "Siswa" = pemilik akun. Bukti per
+Sumber: migrasi `LANJUT_App/server/src/db/migrasi/001`–`018` dan kode app
+(diperbarui LANJUT_056, 8 Oktober 2026; LANJUT_060, 9 Oktober 2026). "Siswa" = pemilik akun. Bukti per
 klaim ada di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md).
 
 ### Di server (basis data MySQL)
@@ -244,6 +245,7 @@ klaim ada di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md).
 | Sesi latihan | `sesi_latihan` (dimulai/selesai_pada, jumlah kartu, mapel fokus, asal) | Siswa | |
 | Riwayat latihan | `riwayat_latihan` (kartu_id, benar, dijawab_pada, sesi_id, keyakinan, mapel_id, gap_numerik, kelas_gap, aturan_versi) | Siswa; dua kolom terakhir dihitung server | `keyakinan` (1–5) terisi bila siswa memilih "Seberapa yakin kamu?" di Latihan (LANJUT_058: yakin 4, ragu 2, tebak 1; boleh dilewati) atau dari data tamu PWA lama. Dipakai Level-In di server; tidak dikirim ke penyedia AI. |
 | Persetujuan | `persetujuan` (jenis, versi, status, sumber, catatan, dicatat_pada) | Siswa (kebijakan, `mandiri`); petugas lewat skrip `persetujuan-ortu` (orang tua/wali, `surat_sekolah`/`admin`) | Riwayat tidak ditimpa; `catatan` berisi nomor/tanggal surat. |
+| Hitungan pemakaian AI harian | `pemakaian_ai_harian` (tanggal WIB, panggilan_ai, token_masuk, token_keluar, balasan_stub, tanda_akut, tanda_ringan, tanda_model, galat_penyedia, web_dipakai, web_kuota_habis, modul_dipakai) | Server, setiap `POST /ngobrol` (LANJUT_060) | **Bukan data pribadi:** satu baris per tanggal untuk semua pengguna digabung. Tidak ada ID akun, isi pesan, kueri, potongan, atau alamat web. Token diambil dari `usage` jawaban penyedia (0 bila tidak ada). Dibaca tim lewat `npm run pemakaian-ai`. Masa simpan belum ditetapkan (ikut `[ISI]` di bagian "Berapa lama data disimpan"). |
 
 Server juga punya endpoint klaim data tamu (`POST /sinkron/klaim`) untuk
 memindahkan data PWA yang tersimpan di perangkat ke akun. App Expo saat ini
@@ -258,7 +260,7 @@ tidak memakainya.
 | Token & salinan profil | Perangkat siswa (AsyncStorage; `localStorage` di web) | Kunci `auth_token`, `auth_pengguna`. |
 | Kelas & jalur Daftar Periksa | Perangkat siswa | Kunci `lanjut.profil.lokal.v1:<id akun>`. |
 | Riwayat Ngobrol | Memori app saja (`providers/ObrolanProvider.tsx`) | Tidak ditulis ke perangkat dan tidak disimpan server. **Dikirim** ke server di setiap `POST /ngobrol` (maks. 20 pesan terakhir) dan diteruskan ke penyedia AI bila akun lolos gerbang (lihat tabel berikut). |
-| Log Ngobrol & keselamatan | Keluaran konsol server | `[ngobrol] materi modul=<n> web=<n> [web_habis]`, jenis galat penyedia, `[keselamatan] tingkat=<akut/ringan/model> waktu=<…>`. Tanpa isi pesan, potongan, kueri, atau alamat web. Baris keselamatan tidak memuat ID akun, tetapi baris log akses permintaan yang sama memuatnya, jadi keduanya bisa dikaitkan lewat waktu. |
+| Log Ngobrol & keselamatan | Keluaran konsol server | `[ngobrol] materi modul=<n> web=<n> [web_habis]`, jenis galat penyedia, `[keselamatan] tingkat=<akut/ringan/model> waktu=<…>`, `[pemakaian] gagal dicatat (<kode galat>)` bila hitungan harian gagal ditulis. Tanpa isi pesan, potongan, kueri, atau alamat web. Baris keselamatan tidak memuat ID akun, tetapi baris log akses permintaan yang sama memuatnya, jadi keduanya bisa dikaitkan lewat waktu. |
 | Hitungan batas Ngobrol & kuota web | Memori proses server | Per ID akun: jumlah pesan per 5 menit / 24 jam (`express-rate-limit`) dan jumlah pencarian web per tanggal WIB. Hilang saat server dinyalakan ulang. |
 
 ### Dikirim ke luar sistem: penyedia AI (LANJUT_051, 053, 055)
@@ -269,7 +271,7 @@ persetujuan, saklar `ai_aktif`, dan penyamaran.
 
 | Data | Kapan | Catatan |
 |---|---|---|
-| Pesan terbaru + riwayat sesi (maks. 20) | Setiap pesan dari akun yang lolos gerbang, saklar `ai_aktif=1` | Disamarkan (telepon, email, 16 angka mirip NIK). Salam pembuka bot (memuat nama tampilan) dibuang. Pesan bertanda bahaya **akut** tidak diteruskan saat itu, tetapi tetap ada di riwayat app dan ikut terkirim bersama pesan berikutnya. |
+| Pesan terbaru + riwayat sesi (maks. 20) | Setiap pesan dari akun yang lolos gerbang, saklar `ai_aktif=1` (bawaan **0** untuk instalasi baru sejak LANJUT_060) | Disamarkan (telepon, email, 16 angka mirip NIK). Salam pembuka bot (memuat nama tampilan) dibuang. Pesan bertanda bahaya **akut** tidak diteruskan saat itu. Sejak LANJUT_060, setiap pesan siswa di riwayat diperiksa ulang dengan daftar tanda bahaya yang berlaku, dan yang tergolong akut diganti penanda netral `[siswa menyampaikan hal yang sangat berat; aplikasi sudah menampilkan kartu bantuan]` sebelum disamarkan dan dikirim (`tanpaPesanAkut`). Balasan aplikasi untuk pesan itu tetap ada di riwayat. Modul dan pencarian web juga tidak memakai pesan akut. |
 | Profil belajar | Sama | Kelas, jenis sekolah, nama prodi impian, gaya belajar. |
 | Potongan modul (maks. `ai_modul_potongan_maks`, bawaan 3) | Pertanyaan materi, `ai_modul_aktif=1` (bawaan) | Hanya milik akun penanya; disamarkan. |
 | Pertanyaan terbaru (permintaan web terpisah) | Pertanyaan materi, `ai_web_aktif=1` (bawaan **0**), kuota harian tersisa, tanpa tanda bahaya | Hanya pertanyaan tersamarkan, tanpa profil/riwayat/modul; diteruskan OpenRouter ke mesin pencari pihak ketiga. |
@@ -373,9 +375,10 @@ di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md) bagian
       Artinya menurut dokumentasi OpenRouter "Provider Routing": hanya
       penyedia yang tidak mengumpulkan data pengguna. Apa yang tetap disimpan
       OpenRouter sendiri dan penyedia model, dan berapa lama, perlu dicek.
-    - **Tanda bahaya akut:** pesan itu tidak diteruskan ke AI saat itu, tetapi
-      app menyimpannya di riwayat sesi dan mengirimnya lagi bersama pesan
-      berikutnya; server meneruskan riwayat itu ke AI (lihat butir 13).
+    - **Tanda bahaya akut:** pesan itu tidak diteruskan ke AI saat itu. App
+      tetap menyimpannya di riwayat sesi dan mengirimnya lagi bersama pesan
+      berikutnya, tetapi sejak LANJUT_060 server menggantinya dengan penanda
+      netral sebelum riwayat dikirim ke AI (lihat butir 13).
 
     Sebelum mencatat persetujuan orang tua/wali sungguhan: isi `[ISI]` yang
     tersisa, rilis app dengan teks ini, lalu naikkan versi (lihat butir 10).
@@ -398,13 +401,18 @@ di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md) bagian
       draf v2; mesin pencari yang sebenarnya dan berlaku tidaknya
       `data_collection: deny` di sana tetap `[ISI]`.
 13. **Temuan LANJUT_056: pesan bertanda bahaya akut ikut di riwayat
-    berikutnya.** `tanganiTandaBahaya` (rute) hanya memeriksa pesan terbaru.
-    Pesan akut tidak diteruskan saat itu, tetapi app (`ObrolanProvider.tsx`)
-    menyimpannya di riwayat, dan server (`susunPermintaan`) meneruskan seluruh
-    riwayat (disamarkan) bersama pesan berikutnya. Draf v2 menuliskannya apa
-    adanya. Perlu diputuskan bersama guru BK: dibiarkan (AI mendapat konteks
-    untuk menanggapi dengan hangat) atau pesan akut dibuang dari riwayat
-    sebelum dikirim (perubahan kode, task terpisah).
+    berikutnya. SELESAI di LANJUT_060.** Dulu `tanganiTandaBahaya` (rute)
+    hanya memeriksa pesan terbaru, dan server meneruskan seluruh riwayat
+    (disamarkan) bersama pesan berikutnya. Sekarang `susunPermintaan` lebih
+    dulu memanggil `tanpaPesanAkut`: setiap pesan **siswa** di riwayat
+    diperiksa ulang dengan daftar tanda bahaya yang berlaku, dan yang akut
+    diganti penanda netral (AI tetap tahu ada hal berat dan kartu bantuan
+    sudah tampil, tanpa isi aslinya). Ini juga menangkap pesan lama yang baru
+    tergolong akut setelah daftar kata diperbarui. Balasan empati aplikasi
+    tetap di riwayat. Modul dan pencarian web hanya memakai pesan terbaru yang
+    sudah pasti tidak akut. Teks kebijakan (bagian Keselamatan) dan surat
+    orang tua/wali sudah diperbarui. Kalimat penanda tetap perlu ditinjau
+    guru BK bersama daftar tanda bahaya.
 14. **Temuan LANJUT_056: teks lain yang belum menyebut AI.** (a) Peringatan
     di formulir unggah modul (`lib/modul.ts`) belum menyebut bahwa potongan
     modul bisa dikirim ke penyedia AI; catatan itu baru ada di layar Ngobrol.

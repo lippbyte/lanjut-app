@@ -19,7 +19,10 @@ const assert = require('node:assert/strict');
 const { acak, nyalakanServer, urlDari, daftarPenggunaBaru, kunciKonfigurasiGlobal, pool } = require('./bantuan');
 const env = require('../src/config/env');
 const penyedia = require('../src/modul/ngobrol/penyedia-ai');
-const { pesanSistem } = require('../src/modul/ngobrol/ngobrol.layanan');
+const { pesanSistem, PENANDA_AKUT } = require('../src/modul/ngobrol/ngobrol.layanan');
+const pemakaian = require('../src/modul/ngobrol/pemakaian');
+const pemakaianRepo = require('../src/modul/ngobrol/pemakaian.repo');
+const { tanggalWib } = require('../src/util/waktu');
 const skrip = require('../src/db/persetujuan/persetujuan-ortu');
 
 const TEKS = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'config', 'ngobrol-teks.json'), 'utf8'));
@@ -28,7 +31,8 @@ const ENV_ASLI = { kunci: env.OPENROUTER_API_KEY, url: env.OPENROUTER_BASE_URL }
 const ALAMAT_MATI = 'http://127.0.0.1:9/api/v1';
 let server;
 let baseUrl;
-let konfigAsli;
+let konfigAsli; // nilai sebelum berkas ini jalan; dikembalikan di after()
+let konfigTes; // nilai antar-tes: konfigAsli dengan ai_aktif = '1'
 let versiKebijakan;
 let lepasKunci;
 
@@ -39,6 +43,9 @@ before(async () => {
   const [baris] = await pool.query('SELECT kunci, nilai FROM konfigurasi_levelin WHERE kunci IN (?)', [KUNCI]);
   konfigAsli = Object.fromEntries(baris.map((b) => [b.kunci, b.nilai]));
   assert.equal(Object.keys(konfigAsli).length, KUNCI.length, 'jalankan npm run migrasi (014_ngobrol, 015_ai_pengaturan)');
+  // LANJUT_060: bawaan instalasi baru ai_aktif = 0; tes yang butuh AI menyalakannya eksplisit.
+  konfigTes = { ...konfigAsli, ai_aktif: '1' };
+  await kembalikanKonfig();
   const [[v]] = await pool.query("SELECT nilai FROM konfigurasi_levelin WHERE kunci = 'persetujuan_versi_kebijakan'");
   versiKebijakan = Number(v.nilai);
   env.OPENROUTER_API_KEY = 'kunci-uji-palsu'; // tidak pernah dipakai ke internet di berkas ini
@@ -46,7 +53,7 @@ before(async () => {
 });
 
 after(async () => {
-  await kembalikanKonfig();
+  await kembalikanKonfig(konfigAsli);
   env.OPENROUTER_API_KEY = ENV_ASLI.kunci;
   env.OPENROUTER_BASE_URL = ENV_ASLI.url;
   await new Promise((resolve) => server.close(resolve));
@@ -55,8 +62,9 @@ after(async () => {
 });
 
 const aturKonfig = (kunci, nilai) => pool.query('UPDATE konfigurasi_levelin SET nilai = ? WHERE kunci = ?', [nilai, kunci]);
-async function kembalikanKonfig() {
-  for (const [k, v] of Object.entries(konfigAsli)) await aturKonfig(k, v);
+/** Antar-tes: kembali ke konfigTes (AI menyala). Di akhir berkas: ke konfigAsli. */
+async function kembalikanKonfig(tujuan = konfigTes) {
+  for (const [k, v] of Object.entries(tujuan)) await aturKonfig(k, v);
 }
 
 async function panggil(metode, p, token, body) {
@@ -521,7 +529,8 @@ test('klien OpenRouter: permintaan benar (kunci di header, model & provider dari
     (res) => jsonRes(res, 200, { choices: [{ message: { role: 'assistant', content: '  Halo juga!  ' }, finish_reason: 'stop' }] }),
     async (diterima) => {
       const hasil = await penyedia.mintaBalasan([{ role: 'system', content: 'aturan' }, { role: 'user', content: 'halo' }], PENGATURAN_UJI);
-      assert.deepEqual(hasil, { teks: 'Halo juga!', terpotong: false, anotasi: [] });
+      // Tanpa `usage` di respons → token 0, bukan galat (LANJUT_060).
+      assert.deepEqual(hasil, { teks: 'Halo juga!', terpotong: false, anotasi: [], token: { masuk: 0, keluar: 0 } });
       assert.equal(diterima.length, 1);
       const [r] = diterima;
       assert.equal(r.metode, 'POST');
@@ -534,6 +543,23 @@ test('klien OpenRouter: permintaan benar (kunci di header, model & provider dari
       assert.equal(r.badan.stream, undefined);
     }
   );
+});
+
+test('LANJUT_060 klien OpenRouter: token dibaca dari usage; usage rusak → 0 tanpa galat', async () => {
+  const kasus = [
+    [{ prompt_tokens: 1234, completion_tokens: 56, total_tokens: 1290 }, { masuk: 1234, keluar: 56 }],
+    [{ prompt_tokens: 'banyak', completion_tokens: -3 }, { masuk: 0, keluar: 0 }],
+    ['bukan objek', { masuk: 0, keluar: 0 }],
+  ];
+  for (const [usage, harapan] of kasus) {
+    await denganServerTiruan(
+      (res) => jsonRes(res, 200, { choices: [{ message: { role: 'assistant', content: 'Halo.' }, finish_reason: 'stop' }], usage }),
+      async () => {
+        const hasil = await penyedia.mintaBalasan([{ role: 'user', content: 'halo' }], PENGATURAN_UJI);
+        assert.deepEqual(hasil.token, harapan, JSON.stringify(usage));
+      }
+    );
+  }
 });
 
 test('klien OpenRouter: 401/402/429/500 dan balasan kosong/rusak → GalatPenyedia (tanpa isi respons)', async () => {
@@ -589,4 +615,150 @@ test('hanya penyedia-ai.js yang mengirim data ke luar; hanya ngobrol.layanan.js 
     const isi = layanan.slice(layanan.indexOf(penyusun), layanan.indexOf('\n}\n', layanan.indexOf(penyusun)));
     assert.ok(isi.includes('samarkan('), `${penyusun} menyamarkan data pribadi`);
   }
+  // LANJUT_060: riwayat lewat penjaga pesan akut sebelum disamarkan dan dikirim.
+  const isiSusun = layanan.slice(layanan.indexOf('function susunPermintaan('), layanan.indexOf('\n}\n', layanan.indexOf('function susunPermintaan(')));
+  assert.ok(isiSusun.indexOf('tanpaPesanAkut(riwayat)') > -1 && isiSusun.indexOf('tanpaPesanAkut(riwayat)') < isiSusun.indexOf('samarkan('), 'penjaga pesan akut sebelum penyamaran');
+});
+
+// --- LANJUT_060: pesan akut tidak bocor lewat riwayat ------------------------------------------------
+
+test('LANJUT_060: pesan akut di riwayat TIDAK ikut terkirim — diganti penanda netral; balasan empati server tetap', async (t) => {
+  const mock = mockBalasan(t);
+  const a = await akun();
+  const AKUT = 'aku pengen bunuh diri aja rasanya PENANDA-AKUT-RAHASIA';
+  // Giliran 1: akut → server menjawab sendiri, penyedia tidak dipanggil.
+  const g1 = await panggil('POST', '/ngobrol', a.token, { pesan: [{ peran: 'pengguna', teks: AKUT }] });
+  assert.equal(g1.status, 200);
+  assert.equal(g1.json.data.balasan, TEKS.empati_akut);
+  assert.equal(mock.mock.callCount(), 0);
+  // Giliran 2: app mengirim riwayat yang memuat pesan akut + balasan server.
+  const g2 = await panggil('POST', '/ngobrol', a.token, {
+    pesan: [
+      { peran: 'pengguna', teks: AKUT },
+      { peran: 'bot', teks: g1.json.data.balasan },
+      { peran: 'pengguna', teks: 'makasih, aku mau cerita soal rencana kuliah' },
+    ],
+  });
+  assert.equal(g2.status, 200);
+  assert.equal(mock.mock.callCount(), 1);
+  const semua = JSON.stringify(mock.mock.calls[0].arguments);
+  assert.ok(!semua.includes('PENANDA-AKUT-RAHASIA'), 'isi pesan akut terkirim ke penyedia');
+  const { data } = dikirim(mock);
+  assert.ok(!data.includes('bunuh diri'), 'isi pesan akut terkirim ke penyedia');
+  assert.ok(data.includes(PENANDA_AKUT), 'penanda netral menggantikan pesan akut');
+  assert.ok(data.includes(TEKS.empati_akut.slice(0, 40)), 'balasan empati server tetap di riwayat');
+  assert.ok(data.includes('aku mau cerita soal rencana kuliah'), 'pesan terbaru tetap utuh');
+});
+
+test('LANJUT_060: pesan di riwayat yang baru terdeteksi akut (daftar kata diperbarui) juga diganti; pesan biasa tidak', async (t) => {
+  const mock = mockBalasan(t);
+  const a = await akun();
+  // "pgn ilang aja" baru dikenal akut sejak LANJUT_060: dulu bisa sudah terkirim dan dijawab AI.
+  const res = await panggil('POST', '/ngobrol', a.token, {
+    pesan: [
+      { peran: 'pengguna', teks: 'pgn ilang aja dari dunia ini PENANDA-LAMA' },
+      { peran: 'bot', teks: 'Balasan AI lama untuk pesan itu.' },
+      { peran: 'pengguna', teks: 'aku suka pelajaran biologi' },
+      { peran: 'bot', teks: 'Seru!' },
+      { peran: 'pengguna', teks: 'kalau kuliah biologi belajar apa aja?' },
+    ],
+  });
+  assert.equal(res.status, 200);
+  const { data } = dikirim(mock);
+  assert.ok(!data.includes('PENANDA-LAMA') && !data.includes('ilang aja'), 'pesan akut lama terkirim');
+  assert.equal(data.split(PENANDA_AKUT).length - 1, 1, 'tepat satu penanda');
+  assert.ok(data.includes('aku suka pelajaran biologi') && data.includes('Balasan AI lama untuk pesan itu.'), 'pesan lain tetap');
+});
+
+// --- LANJUT_060: bawaan gagal-aman ai_aktif ------------------------------------------------------------
+
+test('LANJUT_060: bawaan ai_aktif = 0 untuk instalasi baru; tidak ada migrasi yang mengubah nilai instalasi lama', () => {
+  const dir = path.join(__dirname, '..', 'src', 'db', 'migrasi');
+  const sql015 = fs.readFileSync(path.join(dir, '015_ai_pengaturan.sql'), 'utf8');
+  assert.match(sql015, /\('ai_aktif', '0',/, 'bawaan ai_aktif di 015 harus 0');
+  assert.match(sql015, /ON DUPLICATE KEY UPDATE kunci = kunci;/, 'nilai yang sudah ada tidak ditimpa');
+  for (const berkas of fs.readdirSync(dir)) {
+    const isi = fs.readFileSync(path.join(dir, berkas), 'utf8').replace(/--.*$/gm, '');
+    assert.doesNotMatch(isi, /UPDATE\s+konfigurasi_levelin[\s\S]*ai_aktif/i, `${berkas} mengubah ai_aktif diam-diam`);
+  }
+});
+
+// --- LANJUT_060: pemakaian AI harian (tanpa isi, tanpa identitas) -----------------------------------------
+
+const KOLOM_PEMAKAIAN = ['panggilan_ai', 'token_masuk', 'token_keluar', 'balasan_stub', 'tanda_akut', 'tanda_ringan', 'tanda_model', 'galat_penyedia', 'web_dipakai', 'web_kuota_habis', 'modul_dipakai'];
+
+async function pemakaianHariIni() {
+  await pemakaian.selesai();
+  const [[b]] = await pool.query(`SELECT ${KOLOM_PEMAKAIAN.join(', ')} FROM pemakaian_ai_harian WHERE tanggal = ?`, [tanggalWib()]);
+  return Object.fromEntries(KOLOM_PEMAKAIAN.map((k) => [k, b ? Number(b[k]) : 0]));
+}
+const selisih = (sesudah, sebelum) => Object.fromEntries(KOLOM_PEMAKAIAN.map((k) => [k, sesudah[k] - sebelum[k]]));
+
+test('LANJUT_060 pemakaian: skema hanya tanggal + angka; tanpa id akun, tanpa kolom yang bisa memuat isi', async () => {
+  const [kolom] = await pool.query(
+    "SELECT COLUMN_NAME AS nama, DATA_TYPE AS tipe FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'pemakaian_ai_harian' ORDER BY ORDINAL_POSITION"
+  );
+  assert.deepEqual(kolom.map((k) => k.nama), ['tanggal', ...KOLOM_PEMAKAIAN]);
+  assert.equal(kolom[0].tipe, 'date');
+  for (const k of kolom.slice(1)) assert.ok(['int', 'bigint'].includes(k.tipe), `${k.nama}: ${k.tipe}`);
+  assert.ok(!kolom.some((k) => /pengguna|akun|pemilik|user|id$|isi|pesan|kueri|teks/.test(k.nama)), 'kolom identitas atau isi');
+});
+
+test('LANJUT_060 pemakaian: hitungan harian bertambah benar (panggilan, token, stub, tanda bahaya, galat)', async (t) => {
+  const antrean = [
+    async () => ({ teks: 'Balasan pertama.', terpotong: false, anotasi: [], token: { masuk: 100, keluar: 20 } }),
+    async () => ({ teks: 'Pelan-pelan ya.', terpotong: false, anotasi: [] }), // tanpa token → 0
+    async () => ({ teks: '[[BANTUAN]] Aku khawatir sama kamu.', terpotong: false, anotasi: [], token: { masuk: 50, keluar: 5 } }),
+    async () => {
+      throw new penyedia.GalatPenyedia('menolak permintaan', 402);
+    },
+  ];
+  t.mock.method(penyedia, 'mintaBalasan', async () => antrean.shift()());
+  const a = await akun();
+  const sebelum = await pemakaianHariIni();
+  try {
+    assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan('Aku bingung milih jurusan.'))).status, 200);
+    assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan('aku stres banget mikirin ujian'))).status, 200);
+    assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan('rasanya semuanya berat'))).status, 200);
+    assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan('halo lagi'))).status, 502);
+    assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan('aku pengen bunuh diri'))).status, 200);
+    await aturKonfig('ai_aktif', '0');
+    assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan('halo saat AI mati'))).json.data.uji_coba, true);
+  } finally {
+    await kembalikanKonfig();
+  }
+  assert.deepEqual(selisih(await pemakaianHariIni(), sebelum), {
+    panggilan_ai: 3,
+    token_masuk: 150,
+    token_keluar: 25,
+    balasan_stub: 1,
+    tanda_akut: 1,
+    tanda_ringan: 1,
+    tanda_model: 1,
+    galat_penyedia: 1,
+    web_dipakai: 0,
+    web_kuota_habis: 0,
+    modul_dipakai: 0,
+  });
+});
+
+test('LANJUT_060 pemakaian: pencatatan gagal tidak mengganggu jawaban; log tanpa isi', async (t) => {
+  mockBalasan(t, 'Tetap dijawab.');
+  t.mock.method(pemakaianRepo, 'tambahPemakaian', async () => {
+    throw Object.assign(new Error('koneksi putus RAHASIA-DB'), { code: 'ECONNRESET' });
+  });
+  const a = await akun();
+  const { hasil, tercatat } = await rekamLog(async () => {
+    const biasa = await panggil('POST', '/ngobrol', a.token, obrolan('PENANDA-ISI-PEMAKAIAN halo'));
+    const akut = await panggil('POST', '/ngobrol', a.token, obrolan('aku pengen bunuh diri'));
+    await pemakaian.selesai();
+    return { biasa, akut };
+  });
+  assert.equal(hasil.biasa.status, 200);
+  assert.equal(hasil.biasa.json.data.balasan, 'Tetap dijawab.');
+  assert.equal(hasil.akut.status, 200);
+  assert.equal(hasil.akut.json.data.balasan, TEKS.empati_akut);
+  const log = tercatat.join('\n');
+  assert.ok(log.includes('[pemakaian] gagal dicatat (ECONNRESET)'), log);
+  assert.ok(!log.includes('RAHASIA-DB') && !log.includes('PENANDA-ISI-PEMAKAIAN'), 'isi tercatat di log');
 });

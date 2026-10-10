@@ -9,7 +9,7 @@ const { test, after } = require('node:test');
 const assert = require('node:assert/strict');
 const keselamatan = require('../src/modul/ngobrol/keselamatan');
 const { samarkan } = require('../src/modul/ngobrol/samarkan');
-const { pesanSistem, blokPercakapan, pengaturanPenyedia } = require('../src/modul/ngobrol/ngobrol.layanan');
+const { pesanSistem, blokPercakapan, pengaturanPenyedia, susunPermintaan, tanpaPesanAkut, PENANDA_AKUT } = require('../src/modul/ngobrol/ngobrol.layanan');
 
 const KONFIG = path.join(__dirname, '..', 'config');
 const bacaKonfig = (n) => JSON.parse(fs.readFileSync(path.join(KONFIG, n), 'utf8'));
@@ -98,6 +98,86 @@ test('deteksi: kalimat biasa tidak memicu', () => {
   for (const t of ['HP-ku mati, gimana cara lapor?', 'mati lampu terus di rumah', 'aku mau jadi dokter', 'jurusan apa yang cocok buat aku?', 'nilai matematika aku 85', 'kelas 12 SMK']) {
     assert.equal(keselamatan.deteksi(t).tingkat, null, t);
   }
+});
+
+// --- LANJUT_060: A06 & A07, kombinasi kata kunci, positif palsu --------------------------------------
+
+const VARIASI_060 = {
+  ancaman_sebar_foto: [
+    'dia ngancam bakal nyebar fotoku kalau aku nggak nurut',
+    'fotoku mau disebar, dia ancam aku terus',
+    'mantanku ngancem mau upload video aku ke grup kelas',
+    'dia bilang bakal viralin foto pribadiku, itu ancaman kan?',
+    'aku diancam fotoku bakal disebarin ke ortuku',
+    'kakak kelas mengancam menyebarkan foto aku di sosmed',
+  ],
+  pelecehan: ['fotoku udah disebar di grup kelas, aku malu banget', 'orang di game minta foto bugil aku'],
+  mengakhiri_hidup: [
+    'aku capek banget sama semuanya, pengen hilang aja',
+    'pgn ilang aja dari dunia ini',
+    'rasanya aku mau menghilang aja, gak ada yang peduli',
+    'pengen ngilang aja rasanya',
+    'kadang aku mau lenyap aja dari semua orang',
+    'aku pingin hilaaang aja',
+    'mending aku hilang aja ya biar ga nyusahin',
+    'kepengen ilang dari muka bumi',
+  ],
+};
+
+test('LANJUT_060: A06 & A07 beserta variasinya terdeteksi akut (urutan kata bebas, ejaan gaul, huruf berulang)', () => {
+  for (const [kategori, contoh] of Object.entries(VARIASI_060)) {
+    for (const t of contoh) {
+      const d = keselamatan.deteksi(t);
+      assert.equal(d.tingkat, 'akut', `"${t}" → ${keselamatan.normalisasi(t)}`);
+      assert.equal(d.kategori, kategori, `"${t}"`);
+    }
+  }
+});
+
+test('LANJUT_060: positif palsu baru terdokumentasi untuk guru BK dan memang terdeteksi akut (lebih baik terlalu sering)', () => {
+  const dok = bacaKonfig('tanda-bahaya.json').positif_palsu_diketahui.join('\n');
+  const POSITIF_PALSU = [
+    'jerawatku mau hilang kalau rajin cuci muka?',
+    'sinyal di rumahku mau hilang terus',
+    'datanya mau hilang kalau nggak di-save?',
+    'aku ngancam adikku mau nyebar foto lucunya, bercanda kok',
+    'guru mengancam akan menyebarkan foto kelas yang ribut ke grup orang tua',
+    'kenapa foto bugil anak di internet itu dilarang?',
+  ];
+  for (const t of POSITIF_PALSU) {
+    assert.equal(keselamatan.deteksi(t).tingkat, 'akut', t);
+    assert.ok(dok.includes(`'${t}'`), `belum terdokumentasi di positif_palsu_diketahui: ${t}`);
+  }
+});
+
+test('LANJUT_060: kalimat mirip yang TIDAK boleh memicu', () => {
+  for (const t of [
+    'aku mau ngilangin kebiasaan begadang',
+    'bagaimana fotosintesis menyebarkan oksigen?',
+    'aku upload foto tugas ke classroom',
+    'video pembelajaran fisika ini bagus',
+    'fotoku jelek banget di kartu pelajar',
+    'apa itu ancaman bagi ekosistem laut?',
+    'kucingku hilang sejak kemarin',
+    'mau tanya, kenapa dinosaurus hilang?',
+  ]) {
+    assert.equal(keselamatan.deteksi(t).tingkat, null, `${t} → ${keselamatan.normalisasi(t)}`);
+  }
+});
+
+test('LANJUT_060: penjaga riwayat — hanya pesan SISWA yang akut diganti penanda netral; balasan bot & pesan biasa tetap', () => {
+  const riwayat = [
+    { peran: 'pengguna', teks: 'aku pengen bunuh diri' },
+    { peran: 'bot', teks: 'Terima kasih sudah mau cerita.' },
+    { peran: 'bot', teks: 'aku pengen bunuh diri' }, // bot tidak pernah diganti
+    { peran: 'pengguna', teks: 'pgn ilang aja' },
+    { peran: 'pengguna', teks: 'aku mau cerita soal kuliah' },
+  ];
+  assert.deepEqual(tanpaPesanAkut(riwayat).map((m) => m.teks), [PENANDA_AKUT, 'Terima kasih sudah mau cerita.', 'aku pengen bunuh diri', PENANDA_AKUT, 'aku mau cerita soal kuliah']);
+  const { pesan } = susunPermintaan({ profil: {}, namaProdi: null, riwayat });
+  assert.ok(!pesan[1].content.includes('ilang aja'), 'pesan akut ikut di blok data');
+  assert.equal(pesan[1].content.split(PENANDA_AKUT).length - 1, 2);
+  assert.ok(pesan[0].content.includes(PENANDA_AKUT), 'instruksi sistem menjelaskan arti penanda');
 });
 
 test('normalisasi: huruf kecil, tanda baca, huruf berulang, angka di kata, ejaan gaul', () => {

@@ -6,6 +6,11 @@
 > Khalifa**. Status tiap butir dan buktinya ada di
 > [`peta-kelengkapan-2026-10-09.md`](peta-kelengkapan-2026-10-09.md).
 >
+> **Diperbarui LANJUT_060 (9 Oktober 2026)** sesudah perubahan kode:
+> bawaan `ai_aktif` 0 untuk instalasi baru (1.3, 1.4), migrasi 018 dan dua
+> kunci tarif (1.3, 1.4), daftar periksa keselamatan (3), hal teknis yang
+> sudah beres (4), dan pemantauan dengan tabel `pemakaian_ai_harian` (5).
+>
 > Acuan teknis yang lebih rinci: `LANJUT_App/server/README.md` §6
 > (Deployment), `LANJUT_App/server/DEPLOYMENT-RUMAHWEB.md`,
 > `docs/LANJUT_024_Checklist-Hari-Deploy.md`.
@@ -43,8 +48,8 @@
 | `OPENROUTER_API_KEY` | tidak | kosong = AI mati (503) | **biarkan kosong** sampai daftar periksa keselamatan (bagian 3) beres |
 | `OPENROUTER_BASE_URL` | tidak | `https://openrouter.ai/api/v1` | jangan diubah (hanya untuk uji); selain `https://` ditolak |
 
-Catatan: tabel env di `server/README.md` §6 belum mencantumkan
-`OPENROUTER_API_KEY` (ada di `.env.production.example` dan `env.js`).
+Tabel env di `server/README.md` §6 sudah mencantumkan `OPENROUTER_API_KEY`
+(LANJUT_060).
 
 ### 1.3 Langkah di server baru (dari folder `server/`)
 
@@ -68,18 +73,21 @@ Catatan: tabel env di `server/README.md` §6 belum mencantumkan
    | 012 | persetujuan + `persetujuan_*` |
    | 013 | modul + `modul_*` |
    | 014 | `ngobrol_*` (batas pesan) |
-   | 015 | `ai_aktif`, `ai_model`, `ai_data_collection`, `ai_zdr`, `ai_penyedia_only` |
+   | 015 | `ai_aktif` (bawaan `0` sejak LANJUT_060), `ai_model`, `ai_data_collection`, `ai_zdr`, `ai_penyedia_only` |
    | 016 | `ai_modul_*`, `ai_web_*` |
    | 017 | `ai_web_mesin` |
+   | 018 | tabel `pemakaian_ai_harian` (hitungan harian gabungan, tanpa id akun/isi), `ai_tarif_masuk_per_juta`, `ai_tarif_keluar_per_juta` |
 
-   Migrasi berikutnya (018 dst.) mengikuti pola yang sama; `npm run migrasi`
+   Migrasi berikutnya (019 dst.) mengikuti pola yang sama; `npm run migrasi`
    aman diulang.
 4. `npm run benih` — mengisi konten dan **11 kunci Level-In** dari berkas JSON.
 5. `npm run verifikasi-konten` — **hanya** untuk konten yang benar-benar sudah
    dicek orang. Tanda verifikasi di komputer pengembang **tidak ikut** ke
    server baru; harus ditandai ulang di produksi. Tanpa `--ya` hanya pratinjau.
-6. **Sebelum siswa mendaftar**, atur konfigurasi pilot (bagian 1.4), misalnya
-   `ai_aktif = 0`.
+6. **Sebelum siswa mendaftar**, atur konfigurasi pilot (bagian 1.4). Di
+   server baru `ai_aktif` sudah `0` sejak LANJUT_060; **jangan** dinyalakan
+   sebelum daftar periksa bagian 3 beres. Cek dengan
+   `SELECT nilai FROM konfigurasi_levelin WHERE kunci = 'ai_aktif';`.
 7. `npm start`, lalu cek:
    - `GET /api/v1/sehat` (proses hidup, tidak memeriksa basis data);
    - `GET /api/v1/konten/prodi` (basis data & benih);
@@ -89,7 +97,7 @@ Catatan: tabel env di `server/README.md` §6 belum mencantumkan
 - **APK:** isi `EXPO_PUBLIC_API_URL` di `LANJUT_App/eas.json` → `build.preview.env` dengan alamat produksi `https://…/api/v1` (sekarang masih `http://10.141.5.75:4000/api/v1`, IP LAN), lalu `eas build`. Kode diunggah ke Expo, jadi ini keputusan Khalifa.
 - **Web:** ikuti `DEPLOYMENT-RUMAHWEB.md` dan `docs/keputusan-topologi-hosting.md` (app di root, landing page di `/tentang`).
 
-### 1.4 Tabel konfigurasi `konfigurasi_levelin` (31 kunci)
+### 1.4 Tabel konfigurasi `konfigurasi_levelin` (33 kunci)
 
 Semua kunci dibaca **tiap permintaan**, jadi berlaku tanpa restart.
 
@@ -107,7 +115,7 @@ Cara mengubah:
 | `modul_jumlah_maks` | `10` | modul per akun | |
 | `ngobrol_batas_5_menit` | `10` | pesan Ngobrol per akun per 5 menit | |
 | `ngobrol_batas_24_jam` | `50` | pesan per akun per 24 jam (pengendali biaya) | |
-| `ai_aktif` | `1` | saklar AI: `0` = semua akun mendapat balasan uji coba, tanpa AI | **disarankan `0` saat rilis awal**; tanda bahaya akut tetap dijawab kartu bantuan |
+| `ai_aktif` | `0` (instalasi baru sejak LANJUT_060) | saklar AI: `0` = semua akun mendapat balasan uji coba, tanpa AI | **biarkan `0` saat rilis awal**; tanda bahaya akut tetap dijawab kartu bantuan. Basis data yang sudah dimigrasi sebelum LANJUT_060 **tetap** memakai nilai lamanya (biasanya `1`); periksa dan ubah sendiri dengan SQL |
 | `ai_model` | `anthropic/claude-sonnet-5.5` | model OpenRouter | tidak sah → AI tidak tersedia (503) |
 | `ai_data_collection` | `deny` | `provider.data_collection` OpenRouter | |
 | `ai_zdr` | `0` | `1` = hanya endpoint tanpa penyimpanan data | putuskan setelah retensi dicek |
@@ -120,6 +128,8 @@ Cara mengubah:
 | `ai_web_batas_harian` | `10` | pencarian web per akun per hari (memori proses) | angka akhir: Khalifa |
 | `ai_web_hasil_maks` | `3` | hasil per pencarian | |
 | `ai_web_mesin` | kosong | kosong = bawaan OpenRouter; `exa` = paksa Exa (US$0,007/permintaan menurut dok. OpenRouter); nilai lain mematikan web | |
+| `ai_tarif_masuk_per_juta` | kosong | tarif token masuk (US$ per 1 juta token), hanya untuk perkiraan biaya di `npm run pemakaian-ai` | isi dari halaman harga model di OpenRouter; kosong = biaya tidak dihitung |
+| `ai_tarif_keluar_per_juta` | kosong | tarif token keluar (US$ per 1 juta token) | sama; kedua tarif harus terisi |
 | `aturan_versi` (L) | `1` | versi aturan klasifikasi keyakinan | |
 | `ambang_overconfident` (L) | `0.4` | rate "yakin tapi salah" untuk pola terlalu yakin | perkiraan |
 | `minimum_kartu` (L) | `5` | jawaban berkeyakinan minimal per mapel untuk kalibrasi | |
@@ -165,14 +175,15 @@ sengaja masih 1**.
 Bagian ini berlaku untuk **menyalakan AI bagi siswa**. Rilis uji tanpa AI
 cukup dengan `ai_aktif = 0` dan tidak mencatat persetujuan orang tua/wali.
 
-- [ ] Guru BK meninjau `server/config/tanda-bahaya.json`, termasuk usulan untuk dua yang masih terlewat: A06 "diancam sebar foto" dan A07 "pengen hilang aja" (`tests/skenario-ai/skenario.json`).
+- [ ] Guru BK meninjau `server/config/tanda-bahaya.json`, termasuk tambahan LANJUT_060 untuk A06 "diancam sebar foto" dan A07 "pengen hilang aja" (kombinasi kata `akut_kombinasi`, frasa "mau hilang", "foto aku disebarin", dll.; A06–A24 di `tests/skenario-ai/skenario.json`) dan **positif palsu** yang tercatat di `positif_palsu_diketahui` (mis. "jerawatku mau hilang", "aku ngancam adikku mau nyebar foto lucunya"). Tim menerima positif palsu itu: lebih baik siswa sesekali mendapat kartu bantuan yang tidak perlu daripada tanda bahaya terlewat.
 - [ ] Guru BK meninjau `server/config/kartu-bantuan.json`. **SAPA 129** dicek ke sumber resmi lalu `terverifikasi: true` dan `tanggal_cek` diisi, **atau** tetap tersembunyi (saat ini `false`, tidak pernah tampil). Isi `tanggal_cek` juga untuk Healing119 dan 112 (saat ini `null`).
-- [ ] Keputusan guru BK & Khalifa: pesan bertanda bahaya akut dibuang dari riwayat yang dikirim ke AI atau tidak (peta F4).
+- [x] Pesan bertanda bahaya akut tidak ikut di riwayat yang dikirim ke AI (peta F4): **dibangun di LANJUT_060**. Server mengganti pesan siswa yang akut dengan penanda netral `[siswa menyampaikan hal yang sangat berat; aplikasi sudah menampilkan kartu bantuan]`. Sisa untuk guru BK: meninjau kalimat penanda itu.
 - [ ] Kebijakan privasi v2: semua `[ISI]` terisi, ditinjau hukum, versi dinaikkan (bagian 2).
 - [ ] Surat orang tua/wali siap: kop sekolah, penandatangan, nomor versi, cara menyimpan surat asli.
 - [ ] Retensi OpenRouter dan penyedia model dicek (`[ISI]` I12); putuskan `ai_zdr` dan `ai_penyedia_only`.
 - [ ] Kunci OpenRouter khusus produksi dengan **batas kredit** terpasang di dasbor OpenRouter, hanya di `.env` server.
-- [ ] Saklar `ai_aktif` diuji di server produksi: `0` → balasan uji coba; `1` → AI; tanda bahaya akut tetap dijawab kartu bantuan di kedua keadaan.
+- [ ] Saklar `ai_aktif` diuji di server produksi: `0` (bawaan instalasi baru) → balasan uji coba; `1` → AI; tanda bahaya akut tetap dijawab kartu bantuan di kedua keadaan.
+- [ ] Kedua tarif `ai_tarif_*_per_juta` diisi dari harga model yang dipakai, lalu `npm run pemakaian-ai` dicoba di server produksi (bagian 5).
 - [ ] Evaluasi lapis 2 dijalankan (`EVALUASI_AI_IZIN=ya npm run evaluasi-ai -- --ya-panggil-penyedia`) dan dinilai Khalifa & guru BK (`docs/skenario-ai.md`).
 - [ ] `ai_web_aktif` tetap `0` sampai kebijakan data mesin pencari dicek (`[ISI]` I11); bila dinyalakan, putuskan `ai_web_mesin` dan `ai_web_batas_harian`.
 - [ ] `ai_modul_aktif`: putuskan setelah tinjauan hak cipta modul (`[ISI]` I10).
@@ -189,17 +200,68 @@ cukup dengan `ai_aktif = 0` dan tidak mencatat persetujuan orang tua/wali.
 | Kerentanan app | 29 temuan `npm audit` (4 paket akar) sengaja ditinggal | **Jangan** `npm audit fix` di `LANJUT_App/` (menyelipkan paket SDK 58 atau menurunkan ke Expo 44). Tinjau saat naik SDK 58 | Khalifa |
 | Commit belum di-push | **77 commit** di depan `origin/main` (terakhir di remote `85a7ff0`) | Push | Khalifa |
 | MariaDB | Belum pernah diuji | Uji migrasi & `npm test` di DB hosting | Khalifa |
-| Skrip E2E | Tidak ada di repo (dijalankan dari folder sementara) | Simpan di repo agar uji 360 px bisa diulang sebelum rilis | Khalifa |
-| README env | `OPENROUTER_API_KEY` tidak ada di tabel env `server/README.md` §6 | Tambah satu baris | Khalifa |
+| Skrip E2E | **Selesai (LANJUT_060):** tersimpan di `LANJUT_App/e2e/` beserta README cara menjalankan | Jalankan ulang sebelum rilis (butuh Playwright dan export web) | Khalifa |
+| README env | **Selesai (LANJUT_060):** `OPENROUTER_API_KEY` ada di tabel env `server/README.md` §6 | — | — |
 | Landing page | Tombol ke `https://edilakso.my.id/`; penempatan `/tentang` belum dicek | Cek setelah DNS beres | Khalifa |
 
 ## 5. Rencana pemantauan minimal saat pilot
 
 Prinsipnya: **tidak ada isi obrolan yang disimpan atau dicatat** (dijaga
-`tests/ngobrol.test.js`, "isi obrolan tidak tercatat di log server"). Yang
-bisa dilihat tim hanya dari keluaran konsol server (log hosting).
+`tests/ngobrol.test.js`, "isi obrolan tidak tercatat di log server"). Tim
+bisa melihat dua sumber: hitungan harian di basis data (sejak LANJUT_060) dan
+keluaran konsol server (log hosting).
 
-### Yang sudah bisa dilihat sekarang
+### Hitungan harian tersimpan (LANJUT_060)
+
+Tabel `pemakaian_ai_harian` (migrasi 018) berisi **satu baris per tanggal WIB
+untuk semua pengguna digabung**. Tidak ada id akun, isi pesan, kueri, atau
+alamat web; tesnya `tests/ngobrol.test.js` ("skema hanya tanggal + angka").
+Setiap `POST /ngobrol` menambah hitungannya dengan satu `INSERT … ON
+DUPLICATE KEY UPDATE` (atomik). Penulisan **tidak ditunggu**: bila basis data
+gagal, siswa tetap mendapat jawaban dan log hanya mencatat
+`[pemakaian] gagal dicatat (<kode galat>)`.
+
+| Kolom | Bertambah saat |
+|---|---|
+| `panggilan_ai` | permintaan ke penyedia AI berhasil (jawaban dan pencarian web dihitung masing-masing) |
+| `token_masuk`, `token_keluar` | dari `usage.prompt_tokens` / `usage.completion_tokens` di respons penyedia; 0 bila tidak ada |
+| `balasan_stub` | `ai_aktif = 0`, siswa mendapat balasan uji coba |
+| `tanda_akut` | tanda bahaya akut (di rute maupun lapis kedua di layanan) |
+| `tanda_ringan` | tanda bahaya ringan |
+| `tanda_model` | model menilai siswa butuh bantuan (kartu bantuan tampil) |
+| `galat_penyedia` | penyedia gagal (jawaban atau pencarian web) |
+| `web_dipakai`, `web_kuota_habis` | pencarian web berhasil / kuota harian akun habis |
+| `modul_dipakai` | jawaban memakai potongan modul |
+
+Ringkasan dari folder `server/`:
+
+```bash
+npm run pemakaian-ai              # 7 hari terakhir (bawaan)
+npm run pemakaian-ai -- --hari=30 # 1–366 hari
+```
+
+Perkiraan biaya hanya muncul bila `ai_tarif_masuk_per_juta` **dan**
+`ai_tarif_keluar_per_juta` terisi (bagian 1.4). Contoh keluaran dengan data
+uji (tarif contoh, bukan harga sebenarnya):
+
+```text
+Pemakaian AI 7 hari (2026-10-03 s.d. 2026-10-09, WIB). Hitungan gabungan semua akun, tanpa id akun dan tanpa isi.
+
+Tanggal     Panggilan  Token masuk  Token keluar  Uji coba  Akut  Ringan  Model  Galat  Web  Web habis  Modul  Biaya (US$)
+2026-10-08         12        24000          3000         0     1       2      0      1    0          0      3       0.0780
+2026-10-09          8        16000          2000         4     0       1      1      0    2          1      1       0.0520
+--------------------------------------------------------------------------------------------------------------------------
+Jumlah             20        40000          5000         4     1       3      1      1    2          1      4       0.1300
+
+Perkiraan biaya: US$0.1300 (tarif masuk US$2/juta, keluar US$10/juta token). Tagihan sebenarnya: dasbor OpenRouter.
+Kolom: Panggilan = permintaan ke penyedia yang berhasil (jawaban + web); Uji coba = balasan saat ai_aktif = 0; …
+```
+
+Angka ini perkiraan dari token yang dilaporkan penyedia. Biaya pencarian web
+(mis. Exa) dan pembulatan penyedia tidak ikut; acuan tagihan tetap dasbor
+OpenRouter.
+
+### Yang ada di log
 
 | Yang dipantau | Sumber di log | Contoh baris |
 |---|---|---|
@@ -207,9 +269,9 @@ bisa dilihat tim hanya dari keluaran konsol server (log hosting).
 | Penanda keselamatan | `server/src/modul/ngobrol/keselamatan.js` | `[keselamatan] tingkat=akut waktu=…` (juga `ringan`, `model`) |
 | Galat penyedia | `ngobrol.layanan.js` | `[ngobrol] penyedia AI menolak permintaan (HTTP 402)`, `[ngobrol] pencarian web: …`, `[ngobrol] konfigurasi penyedia AI tidak sah …` |
 | Pemakaian materi | `ngobrol.layanan.js` | `[ngobrol] materi modul=1 web=0` (`web_habis` bila kuota habis) |
-| Biaya dan token | **tidak ada di LANJUT** | hanya di dasbor OpenRouter per kunci |
+| Hitungan harian gagal ditulis | `server/src/modul/ngobrol/pemakaian.js` | `[pemakaian] gagal dicatat (ECONNRESET)` |
 
-Hitungan cepat per hari (ganti `<log>` dengan berkas log hosting):
+Hitungan cepat dari log (ganti `<log>` dengan berkas log hosting):
 
 ```bash
 grep -c "POST /api/v1/ngobrol 200" <log>        # balasan berhasil
@@ -218,11 +280,17 @@ grep -c "\[keselamatan\] tingkat=akut" <log>     # tanda bahaya akut
 grep -c "\[keselamatan\] tingkat=model" <log>    # model menilai siswa butuh bantuan
 ```
 
-### Celah (belum ada)
+### Celah
 
-1. **Tidak ada hitungan tersimpan atau dasbor.** Semua hanya di log konsol; masa simpannya bergantung hosting (`[ISI]` I2).
-2. **Tidak ada biaya atau token per hari di server.** `usage` di respons OpenRouter tidak dibaca (`audit-051-vs-spek.md` celah 10). Satu-satunya pengendali: batas kredit kunci dan `ngobrol_batas_*`.
-3. **Tidak ada peringatan otomatis** untuk lonjakan tanda bahaya, galat penyedia, atau 402 (kredit habis).
-4. **Tidak ada jalur moderasi** (peta D4). Karena isi tidak disimpan, tim tidak bisa membaca ulang percakapan; perlu cara lain, mis. siswa melapor.
-5. **Baris keselamatan bisa dikaitkan ke akun.** Baris `[keselamatan]` tanpa id akun, tetapi baris log akses permintaan yang sama memuat `pengguna=<id>` pada waktu yang sama (dicatat di Lampiran A kebijakan). Akses ke log harus dibatasi.
-6. **Kuota web dan batas laju hanya di memori.** Hilang saat restart dan tidak dibagi antarproses.
+Sudah ditutup di LANJUT_060:
+
+- ~~Tidak ada hitungan tersimpan.~~ Ada `pemakaian_ai_harian` + `npm run pemakaian-ai`. Belum ada dasbor; ringkasan dibaca dari terminal server.
+- ~~Tidak ada biaya atau token per hari di server.~~ `usage` dibaca (`penyedia-ai.js`, `bacaToken`) dan dijumlahkan per hari. Pengendali biaya tetap batas kredit kunci dan `ngobrol_batas_*`; angka LANJUT hanya perkiraan.
+
+Masih terbuka:
+
+1. **Tidak ada peringatan otomatis** untuk lonjakan tanda bahaya, galat penyedia, atau 402 (kredit habis). Tim harus menjalankan `npm run pemakaian-ai` sendiri, mis. tiap pagi selama pilot.
+2. **Tidak ada jalur moderasi** (peta D4). Karena isi tidak disimpan, tim tidak bisa membaca ulang percakapan; perlu cara lain, mis. siswa melapor.
+3. **Baris keselamatan bisa dikaitkan ke akun.** Baris `[keselamatan]` tanpa id akun, tetapi baris log akses permintaan yang sama memuat `pengguna=<id>` pada waktu yang sama (dicatat di Lampiran A kebijakan). Akses ke log harus dibatasi. Tabel `pemakaian_ai_harian` tidak punya masalah ini (hanya per tanggal).
+4. **Kuota web dan batas laju hanya di memori.** Hilang saat restart dan tidak dibagi antarproses.
+5. **Masa simpan log dan tabel pemakaian belum ditetapkan** (`[ISI]` I2 dan I16).

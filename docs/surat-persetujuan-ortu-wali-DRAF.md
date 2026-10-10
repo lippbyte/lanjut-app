@@ -77,8 +77,9 @@ ditutup. LANJUT meminta penyedia yang tidak mengumpulkan data pengguna;
 apa yang disimpan penyedia dan berapa lama mengikuti kebijakan mereka
 ([ISI: hasil pengecekan kebijakan OpenRouter dan penyedia model]). Pesan
 yang menunjukkan tanda bahaya serius tidak diteruskan ke AI; LANJUT langsung
-menampilkan kartu layanan bantuan (bila obrolan dilanjutkan, pesan itu ikut
-di riwayat yang dikirim). Jawaban AI bisa keliru.
+menampilkan kartu layanan bantuan (bila obrolan dilanjutkan, isi pesan itu
+tetap tidak ikut terkirim; di riwayat obrolan, pesan itu diganti catatan
+singkat). Jawaban AI bisa keliru.
 
 **Hak Bapak/Ibu:** melihat data anak, meminta perbaikan atau penghapusan,
 dan **mencabut persetujuan kapan saja** lewat sekolah atau [ISI: kontak resmi

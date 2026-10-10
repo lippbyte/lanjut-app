@@ -41,11 +41,18 @@ function bacaAnotasi(pilihan) {
   return [...hasil.values()];
 }
 
+/** Jumlah token dari `usage` respons (LANJUT_060, pemantauan); 0 bila tidak ada atau tidak sah. */
+function bacaToken(json) {
+  const u = json && json.usage && typeof json.usage === 'object' ? json.usage : {};
+  const angka = (n) => (Number.isFinite(Number(n)) && Number(n) > 0 ? Math.round(Number(n)) : 0);
+  return { masuk: angka(u.prompt_tokens), keluar: angka(u.completion_tokens) };
+}
+
 /**
  * `pesan` = [{ role: 'system' | 'user', content }].
  * `pengaturan` = { model, provider, plugins?, max_tokens? }. `plugins` dipakai
  * HANYA untuk permintaan pencarian web yang terisolasi (LANJUT_055).
- * Mengembalikan { teks, terpotong, anotasi }. Melempar GalatPenyedia.
+ * Mengembalikan { teks, terpotong, anotasi, token: { masuk, keluar } }. Melempar GalatPenyedia.
  */
 async function mintaBalasan(pesan, pengaturan) {
   const kendali = new AbortController();
@@ -78,7 +85,7 @@ async function mintaBalasan(pesan, pengaturan) {
     const pilihan = json && Array.isArray(json.choices) ? json.choices[0] : null;
     const teks = pilihan && pilihan.message ? pilihan.message.content : null;
     if (typeof teks !== 'string' || !teks.trim()) throw new GalatPenyedia('memberi balasan kosong', res.status);
-    return { teks: teks.trim(), terpotong: pilihan.finish_reason === 'length', anotasi: bacaAnotasi(pilihan) };
+    return { teks: teks.trim(), terpotong: pilihan.finish_reason === 'length', anotasi: bacaAnotasi(pilihan), token: bacaToken(json) };
   } catch (e) {
     if (e instanceof GalatPenyedia) throw e;
     throw new GalatPenyedia(e.name === 'AbortError' ? 'lewat batas waktu' : 'gagal dibaca');
@@ -87,4 +94,4 @@ async function mintaBalasan(pesan, pengaturan) {
   }
 }
 
-module.exports = { mintaBalasan, bacaAnotasi, GalatPenyedia, BATAS_WAKTU_MS, TOKEN_BALASAN_MAKS };
+module.exports = { mintaBalasan, bacaAnotasi, bacaToken, GalatPenyedia, BATAS_WAKTU_MS, TOKEN_BALASAN_MAKS };

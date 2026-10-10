@@ -16,7 +16,8 @@ diganti atau dihapus tercatat di bagian "Klaim yang diganti atau dihapus".
 `tes/` = `LANJUT_App/server/tests/` · `app/` = `LANJUT_App/` (app Expo).
 Nomor baris per 8 Oktober 2026, yaitu commit `b20db57`. Bila kode sudah
 berubah (mis. LANJUT_057 menambah baris di `ngobrol.layanan.js`), buka
-versi itu dengan `git show b20db57:<berkas>`.
+versi itu dengan `git show b20db57:<berkas>`. Baris yang bertanda
+**(060)** (K4, S2, S6) memakai nomor baris sesudah LANJUT_060.
 
 **Status.**
 - **terbukti**: kode dan/atau tes otomatis menunjukkan perilaku itu.
@@ -28,7 +29,8 @@ versi itu dengan `git show b20db57:<berkas>`.
   tanpa janji, dan fakta yang belum diketahui ditulis `[ISI: ...]`.
 
 Pengaturan yang dirujuk (tabel `konfigurasi_levelin`, bisa diubah tanpa
-restart): `ai_aktif` (bawaan 1), `ai_model` (bawaan
+restart): `ai_aktif` (bawaan **0** untuk instalasi baru sejak LANJUT_060;
+instalasi lama tetap memakai nilai yang sudah ada), `ai_model` (bawaan
 `anthropic/claude-sonnet-5.5`), `ai_data_collection` (bawaan `deny`),
 `ai_zdr` (0), `ai_penyedia_only` (kosong), `ai_modul_aktif` (1),
 `ai_modul_potongan_maks` (3), `ai_web_aktif` (**0**), `ai_web_batas_harian`
@@ -114,10 +116,11 @@ kebijakan (dicocokkan dengan migrasi 001–016) dan di tes kebijakan.
 | # | Klaim | Bukti | Status |
 |---|---|---|---|
 | S1 | Server tidak menyimpan isi obrolan, potongan yang dikirim, atau pertanyaan web, dan tidak mencatatnya di log. | `tes/ngobrol.test.js:243` (penanda tidak ada di log maupun di kolom teks mana pun di basis data); `tes/ngobrol-materi.test.js:329`; `tes/ngobrol.test.js:474` (JSON rusak) | terbukti |
-| S2 | Yang tercatat hanya: permintaan ke Ngobrol (hasil, lama, ID akun), jumlah potongan dan hasil web, jenis gangguan penyedia, tingkat tanda bahaya + waktu. | `srv/app.js:57`; `srv/modul/ngobrol/ngobrol.layanan.js:374`, `:390`, `:408`, `:421`; `srv/modul/ngobrol/keselamatan.js:153-155`; `srv/middleware/penangananGalat.js:18`; `tes/ngobrol.test.js:330` | terbukti (catatan: baris keselamatan tanpa ID akun, tetapi bisa dikaitkan dengan baris log akses permintaan yang sama lewat waktunya; kebijakan tidak mengklaim anonim) |
+| S2 | Yang tercatat hanya: permintaan ke Ngobrol (hasil, lama, ID akun), jumlah potongan dan hasil web, jenis gangguan penyedia, tingkat tanda bahaya + waktu. | `srv/app.js:57`; `srv/modul/ngobrol/ngobrol.layanan.js:374`, `:390`, `:408`, `:421`; `srv/modul/ngobrol/keselamatan.js:153-155`; `srv/middleware/penangananGalat.js:18`; `tes/ngobrol.test.js:330`; (060) `srv/modul/ngobrol/pemakaian.js:31` (bila hitungan harian gagal ditulis, log hanya memuat kode galat); `tes/ngobrol.test.js:745` | terbukti (catatan: baris keselamatan tanpa ID akun, tetapi bisa dikaitkan dengan baris log akses permintaan yang sama lewat waktunya; kebijakan tidak mengklaim anonim) |
 | S3 | Hitungan batas pesan dan kuota web per akun hanya di memori, hilang saat server dinyalakan ulang. | `srv/modul/ngobrol/ngobrol.rute.js:26-35` (tanpa `store` = memori); `srv/modul/ngobrol/ngobrol.layanan.js:317` (`Map`) | terbukti |
 | S4 | Kami meminta OpenRouter hanya memakai penyedia yang tidak mengumpulkan data pengguna (`data_collection: deny`). | `mig/015_ai_pengaturan.sql:21`; `srv/modul/ngobrol/ngobrol.layanan.js:250-269`; `tes/ngobrol.test.js:177`, `:519`; untuk web: `srv/modul/ngobrol/ngobrol.layanan.js:364` | terbukti bahwa parameternya dikirim; arti dan kepatuhannya di pihak OpenRouter/penyedia: perlu dicek manusia |
 | S5 | Apa yang disimpan OpenRouter dan penyedia model, dan berapa lama, mengikuti kebijakan mereka. | Tidak bisa dibuktikan dari kode → `[ISI]` | perlu dicek manusia |
+| S6 | (060) Server menyimpan hitungan harian gabungan untuk semua pengguna (permintaan ke penyedia AI, token, tanda bahaya, gangguan), tanpa ID akun maupun isi pesan. | `mig/018_pemakaian_ai.sql` (kunci utama hanya `tanggal`, semua kolom lain angka); `srv/modul/ngobrol/pemakaian.repo.js` (hanya tanggal + angka yang ditulis); `srv/modul/ngobrol/ngobrol.layanan.js:574`, `srv/modul/ngobrol/ngobrol.rute.js:43` (`pemakaian.catat`, tidak ditunggu); `tes/ngobrol.test.js:697` (skema: tanpa kolom identitas atau teks), `:707` (hitungan bertambah benar), `:745` (pencatatan gagal tidak mengganggu jawaban) | terbukti |
 
 ## 6. Keselamatan
 
@@ -126,7 +129,7 @@ kebijakan (dicocokkan dengan migrasi 001–016) dan di tes kebijakan.
 | K1 | Server memeriksa pesan terbaru untuk tanda bahaya, di server, bukan oleh penyedia AI. | `srv/modul/ngobrol/ngobrol.rute.js:38-43` (`pesan[pesan.length - 1]`); `srv/modul/ngobrol/keselamatan.js:126-132` | terbukti |
 | K2 | Tanda bahaya serius (akut): pesan itu tidak diteruskan ke penyedia AI; server membalas teks tetap + kartu bantuan terverifikasi. | `srv/modul/ngobrol/ngobrol.rute.js:38-43`, `:50`; `srv/modul/ngobrol/keselamatan.js:135-143`; `tes/ngobrol.test.js:296`; `tes/ngobrol-keselamatan.test.js:22` | terbukti |
 | K3 | Juga saat fitur AI dimatikan. | `srv/modul/ngobrol/ngobrol.rute.js:50` (sebelum batas laju dan layanan); `tes/ngobrol.test.js:309` | terbukti |
-| K4 | Bila obrolan dilanjutkan, pesan akut ikut terkirim sebagai bagian riwayat bersama pesan berikutnya. | `app/providers/ObrolanProvider.tsx:72-75` (riwayat tidak disaring); `srv/modul/ngobrol/ngobrol.rute.js:40` (hanya pesan terbaru diperiksa); `srv/modul/ngobrol/ngobrol.layanan.js:181` | terbukti (temuan LANJUT_056; lihat Lampiran C butir 13 kebijakan) |
+| K4 | (060) Bila obrolan dilanjutkan, isi pesan akut tetap tidak ikut terkirim: server memeriksa ulang pesan siswa di riwayat dan mengganti yang akut dengan catatan singkat; balasan aplikasi tetap di riwayat. | `srv/modul/ngobrol/ngobrol.layanan.js:189-191` (`tanpaPesanAkut`, deteksi yang sama dengan rute, hanya peran `pengguna`), `:201` (dipanggil sebelum deteksi ringan dan `samarkan`), `:520-521` (modul/web hanya memakai pesan terbaru yang sudah pasti tidak akut); `tes/ngobrol.test.js:625` (dua giliran: isi akut tidak ada di permintaan ke penyedia, penanda ada, balasan empati tetap), `:653` (pesan lama yang baru terdeteksi akut juga diganti); `tes/ngobrol-materi.test.js:421` (modul, web, jawaban); `tes/ngobrol-keselamatan.test.js:168`. Uji mutasi LANJUT_060: penjaga dicabut → keempat tes gagal. | terbukti (temuan LANJUT_056 ditutup di LANJUT_060; Lampiran C butir 13 kebijakan) |
 | K5 | Tanda ringan: pesan tetap dikirim, dengan catatan agar AI menanggapi perasaan lebih dulu. | `srv/modul/ngobrol/ngobrol.layanan.js:86-87`, `:122`, `:180`; `tes/ngobrol.test.js:344` | terbukti |
 | K6 | AI bisa menilai siswa butuh bantuan; app lalu menampilkan kartu bantuan. | `srv/modul/ngobrol/ngobrol.layanan.js:425-429`; `tes/ngobrol.test.js:355` | terbukti |
 | K7 | Daftar tanda bahaya masih draf untuk tinjauan guru BK; daftar kartu bantuan juga draf. | `cfg/tanda-bahaya.json:2`; `cfg/kartu-bantuan.json:2`; `tes/ngobrol-keselamatan.test.js:45` | terbukti |
@@ -167,7 +170,7 @@ Kalimat surat adalah ringkasan kalimat kebijakan di atas.
 | Nama, nama pengguna, email, ID akun tidak dikirim; nomor/email/16 angka disamarkan; nama atau alamat yang ditulis anak tetap terkirim | T1, T4, PS1, PS4 | terbukti |
 | Isi obrolan tidak disimpan di server LANJUT dan hilang dari app saat ditutup | S1, HP1 | terbukti |
 | LANJUT meminta penyedia yang tidak mengumpulkan data; penyimpanan penyedia mengikuti kebijakan mereka | S4, S5 | perlu dicek manusia (`[ISI]`) |
-| Tanda bahaya serius tidak diteruskan ke AI; kartu bantuan; ikut di riwayat bila obrolan dilanjutkan | K2, K4 | terbukti |
+| Tanda bahaya serius tidak diteruskan ke AI; kartu bantuan; bila obrolan dilanjutkan, isinya tetap tidak terkirim (diganti catatan singkat di riwayat) | K2, K4 | terbukti |
 | Mencabut kapan saja; AI tertutup mulai pesan berikutnya; tidak menghapus data yang sudah dikirim | H5, H6 | terbukti |
 | Tanpa persetujuan, fitur AI terkunci | P4 | terbukti |
 
@@ -180,7 +183,7 @@ Kalimat surat adalah ringkasan kalimat kebijakan di atas.
 | G3 | Bagian "Fitur AI (belum aktif)" v1: "masih versi uji coba: balasannya contoh". | Balasan uji coba hanya saat saklar `ai_aktif` mati. | Dihapus; diganti B1. |
 | G4 | Usulan task: "tanpa persetujuan app tetap bisa dipakai dengan balasan uji coba". | Tidak sesuai kode: tanpa persetujuan layar Ngobrol terkunci (403 `AI_BELUM_DIIZINKAN`), bukan balasan uji coba. | Ditulis sesuai kode (P4); fitur lain tetap jalan. |
 | G5 | Usulan task: persetujuan "untuk siswa di bawah 18 tahun". | Gerbang tidak memeriksa usia; berlaku untuk semua akun. | Ditulis sesuai kode (P3); pertanyaan siswa dewasa tetap di Lampiran C butir 2. |
-| G6 | Usulan task: "pesan yang memicunya tidak dikirim ke penyedia AI". | Hanya benar untuk tanda **akut**, dan hanya pada permintaan itu: pesan itu ikut di riwayat berikutnya. Tanda **ringan** tetap dikirim. | Ditulis dengan rinciannya (K2, K4, K5). Lampiran C butir 13. |
+| G6 | Usulan task: "pesan yang memicunya tidak dikirim ke penyedia AI". | Hanya benar untuk tanda **akut**, dan hanya pada permintaan itu: pesan itu ikut di riwayat berikutnya. Tanda **ringan** tetap dikirim. | Ditulis dengan rinciannya (K2, K4, K5). Lampiran C butir 13. LANJUT_060: pesan akut kini juga tidak ikut di riwayat berikutnya; K4 ditulis ulang. |
 | G7 | Kebijakan v1: "Sekolah lalu mencatatnya ke akunmu." | Pencatatan memakai skrip server (`npm run persetujuan-ortu`); siapa yang menjalankannya belum ditetapkan. | Diganti "persetujuan itu dicatat ke akunmu" (P1). |
 | G8 | Usulan task: "jenjang" ikut dikirim. | Jenjang tidak dikirim terpisah; yang dikirim kelas dan jenis sekolah. | Ditulis "kelas dan jenis sekolah" (A9). |
 | G9 | Lampiran C butir 11 (draf lama): "Keduanya perusahaan Amerika Serikat". | Bukan fakta dari kode dan belum dicek dari sumber resmi. | Dihapus; negara pemrosesan menjadi `[ISI]` (A3). |
@@ -258,6 +261,7 @@ PDP). Tes memastikan setiap `[ISI]` di JSON dan surat ada di tabel ini.
 | I29 | Surat: tanda tangan | `[ISI: wali kelas / kepala sekolah]` | Sekolah (lewat Khalifa) |
 
 Di luar `[ISI]`, yang menunggu **guru BK**: daftar tanda bahaya
-(`cfg/tanda-bahaya.json`), kartu bantuan (`cfg/kartu-bantuan.json`), dan
-keputusan apakah pesan akut dibuang dari riwayat yang dikirim (Lampiran C
-butir 13). Kalimat kebijakan K7 berubah bila tinjauan itu selesai.
+(`cfg/tanda-bahaya.json`, termasuk positif palsu LANJUT_060 di
+`positif_palsu_diketahui`), kartu bantuan (`cfg/kartu-bantuan.json`), dan
+kalimat penanda netral yang menggantikan pesan akut di riwayat (LANJUT_060,
+Lampiran C butir 13). Kalimat kebijakan K7 berubah bila tinjauan itu selesai.

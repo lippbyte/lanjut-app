@@ -39,12 +39,14 @@ const BALASAN_TIRUAN = 'Balasan tiruan.';
 const KARTU_TERVERIFIKASI = ['Healing119 (layanan kesehatan jiwa Kemenkes)', 'Nomor darurat nasional'];
 const PENANDA_BLOK = 'PESAN TERBARU SISWA (JSON):';
 // A–J: LANJUT_054 (52). K: LANJUT_055 (materi & modul, 6–8).
-const JUMLAH_PER_KATEGORI = { A: 8, B: 5, C: 7, D: 6, E: 5, F: 5, G: 6, H: 3, I: 3, J: 4, K: 8 };
+// A: +16 di LANJUT_060 (7 variasi A06, 7 variasi A07, 2 positif palsu baru).
+const JUMLAH_PER_KATEGORI = { A: 24, B: 5, C: 7, D: 6, E: 5, F: 5, G: 6, H: 3, I: 3, J: 4, K: 8 };
 const STATUS_ARSIP = { ada: 'ada potongan modul', tidak_cocok: 'tidak ada yang cocok', belum_punya: 'belum mengunggah modul', tidak_dipakai: 'tidak dipakai' };
 
 let server;
 let baseUrl;
-let konfigAsli;
+let konfigAsli; // nilai sebelum berkas ini jalan; dikembalikan di after()
+let konfigTes; // nilai antar-skenario: konfigAsli dengan ai_aktif = '1'
 let versiKebijakan;
 let lepasKunci;
 
@@ -62,6 +64,9 @@ before(async () => {
   const [baris] = await pool.query('SELECT kunci, nilai FROM konfigurasi_levelin WHERE kunci IN (?)', [KUNCI]);
   konfigAsli = Object.fromEntries(baris.map((b) => [b.kunci, b.nilai]));
   assert.equal(Object.keys(konfigAsli).length, KUNCI.length, 'jalankan npm run migrasi (014–017)');
+  // LANJUT_060: bawaan instalasi baru ai_aktif = 0; skenario yang butuh AI menyalakannya eksplisit.
+  konfigTes = { ...konfigAsli, ai_aktif: '1' };
+  await kembalikanKonfig();
   const [[v]] = await pool.query("SELECT nilai FROM konfigurasi_levelin WHERE kunci = 'persetujuan_versi_kebijakan'");
   versiKebijakan = Number(v.nilai);
   env.OPENROUTER_API_KEY = 'kunci-uji-palsu';
@@ -69,7 +74,7 @@ before(async () => {
 });
 
 after(async () => {
-  await kembalikanKonfig();
+  await kembalikanKonfig(konfigAsli);
   env.OPENROUTER_API_KEY = ENV_ASLI.kunci;
   env.OPENROUTER_BASE_URL = ENV_ASLI.url;
   await new Promise((resolve) => server.close(resolve));
@@ -78,8 +83,9 @@ after(async () => {
 });
 
 const aturKonfig = (kunci, nilai) => pool.query('UPDATE konfigurasi_levelin SET nilai = ? WHERE kunci = ?', [nilai, kunci]);
-async function kembalikanKonfig() {
-  for (const [k, v] of Object.entries(konfigAsli)) await aturKonfig(k, v);
+/** Antar-skenario: kembali ke konfigTes (AI menyala). Di akhir berkas: ke konfigAsli. */
+async function kembalikanKonfig(tujuan = konfigTes) {
+  for (const [k, v] of Object.entries(tujuan)) await aturKonfig(k, v);
 }
 
 async function panggil(metode, p, token, body) {
@@ -276,9 +282,9 @@ async function jalankan(sk, t) {
 
 // --- validasi berkas skenario ----------------------------------------------------------------
 
-test('skenario.json: A–J (LANJUT_054, 48–55) + K (LANJUT_055, 6–8), jumlah per kategori sesuai, id unik, kolom lengkap', async () => {
+test('skenario.json: A–J (LANJUT_054, 48–55, + 16 variasi & positif palsu LANJUT_060) + K (LANJUT_055, 6–8), jumlah per kategori sesuai, id unik, kolom lengkap', async () => {
   const k = SKENARIO.filter((s) => s.kategori.startsWith('K')).length;
-  assert.ok(SKENARIO.length - k >= 48 && SKENARIO.length - k <= 55, `A–J: ${SKENARIO.length - k}`);
+  assert.ok(SKENARIO.length - k >= 64 && SKENARIO.length - k <= 71, `A–J: ${SKENARIO.length - k}`);
   assert.ok(k >= 6 && k <= 8, `K: ${k}`);
   const perKategori = {};
   for (const sk of SKENARIO) perKategori[sk.kategori[0]] = (perKategori[sk.kategori[0]] || 0) + 1;

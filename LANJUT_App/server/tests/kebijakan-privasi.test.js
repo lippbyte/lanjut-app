@@ -99,7 +99,7 @@ test('LANJUT_056: kebijakan menyebut pengiriman ke penyedia AI, modul, web, peny
     'server lanjut tidak menyimpan isi obrolan',
     'data_collection: deny',
     'kartu layanan bantuan',
-    'ikut terkirim sebagai bagian dari riwayat obrolan', // pesan akut di riwayat berikutnya
+    'diganti catatan singkat dari aplikasi', // pesan akut di riwayat berikutnya (LANJUT_060)
     'bisa mematikan fitur ai',
     'layar ngobrol terkunci',
     'pencabutan tidak menghapus data yang sudah pernah dikirim ke penyedia ai',
@@ -187,6 +187,7 @@ test('setiap kelompok data yang disimpan disebut di kebijakan', () => {
     modul: 'modul', // LANJUT_049
     'modul.isi (berkas asli tidak disimpan)': 'berkas aslinya tidak disimpan',
     'modul (hapus permanen)': 'hapus permanen',
+    pemakaian_ai_harian: 'hitungan harian gabungan', // LANJUT_060, tanpa ID akun/isi
   };
   for (const [kolom, kata] of Object.entries(WAJIB)) assert.ok(teks.includes(kata), `${kolom} → "${kata}"`);
 });

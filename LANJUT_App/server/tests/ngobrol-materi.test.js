@@ -12,13 +12,17 @@ const env = require('../src/config/env');
 const penyedia = require('../src/modul/ngobrol/penyedia-ai');
 const modulRepo = require('../src/modul/modul/modul.repo');
 const skrip = require('../src/db/persetujuan/persetujuan-ortu');
+const pemakaian = require('../src/modul/ngobrol/pemakaian');
+const { PENANDA_AKUT } = require('../src/modul/ngobrol/ngobrol.layanan');
+const { tanggalWib } = require('../src/util/waktu');
 
 const KUNCI = ['ngobrol_batas_5_menit', 'ngobrol_batas_24_jam', 'ai_aktif', 'ai_modul_aktif', 'ai_modul_potongan_maks', 'ai_modul_skor_min', 'ai_modul_kata_min', 'ai_web_aktif', 'ai_web_batas_harian', 'ai_web_hasil_maks', 'ai_web_mesin'];
 const ENV_ASLI = { kunci: env.OPENROUTER_API_KEY, url: env.OPENROUTER_BASE_URL };
 const PENANDA = 'PESAN TERBARU SISWA (JSON):';
 let server;
 let baseUrl;
-let konfigAsli;
+let konfigAsli; // nilai sebelum berkas ini jalan; dikembalikan di after()
+let konfigTes; // nilai antar-tes: konfigAsli dengan ai_aktif = '1'
 let versiKebijakan;
 let lepasKunci;
 
@@ -29,6 +33,9 @@ before(async () => {
   const [baris] = await pool.query('SELECT kunci, nilai FROM konfigurasi_levelin WHERE kunci IN (?)', [KUNCI]);
   konfigAsli = Object.fromEntries(baris.map((b) => [b.kunci, b.nilai]));
   assert.equal(Object.keys(konfigAsli).length, KUNCI.length, 'jalankan npm run migrasi (016_ai_materi, 017_ai_web_mesin)');
+  // LANJUT_060: bawaan instalasi baru ai_aktif = 0; tes yang butuh AI menyalakannya eksplisit.
+  konfigTes = { ...konfigAsli, ai_aktif: '1' };
+  await kembalikanKonfig();
   const [[v]] = await pool.query("SELECT nilai FROM konfigurasi_levelin WHERE kunci = 'persetujuan_versi_kebijakan'");
   versiKebijakan = Number(v.nilai);
   env.OPENROUTER_API_KEY = 'kunci-uji-palsu';
@@ -36,7 +43,7 @@ before(async () => {
 });
 
 after(async () => {
-  await kembalikanKonfig();
+  await kembalikanKonfig(konfigAsli);
   env.OPENROUTER_API_KEY = ENV_ASLI.kunci;
   env.OPENROUTER_BASE_URL = ENV_ASLI.url;
   await new Promise((resolve) => server.close(resolve));
@@ -45,8 +52,9 @@ after(async () => {
 });
 
 const aturKonfig = (kunci, nilai) => pool.query('UPDATE konfigurasi_levelin SET nilai = ? WHERE kunci = ?', [nilai, kunci]);
-async function kembalikanKonfig() {
-  for (const [k, v] of Object.entries(konfigAsli)) await aturKonfig(k, v);
+/** Antar-tes: kembali ke konfigTes (AI menyala). Di akhir berkas: ke konfigAsli. */
+async function kembalikanKonfig(tujuan = konfigTes) {
+  for (const [k, v] of Object.entries(tujuan)) await aturKonfig(k, v);
 }
 
 async function panggil(metode, p, token, body) {
@@ -406,4 +414,61 @@ test('log materi hanya jumlah dan penanda: tanpa pertanyaan, potongan, kueri, at
   assert.ok(tercatat.includes('[ngobrol] materi modul=1 web=2'), tercatat.join(' | '));
   const log = tercatat.join('\n');
   for (const tidakBoleh of ['PENANDA-KUERI', 'fotosintesis', 'Fotosintesis', 'sumber.contoh', 'Biologi: Fotosintesis']) assert.ok(!log.includes(tidakBoleh), tidakBoleh);
+});
+
+// --- LANJUT_060 ---------------------------------------------------------------------------------------
+
+test('LANJUT_060: pesan akut di riwayat tidak dipakai modul, web, maupun jawaban — hanya pertanyaan terbaru', async (t) => {
+  const a = await akun({ modul: [BIOLOGI] });
+  const mock = tiruan(t, { web: { teks: 'Ringkasan.', anotasi: ANOTASI } });
+  const kandidat = t.mock.method(modulRepo, 'kandidatUntukAi');
+  const AKUT = 'aku diancam fotoku disebar PENANDA-AKUT-MATERI';
+  try {
+    await aturKonfig('ai_web_aktif', '1');
+    const r = await tanya(a, 'apa hasil fotosintesis?', [
+      { peran: 'pengguna', teks: AKUT },
+      { peran: 'bot', teks: 'Terima kasih sudah mau cerita.' },
+    ]);
+    assert.equal(r.status, 200);
+  } finally {
+    await kembalikanKonfig();
+  }
+  assert.ok(!JSON.stringify(mock.mock.calls.map((c) => c.arguments)).includes('PENANDA-AKUT-MATERI'), 'pesan akut terkirim ke penyedia');
+  assert.equal(panggilanWeb(mock)[0].arguments[0][1].content, 'apa hasil fotosintesis?', 'kueri web hanya pertanyaan terbaru');
+  assert.ok(dataDari(panggilanJawaban(mock)[0]).includes(PENANDA_AKUT));
+  assert.equal(kandidat.mock.callCount(), 1);
+  assert.ok(!JSON.stringify(kandidat.mock.calls[0].arguments).includes('ancam'), 'pencarian modul memakai kata dari pesan akut');
+});
+
+test('LANJUT_060 pemakaian: web dipakai, kuota web habis, dan modul dipakai terhitung (tanpa isi)', async (t) => {
+  const a = await akun({ modul: [BIOLOGI] });
+  t.mock.method(penyedia, 'mintaBalasan', async (pesan, pengaturan) =>
+    pengaturan.plugins
+      ? { teks: 'Ringkasan web.', terpotong: false, anotasi: ANOTASI, token: { masuk: 300, keluar: 40 } }
+      : { teks: 'Jawaban [M1].', terpotong: false, anotasi: [], token: { masuk: 900, keluar: 60 } }
+  );
+  const kolom = ['panggilan_ai', 'token_masuk', 'token_keluar', 'web_dipakai', 'web_kuota_habis', 'modul_dipakai'];
+  const baca = async () => {
+    await pemakaian.selesai();
+    const [[b]] = await pool.query(`SELECT ${kolom.join(', ')} FROM pemakaian_ai_harian WHERE tanggal = ?`, [tanggalWib()]);
+    return Object.fromEntries(kolom.map((k) => [k, b ? Number(b[k]) : 0]));
+  };
+  const sebelum = await baca();
+  try {
+    await aturKonfig('ai_web_aktif', '1');
+    await aturKonfig('ai_web_batas_harian', '1');
+    assert.equal((await tanya(a, 'apa hasil fotosintesis?')).status, 200); // web + modul
+    assert.equal((await tanya(a, 'bagaimana klorofil menyerap cahaya?')).status, 200); // kuota habis + modul
+  } finally {
+    await kembalikanKonfig();
+  }
+  const sesudah = await baca();
+  assert.deepEqual(Object.fromEntries(kolom.map((k) => [k, sesudah[k] - sebelum[k]])), {
+    panggilan_ai: 3, // web + 2 jawaban
+    token_masuk: 300 + 900 + 900,
+    token_keluar: 40 + 60 + 60,
+    web_dipakai: 1,
+    web_kuota_habis: 1,
+    modul_dipakai: 2,
+  });
 });

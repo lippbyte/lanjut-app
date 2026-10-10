@@ -18,6 +18,7 @@ const { galat, sukses } = require('../../util/respons');
 const { kirimSkema } = require('./ngobrol.skema');
 const layanan = require('./ngobrol.layanan');
 const keselamatan = require('./keselamatan');
+const pemakaian = require('./pemakaian');
 
 const router = express.Router();
 
@@ -39,6 +40,7 @@ function tanganiTandaBahaya(req, res, next) {
   const pesan = req.body.pesan;
   if (keselamatan.deteksi(pesan[pesan.length - 1].teks).tingkat !== 'akut') return next();
   keselamatan.catat('akut');
+  pemakaian.catat({ tanda_akut: 1 }); // LANJUT_060: hitungan harian, tidak ditunggu
   return sukses(res, layanan.balasanAkut());
 }
 

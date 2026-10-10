@@ -56,6 +56,11 @@ function keTanggal(nilai) {
   return d.toISOString().slice(0, 10);
 }
 
+/** Tanggal kalender WIB (UTC+7) "YYYY-MM-DD": batas hari kuota web (LANJUT_055) dan pemakaian AI (LANJUT_060). */
+function tanggalWib(ms = Date.now()) {
+  return new Date(ms + 7 * 3600 * 1000).toISOString().slice(0, 10);
+}
+
 module.exports = {
   sekarangUntukDb,
   sekarangIso,
@@ -63,4 +68,5 @@ module.exports = {
   tambahHariDb,
   keTanggal,
   keDbDariKlien,
+  tanggalWib,
 };

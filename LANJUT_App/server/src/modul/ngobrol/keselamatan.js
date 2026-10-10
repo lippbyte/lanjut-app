@@ -1,7 +1,8 @@
 // Keselamatan siswa di Ngobrol (LANJUT_053). Tanpa SQL, tanpa jaringan.
 //
-// - Deteksi tanda bahaya DI SERVER, dari daftar frasa di
-//   server/config/tanda-bahaya.json (DRAF untuk review guru BK).
+// - Deteksi tanda bahaya DI SERVER, dari daftar frasa dan kombinasi kata
+//   kunci (LANJUT_060) di server/config/tanda-bahaya.json (DRAF untuk review
+//   guru BK).
 //   Tingkat akut → server membalas sendiri dengan teks tetap + kartu bantuan,
 //   AI tidak dipanggil. Tingkat ringan → AI tetap menjawab dengan instruksi
 //   menanggapi perasaan siswa lebih dulu.
@@ -104,6 +105,32 @@ const FRASA_AKUT = Object.entries(TANDA.akut).flatMap(([kategori, daftar]) =>
 );
 const FRASA_RINGAN = siapkanFrasa(TANDA.ringan, 'ringan');
 
+/**
+ * Kombinasi kata kunci (LANJUT_060): { kategori: [[akar, ...], [akar, ...], ...] }.
+ * Cocok bila SETIAP kelompok punya akar yang muncul di dalam salah satu kata
+ * pesan, urutan bebas. Akar dinormalisasi seperti pesan; minimal dua kelompok
+ * dan akar minimal 3 huruf supaya tidak cocok dengan apa saja.
+ */
+function siapkanKombinasi(kombinasi) {
+  if (kombinasi === undefined) return [];
+  if (!kombinasi || typeof kombinasi !== 'object' || Array.isArray(kombinasi)) gagal('tanda-bahaya.json', 'akut_kombinasi harus objek');
+  return Object.entries(kombinasi).map(([kategori, kelompok]) => {
+    if (!Array.isArray(kelompok) || kelompok.length < 2) gagal('tanda-bahaya.json', `akut_kombinasi.${kategori} harus berisi minimal dua kelompok`);
+    return {
+      kategori,
+      kelompok: kelompok.map((akar, i) => {
+        if (!Array.isArray(akar) || akar.length === 0) gagal('tanda-bahaya.json', `akut_kombinasi.${kategori}[${i}] harus daftar berisi`);
+        return akar.map((a) => {
+          const dasar = kataDasar(a);
+          if (dasar.length !== 1 || dasar[0].length < 3) gagal('tanda-bahaya.json', `akut_kombinasi.${kategori}: akar "${a}" harus satu kata, minimal 3 huruf`);
+          return dasar[0];
+        });
+      }),
+    };
+  });
+}
+const KOMBINASI_AKUT = siapkanKombinasi(TANDA.akut_kombinasi);
+
 const KARTU = bacaJson('kartu-bantuan.json');
 if (!Array.isArray(KARTU.layanan)) gagal('kartu-bantuan.json', 'layanan harus daftar');
 for (const [i, l] of KARTU.layanan.entries()) {
@@ -127,6 +154,9 @@ function deteksi(teks) {
   const t = ` ${normalisasi(teks)} `;
   const akut = FRASA_AKUT.find(({ frasa }) => t.includes(` ${frasa} `));
   if (akut) return { tingkat: 'akut', kategori: akut.kategori };
+  const kata = t.trim().split(' ');
+  const kombinasi = KOMBINASI_AKUT.find(({ kelompok }) => kelompok.every((akar) => kata.some((k) => akar.some((a) => k.includes(a)))));
+  if (kombinasi) return { tingkat: 'akut', kategori: kombinasi.kategori };
   if (FRASA_RINGAN.some((frasa) => t.includes(` ${frasa} `))) return { tingkat: 'ringan', kategori: null };
   return { tingkat: null, kategori: null };
 }

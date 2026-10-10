@@ -119,6 +119,7 @@
         "Server LANJUT tidak menyimpan isi obrolan, potongan modul yang dikirim, maupun pertanyaan pencarian web, dan tidak mencatatnya di catatan teknis server.",
         "Yang tercatat di catatan teknis server hanya: permintaan ke Ngobrol (seperti fitur lain: hasil, lama proses, dan ID akun), jumlah potongan modul dan hasil web yang dipakai, jenis gangguan bila penyedia AI gagal, serta tingkat tanda bahaya beserta waktunya, tanpa isi pesan.",
         "Untuk membatasi pemakaian, server menghitung jumlah pesan dan pencarian web per akun. Hitungan ini hanya ada di memori server dan hilang saat server dinyalakan ulang.",
+        "Untuk memantau biaya dan keselamatan, server menyimpan hitungan harian gabungan untuk semua pengguna, misalnya jumlah permintaan ke penyedia AI, jumlah token, jumlah tanda bahaya, dan jumlah gangguan. Hitungan ini tidak memuat ID akun maupun isi pesan.",
         "Di sisi penyedia AI: kami meminta OpenRouter hanya memakai penyedia model yang tidak mengumpulkan data pengguna (pengaturan data_collection: deny). Apa yang tetap disimpan OpenRouter dan penyedia model, dan berapa lama, mengikuti kebijakan mereka. [ISI: hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model: apa yang disimpan dan berapa lama.]"
       ]
     },
@@ -126,7 +127,7 @@
       "judul": "Keselamatan",
       "paragraf": [
         "Server LANJUT memeriksa setiap pesan terbarumu untuk tanda bahaya, misalnya keinginan menyakiti diri atau mengalami kekerasan. Pemeriksaan ini dilakukan di server LANJUT, bukan oleh penyedia AI.",
-        "Kalau tanda bahayanya serius, pesan itu tidak diteruskan ke penyedia AI. Server langsung membalas dengan pesan tetap dan kartu layanan bantuan yang sudah dicek, juga saat fitur AI sedang dimatikan. Kalau kamu lalu melanjutkan obrolan, pesan itu ikut terkirim sebagai bagian dari riwayat obrolan bersama pesan berikutnya.",
+        "Kalau tanda bahayanya serius, pesan itu tidak diteruskan ke penyedia AI. Server langsung membalas dengan pesan tetap dan kartu layanan bantuan yang sudah dicek, juga saat fitur AI sedang dimatikan. Kalau kamu lalu melanjutkan obrolan, isi pesan itu tetap tidak ikut terkirim: setiap kali riwayat obrolan dikirim ke penyedia AI, server memeriksa ulang pesan-pesanmu, dan pesan yang tanda bahayanya serius diganti catatan singkat dari aplikasi bahwa kamu menyampaikan hal yang sangat berat dan kartu bantuan sudah ditampilkan. Balasan aplikasi untuk pesan itu tetap ada di riwayat.",
         "Untuk tanda tekanan yang lebih ringan, misalnya cemas atau capek belajar, pesan tetap dikirim ke penyedia AI, disertai catatan dari aplikasi agar AI menanggapi perasaanmu lebih dulu. AI juga bisa menilai bahwa kamu mungkin butuh bantuan; aplikasi lalu menampilkan kartu layanan bantuan.",
         "Daftar tanda bahaya masih draf yang menunggu tinjauan guru BK, dan daftar kartu bantuan juga masih draf. Pemeriksaan otomatis bisa keliru. Kalau kamu dalam bahaya, segera hubungi orang dewasa yang kamu percaya."
       ]

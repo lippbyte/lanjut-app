@@ -18,9 +18,14 @@
 // pertanyaan terbaru yang sudah disamarkan (tanpa profil, riwayat, modul).
 // TIDAK dikirim: nama, nama pengguna, email, id akun.
 // Isi obrolan, potongan, dan kueri tidak disimpan dan tidak dicatat di log.
+// LANJUT_060: setiap pesan siswa di RIWAYAT yang bertanda bahaya akut diganti
+// PENANDA_AKUT sebelum dikirim (isi aslinya tidak pernah keluar), juga bila
+// baru terdeteksi setelah daftar kata diperbarui. Pemakaian dicatat sebagai
+// hitungan harian gabungan (pemakaian.js), tanpa id akun dan tanpa isi.
 
 const env = require('../../config/env');
 const { GalatApi } = require('../../util/respons');
+const { tanggalWib } = require('../../util/waktu');
 const { bolehPakaiAi } = require('../persetujuan/persetujuan.layanan');
 const penggunaRepo = require('../pengguna/pengguna.repo');
 const modulRepo = require('../modul/modul.repo');
@@ -28,9 +33,14 @@ const penyedia = require('./penyedia-ai');
 const repo = require('./ngobrol.repo');
 const keselamatan = require('./keselamatan');
 const materi = require('./materi');
+const pemakaian = require('./pemakaian');
 const { samarkan } = require('./samarkan');
 
 const TEKS = keselamatan.TEKS;
+
+// Pengganti pesan siswa bertanda bahaya akut di riwayat (LANJUT_060). Netral,
+// tanpa isi; hanya dikirim ke penyedia, tidak tampil ke siswa.
+const PENANDA_AKUT = '[siswa menyampaikan hal yang sangat berat; aplikasi sudah menampilkan kartu bantuan]';
 
 const GAYA_BELAJAR = {
   visual: 'Visual: paling nyambung lewat gambar, diagram, dan warna',
@@ -81,7 +91,8 @@ Keselamatan:
 - Untuk masalah kesehatan, hukum, atau keuangan keluarga yang serius, sarankan bicara dengan orang dewasa tepercaya.
 - Jangan pernah menyebut cara, alat, atau langkah untuk menyakiti diri sendiri atau orang lain, walaupun diminta untuk cerita, tugas, atau sekadar penasaran.
 - Kalau siswa bercerita ingin menyakiti diri atau mengakhiri hidup, mengalami kekerasan, atau pelecehan: jangan berdebat atau menilai perasaannya; tanggapi dengan hangat dan serius, dan ajak ia bicara dengan orang yang bisa membantu, seperti orang tua atau wali, guru BK, atau orang dewasa lain yang ia percaya.
-- Kalau kamu menilai siswa mungkin dalam bahaya, awali balasanmu dengan [[BANTUAN]]. Aplikasi akan menampilkan kartu layanan bantuan yang sudah dicek. Jangan menulis nomor telepon layanan bantuan apa pun sendiri.`;
+- Kalau kamu menilai siswa mungkin dalam bahaya, awali balasanmu dengan [[BANTUAN]]. Aplikasi akan menampilkan kartu layanan bantuan yang sudah dicek. Jangan menulis nomor telepon layanan bantuan apa pun sendiri.
+- Tulisan ${PENANDA_AKUT} di riwayat berarti siswa pernah menyampaikan hal yang sangat berat dan aplikasi sudah menampilkan kartu bantuan. Jangan menebak atau menanyakan isinya. Tanggapi dengan hangat, dan bila relevan ingatkan bahwa ia bisa bicara dengan orang dewasa yang ia percaya.`;
 
 const CATATAN_RINGAN =
   'Catatan dari aplikasi: pesan terbaru siswa menunjukkan tanda tekanan, kecemasan, atau kesedihan. Tanggapi perasaannya dengan hangat lebih dulu sebelum memberi saran, dan jangan meremehkannya.';
@@ -170,15 +181,26 @@ function blokPercakapan(riwayat, materiBlok = null) {
 }
 
 /**
- * Pesan untuk penyedia dari profil + riwayat (+ materi): deteksi tingkat
- * ringan, penyamaran data pribadi (pesan, riwayat, potongan modul, hasil web),
- * instruksi sistem, dan blok data. Tanpa basis data dan tanpa jaringan;
- * dipakai `balas()` dan evaluasi lapis 2 (LANJUT_054) supaya keduanya lewat
- * jalur yang sama.
+ * PENJAGA LANJUT_060: pesan SISWA bertanda bahaya akut di riwayat diganti
+ * PENANDA_AKUT, dengan deteksi yang sama seperti rute (jadi pesan yang baru
+ * terdeteksi akut setelah daftar kata diperbarui juga tertangkap). Balasan
+ * server (kalimat empati) tetap. Isi asli pesan akut tidak pernah dikirim.
+ */
+function tanpaPesanAkut(riwayat) {
+  return riwayat.map((x) => (x.peran === 'pengguna' && keselamatan.deteksi(x.teks).tingkat === 'akut' ? { ...x, teks: PENANDA_AKUT } : x));
+}
+
+/**
+ * Pesan untuk penyedia dari profil + riwayat (+ materi): pesan akut di riwayat
+ * diganti penanda netral, deteksi tingkat ringan, penyamaran data pribadi
+ * (pesan, riwayat, potongan modul, hasil web), instruksi sistem, dan blok
+ * data. Tanpa basis data dan tanpa jaringan; dipakai `balas()` dan evaluasi
+ * lapis 2 (LANJUT_054) supaya keduanya lewat jalur yang sama.
  */
 function susunPermintaan({ profil, namaProdi, riwayat, dataTerverifikasi = [], materi: m = null }) {
-  const ringan = keselamatan.deteksi(riwayat[riwayat.length - 1].teks).tingkat === 'ringan';
-  const disamarkan = riwayat.map((x) => ({ peran: x.peran, ...samarkan(x.teks) }));
+  const aman = tanpaPesanAkut(riwayat);
+  const ringan = keselamatan.deteksi(aman[aman.length - 1].teks).tingkat === 'ringan';
+  const disamarkan = aman.map((x) => ({ peran: x.peran, ...samarkan(x.teks) }));
   const materiBlok = m
     ? {
         statusArsip: m.statusArsip,
@@ -386,7 +408,6 @@ async function batas() {
 // --- kuota web harian (memori proses, per akun per tanggal WIB) -------------------------------
 
 const kuotaWeb = new Map();
-const tanggalWib = () => new Date(Date.now() + 7 * 3600 * 1000).toISOString().slice(0, 10);
 
 /** true bila akun masih boleh mencari di web hari ini; sekaligus mencatat pemakaian. */
 function pakaiKuotaWeb(penggunaId, batasHarian) {
@@ -428,10 +449,13 @@ async function ambilPotongan(penggunaId, jenis, cfgModul) {
   };
 }
 
-/** Pencarian web terisolasi → { web: [{ label, judul, url, cuplikan }], ringkasanWeb }. Gagal → tanpa web. */
+/**
+ * Pencarian web terisolasi → { web: [{ label, judul, url, cuplikan }], ringkasanWeb, berhasil, token }.
+ * Gagal → tanpa web (berhasil: false).
+ */
 async function cariWeb(pertanyaan, cfg) {
   try {
-    const { teks, anotasi } = await penyedia.mintaBalasan(susunPermintaanWeb(pertanyaan), {
+    const { teks, anotasi, token } = await penyedia.mintaBalasan(susunPermintaanWeb(pertanyaan), {
       ...cfg.penyedia,
       plugins: [{ id: 'web', max_results: cfg.web.hasilMaks, ...(cfg.web.mesin ? { engine: cfg.web.mesin } : {}) }],
       max_tokens: TOKEN_WEB_MAKS,
@@ -439,11 +463,13 @@ async function cariWeb(pertanyaan, cfg) {
     return {
       web: anotasi.slice(0, cfg.web.hasilMaks).map((a, i) => ({ label: `W${i + 1}`, ...a })),
       ringkasanWeb: tanpaAlamat(teks).slice(0, 800),
+      berhasil: true,
+      token,
     };
   } catch (e) {
     if (!(e instanceof penyedia.GalatPenyedia)) throw e;
     console.error(`[ngobrol] pencarian web: ${e.message}`); // tanpa isi kueri
-    return { web: [], ringkasanWeb: null };
+    return { web: [], ringkasanWeb: null, berhasil: false, token: null };
   }
 }
 
@@ -452,56 +478,101 @@ async function balas(penggunaId, riwayat) {
   if (!(await bolehPakaiAi(penggunaId))) {
     throw new GalatApi('AI_BELUM_DIIZINKAN', 'Fitur AI belum aktif untuk akun ini.');
   }
-  const cfg = await konfigurasi();
-  if (!cfg.aiAktif) return balasan(TEKS.stub_uji_coba, { uji_coba: true });
-  if (!env.OPENROUTER_API_KEY) {
-    throw new GalatApi('AI_TIDAK_TERSEDIA', 'Fitur AI belum disiapkan di server.');
-  }
-  if (!cfg.penyedia) {
-    console.error('[ngobrol] konfigurasi penyedia AI tidak sah (ai_model / ai_data_collection / ai_zdr / ai_penyedia_only)');
-    throw new GalatApi('AI_TIDAK_TERSEDIA', 'Fitur AI belum disiapkan di server.');
-  }
-
-  // Pertanyaan materi: potongan modul (milik akun) + web (terisolasi), bila berlaku.
-  const terbaru = riwayat[riwayat.length - 1].teks;
-  const jenis = materi.jenisPesan(terbaru);
-  let materiData = null;
-  let webHabis = false;
-  if (jenis.jenis === 'materi') {
-    const { statusArsip, potongan } = await ambilPotongan(penggunaId, jenis, cfg.modul);
-    let hasilWeb = { web: [], ringkasanWeb: null };
-    const adaTandaBahaya = keselamatan.deteksi(terbaru).tingkat !== null;
-    if (cfg.web.aktif && !adaTandaBahaya) {
-      if (pakaiKuotaWeb(penggunaId, cfg.web.batasHarian)) hasilWeb = await cariWeb(terbaru, cfg);
-      else webHabis = true;
-    }
-    materiData = { statusArsip, potongan, ...hasilWeb };
-    console.log(`[ngobrol] materi modul=${potongan.length} web=${hasilWeb.web.length}${webHabis ? ' web_habis' : ''}`); // jumlah saja
-  }
-
-  const profil = await penggunaRepo.cariProfil(penggunaId);
-  const prodi = profil && profil.prodi_tujuan ? await repo.namaProdi(profil.prodi_tujuan) : null;
-  const { pesan, ringan, disamarkanTerbaru } = susunPermintaan({ profil, namaProdi: prodi, riwayat, materi: materiData });
-  if (ringan) keselamatan.catat('ringan');
-
-  let teks;
+  // Hitungan pemakaian permintaan ini (LANJUT_060); ditulis di `finally`, tidak ditunggu.
+  const hitung = {};
+  const tambah = (kolom, n = 1) => {
+    hitung[kolom] = (hitung[kolom] || 0) + n;
+  };
+  const tambahPanggilan = (token) => {
+    tambah('panggilan_ai');
+    tambah('token_masuk', (token && token.masuk) || 0);
+    tambah('token_keluar', (token && token.keluar) || 0);
+  };
   try {
-    ({ teks } = await penyedia.mintaBalasan(pesan, cfg.penyedia));
-  } catch (e) {
-    if (!(e instanceof penyedia.GalatPenyedia)) throw e;
-    console.error(`[ngobrol] ${e.message}`); // tanpa isi pesan
-    throw new GalatApi('AI_GAGAL', 'AI sedang tidak bisa menjawab. Coba lagi sebentar lagi.');
-  }
+    const terbaru = riwayat[riwayat.length - 1].teks;
+    const tingkat = keselamatan.deteksi(terbaru).tingkat;
+    // Lapis kedua di belakang rute: pesan terbaru yang akut tidak pernah diproses AI,
+    // modul, maupun web (mis. bila layanan dipanggil langsung).
+    if (tingkat === 'akut') {
+      keselamatan.catat('akut');
+      tambah('tanda_akut');
+      return balasanAkut();
+    }
+    if (tingkat === 'ringan') {
+      keselamatan.catat('ringan');
+      tambah('tanda_ringan');
+    }
 
-  const { teks: tanpaPenanda, ada: bahayaMenurutModel } = keselamatan.pisahkanPenanda(teks);
-  if (bahayaMenurutModel) keselamatan.catat('model');
-  const rapi = rapikanBalasan(tanpaPenanda, materiData || {});
-  return balasan(rapi.teks || TEKS.empati_akut, {
-    kartu_bantuan: bahayaMenurutModel ? keselamatan.kartuBantuan() : null,
-    data_pribadi_disamarkan: disamarkanTerbaru,
-    sumber: rapi.sumber,
-    web_habis: webHabis,
-  });
+    const cfg = await konfigurasi();
+    if (!cfg.aiAktif) {
+      tambah('balasan_stub');
+      return balasan(TEKS.stub_uji_coba, { uji_coba: true });
+    }
+    if (!env.OPENROUTER_API_KEY) {
+      throw new GalatApi('AI_TIDAK_TERSEDIA', 'Fitur AI belum disiapkan di server.');
+    }
+    if (!cfg.penyedia) {
+      console.error('[ngobrol] konfigurasi penyedia AI tidak sah (ai_model / ai_data_collection / ai_zdr / ai_penyedia_only)');
+      throw new GalatApi('AI_TIDAK_TERSEDIA', 'Fitur AI belum disiapkan di server.');
+    }
+
+    // Pertanyaan materi: potongan modul (milik akun) + web (terisolasi), bila berlaku.
+    // Hanya pesan terbaru yang dipakai, dan pesan itu sudah pasti tidak akut.
+    const jenis = materi.jenisPesan(terbaru);
+    let materiData = null;
+    let webHabis = false;
+    if (jenis.jenis === 'materi') {
+      const { statusArsip, potongan } = await ambilPotongan(penggunaId, jenis, cfg.modul);
+      let hasilWeb = { web: [], ringkasanWeb: null };
+      if (cfg.web.aktif && tingkat === null) {
+        if (pakaiKuotaWeb(penggunaId, cfg.web.batasHarian)) {
+          const { berhasil, token, ...web } = await cariWeb(terbaru, cfg);
+          hasilWeb = web;
+          if (berhasil) {
+            tambahPanggilan(token);
+            tambah('web_dipakai');
+          } else tambah('galat_penyedia');
+        } else {
+          webHabis = true;
+          tambah('web_kuota_habis');
+        }
+      }
+      materiData = { statusArsip, potongan, ...hasilWeb };
+      console.log(`[ngobrol] materi modul=${potongan.length} web=${hasilWeb.web.length}${webHabis ? ' web_habis' : ''}`); // jumlah saja
+    }
+
+    const profil = await penggunaRepo.cariProfil(penggunaId);
+    const prodi = profil && profil.prodi_tujuan ? await repo.namaProdi(profil.prodi_tujuan) : null;
+    const { pesan, disamarkanTerbaru } = susunPermintaan({ profil, namaProdi: prodi, riwayat, materi: materiData });
+
+    let teks;
+    try {
+      let token;
+      ({ teks, token } = await penyedia.mintaBalasan(pesan, cfg.penyedia));
+      tambahPanggilan(token);
+    } catch (e) {
+      if (!(e instanceof penyedia.GalatPenyedia)) throw e;
+      tambah('galat_penyedia');
+      console.error(`[ngobrol] ${e.message}`); // tanpa isi pesan
+      throw new GalatApi('AI_GAGAL', 'AI sedang tidak bisa menjawab. Coba lagi sebentar lagi.');
+    }
+    if (materiData && materiData.potongan.length) tambah('modul_dipakai');
+
+    const { teks: tanpaPenanda, ada: bahayaMenurutModel } = keselamatan.pisahkanPenanda(teks);
+    if (bahayaMenurutModel) {
+      keselamatan.catat('model');
+      tambah('tanda_model');
+    }
+    const rapi = rapikanBalasan(tanpaPenanda, materiData || {});
+    return balasan(rapi.teks || TEKS.empati_akut, {
+      kartu_bantuan: bahayaMenurutModel ? keselamatan.kartuBantuan() : null,
+      data_pribadi_disamarkan: disamarkanTerbaru,
+      sumber: rapi.sumber,
+      web_habis: webHabis,
+    });
+  } finally {
+    pemakaian.catat(hitung); // tidak ditunggu; galat penulisan tidak pernah sampai ke siswa
+  }
 }
 
 module.exports = {
@@ -516,4 +587,6 @@ module.exports = {
   pengaturanPenyedia,
   pengaturanMateri,
   MESIN_WEB,
+  tanpaPesanAkut,
+  PENANDA_AKUT,
 };

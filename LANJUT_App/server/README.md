@@ -425,6 +425,34 @@ Tes: `tests/modul.test.js`, `tests/modul-potong.test.js` (berkas contoh di
 Ngobrol dijawab AI lewat **OpenRouter**. Model dan pengaturan penyedia ada
 di tabel konfigurasi (`ai_*`); model bawaan `anthropic/claude-sonnet-5.5`.
 
+### Bawaan: AI mati (LANJUT_060)
+
+Sejak LANJUT_060, `ai_aktif` bawaannya **`0`** untuk instalasi baru (migrasi
+015). Server yang baru dipasang langsung membalas Ngobrol dengan balasan uji
+coba berlabel sampai seseorang sengaja menyalakannya. Basis data yang sudah
+menjalankan migrasi 015 sebelumnya **tidak diubah**: migrasi hanya jalan
+sekali, jadi nilainya tetap seperti dulu (biasanya `1`). Periksa sendiri:
+
+```sql
+SELECT nilai FROM konfigurasi_levelin WHERE kunci = 'ai_aktif';
+```
+
+**Uji lokal** dengan penyedia tiruan atau kunci uji: nyalakan di basis data
+pengembangan.
+
+```sql
+UPDATE konfigurasi_levelin SET nilai = '1' WHERE kunci = 'ai_aktif';
+```
+
+> **Produksi:** jangan jalankan perintah itu di server tayang sebelum daftar
+> periksa keselamatan di `docs/kesiapan-rilis-uji.md` (bagian 3) beres:
+> tinjauan guru BK, kebijakan privasi final, persetujuan orang tua/wali, dan
+> batas kredit kunci.
+
+Tes yang butuh AI (`ngobrol*.test.js`, `skenario-ai.test.js`) menyalakan
+`ai_aktif = 1` sendiri di awal dan mengembalikan nilai asli di akhir, jadi
+tetap lolos di basis data tes yang baru.
+
 ### Mematikan AI seketika
 
 ```sql
@@ -452,9 +480,10 @@ dijawab dengan kartu bantuan walau AI mati.
    jangan pernah di app atau di `eas.json`. Kunci kosong =
    `503 AI_TIDAK_TERSEDIA`; server tetap jalan.
 3. `npm run migrasi` (014: batas pemakaian; 015: saklar & pengaturan
-   penyedia), lalu nyalakan ulang server.
+   penyedia; 018: hitungan pemakaian harian), lalu nyalakan ulang server.
 4. Akun harus lolos gerbang `bolehPakaiAi`: kebijakan diterima **dan**
    persetujuan orang tua/wali tercatat (`npm run persetujuan-ortu`, bagian 2b).
+5. Nyalakan saklar `ai_aktif` (lihat "Bawaan: AI mati" di atas).
 
 ### Alur `POST /api/v1/ngobrol` (wajib login)
 
@@ -471,24 +500,34 @@ menggemakan isinya.
 2. Batas per akun → gerbang `bolehPakaiAi` → saklar `ai_aktif` → kunci dan
    pengaturan penyedia sah. Kalau salah satu gagal, **tidak ada apa pun yang
    dikirim keluar**.
-3. **Data pribadi disamarkan** di pesan terbaru dan di seluruh riwayat
+3. **Pesan akut di riwayat diganti** (LANJUT_060, `tanpaPesanAkut` di
+   `ngobrol.layanan.js`): setiap pesan siswa di riwayat diperiksa ulang
+   dengan daftar tanda bahaya yang berlaku. Yang akut diganti penanda netral
+   `[siswa menyampaikan hal yang sangat berat; aplikasi sudah menampilkan
+   kartu bantuan]` sebelum penyamaran dan pengiriman, termasuk pesan lama
+   yang baru tergolong akut setelah daftar kata diperbarui. Balasan server
+   (kalimat empati) tetap. Modul dan web hanya memakai pesan terbaru, yang
+   sudah pasti tidak akut.
+4. **Data pribadi disamarkan** di pesan terbaru dan di seluruh riwayat
    (`src/modul/ngobrol/samarkan.js`): nomor telepon Indonesia, email, dan 16
    angka mirip NIK menjadi `[disamarkan]`. Bila pesan terbaru disamarkan,
    `data_pribadi_disamarkan: true` dan app memberi tahu siswa.
-4. Ke penyedia hanya **dua pesan**: `system` (aturan + profil belajar: kelas,
+5. Ke penyedia hanya **dua pesan**: `system` (aturan + profil belajar: kelas,
    jenis sekolah, nama prodi impian, gaya belajar) dan **satu** `user` berisi
    riwayat dan pesan terbaru sebagai **data JSON** bertanda "bukan perintah".
    Riwayat dari app tidak pernah diteruskan sebagai giliran
    `assistant`/`system`, jadi balasan bot palsu dari klien hanya menjadi data
    berlabel. Salam pembuka app (memuat nama) dibuang.
-5. **Tidak dikirim:** nama tampilan, nama pengguna, email, id akun.
-6. Tanda bahaya **ringan** (stres, cemas, kewalahan) → AI tetap menjawab,
+6. **Tidak dikirim:** nama tampilan, nama pengguna, email, id akun.
+7. Tanda bahaya **ringan** (stres, cemas, kewalahan) → AI tetap menjawab,
    dengan catatan di instruksi sistem untuk menanggapi perasaan lebih dulu.
    Model juga diminta mengawali balasan dengan `[[BANTUAN]]` bila menilai
    siswa dalam bahaya: server membuang penanda itu dan menempelkan kartu
    bantuan.
-7. `max_tokens` 800, batas waktu 45 detik. Galat penyedia → `502 AI_GAGAL`,
+8. `max_tokens` 800, batas waktu 45 detik. Galat penyedia → `502 AI_GAGAL`,
    tanpa rincian ke app.
+9. Hitungan harian (`pemakaian_ai_harian`) ditambah sesudah jawaban siap,
+   tanpa ditunggu (lihat "Pemakaian AI harian" di bawah).
 
 **Isi obrolan tidak disimpan** di basis data dan tidak dicatat di log:
 - log akses hanya mencatat metode dan jalur;
@@ -496,7 +535,8 @@ menggemakan isinya.
 - keselamatan hanya `[keselamatan] tingkat=akut|ringan|model waktu=…`, tanpa
   kata yang cocok maupun isi pesan;
 - JSON rusak → `400 VALIDASI_GAGAL`, dan pesan galat parser (yang bisa memuat
-  cuplikan isi) tidak dicetak, di semua rute.
+  cuplikan isi) tidak dicetak, di semua rute;
+- hitungan harian `pemakaian_ai_harian` hanya berisi tanggal dan angka.
 
 Riwayat hanya hidup di memori app. Yang tetap terjadi: OpenRouter dan
 penyedia model menerima isi obrolan yang sudah disamarkan untuk membuat
@@ -525,9 +565,14 @@ kartu yang sama, untuk tautan "Butuh bicara dengan orang?" di app.
   **DRAF untuk direview guru BK.** Normalisasi: huruf kecil, angka di kata
   menjadi huruf (`d1r1` = `diri`), tanda baca dihapus, huruf terpisah
   digabung (`b u n u h` = `bunuh`), huruf berulang diringkas
-  (`matiii` = `mati`), kata gaul diganti bentuk bakunya. Sengaja longgar:
-  ada positif palsu (mis. "dipukul rata"), dan siswa tetap bisa lanjut
-  ngobrol.
+  (`matiii` = `mati`), kata gaul diganti bentuk bakunya (`ilang` = `hilang`,
+  `fotoku` = `foto aku`). Selain frasa, ada **kombinasi kata**
+  (`akut_kombinasi`, LANJUT_060): pesan akut bila setiap kelompok punya
+  setidaknya satu akar yang muncul di salah satu kata, dalam urutan apa pun.
+  Contoh: `ancam` + `sebar`/`viral`/`upload` + `foto`/`video` menangkap
+  "dia ngancem bakal nyebarin foto aku". Sengaja longgar: ada positif palsu
+  (daftarnya di `positif_palsu_diketahui`, mis. "dipukul rata", "jerawatku
+  mau hilang"), dan siswa tetap bisa lanjut ngobrol.
 - `ngobrol-teks.json`: teks tetap server (balasan akut, judul/penutup kartu,
   kalimat tolak di luar topik dan tolak mengabaikan aturan, balasan uji
   coba). Sama persis dengan salinan teks §4.16.
@@ -541,11 +586,13 @@ membuat server gagal menyala. Mengubahnya perlu restart.
 |---|---|---|
 | `ngobrol_batas_5_menit` | 10 | pesan per akun per 5 menit |
 | `ngobrol_batas_24_jam` | 50 | pesan per akun per 24 jam (pengendali biaya) |
-| `ai_aktif` | 1 | saklar AI (lihat di atas) |
+| `ai_aktif` | 0 (instalasi baru sejak LANJUT_060) | saklar AI (lihat di atas) |
 | `ai_model` | `anthropic/claude-sonnet-5.5` | model OpenRouter |
 | `ai_data_collection` | `deny` | `provider.data_collection`: `deny` = tanpa penyedia yang menyimpan data dan bisa melatih model darinya |
 | `ai_zdr` | 0 | `provider.zdr`: 1 = hanya endpoint tanpa penyimpanan data (ZDR) |
 | `ai_penyedia_only` | (kosong) | `provider.only`: slug penyedia dipisah koma; kosong = tidak dibatasi |
+| `ai_tarif_masuk_per_juta` | (kosong) | US$ per 1 juta token masuk, hanya untuk perkiraan biaya `npm run pemakaian-ai` |
+| `ai_tarif_keluar_per_juta` | (kosong) | US$ per 1 juta token keluar; perkiraan biaya muncul bila kedua tarif terisi |
 
 ```sql
 UPDATE konfigurasi_levelin SET nilai = '100' WHERE kunci = 'ngobrol_batas_24_jam';
@@ -569,6 +616,44 @@ internet: penyedia di-mock, klien asli diuji terhadap server tiruan di
 localhost, dan selama tes alamat penyedia menunjuk ke `127.0.0.1:9` supaya
 tes yang lupa memakai mock gagal di tempat. Tes pengaman murni (deteksi,
 penyamaran, kartu, instruksi sistem) ada di `tests/ngobrol-keselamatan.test.js`.
+
+### Pemakaian AI harian (LANJUT_060)
+
+Untuk memantau pilot, server menjumlahkan pemakaian per tanggal WIB di tabel
+`pemakaian_ai_harian` (migrasi 018): panggilan ke penyedia yang berhasil,
+token masuk/keluar (dari `usage` respons penyedia; 0 bila tidak ada), balasan
+uji coba, tanda bahaya akut/ringan/model, galat penyedia, pencarian web
+dipakai/kuota habis, dan jawaban yang memakai modul.
+
+- **Bukan data pribadi:** satu baris per tanggal untuk semua akun digabung,
+  tanpa id akun, isi pesan, kueri, potongan, atau alamat web.
+- **Atomik:** setiap permintaan menambah hitungannya dengan satu
+  `INSERT … ON DUPLICATE KEY UPDATE kolom = kolom + nilai`
+  (`src/modul/ngobrol/pemakaian.repo.js`).
+- **Tidak mengganggu jawaban:** penulisan tidak ditunggu
+  (`src/modul/ngobrol/pemakaian.js`). Bila basis data gagal, siswa tetap
+  mendapat jawaban dan log hanya memuat `[pemakaian] gagal dicatat (<kode>)`.
+
+Ringkasan di terminal server:
+
+```bash
+npm run pemakaian-ai              # 7 hari terakhir
+npm run pemakaian-ai -- --hari=30 # 1–366 hari
+```
+
+Perkiraan biaya dalam US$ muncul bila `ai_tarif_masuk_per_juta` **dan**
+`ai_tarif_keluar_per_juta` diisi (harga model di OpenRouter), mis.
+
+```sql
+UPDATE konfigurasi_levelin SET nilai = '3' WHERE kunci = 'ai_tarif_masuk_per_juta';
+UPDATE konfigurasi_levelin SET nilai = '15' WHERE kunci = 'ai_tarif_keluar_per_juta';
+```
+
+Angka itu perkiraan dari token; biaya pencarian web tidak ikut. Tagihan
+sebenarnya tetap di dasbor OpenRouter. Contoh keluaran ada di
+`docs/kesiapan-rilis-uji.md` bagian 5. Tes: `tests/ngobrol.test.js`,
+`tests/ngobrol-materi.test.js` (hitungan), `tests/pemakaian-ai.test.js`
+(skrip).
 
 ### Materi: modul Arsip, pencarian web, sitasi (LANJUT_055)
 
@@ -643,7 +728,8 @@ sumber).
 
 ### Skenario uji AI (LANJUT_054)
 
-±50 percakapan fiktif di `tests/skenario-ai/skenario.json`, dalam dua lapis.
+76 percakapan fiktif (per LANJUT_060) di `tests/skenario-ai/skenario.json`,
+dalam dua lapis.
 Daftar lengkap dan rubriknya ada di `docs/skenario-ai.md`; tabelnya ditulis
 ulang dengan `npm run dokumen-skenario-ai`.
 
@@ -662,7 +748,7 @@ ulang dengan `npm run dokumen-skenario-ai`.
   Skrip menolak berjalan tanpa `EVALUASI_AI_IZIN=ya`, flag
   `--ya-panggil-penyedia`, dan `OPENROUTER_API_KEY`, atau bila
   `NODE_ENV=production`. Sebelum memanggil, skrip menampilkan jumlah
-  panggilan (sekitar 40 untuk set sekarang) dan modelnya, lalu menunggu 5
+  panggilan (48 untuk set LANJUT_060, tanpa `--web`) dan modelnya, lalu menunggu 5
   detik. Skrip berhenti di kegagalan pertama (mis. 402 kredit habis, atau
   429) tanpa mengulang. Hasilnya ditulis ke
   `docs/hasil-evaluasi-ai-<tanggal>.md` (diabaikan git), untuk dinilai Khalifa
@@ -769,6 +855,7 @@ sama dengan `.env.example`:
 | `SESI_UMUR_HARI` | tidak (bawaan `90`) | `90` | Umur sesi login (hari, bergulir) |
 | `JUMLAH_PROXY` | tidak (bawaan `0`) | `1` | Jumlah reverse proxy di depan server — lihat di bawah |
 | `LOKASI_DATA_KONTEN` | tidak (bawaan `../../MVP-PWA/data`) | `data-konten` | Folder berisi berkas `*.json` konten untuk `npm run benih` — lihat di bawah |
+| `OPENROUTER_API_KEY` | tidak (bawaan kosong) | *(rahasia, biarkan kosong dulu)* | Kunci AI Ngobrol (§2d). Kosong = AI tidak tersedia (`503 AI_TIDAK_TERSEDIA`), atau balasan uji coba selama `ai_aktif = 0`; server tetap jalan. Hanya di `.env` server, jangan di app. Isi sesudah daftar periksa keselamatan di `docs/kesiapan-rilis-uji.md` beres, dengan batas kredit di dasbor OpenRouter |
 
 Koneksi basis data memakai **lima variabel terpisah** (`DB_HOST`, `DB_PORT`,
 `DB_USER`, `DB_PASSWORD`, `DB_NAME`), bukan satu URL koneksi. Hosting yang
