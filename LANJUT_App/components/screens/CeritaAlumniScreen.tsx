@@ -10,7 +10,7 @@ import { Kartu, KeadaanGalat, Kosong, Lencana, Memuat, Penafian, Tombol, gaya } 
 
 // mailto yang sama dengan tombol "Hubungkan kami" di MVP-PWA/alumni.html.
 const TAUTAN_HUBUNGKAN =
-  'mailto:edilaksogroup@gmail.com?subject=Cerita%20Alumni%20SMK%20untuk%20LANJUT';
+  'mailto:edilaksogroup@gmail.com?subject=Cerita%20Alumni%20untuk%20LANJUT';
 
 /**
  * F4 — padanan MVP-PWA/alumni.html. Judul ada di page bar (AppShell).

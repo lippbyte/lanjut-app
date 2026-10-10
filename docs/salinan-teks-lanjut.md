@@ -122,8 +122,8 @@ Dipakai di: beranda, notifikasi, layar kosong.
 **Pembuka halaman:**
 > Sebagian aturan seleksi menganggap semua pendaftar berasal dari SMA. Halaman ini merangkum bagian yang tidak berlaku sama untuk kita — dan apa yang bisa dilakukan.
 
-**LANJUT_App (LANJUT_037) — halaman jadi "Jenjang Saya" (`/jenjang-saya`,
-tab "Jenjang" — "Jenjang Saya" terpotong di 360 px; `/khusus-smk` dialihkan). Teks di bawah DRAF, belum
+**LANJUT_App (LANJUT_037, LANJUT_064) — halaman jadi "Jenjang Saya" (`/jenjang-saya`,
+tab "Jenjang Saya" — draf LANJUT_064, sebelumnya "Jenjang"; `/khusus-smk` dialihkan). Teks di bawah DRAF, belum
 disetujui Khalifa**, kecuali pembuka SMK kelas 12 yang memakai pembuka lama
 di atas apa adanya. Isi menurut kelas akun (`components/screens/JenjangSayaScreen.tsx`):
 
@@ -154,7 +154,7 @@ di atas apa adanya. Isi menurut kelas akun (`components/screens/JenjangSayaScree
 
 ### 4.3 Cerita Alumni
 
-**Judul:** Cerita Alumni SMK
+**Judul:** Cerita Alumni (draf LANJUT_064, dinetralkan untuk semua jenjang dari sebelumnya "Cerita Alumni SMK")  
 **Kalimat pendamping:** Mereka sudah lewat jalan ini.
 
 - **Layar kosong:** Cerita pertama sedang kami kumpulkan. Kenal alumni SMK yang tembus PTN? `[ Hubungkan kami ]`
@@ -162,7 +162,8 @@ di atas apa adanya. Isi menurut kelas akun (`components/screens/JenjangSayaScree
 
 ### 4.4 Daftar Periksa
 
-**Judul:** Daftar Periksa
+**Judul:** Daftar Periksa  
+**Label tab:** Daftar Periksa (LANJUT_064, menggantikan "Checklist" di tab bar agar konsisten)  
 **Kalimat pendamping:** Satu per satu, tidak perlu sekaligus.
 
 - **Layar kosong:** Belum ada yang dicentang — itu wajar kalau baru mulai. Ambil satu yang paling gampang dulu.

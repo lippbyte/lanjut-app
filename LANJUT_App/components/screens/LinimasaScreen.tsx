@@ -5,8 +5,11 @@ import { Linking, StyleSheet, Text, View } from 'react-native';
 
 import type { TahapanLinimasa } from '../../api/types';
 import { useTahapanLinimasa } from '../../hooks/useTahapanLinimasa';
+import { daftarKartuBeranda } from '../../lib/beranda';
+import { kelompokJenjang } from '../../lib/jenjang';
 import { formatRentang, formatTanggal, tanggalMomen, turunkanLinimasa, type TahapanTurunan } from '../../lib/linimasa';
 import { lembagaSumber } from '../../lib/sumber';
+import { useSesi } from '../../providers/AuthProvider';
 import { color, font, spacing, teks } from '../../theme/tokens';
 import {
   Kartu,
@@ -19,70 +22,41 @@ import {
   Tombol,
   gaya,
 } from '../ui';
-import { KhususKelas12 } from './KhususKelas12';
 
 const LAMAN_SNPMB = 'https://snpmb.bppp.kemdikbud.go.id/';
 
 /**
  * Tab Beranda — padanan MVP-PWA/beranda.html: kalimat K1, kartu tenggat
- * terdekat (gradasi), linimasa bertitik-garis, lalu pintu ke Cerita Alumni.
- * Butir tanpa `diperiksa_pada` sudah disaring di lib/linimasa.ts (PRD F1),
- * jadi selama tim konten belum memverifikasi data, layar kosong yang tampil.
+ * terdekat (gradasi untuk kelas 12), lalu kartu pintu sesuai jenjang akun (LANJUT_064).
+ * Butir tanpa `diperiksa_pada` sudah disaring di lib/linimasa.ts (PRD F1).
  */
 export function LinimasaScreen() {
   const router = useRouter();
+  const { pengguna } = useSesi();
+  const kelas = pengguna?.kelas ?? null;
+  const kelompok = kelompokJenjang(kelas);
+  const kartu = daftarKartuBeranda(kelas);
 
   return (
     <View style={gaya.layarIsi}>
       <H1 style={s.k1}>Tahu harus ngapain hari ini.</H1>
 
-      {/* LANJUT_035: tenggat & tahapan SNBP/SNBT/TKA hanya untuk kelas 12. */}
-      <KhususKelas12>
-        <Tenggat />
-      </KhususKelas12>
+      {/* LANJUT_035, LANJUT_064: tenggat & tahapan SNBP/SNBT/TKA HANYA untuk kelas 12.
+          Non-12 tidak merender Tenggat (tidak mengambil data linimasa & tidak
+          menampilkan placeholder kosong). */}
+      {kelompok === 'kelas12' ? <Tenggat /> : null}
 
-      {/* v1.1 — tidak ada di PWA. Di bawah tenggat supaya tenggat tetap pertama. */}
-      <KartuPintu
-        ikon="posisi"
-        judul="Cek Posisi Gue"
-        keterangan="Lihat kamu lagi di tahap mana dan langkah yang cocok berikutnya."
-        onPress={() => router.push('/cek-posisi')}
-      />
-
-      {/* F6 (LANJUT_039) — untuk semua kelas, bukan konten SNBP. Pintu yang
-          sama dengan PWA ("Latihan & Arsip Belajar"), tanpa Latihan dulu. */}
-      <KartuPintu
-        ikon="mapel"
-        judul="Arsip Belajar"
-        keterangan="Catatan dan soal buatanmu, disimpan per mapel."
-        onPress={() => router.push('/arsip')}
-      />
-
-      {/* LANJUT_058 — hasil latihan per mapel (dihitung server), semua kelas.
-          Tepat di bawah Arsip Belajar: Level-In adalah hasil Latihan dari arsip itu. */}
-      <KartuPintu
-        ikon="ok"
-        judul="Level-In"
-        keterangan="Seberapa kuat kamu di tiap mapel, dari latihanmu."
-        onPress={() => router.push('/level-in')}
-      />
-
-      {/* LANJUT_032; dijawab AI lewat server sejak LANJUT_051 (di balik gerbang persetujuan). */}
-      <KartuPintu
-        ikon="obrolan"
-        judul="Ngobrol Bareng LANJUT"
-        keterangan="Cerita soal minat, cara belajar, atau rencana kuliahmu."
-        onPress={() => router.push('/ngobrol')}
-      />
-
-      {/* Satu-satunya jalan ke Cerita Alumni — bukan tab (sama dengan PWA). */}
-      <KartuPintu
-        ikon="alumni"
-        judul="Cerita Alumni SMK"
-        keterangan="Mereka sudah lewat jalan ini."
-        varian="outline"
-        onPress={() => router.push('/cerita-alumni')}
-      />
+      {/* Kartu pintu per jenjang (LANJUT_064). Kartu tanpa isi disembunyikan. */}
+      {kartu.map((k) => (
+        <KartuPintu
+          key={k.id}
+          ikon={k.ikon}
+          judul={k.judul}
+          keterangan={k.keterangan}
+          varian={k.varian}
+          onPress={() => router.push(k.href as any)}
+        />
+      ))}
     </View>
   );
 }

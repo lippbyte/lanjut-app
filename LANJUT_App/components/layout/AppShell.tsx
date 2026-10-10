@@ -12,16 +12,17 @@ import { Ikon, type NamaIkon } from '../ui/Ikon';
 // dibuka tab Beranda yang tetap aktif (seperti alumni.html di PWA).
 const TAB: { href: '/linimasa' | '/jenjang-saya' | '/pilih-mapel' | '/daftar-periksa'; label: string; ikon: NamaIkon }[] = [
   { href: '/linimasa', label: 'Beranda', ikon: 'beranda' },
-  // LANJUT_037: dulu Khusus SMK (/khusus-smk masih dialihkan ke sini). Label
-  // pendek: "Jenjang Saya" terpotong di 360 px saat tab aktif (tebal).
-  { href: '/jenjang-saya', label: 'Jenjang', ikon: 'smk' },
+  // LANJUT_064: ganti label menjadi 'Jenjang Saya' (DRAF)
+  { href: '/jenjang-saya', label: 'Jenjang Saya', ikon: 'smk' },
   { href: '/pilih-mapel', label: 'Pilih Mapel', ikon: 'mapel' },
-  { href: '/daftar-periksa', label: 'Checklist', ikon: 'checklist' },
+  // LANJUT_064: ganti label menjadi 'Daftar Periksa'
+  { href: '/daftar-periksa', label: 'Daftar Periksa', ikon: 'checklist' },
 ];
 
 // Halaman anak: dapat .pagebar (tombol kembali + judul) di bawah app bar.
 const HALAMAN_ANAK: Record<string, string> = {
-  '/cerita-alumni': 'Cerita Alumni SMK',
+  // LANJUT_064: judul netral untuk semua jenjang (DRAF)
+  '/cerita-alumni': 'Cerita Alumni',
   '/akun': 'Jalur Saya',
   '/cek-posisi': 'Cek Posisi Gue',
   '/gaya-belajar': 'Gaya Belajar',
@@ -207,7 +208,7 @@ const s = StyleSheet.create({
   tab: { flex: 1, alignItems: 'center', gap: spacing.s1, paddingVertical: 6, minHeight: 48 },
   tabIkon: { width: 44, height: 28, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
   tabIkonAktif: { backgroundColor: color.blue100 },
-  tabLabel: { ...teks.caption, color: color.ink500 },
+  tabLabel: { ...teks.caption, fontSize: 11, lineHeight: 15, color: color.ink500 },
   tabLabelAktif: { color: color.blue600, fontFamily: font.semibold },
   ditekan: { opacity: 0.85, transform: [{ scale: 0.97 }] },
 });
