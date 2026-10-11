@@ -114,6 +114,46 @@ Dipakai di: beranda, notifikasi, layar kosong.
 
 > **Catatan:** hitungan mundur ditampilkan sebagai angka biasa, bukan hitungan detik yang berdetak. Tenggat perlu diketahui, bukan dijadikan tekanan.
 
+**LANJUT_App (LANJUT_065) — Beranda: Kartu "Mulai dari Sini", Progres Sederhana, dan Grid Menu (draf LANJUT_065, belum disetujui Khalifa):**
+
+- **Kartu "Mulai dari Sini" (tampil untuk akun baru / belum ada kemajuan):**
+  - **SMP (kelas 7–9):**
+    - Judul: Mulai dari Sini
+    - Penjelas: Kenali minat, cara belajar, dan pilihan jenjang berikutnya pelan-pelan.
+    - Tombol: Buka Jenjang Saya (ke `/jenjang-saya`)
+  - **Kelas 10–11:**
+    - Judul: Mulai dari Sini
+    - Penjelas: Lihat mata pelajaran pendukung yang cocok untuk jurusan incaranmu.
+    - Tombol: Pilih Mapel (ke `/pilih-mapel`)
+  - **Kelas 12:**
+    - Judul: Mulai dari Sini
+    - Penjelas: Cek posisi persiapanmu sekarang dan langkah yang perlu diambil.
+    - Tombol: Cek Posisi Gue (ke `/cek-posisi`)
+  - **Tanpa kelas / umum:**
+    - Judul: Mulai dari Sini
+    - Penjelas: Mulai kenali pilihan jenjang dan arah langkahmu.
+    - Tombol: Buka Jenjang Saya (ke `/jenjang-saya`)
+
+- **Progres Sederhana:**
+  - Format: `[X] dari [Y] langkah selesai` (misal: "1 dari 4 langkah selesai")
+  - Langkah yang dihitung (4 langkah dari data server):
+    1. Isi kelas (`pengguna.kelas`)
+    2. Isi prodi impian (`pengguna.prodi_impian`)
+    3. Centang Daftar Periksa (minimal 1 butir di `/kemajuan`)
+    4. Coba Latihan (minimal 1 sesi di `/sesi-latihan`)
+  - *Catatan:* Langkah "buka Arsip" tidak dihitung karena server tidak memiliki pencatatan telemetri pembukaan layar.
+
+- **Grid Menu Launcher (label pendek):**
+  - Eksplorasi Tujuan
+  - Gaya Belajar
+  - Arsip Belajar
+  - Level-In
+  - Ngobrol Bareng (dari "Ngobrol Bareng LANJUT")
+  - Cerita Alumni
+  - Cek Posisi (dari "Cek Posisi Gue")
+  - Pilih Mapel
+  - Daftar Periksa
+
 ### 4.2 Khusus SMK → Jenjang Saya
 
 **Judul:** Khusus SMK

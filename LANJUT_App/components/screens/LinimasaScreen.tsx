@@ -1,19 +1,28 @@
 import React from 'react';
 import { Article, H1 } from '@expo/html-elements';
 import { useRouter } from 'expo-router';
-import { Linking, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
 import type { TahapanLinimasa } from '../../api/types';
 import { useTahapanLinimasa } from '../../hooks/useTahapanLinimasa';
-import { daftarKartuBeranda } from '../../lib/beranda';
-import { kelompokJenjang } from '../../lib/jenjang';
+import { useKemajuan } from '../../hooks/useKemajuan';
+import { useRiwayatLatihan } from '../../hooks/useLatihan';
+import { useKartuSaya } from '../../hooks/useKartu';
+import {
+  apakahPunyaKemajuan,
+  daftarKartuBeranda,
+  hitungProgresBeranda,
+  infoMulaiDariSini,
+} from '../../lib/beranda';
+import { kelompokJenjang, type Kelas } from '../../lib/jenjang';
 import { formatRentang, formatTanggal, tanggalMomen, turunkanLinimasa, type TahapanTurunan } from '../../lib/linimasa';
 import { lembagaSumber } from '../../lib/sumber';
 import { useSesi } from '../../providers/AuthProvider';
-import { color, font, spacing, teks } from '../../theme/tokens';
+import { color, font, radius, shadow, spacing, teks } from '../../theme/tokens';
 import {
+  BilahProgres,
+  Ikon,
   Kartu,
-  KartuPintu,
   KeadaanGalat,
   Kosong,
   Memuat,
@@ -27,15 +36,41 @@ const LAMAN_SNPMB = 'https://snpmb.bppp.kemdikbud.go.id/';
 
 /**
  * Tab Beranda — padanan MVP-PWA/beranda.html: kalimat K1, kartu tenggat
- * terdekat (gradasi untuk kelas 12), lalu kartu pintu sesuai jenjang akun (LANJUT_064).
- * Butir tanpa `diperiksa_pada` sudah disaring di lib/linimasa.ts (PRD F1).
+ * terdekat (gradasi untuk kelas 12), kartu "Mulai dari Sini" bila baru, baris progres,
+ * dan grid menu launcher 4 kolom (3 kolom < 360 px) per jenjang (LANJUT_065).
  */
 export function LinimasaScreen() {
   const router = useRouter();
   const { pengguna } = useSesi();
+  const { width } = useWindowDimensions();
   const kelas = pengguna?.kelas ?? null;
   const kelompok = kelompokJenjang(kelas);
   const kartu = daftarKartuBeranda(kelas);
+
+  // Ambil data progres & aktivitas pengguna dari server
+  const kemajuanQuery = useKemajuan();
+  const latihanQuery = useRiwayatLatihan();
+  const kartuQuery = useKartuSaya();
+
+  const jumlahCentang = kemajuanQuery.data?.filter((k) => k.selesai_pada).length ?? 0;
+  const jumlahLatihan = latihanQuery.data?.length ?? 0;
+  const jumlahKartu = kartuQuery.data?.length ?? 0;
+
+  const punyaKemajuan = apakahPunyaKemajuan({
+    jumlahCentang,
+    jumlahLatihan,
+    jumlahKartu,
+  });
+
+  const progres = hitungProgresBeranda({
+    kelas,
+    prodiImpian: pengguna?.prodi_impian,
+    jumlahCentang,
+    jumlahLatihan,
+  });
+
+  const kolom = width < 360 ? 3 : 4;
+  const memuatData = kemajuanQuery.isPending || latihanQuery.isPending || kartuQuery.isPending;
 
   return (
     <View style={gaya.layarIsi}>
@@ -46,18 +81,68 @@ export function LinimasaScreen() {
           menampilkan placeholder kosong). */}
       {kelompok === 'kelas12' ? <Tenggat /> : null}
 
-      {/* Kartu pintu per jenjang (LANJUT_064). Kartu tanpa isi disembunyikan. */}
-      {kartu.map((k) => (
-        <KartuPintu
-          key={k.id}
-          ikon={k.ikon}
-          judul={k.judul}
-          keterangan={k.keterangan}
-          varian={k.varian}
-          onPress={() => router.push(k.href as any)}
+      {/* LANJUT_065 §B: Kartu "Mulai dari Sini" untuk akun baru / belum punya kemajuan */}
+      {!memuatData && !punyaKemajuan ? (
+        <KartuMulaiDariSini kelas={kelas} onPress={(href) => router.push(href as any)} />
+      ) : null}
+
+      {/* LANJUT_065 §C: Satu baris progres di atas grid */}
+      <View style={s.barisProgres}>
+        <View style={s.progresTeksBaris}>
+          <Text style={s.progresLabel}>{`${progres.selesai} dari ${progres.total} langkah selesai`}</Text>
+        </View>
+        <BilahProgres
+          selesai={progres.selesai}
+          total={progres.total}
+          label="Progres langkah awal"
         />
-      ))}
+      </View>
+
+      {/* LANJUT_065 §A: Grid menu launcher 4 kolom (3 kolom bila lebar layar < 360 px) */}
+      <View style={s.gridWadah}>
+        {kartu.map((k) => {
+          const label = k.labelPendek ?? k.judul;
+          return (
+            <Pressable
+              key={k.id}
+              accessibilityRole="button"
+              accessibilityLabel={k.judul}
+              style={({ pressed }) => [
+                s.gridItem,
+                { width: `${100 / kolom}%` as any },
+                pressed && s.ditekan,
+              ]}
+              onPress={() => router.push(k.href as any)}
+            >
+              <View style={s.ikonWadah}>
+                <Ikon nama={k.ikon} ukuran={24} warna={color.blue600} />
+              </View>
+              <Text style={s.gridLabel} numberOfLines={2}>
+                {label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
     </View>
+  );
+}
+
+function KartuMulaiDariSini({
+  kelas,
+  onPress,
+}: {
+  kelas: Kelas | null | undefined;
+  onPress: (href: string) => void;
+}) {
+  const info = infoMulaiDariSini(kelas);
+
+  return (
+    <Kartu varian="soft" style={s.mulaiKartu}>
+      <Text style={s.mulaiJudul}>{info.judul}</Text>
+      <Text style={s.mulaiPenjelas}>{info.penjelas}</Text>
+      <Tombol label={info.labelTombol} varian="utama" onPress={() => onPress(info.href)} />
+    </Kartu>
   );
 }
 
@@ -170,4 +255,65 @@ const s = StyleSheet.create({
   tanggal: { ...teks.caption, color: color.textMuted },
   judul: { ...teks.title, fontFamily: font.semibold, color: color.textBody, marginTop: 2 },
   judulLewat: { textDecorationLine: 'line-through' },
+  // LANJUT_065: Mulai dari Sini
+  mulaiKartu: {
+    gap: spacing.s3,
+    padding: spacing.s5,
+  },
+  mulaiJudul: {
+    ...teks.title,
+    fontFamily: font.semibold,
+    color: color.textBody,
+  },
+  mulaiPenjelas: {
+    ...teks.bodySm,
+    color: color.textMuted,
+  },
+  // LANJUT_065: Baris Progres Sederhana
+  barisProgres: {
+    gap: spacing.s2,
+  },
+  progresTeksBaris: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  progresLabel: {
+    ...teks.caption,
+    fontFamily: font.medium,
+    color: color.textMuted,
+  },
+  // LANJUT_065: Grid Menu Launcher
+  gridWadah: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -spacing.s1,
+    rowGap: spacing.s5,
+  },
+  gridItem: {
+    alignItems: 'center',
+    paddingHorizontal: spacing.s1,
+    gap: spacing.s2,
+  },
+  ikonWadah: {
+    width: 52,
+    height: 52,
+    borderRadius: radius.md,
+    backgroundColor: color.surfaceCard,
+    borderWidth: 1,
+    borderColor: color.borderSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: shadow.s1,
+  },
+  gridLabel: {
+    fontFamily: font.medium,
+    fontSize: 11,
+    lineHeight: 14,
+    color: color.textBody,
+    textAlign: 'center',
+  },
+  ditekan: {
+    opacity: 0.7,
+  },
 });
