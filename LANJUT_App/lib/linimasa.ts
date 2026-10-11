@@ -1,4 +1,5 @@
 import type { TahapanLinimasa } from '../api/types';
+import { kelompokJenjang, type Kelas } from './jenjang';
 
 export type StatusTahapan = 'done' | 'soon' | 'idle';
 
@@ -74,16 +75,18 @@ export function formatRentang(mulai: string, selesai: string): string {
  * proyek, karena LANJUT_App adalah eksplorasi terpisah yang harus bisa
  * dihapus tanpa menyentuh satu baris pun PWA (lihat LANJUT_App/README.md).
  *
- * Penyaringan `diperiksa_pada == null` terjadi DI SINI, di lapisan data,
- * bukan di lapisan tampilan — PRD F1 melarang menampilkan tanggal yang
- * belum diverifikasi dari laman resmi sama sekali, jadi butir semacam itu
- * tidak boleh pernah sampai ke komponen layar.
+ * Penyaringan `status_verifikasi === 'terverifikasi'` dan `diperiksa_pada != null`
+ * terjadi DI SINI, di lapisan data, bukan di lapisan tampilan — PRD F1 dan
+ * LANJUT_066 melarang menampilkan tanggal yang belum diverifikasi dari laman resmi
+ * sama sekali, jadi butir semacam itu tidak boleh pernah sampai ke komponen layar.
  */
 export function turunkanLinimasa(
   data: TahapanLinimasa[],
   hariIniMs: number = hariIniUtc()
 ): LinimasaTerkini {
-  const terverifikasi = data.filter((t) => t.diperiksa_pada != null);
+  const terverifikasi = (data ?? []).filter(
+    (t) => t.status_verifikasi === 'terverifikasi' && t.diperiksa_pada != null
+  );
 
   const butir: TahapanTurunan[] = terverifikasi
     .slice()
@@ -128,3 +131,21 @@ export function turunkanLinimasa(
 export function tanggalMomen(tahapan: TahapanLinimasa, momen: Momen): string {
   return momen === 'mulai' ? tahapan.tanggal_mulai : tahapan.tanggal_selesai;
 }
+
+/**
+ * Mengambil paling banyak tiga butir Info Penting dari data terverifikasi (LANJUT_066).
+ * Relevansi jenjang mengikuti kelompokJenjang: hanya relevan untuk kelas 12.
+ */
+export function infoPentingLinimasa(
+  data: TahapanLinimasa[],
+  kelas?: Kelas | null | undefined,
+  hariIniMs: number = hariIniUtc()
+): TahapanTurunan[] {
+  const kelompok = kelompokJenjang(kelas);
+  if (kelompok !== 'kelas12') {
+    return [];
+  }
+  const hasil = turunkanLinimasa(data, hariIniMs);
+  return hasil.butir.slice(0, 3);
+}
+

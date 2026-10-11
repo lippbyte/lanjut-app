@@ -15,7 +15,14 @@ import {
   infoMulaiDariSini,
 } from '../../lib/beranda';
 import { kelompokJenjang, type Kelas } from '../../lib/jenjang';
-import { formatRentang, formatTanggal, tanggalMomen, turunkanLinimasa, type TahapanTurunan } from '../../lib/linimasa';
+import {
+  formatRentang,
+  formatTanggal,
+  infoPentingLinimasa,
+  tanggalMomen,
+  turunkanLinimasa,
+  type TahapanTurunan,
+} from '../../lib/linimasa';
 import { lembagaSumber } from '../../lib/sumber';
 import { useSesi } from '../../providers/AuthProvider';
 import { color, font, radius, shadow, spacing, teks } from '../../theme/tokens';
@@ -24,7 +31,6 @@ import {
   Ikon,
   Kartu,
   KeadaanGalat,
-  Kosong,
   Memuat,
   SeksiJudul,
   Sumber,
@@ -36,7 +42,8 @@ const LAMAN_SNPMB = 'https://snpmb.bppp.kemdikbud.go.id/';
 
 /**
  * Tab Beranda — padanan MVP-PWA/beranda.html: kalimat K1, kartu tenggat
- * terdekat (gradasi untuk kelas 12), kartu "Mulai dari Sini" bila baru, baris progres,
+ * terdekat (gradasi untuk kelas 12), kartu "Info Penting" dari data terverifikasi (LANJUT_066),
+ * kartu "Mulai dari Sini" bila baru, baris progres,
  * dan grid menu launcher 4 kolom (3 kolom < 360 px) per jenjang (LANJUT_065).
  */
 export function LinimasaScreen() {
@@ -76,10 +83,9 @@ export function LinimasaScreen() {
     <View style={gaya.layarIsi}>
       <H1 style={s.k1}>Tahu harus ngapain hari ini.</H1>
 
-      {/* LANJUT_035, LANJUT_064: tenggat & tahapan SNBP/SNBT/TKA HANYA untuk kelas 12.
-          Non-12 tidak merender Tenggat (tidak mengambil data linimasa & tidak
-          menampilkan placeholder kosong). */}
-      {kelompok === 'kelas12' ? <Tenggat /> : null}
+      {/* LANJUT_035, LANJUT_064, LANJUT_066: tenggat & Info Penting terverifikasi HANYA untuk kelas 12.
+          Bila tidak ada data terverifikasi yang relevan, kartu tidak tampil (tidak merender kartu kosong). */}
+      {kelompok === 'kelas12' ? <Tenggat kelas={kelas} /> : null}
 
       {/* LANJUT_065 §B: Kartu "Mulai dari Sini" untuk akun baru / belum punya kemajuan */}
       {!memuatData && !punyaKemajuan ? (
@@ -146,26 +152,19 @@ function KartuMulaiDariSini({
   );
 }
 
-function Tenggat() {
+function Tenggat({ kelas }: { kelas: Kelas | null | undefined }) {
   const { data, isPending, isError } = useTahapanLinimasa();
-  return isPending ? <Memuat /> : isError ? <KeadaanGalat /> : <Isi data={data} />;
+  return isPending ? <Memuat /> : isError ? <KeadaanGalat /> : <Isi data={data} kelas={kelas} />;
 }
 
-function Isi({ data }: { data: TahapanLinimasa[] | undefined }) {
+function Isi({ data, kelas }: { data: TahapanLinimasa[] | undefined; kelas: Kelas | null | undefined }) {
   const hasil = turunkanLinimasa(data ?? []);
+  const infoPenting = infoPentingLinimasa(data ?? [], kelas);
 
+  // LANJUT_066: Bila tidak ada data terverifikasi yang relevan, kartu tidak tampil sama sekali
+  // (jangan menampilkan kartu kosong atau kalimat "belum ada info").
   if (!hasil.butir.length) {
-    return (
-      <Kartu>
-        <Kosong
-          judul="Tanggal resminya sedang kami cek."
-          teks="Tahapan TKA, SNBP, dan SNBT baru tampil di sini setelah dicek ke laman resmi SNPMB. Sementara itu, lihat jadwalnya langsung di sana."
-          aksi={
-            <Tombol label="Buka laman resmi SNPMB" varian="sekunder" onPress={() => Linking.openURL(LAMAN_SNPMB)} />
-          }
-        />
-      </Kartu>
-    );
+    return null;
   }
 
   const { terdekat, sisaHari, momen } = hasil;
@@ -175,56 +174,51 @@ function Isi({ data }: { data: TahapanLinimasa[] | undefined }) {
     <>
       {/* Tenggat terdekat: angka hari biasa, bukan hitungan detik (§4.1).
           Belum dimulai → menuju tanggal mulai; sudah berjalan → menuju tutup. */}
-      <Kartu varian="brand">
-        {adaTenggat ? (
-          <>
-            <Text style={s.tenggatAngka}>{sisaHari} hari</Text>
-            <Text style={s.tenggatTeks}>
-              menuju {terdekat.judul} {momen === 'mulai' ? 'dimulai' : 'ditutup'},{' '}
-              {formatTanggal(tanggalMomen(terdekat, momen))}.
-            </Text>
-          </>
-        ) : (
-          <Text style={s.tenggatTeks}>Sudah lewat. Tenggat berikutnya ada di bawah.</Text>
-        )}
-      </Kartu>
-
-      <View style={s.seksi}>
-        <SeksiJudul>Tahapan berikutnya</SeksiJudul>
-        <Kartu>
-          {hasil.butir.map((b, i) => (
-            <ButirLinimasa key={b.id} butir={b} terakhir={i === hasil.butir.length - 1} />
-          ))}
+      {adaTenggat ? (
+        <Kartu varian="brand">
+          <Text style={s.tenggatAngka}>{sisaHari} hari</Text>
+          <Text style={s.tenggatTeks}>
+            menuju {terdekat.judul} {momen === 'mulai' ? 'dimulai' : 'ditutup'},{' '}
+            {formatTanggal(tanggalMomen(terdekat, momen))}.
+          </Text>
         </Kartu>
-      </View>
+      ) : null}
+
+      {/* LANJUT_066 §A: Paling banyak tiga kartu "Info Penting" dari data terverifikasi */}
+      {infoPenting.length > 0 ? (
+        <View style={s.seksi}>
+          <SeksiJudul>Info Penting</SeksiJudul>
+          {infoPenting.map((b) => (
+            <KartuInfoPenting key={b.id} butir={b} />
+          ))}
+        </View>
+      ) : null}
     </>
   );
 }
 
-// .linimasa li — titik + garis penghubung di kiri, teks di kanan. Tahapan
-// yang lewat diredupkan & dicoret, tidak dihapus (PRD F1).
-function ButirLinimasa({ butir, terakhir }: { butir: TahapanTurunan; terakhir: boolean }) {
-  const lewat = butir.status === 'done';
+// Kartu "Info Penting" di Beranda (LANJUT_066 §A).
+// Menampilkan judul, tanggal/rentang, label sumber, tanggal periksa, dan tautan ke url_sumber.
+function KartuInfoPenting({ butir }: { butir: TahapanTurunan }) {
   return (
-    <Article style={StyleSheet.flatten([s.butir, lewat && s.butirLewat])}>
-      <View style={s.rel}>
-        <View
-          style={StyleSheet.flatten([
-            s.titik,
-            butir.status === 'done' && s.titikLewat,
-            butir.status === 'soon' && s.titikSoon,
-          ])}
-        />
-        {!terakhir && <View style={s.garis} />}
+    <Kartu style={s.infoKartu}>
+      <Text style={s.infoTanggal}>{formatRentang(butir.tanggal_mulai, butir.tanggal_selesai)}</Text>
+      <Text style={s.infoJudul}>{butir.judul}</Text>
+      <View style={s.infoMetaBaris}>
+        <Text style={s.infoMeta}>Sumber: {lembagaSumber(butir.url_sumber)}</Text>
+        <Text style={s.infoMeta}>Diperiksa pada {formatTanggal(butir.diperiksa_pada)}</Text>
       </View>
-      <View style={StyleSheet.flatten([s.teks, terakhir && s.teksTerakhir])}>
-        <Text style={s.tanggal}>{formatRentang(butir.tanggal_mulai, butir.tanggal_selesai)}</Text>
-        <Text style={StyleSheet.flatten([s.judul, lewat && s.judulLewat])}>{butir.judul}</Text>
-        <Sumber>
-          Diperbarui dari {lembagaSumber(butir.url_sumber)} · dicek {formatTanggal(butir.diperiksa_pada)}
-        </Sumber>
-      </View>
-    </Article>
+      {butir.url_sumber ? (
+        <Pressable
+          accessibilityRole="link"
+          accessibilityLabel={`Buka tautan sumber resmi ${butir.judul}`}
+          onPress={() => Linking.openURL(butir.url_sumber)}
+          style={({ pressed }) => [s.infoTautan, pressed && s.ditekan]}
+        >
+          <Text style={s.infoTautanTeks}>Buka sumber resmi ↗</Text>
+        </Pressable>
+      ) : null}
+    </Kartu>
   );
 }
 
@@ -253,8 +247,37 @@ const s = StyleSheet.create({
   teks: { flex: 1, paddingBottom: spacing.s6 },
   teksTerakhir: { paddingBottom: 0 },
   tanggal: { ...teks.caption, color: color.textMuted },
-  judul: { ...teks.title, fontFamily: font.semibold, color: color.textBody, marginTop: 2 },
-  judulLewat: { textDecorationLine: 'line-through' },
+  // LANJUT_066: Kartu Info Penting
+  infoKartu: {
+    gap: spacing.s2,
+    padding: spacing.s4,
+  },
+  infoTanggal: {
+    ...teks.caption,
+    color: color.textMuted,
+  },
+  infoJudul: {
+    ...teks.title,
+    fontFamily: font.semibold,
+    color: color.textBody,
+  },
+  infoMetaBaris: {
+    gap: 2,
+  },
+  infoMeta: {
+    ...teks.caption,
+    color: color.ink500,
+  },
+  infoTautan: {
+    alignSelf: 'flex-start',
+    marginTop: spacing.s1,
+  },
+  infoTautanTeks: {
+    ...teks.caption,
+    fontFamily: font.medium,
+    color: color.blue600,
+    textDecorationLine: 'underline',
+  },
   // LANJUT_065: Mulai dari Sini
   mulaiKartu: {
     gap: spacing.s3,

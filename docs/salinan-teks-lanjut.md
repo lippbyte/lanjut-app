@@ -154,6 +154,16 @@ Dipakai di: beranda, notifikasi, layar kosong.
   - Pilih Mapel
   - Daftar Periksa
 
+- **Kartu "Info Penting" dari Data Terverifikasi (draf LANJUT_066, belum disetujui Khalifa):**
+  - **Seksi Judul:** Info Penting
+  - **Tampilan kartu (maksimal 3 kartu, diurutkan tanggal terdekat):**
+    - Judul tahapan (misal: "Pelaksanaan TKA")
+    - Tanggal / Rentang tanggal (misal: "26 Oktober – 8 November 2026")
+    - Label Sumber: `Sumber: [nama lembaga sumber]` (misal: "Sumber: laman resmi Kemendikdasmen")
+    - Tanggal Periksa: `Diperiksa pada [tanggal]` (misal: "Diperiksa pada 27 September 2026")
+    - Tautan Sumber: `Buka sumber resmi ↗` (tautan langsung ke `url_sumber`)
+  - **Aturan keterlihatan:** Hanya kartu dengan `status_verifikasi = terverifikasi` yang tampil. Bila tidak ada data terverifikasi yang relevan, seksi ini hilang sama sekali (tanpa kartu kosong atau teks "belum ada info").
+
 ### 4.2 Khusus SMK → Jenjang Saya
 
 **Judul:** Khusus SMK
