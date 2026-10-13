@@ -203,7 +203,10 @@ baris progres, grid menu, Info Penting (kelas 12), carousel banner. Kalimat K1 d
 "Mulai dari Sini" (akun baru) tidak disebut di task, jadi ditaruh paling bawah dengan urutan
 lama (pilihan di percakapan, belum disetujui PM). Kartu hero memakai teks kartu tenggat yang
 sama ("[n] hari" · "menuju [tahapan] dimulai/ditutup, [tanggal].") tanpa teks baru; selama
-memuat atau bila gagal, kartu tidak tampil, tanpa pesan. Carousel tanpa judul seksi. Teks
+memuat atau bila gagal, kartu tidak tampil, tanpa pesan. Sapaan dan kartu hero menyatu
+dengan app bar dalam satu kepala bergradasi warna kartu tenggat lama (blue200 → blue300,
+teks gelap), seperti header GoPay; bagian lain ada di lembar putih bersudut bulat di
+bawahnya (pilihan di percakapan, belum disetujui PM). Carousel tanpa judul seksi. Teks
 yang menunjuk ke halaman akun ikut diganti di butir masing-masing (§4.2, §4.10–§4.14),
 kecuali isi kebijakan privasi (`lib/kebijakan-privasi.json`) yang menunggu review hukum.
 

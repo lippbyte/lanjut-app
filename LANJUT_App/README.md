@@ -84,6 +84,7 @@ Perbedaan yang disengaja dari PWA:
 | Layar | Beda | Alasan |
 |---|---|---|
 | Beranda | Tahapan tanpa `diperiksa_pada` tidak ditampilkan (PWA menampilkannya dengan peringatan "Contoh"). Layar kosongnya mengarah ke laman resmi SNPMB. | PRD F1; keputusan PM 26 Sep 2026. |
+| Beranda | Sapaan dan hitung mundur tenggat (kelas 12) ada di kepala bergradasi blue200 → blue300 yang menyatu dengan app bar (tanpa garis bawah); bagian lain di lembar putih bersudut bulat di bawahnya. | LANJUT_074, gaya header GoPay — pilihan di percakapan, belum disetujui PM. |
 | Beranda | Tidak ada kartu "Latihan Hari Ini". Ada pintu Arsip Belajar (Latihan dibuka dari sana) dan pintu Level-In; saran harian tampil di layar Level-In, bukan di Beranda. | LANJUT_039/041/058: satu pintu per fitur; Level-In untuk semua kelas 7–12. |
 | Jenjang Saya (dulu Khusus SMK) | Semua kartu tertutup saat layar dibuka (PWA membuka kartu pertama). | Kartu pertama yang terbuka menutupi judul lain di layar HP; permintaan user 27 Sep 2026. |
 | Pilih Mapel | Tidak ada kartu "Lihat prospek & kampus" (F10). "Simpan ke Daftar Periksa" mencentang butir `mapel-tka` di akun, tidak membuat butir baru. | F10 belum ada di Expo; backend belum mendukung butir buatan pengguna. |

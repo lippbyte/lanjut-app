@@ -61,6 +61,10 @@ export const gradient = {
   cover: { colors: [color.blue200, color.blue300, color.blue400], start: { x: 0, y: 0 }, end: { x: 0, y: 1 } },
   // --gradient-tile: linear-gradient(160deg, blue200, blue300) — kartu tenggat.
   tile: { colors: [color.blue200, color.blue300], start: { x: 0.33, y: 0 }, end: { x: 0.67, y: 1 } },
+  // LANJUT_074 (pilihan di percakapan): kepala Beranda yang menyatu dengan app bar —
+  // warna kartu tenggat (blue200 → blue300), tetapi tegak lurus supaya tepi atasnya
+  // persis blue200, warna app bar (appbarBg), tanpa sambungan terlihat.
+  kepala: { colors: [color.blue200, color.blue300], start: { x: 0, y: 0 }, end: { x: 0, y: 1 } },
   // .progress__isi: linear-gradient(90deg, blue200, blue400).
   progress: { colors: [color.blue200, color.blue400], start: { x: 0, y: 0 }, end: { x: 1, y: 0 } },
 } as const;

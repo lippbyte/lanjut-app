@@ -21,7 +21,7 @@ const beranda = muatModulApp('lib/beranda');
 const navigasi = muatModulApp('lib/navigasi');
 const jenjangSaya = muatModulApp('lib/jenjangSaya');
 const suara = muatModulApp('lib/suara');
-const { color } = muatModulApp('theme/tokens');
+const { color, gradient } = muatModulApp('theme/tokens');
 
 // Label lama /cek-posisi dirakit dari potongan supaya berkas ini sendiri tidak memuatnya.
 const LABEL_LAMA = ['Cek', 'Posisi', 'Gue'].join(' ');
@@ -95,16 +95,47 @@ describe('LANJUT_074 §A–B: urutan Beranda', () => {
     assert.ok(hero.includes('turunkanLinimasa(data ?? [])'), 'tenggat tetap dari data terverifikasi (LANJUT_066)');
   });
 
-  test('Hero: latar penuh dari token, teks putih dengan kontras tinggi, lebih besar dari kartu lain', () => {
+  // Pilihan di percakapan (belum disetujui PM): warna kartu tenggat lama, menyatu dengan app bar.
+  test('Hero: di kepala bergradasi token kartu tenggat yang menyatu dengan app bar; teks gelap kontras tinggi', () => {
     const layar = baca('components', 'screens', 'LinimasaScreen.tsx');
     const gaya = (nama) => layar.match(new RegExp(`\\n  ${nama}: \\{([^}]*)\\}`))?.[1] ?? '';
-    assert.match(gaya('hero'), /backgroundColor: color\.blue600/);
-    assert.match(gaya('heroAngka'), /color: color\.white/);
-    assert.match(gaya('heroTeks'), /color: color\.white/);
-    assert.ok(kontras(color.blue600, color.white) >= 4.5, `kontras ${kontras(color.blue600, color.white).toFixed(2)}:1`);
+    // Gradasi = warna kartu tenggat lama (gradient.tile), tegak lurus supaya tepi atas = warna app bar.
+    assert.deepEqual([...gradient.kepala.colors], [...gradient.tile.colors]);
+    assert.deepEqual([...gradient.kepala.colors], [color.blue200, color.blue300]);
+    assert.equal(gradient.kepala.start.y, 0);
+    assert.equal(gradient.kepala.start.x, gradient.kepala.end.x);
+    assert.ok(layar.includes('colors={gradient.kepala.colors}'));
+    const shell = baca('components', 'layout', 'AppShell.tsx');
+    assert.ok(shell.includes("menyatu={pathname === '/linimasa'}"));
+    assert.ok(shell.includes('appbarMenyatu: { backgroundColor: gradient.kepala.colors[0] }'));
+    assert.ok(!/borderBottom|boxShadow/.test(shell.match(/appbarMenyatu: \{[^}]*\}/)[0]), 'tanpa garis/bayangan di Beranda');
+    // Teks gelap seperti kartu tenggat lama; kontras dihitung di kedua ujung gradasi.
+    assert.match(gaya('sapaan'), /color: color\.textBody/);
+    assert.match(gaya('heroAngka'), /color: color\.textBody/);
+    assert.match(gaya('heroTeks'), /color: color\.textMuted/);
+    for (const latar of gradient.kepala.colors) {
+      for (const teks of [color.textBody, color.textMuted]) {
+        assert.ok(kontras(teks, latar) >= 4.5, `${teks} di ${latar}: ${kontras(teks, latar).toFixed(2)}:1`);
+      }
+    }
     // Angka hero 40 px; kartu lain di Beranda paling besar memakai teks.title.
     assert.match(gaya('heroAngka'), /fontSize: 40/);
-    assert.match(gaya('hero'), /paddingVertical: spacing\.s6/);
+  });
+
+  test('Kepala (menyatu dengan app bar) = sapaan + hero kelas 12, sapaan saja kelas lain; urutan tidak berubah', () => {
+    for (const kelas of ['7', '10', '12', null]) {
+      for (const tampilBanner of [true, false]) {
+        const u = beranda.urutanBeranda({ kelas, tampilMulaiDariSini: true, tampilBanner });
+        const { kepala, badan } = beranda.pisahKepalaBeranda(u);
+        assert.deepEqual([...kepala, ...badan], u, `kelas ${kelas}`);
+        assert.deepEqual(kepala, kelas === '12' ? ['sapaan', 'hero'] : ['sapaan']);
+        assert.equal(badan[0], 'progres', 'progres paling atas di lembar putih, tepat di bawah hero');
+      }
+    }
+    const layar = baca('components', 'screens', 'LinimasaScreen.tsx');
+    assert.ok(layar.includes('const { kepala, badan } = pisahKepalaBeranda(urutan);'));
+    assert.ok(layar.includes('{kepala.map((b) => ('));
+    assert.ok(layar.includes('{badan.map((b) => ('));
   });
 });
 

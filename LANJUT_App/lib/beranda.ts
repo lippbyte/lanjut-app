@@ -283,6 +283,21 @@ export function urutanBeranda(data: {
   return urutan;
 }
 
+/**
+ * Bagian yang menyatu dengan app bar di kepala Beranda bergradasi (gaya header
+ * GoPay — pilihan di percakapan LANJUT_074, belum disetujui PM): sapaan dan kartu
+ * hero tenggat. Bagian lain ada di lembar putih di bawahnya.
+ */
+export const BAGIAN_KEPALA_BERANDA: readonly BagianBeranda[] = ['sapaan', 'hero'];
+
+/** Urutan Beranda dibelah dua tanpa mengubah urutannya: kepala (bergradasi) dan badan (lembar putih). */
+export function pisahKepalaBeranda(urutan: readonly BagianBeranda[]): { kepala: BagianBeranda[]; badan: BagianBeranda[] } {
+  return {
+    kepala: urutan.filter((b) => BAGIAN_KEPALA_BERANDA.includes(b)),
+    badan: urutan.filter((b) => !BAGIAN_KEPALA_BERANDA.includes(b)),
+  };
+}
+
 type BarisCentang = { selesai_pada: string | null };
 
 /**

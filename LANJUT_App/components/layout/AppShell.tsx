@@ -5,7 +5,7 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { PLACEHOLDER_TAB_TENGAH, TAB_BAWAH, TINGGI_IKON_TAB, UKURAN_TAB_TENGAH, type HrefTab } from '../../lib/navigasi';
-import { color, font, layout, radius, shadow, spacing, teks } from '../../theme/tokens';
+import { color, font, gradient, layout, radius, shadow, spacing, teks } from '../../theme/tokens';
 import { Ikon } from '../ui/Ikon';
 
 // Tab bar bawah: lima tab dari lib/navigasi.ts (LANJUT_074) — Beranda, Jenjang
@@ -63,7 +63,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <View style={s.akar}>
-      <AppBar tampilkanProfil={pathname !== '/akun'} />
+      {/* Beranda: app bar menyatu dengan kepala bergradasi (LANJUT_074, pilihan di percakapan). */}
+      <AppBar tampilkanProfil={pathname !== '/akun'} menyatu={pathname === '/linimasa'} />
       {judulAnak ? <PageBar judul={judulAnak} /> : null}
       <Main style={s.main}>
         {TANPA_GULIR_HALAMAN.has(pathname) ? (
@@ -79,12 +80,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** .appbar — maskot kiri, wordmark tengah, profil kanan. */
-function AppBar({ tampilkanProfil }: { tampilkanProfil: boolean }) {
+/**
+ * .appbar — maskot kiri, wordmark tengah, profil kanan. `menyatu`: tanpa garis dan
+ * bayangan bawah, latar = warna atas gradasi kepala Beranda, jadi keduanya tampak
+ * satu blok.
+ */
+function AppBar({ tampilkanProfil, menyatu }: { tampilkanProfil: boolean; menyatu: boolean }) {
   const { top } = useSafeAreaInsets();
   const router = useRouter();
   return (
-    <Header style={StyleSheet.flatten([s.appbar, { paddingTop: spacing.s3 + top }])}>
+    <Header style={StyleSheet.flatten([s.appbar, menyatu ? s.appbarMenyatu : s.appbarGaris, { paddingTop: spacing.s3 + top }])}>
       <Image source={require('../../assets/mascot-blue.png')} style={s.mark} resizeMode="contain" />
       <Image
         source={require('../../assets/lanjut-wordmark.png')}
@@ -173,12 +178,15 @@ const s = StyleSheet.create({
     justifyContent: 'space-between',
     paddingBottom: spacing.s3,
     paddingHorizontal: spacing.gutter,
+    zIndex: 2,
+  },
+  appbarGaris: {
     backgroundColor: color.appbarBg,
     borderBottomWidth: 1,
     borderBottomColor: color.appbarBorder,
     boxShadow: shadow.appbar,
-    zIndex: 2,
   },
+  appbarMenyatu: { backgroundColor: gradient.kepala.colors[0] },
   mark: { width: 32, height: 32 },
   wordmark: { height: 32, width: 93 },
   profil: {

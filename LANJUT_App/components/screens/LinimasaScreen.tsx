@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Article, H1 } from '@expo/html-elements';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import {
   Linking,
@@ -27,6 +28,7 @@ import {
   hitungJumlahCentang,
   hitungProgresBeranda,
   infoMulaiDariSini,
+  pisahKepalaBeranda,
   teksSapaan,
   urutanBeranda,
   type BagianBeranda,
@@ -42,7 +44,7 @@ import {
 } from '../../lib/linimasa';
 import { lembagaSumber } from '../../lib/sumber';
 import { useSesi } from '../../providers/AuthProvider';
-import { color, font, radius, shadow, spacing, teks } from '../../theme/tokens';
+import { color, font, gradient, radius, shadow, spacing, teks } from '../../theme/tokens';
 import {
   BilahProgres,
   Ikon,
@@ -61,6 +63,10 @@ const LAMAN_SNPMB = 'https://snpmb.bppp.kemdikbud.go.id/';
  * progres, grid menu launcher per jenjang (LANJUT_065), Info Penting dari data
  * terverifikasi (kelas 12, LANJUT_066/072b), carousel banner (LANJUT_073/074),
  * lalu kalimat K1 dan kartu "Mulai dari Sini" bila akun baru.
+ *
+ * Sapaan dan hero ada di kepala bergradasi yang menyatu dengan app bar; sisanya di
+ * lembar putih bersudut bulat yang sedikit menimpa kepala (gaya header GoPay —
+ * pilihan di percakapan LANJUT_074, belum disetujui PM).
  */
 export function LinimasaScreen() {
   const router = useRouter();
@@ -165,11 +171,25 @@ export function LinimasaScreen() {
     info_penting: <InfoPenting kelas={kelas} />,
   };
 
+  const { kepala, badan } = pisahKepalaBeranda(urutan);
+
   return (
-    <View style={gaya.layarIsi}>
-      {urutan.map((b) => (
-        <React.Fragment key={b}>{bagian[b]}</React.Fragment>
-      ))}
+    <View style={s.akar}>
+      <LinearGradient
+        colors={gradient.kepala.colors}
+        start={gradient.kepala.start}
+        end={gradient.kepala.end}
+        style={s.kepala}
+      >
+        {kepala.map((b) => (
+          <React.Fragment key={b}>{bagian[b]}</React.Fragment>
+        ))}
+      </LinearGradient>
+      <View style={StyleSheet.flatten([gaya.layarIsi, s.lembar])}>
+        {badan.map((b) => (
+          <React.Fragment key={b}>{bagian[b]}</React.Fragment>
+        ))}
+      </View>
     </View>
   );
 }
@@ -252,9 +272,10 @@ function KartuMulaiDariSini({
   );
 }
 
-// LANJUT_074: kartu hero tenggat terdekat (kelas 12) — latar penuh color.blue600 dengan
-// teks putih (kontras ±5,7:1), lebih besar dari kartu lain. Isi sama dengan kartu
-// tenggat sebelumnya, tanpa teks baru. Memuat atau gagal → tidak tampil, tanpa pesan.
+// LANJUT_074: kartu hero tenggat terdekat (kelas 12), menyatu dengan app bar di kepala
+// bergradasi Beranda (warna kartu tenggat lama, gradient.kepala; teks gelap seperti
+// dulu). Lebih besar dari kartu lain. Isi sama dengan kartu tenggat sebelumnya, tanpa
+// teks baru. Memuat atau gagal → tidak tampil, tanpa pesan.
 // Tenggat dan Info Penting memakai satu query yang sama; "hari ini" untuk keduanya =
 // hariIniWib (LANJUT_072b), lewat default turunkanLinimasa. LANJUT_066: tanpa data
 // terverifikasi yang relevan, tidak ada kartu sama sekali.
@@ -326,20 +347,30 @@ function KartuInfoPenting({ butir }: { butir: TahapanTurunan }) {
 }
 
 const s = StyleSheet.create({
+  akar: { flexGrow: 1 },
+  // LANJUT_074 (pilihan di percakapan): kepala bergradasi yang menyambung app bar —
+  // tanpa jarak samping, ujung bawahnya ditimpa lembar putih sedalam radius.lg.
+  kepala: {
+    paddingHorizontal: spacing.gutter,
+    paddingTop: spacing.s2,
+    paddingBottom: spacing.s6 + radius.lg,
+    gap: spacing.s5,
+  },
+  lembar: {
+    marginTop: -radius.lg,
+    paddingTop: spacing.s6,
+    borderTopLeftRadius: radius.lg,
+    borderTopRightRadius: radius.lg,
+    backgroundColor: color.white,
+  },
   sapaan: { ...teks.title, fontFamily: font.semibold, color: color.textBody },
   k1: { ...teks.title, color: color.textBody, marginVertical: 0 },
-  // LANJUT_074: kartu hero tenggat — latar penuh blue600 (#456A8C), bukan gradasi
-  // biru muda (putih di gradasi itu hanya 1,3–2,0:1, LANJUT_027). Putih di blue600 ±5,7:1.
-  hero: {
-    backgroundColor: color.blue600,
-    borderRadius: radius.lg,
-    paddingVertical: spacing.s6,
-    paddingHorizontal: spacing.s5,
-    gap: spacing.s2,
-    boxShadow: shadow.s2,
-  },
-  heroAngka: { ...teks.h1, fontSize: 40, lineHeight: 46, color: color.white },
-  heroTeks: { ...teks.bodyLg, color: color.white },
+  // LANJUT_074: hero tenggat di atas gradasi biru muda — teks gelap seperti kartu tenggat
+  // lama (putih di gradasi itu hanya 1,3–2,0:1, LANJUT_027). textBody ±8,7:1 dan
+  // textMuted ±4,9:1 di ujung tergelap gradasi (blue300).
+  hero: { gap: spacing.s1 },
+  heroAngka: { ...teks.h1, fontSize: 40, lineHeight: 46, color: color.textBody },
+  heroTeks: { ...teks.bodyLg, color: color.textMuted },
   // LANJUT_074: carousel banner
   karousel: { gap: spacing.s2 },
   karouselIsi: { alignItems: 'stretch' },
