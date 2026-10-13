@@ -210,10 +210,28 @@ export function infoMulaiDariSini(kelas: Kelas | null | undefined): InfoMulaiDar
   };
 }
 
+type BarisCentang = { selesai_pada: string | null };
+
+/**
+ * Jumlah centang Daftar Periksa milik akun (LANJUT_070): butir umum di
+ * /kemajuan DITAMBAH butir pribadi di /butir-pribadi. Siswa kelas 7–11 hanya
+ * melihat butir pribadi di Daftar Periksa (LANJUT_035), jadi centang mereka
+ * tidak pernah masuk /kemajuan. Kedua endpoint sudah memfilter per akun.
+ * Satu-satunya tempat aturan ini; dipakai progres dan penanda kemajuan.
+ */
+export function hitungJumlahCentang(data: {
+  kemajuan?: readonly BarisCentang[] | null;
+  butirPribadi?: readonly BarisCentang[] | null;
+}): number {
+  const selesai = (daftar?: readonly BarisCentang[] | null) => (daftar ?? []).filter((b) => b.selesai_pada).length;
+  return selesai(data.kemajuan) + selesai(data.butirPribadi);
+}
+
 /**
  * Kriteria kemajuan pengguna (LANJUT_065 §B).
  * Kartu "Mulai dari Sini" hilang bila pengguna sudah memiliki kemajuan
  * (ada centang Daftar Periksa, pernah coba latihan, atau ada kartu di arsip).
+ * `jumlahCentang` berasal dari hitungJumlahCentang (LANJUT_070).
  */
 export function apakahPunyaKemajuan(data: {
   jumlahCentang?: number;
@@ -247,7 +265,8 @@ export type HasilProgresBeranda = {
  *
  * Dihitung dari 3 langkah yang benar-benar bisa diubah oleh pengguna:
  * 1. Isi prodi impian: pengguna.prodi_impian terisi di akun
- * 2. Centang Daftar Periksa: minimal 1 butir terselesaikan di /kemajuan
+ * 2. Centang Daftar Periksa: minimal 1 butir terselesaikan di /kemajuan atau
+ *    di butir pribadi (LANJUT_070, lewat hitungJumlahCentang)
  * 3. Coba Latihan: minimal 1 sesi latihan di /sesi-latihan
  *
  * Catatan penting (LANJUT_065 §C):

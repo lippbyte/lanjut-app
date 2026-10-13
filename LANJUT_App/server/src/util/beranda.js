@@ -177,7 +177,18 @@ function infoMulaiDariSini(kelas) {
 }
 
 /**
- * Kriteria kemajuan pengguna (LANJUT_065 §B).
+ * Jumlah centang Daftar Periksa milik akun (LANJUT_070): butir umum di
+ * /kemajuan DITAMBAH butir pribadi di /butir-pribadi. Siswa kelas 7–11 hanya
+ * mencentang butir pribadi, jadi /kemajuan saja tidak cukup.
+ */
+function hitungJumlahCentang(data = {}) {
+  const selesai = (daftar) => (daftar ?? []).filter((b) => b.selesai_pada).length;
+  return selesai(data.kemajuan) + selesai(data.butirPribadi);
+}
+
+/**
+ * Kriteria kemajuan pengguna (LANJUT_065 §B). `jumlahCentang` berasal dari
+ * hitungJumlahCentang (LANJUT_070).
  */
 function apakahPunyaKemajuan(data = {}) {
   const centang = data.jumlahCentang ?? 0;
@@ -221,6 +232,7 @@ module.exports = {
   kelompokJenjang,
   daftarKartuBeranda,
   infoMulaiDariSini,
+  hitungJumlahCentang,
   apakahPunyaKemajuan,
   hitungProgresBeranda,
   KARTU_ARSIP,

@@ -15,7 +15,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { nyalakanServer, urlDari, daftarPenggunaBaru, pool } = require('./bantuan');
-const { hitungProgresBeranda } = require('../src/util/beranda');
+const { hitungJumlahCentang, hitungProgresBeranda } = require('../src/util/beranda');
 
 const LANGKAH = ['isi_prodi_impian', 'centang_daftar_periksa', 'coba_latihan'];
 
@@ -49,16 +49,20 @@ function idSelesai(p) {
 }
 
 // Progres dihitung dari data server dengan cara yang sama seperti
-// LinimasaScreen: prodi dari /auth/saya, centang = butir /kemajuan yang
-// punya selesai_pada, latihan = jumlah sesi di /sesi-latihan.
+// LinimasaScreen: prodi dari /auth/saya, centang = butir /kemajuan dan butir
+// pribadi yang punya selesai_pada (LANJUT_070), latihan = jumlah sesi di
+// /sesi-latihan. Tes di berkas ini memakai jalur PUT /kemajuan (kelas 12);
+// jalur butir pribadi ada di progres-butir-pribadi.test.js.
 async function progresDariServer(token) {
   const profil = await panggil('GET', '/auth/saya', token);
   const kemajuan = await panggil('GET', '/kemajuan', token);
+  const pribadi = await panggil('GET', '/butir-pribadi', token);
   const sesi = await panggil('GET', '/sesi-latihan', token);
   assert.equal(profil.status, 200);
   assert.equal(kemajuan.status, 200);
+  assert.equal(pribadi.status, 200);
   assert.equal(sesi.status, 200);
-  const jumlahCentang = kemajuan.json.data.filter((k) => k.selesai_pada).length;
+  const jumlahCentang = hitungJumlahCentang({ kemajuan: kemajuan.json.data, butirPribadi: pribadi.json.data });
   const jumlahLatihan = sesi.json.data.length;
   return {
     jumlahCentang,

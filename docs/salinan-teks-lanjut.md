@@ -139,8 +139,9 @@ Dipakai di: beranda, notifikasi, layar kosong.
   - Total langkah: 3 (langkah `isi_kelas` dihapus di LANJUT_067 karena pengguna baru wajib mengisi kelas saat onboarding, sehingga selalu mulai dari 1 dari 4 dan menyesatkan).
   - Langkah yang dihitung (3 langkah dari data server yang benar-benar bisa diubah oleh pengguna):
     1. Isi prodi impian (`pengguna.prodi_impian`)
-    2. Centang Daftar Periksa (minimal 1 butir di `/kemajuan`)
+    2. Centang Daftar Periksa (minimal 1 butir tercentang di `/kemajuan` **atau** di butir pribadi `/butir-pribadi`, sejak LANJUT_070. Siswa kelas 7–11 hanya mencentang butir pribadi.)
     3. Coba Latihan (minimal 1 sesi di `/sesi-latihan`)
+  - *Catatan LANJUT_070:* hanya definisi langkah yang berubah; bunyi teks progres tetap. Aturan yang sama menentukan kartu "Mulai dari Sini" (hilang bila ada centang, latihan, atau kartu).
   - *Catatan:* Langkah "buka Arsip" tidak dihitung karena server tidak memiliki pencatatan telemetri pembukaan layar.
 
 - **Grid Menu Launcher (label pendek):**

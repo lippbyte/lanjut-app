@@ -5,12 +5,14 @@ import { Linking, Pressable, StyleSheet, Text, View, useWindowDimensions } from 
 
 import type { TahapanLinimasa } from '../../api/types';
 import { useTahapanLinimasa } from '../../hooks/useTahapanLinimasa';
+import { useButirPribadi } from '../../hooks/useButirPribadi';
 import { useKemajuan } from '../../hooks/useKemajuan';
 import { useRiwayatLatihan } from '../../hooks/useLatihan';
 import { useKartuSaya } from '../../hooks/useKartu';
 import {
   apakahPunyaKemajuan,
   daftarKartuBeranda,
+  hitungJumlahCentang,
   hitungProgresBeranda,
   infoMulaiDariSini,
 } from '../../lib/beranda';
@@ -56,10 +58,15 @@ export function LinimasaScreen() {
 
   // Ambil data progres & aktivitas pengguna dari server
   const kemajuanQuery = useKemajuan();
+  const butirPribadiQuery = useButirPribadi();
   const latihanQuery = useRiwayatLatihan();
   const kartuQuery = useKartuSaya();
 
-  const jumlahCentang = kemajuanQuery.data?.filter((k) => k.selesai_pada).length ?? 0;
+  // LANJUT_070: centang butir umum (/kemajuan) dan butir pribadi sama-sama dihitung.
+  const jumlahCentang = hitungJumlahCentang({
+    kemajuan: kemajuanQuery.data,
+    butirPribadi: butirPribadiQuery.data,
+  });
   const jumlahLatihan = latihanQuery.data?.length ?? 0;
   const jumlahKartu = kartuQuery.data?.length ?? 0;
 
@@ -76,7 +83,8 @@ export function LinimasaScreen() {
   });
 
   const kolom = width < 360 ? 3 : 4;
-  const memuatData = kemajuanQuery.isPending || latihanQuery.isPending || kartuQuery.isPending;
+  const memuatData =
+    kemajuanQuery.isPending || butirPribadiQuery.isPending || latihanQuery.isPending || kartuQuery.isPending;
 
   return (
     <View style={gaya.layarIsi}>
