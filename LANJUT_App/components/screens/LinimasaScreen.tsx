@@ -3,13 +3,16 @@ import { Article, H1 } from '@expo/html-elements';
 import { useRouter } from 'expo-router';
 import { Linking, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
+import type { BannerBeranda } from '../../api/types';
 import { useTahapanLinimasa } from '../../hooks/useTahapanLinimasa';
+import { useBannerBeranda } from '../../hooks/useBannerBeranda';
 import { useButirPribadi } from '../../hooks/useButirPribadi';
 import { useKemajuan } from '../../hooks/useKemajuan';
 import { useRiwayatLatihan } from '../../hooks/useLatihan';
 import { useKartuSaya } from '../../hooks/useKartu';
 import {
   apakahPunyaKemajuan,
+  bannerUntukBeranda,
   daftarKartuBeranda,
   hitungJumlahCentang,
   hitungProgresBeranda,
@@ -46,10 +49,10 @@ const LAMAN_SNPMB = 'https://snpmb.bppp.kemdikbud.go.id/';
 
 /**
  * Tab Beranda — padanan MVP-PWA/beranda.html. Dari atas (LANJUT_072,
- * lib/beranda.ts `urutanBeranda`): sapaan, kalimat K1, baris progres, grid menu
- * launcher per jenjang (LANJUT_065), kartu "Mulai dari Sini" bila baru, lalu —
- * hanya kelas 12 — kartu tenggat terdekat dan "Info Penting" dari data
- * terverifikasi (LANJUT_066).
+ * lib/beranda.ts `urutanBeranda`): sapaan, banner pengumuman bila ada (LANJUT_073),
+ * kalimat K1, baris progres, grid menu launcher per jenjang (LANJUT_065), kartu
+ * "Mulai dari Sini" bila baru, lalu — hanya kelas 12 — kartu tenggat terdekat
+ * dan "Info Penting" dari data terverifikasi (LANJUT_066).
  */
 export function LinimasaScreen() {
   const router = useRouter();
@@ -88,9 +91,19 @@ export function LinimasaScreen() {
   const memuatData =
     kemajuanQuery.isPending || butirPribadiQuery.isPending || latihanQuery.isPending || kartuQuery.isPending;
 
+  // LANJUT_073: banner hanya bila endpoint berhasil dan ada satu banner yang masih
+  // berlaku. Memuat, kosong, atau gagal → seksi tidak tampil, tanpa teks pengganti.
+  const bannerQuery = useBannerBeranda();
+  const banner = bannerQuery.isError ? null : bannerUntukBeranda(bannerQuery.data?.banner);
+
   // LANJUT_072: urutan tampil sepenuhnya ditentukan urutanBeranda (lib/beranda.ts) —
-  // sapaan, judul, progres, grid, "Mulai dari Sini", lalu tenggat & Info Penting (kelas 12).
-  const urutan = urutanBeranda({ kelas, tampilMulaiDariSini: !memuatData && !punyaKemajuan });
+  // sapaan, banner (LANJUT_073), judul, progres, grid, "Mulai dari Sini", lalu tenggat
+  // & Info Penting (kelas 12).
+  const urutan = urutanBeranda({
+    kelas,
+    tampilMulaiDariSini: !memuatData && !punyaKemajuan,
+    tampilBanner: banner !== null,
+  });
 
   const bagian: Record<BagianBeranda, React.ReactNode> = {
     // Nama panjang (nama_tampilan maks. 60 karakter) dipotong di baris kedua dengan "…".
@@ -99,6 +112,7 @@ export function LinimasaScreen() {
         {teksSapaan(pengguna)}
       </Text>
     ),
+    banner: banner ? <KartuBanner banner={banner} /> : null,
     judul: <H1 style={s.k1}>Tahu harus ngapain hari ini.</H1>,
     // LANJUT_065 §C: satu baris progres, tepat di atas grid.
     progres: (
@@ -150,6 +164,25 @@ export function LinimasaScreen() {
         <React.Fragment key={b}>{bagian[b]}</React.Fragment>
       ))}
     </View>
+  );
+}
+
+// LANJUT_073: banner pengumuman terkurasi (server/config/banner-beranda.json).
+// Judul dan isi apa adanya dari server (sudah dibatasi 80/200 karakter di sana).
+// Kartunya sendiri tidak bisa ditekan; satu-satunya tautan adalah "Sumber: …".
+function KartuBanner({ banner }: { banner: BannerBeranda }) {
+  return (
+    <Kartu varian="outline" style={s.bannerKartu}>
+      <Text style={s.bannerJudul}>{banner.judul}</Text>
+      <Text style={s.bannerIsi}>{banner.isi}</Text>
+      <Pressable
+        accessibilityRole="link"
+        onPress={() => Linking.openURL(banner.url_sumber)}
+        style={({ pressed }) => [s.infoTautan, pressed && s.ditekan]}
+      >
+        <Text style={s.infoTautanTeks}>Sumber: {banner.sumber}</Text>
+      </Pressable>
+    </Kartu>
   );
 }
 
@@ -300,6 +333,20 @@ const s = StyleSheet.create({
     fontFamily: font.medium,
     color: color.blue600,
     textDecorationLine: 'underline',
+  },
+  // LANJUT_073: Banner Beranda
+  bannerKartu: {
+    gap: spacing.s2,
+    padding: spacing.s4,
+  },
+  bannerJudul: {
+    ...teks.title,
+    fontFamily: font.semibold,
+    color: color.textBody,
+  },
+  bannerIsi: {
+    ...teks.bodySm,
+    color: color.textBody,
   },
   // LANJUT_065: Mulai dari Sini
   mulaiKartu: {

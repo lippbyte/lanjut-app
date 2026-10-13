@@ -1,5 +1,7 @@
+import type { BannerBeranda } from '../api/types';
 import type { Kelas } from './jenjang';
 import { kelompokJenjang } from './jenjang';
+import { hariIniWib, uraiTanggal } from './linimasa';
 import type { NamaIkon } from '../components/ui/Ikon';
 
 export type KartuBeranda = {
@@ -222,7 +224,34 @@ export function teksSapaan(
   return nama ? `Halo, ${nama}` : 'Halo';
 }
 
-export type BagianBeranda = 'sapaan' | 'judul' | 'progres' | 'grid' | 'mulai_dari_sini' | 'tenggat' | 'info_penting';
+/**
+ * Banner yang tampil di Beranda (LANJUT_073), dari jawaban GET /konten/banner.
+ * Server sudah menyaring (terverifikasi, berlaku hari ini WIB, https, paling
+ * banyak satu). Di app hanya penjaga kedua — mis. jawaban lama di cache sesudah
+ * tengah malam: dibuang bila tanggal_selesai sudah lewat menurut hariIniWib
+ * (LANJUT_072b) atau tautannya bukan https. null → seksi banner tidak tampil.
+ */
+export function bannerUntukBeranda(
+  daftar: readonly BannerBeranda[] | null | undefined,
+  hariIniMs: number = hariIniWib()
+): BannerBeranda | null {
+  const banner = daftar?.[0];
+  if (!banner) return null;
+  const selesai = uraiTanggal(banner.tanggal_selesai);
+  if (Number.isNaN(selesai) || selesai < hariIniMs) return null;
+  if (!banner.url_sumber?.startsWith('https://')) return null;
+  return banner;
+}
+
+export type BagianBeranda =
+  | 'sapaan'
+  | 'banner'
+  | 'judul'
+  | 'progres'
+  | 'grid'
+  | 'mulai_dari_sini'
+  | 'tenggat'
+  | 'info_penting';
 
 /**
  * Urutan bagian Beranda dari atas ke bawah (LANJUT_072). Susunan "berkelompok"
@@ -231,10 +260,18 @@ export type BagianBeranda = 'sapaan' | 'judul' | 'progres' | 'grid' | 'mulai_dar
  * grid → "Mulai dari Sini" → Info Penting; bagian lain ikut bagian terdekatnya:
  * judul K1 di bawah sapaan, baris progres tepat di atas grid (LANJUT_065), dan
  * kartu tenggat menempel di atas Info Penting (keduanya hanya kelas 12, LANJUT_066).
+ * LANJUT_073: banner (bila ada) disisipkan tepat di bawah sapaan, di atas judul
+ * dan baris progres; urutan bagian lain tidak berubah.
  * Setiap bagian paling banyak muncul sekali.
  */
-export function urutanBeranda(data: { kelas?: Kelas | null; tampilMulaiDariSini: boolean }): BagianBeranda[] {
-  const urutan: BagianBeranda[] = ['sapaan', 'judul', 'progres', 'grid'];
+export function urutanBeranda(data: {
+  kelas?: Kelas | null;
+  tampilMulaiDariSini: boolean;
+  tampilBanner?: boolean;
+}): BagianBeranda[] {
+  const urutan: BagianBeranda[] = ['sapaan'];
+  if (data.tampilBanner) urutan.push('banner');
+  urutan.push('judul', 'progres', 'grid');
   if (data.tampilMulaiDariSini) urutan.push('mulai_dari_sini');
   if (kelompokJenjang(data.kelas) === 'kelas12') urutan.push('tenggat', 'info_penting');
   return urutan;

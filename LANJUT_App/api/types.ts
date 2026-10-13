@@ -34,6 +34,19 @@ export type TahapanLinimasa = MetaSumberResmi & {
   jalur: 'TKA' | 'SNBP' | 'SNBT';
 };
 
+// LANJUT_073 — GET /konten/banner (konten.rute.js, server/src/modul/konten/banner.js).
+// Hanya medan publik; status_verifikasi & diperiksa_pada sengaja TIDAK dikirim server.
+export type BannerBeranda = {
+  id: string;
+  judul: string;
+  isi: string;
+  sumber: string;
+  url_sumber: string; // selalu https:// (divalidasi server)
+  tanggal_selesai: string; // YYYY-MM-DD, WIB
+};
+
+export type ResponsBanner = { banner: BannerBeranda[] };
+
 // F2 — butir_khusus_smk (konten.repo.js `ambilKhususSmk`).
 export type ButirKhususSmk = MetaSumberResmi & {
   id: string; // VARCHAR(64) slug, mis. "nilai-rapor"

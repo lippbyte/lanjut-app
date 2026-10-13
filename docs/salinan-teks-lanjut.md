@@ -186,6 +186,17 @@ terverifikasi sudah lewat, di bawah judul seksi "Info Penting".
 
 - **Info Penting kosong (semua tahapan terverifikasi sudah lewat):** Belum ada info penting untuk saat ini.
 
+**LANJUT_App (LANJUT_073) — Banner Beranda. DRAF, belum disetujui Khalifa.** Satu kartu
+banner pengumuman tepat di bawah sapaan (`urutanBeranda`), dari `server/config/banner-beranda.json`
+lewat `GET /api/v1/konten/banner`. Hanya satu banner terverifikasi yang berlaku hari ini (WIB)
+yang tampil. Judul, isi, dan nama sumber berasal dari berkas itu (dikurasi tim, bukan berita
+dari internet) dan wajib dicek manusia ke sumber resmi sebelum `status_verifikasi` diubah
+menjadi `terverifikasi`. Tanpa banner, atau bila endpoint gagal, seksi ini tidak tampil sama
+sekali, tanpa teks pengganti. Tidak ada judul seksi. Kartu tidak bisa ditekan; hanya tautan
+sumber.
+
+- **Banner — label sumber:** Sumber: [sumber] (tautan ke `url_sumber`, satu-satunya bagian banner yang bisa ditekan)
+
 ### 4.2 Khusus SMK → Jenjang Saya
 
 **Judul:** Khusus SMK

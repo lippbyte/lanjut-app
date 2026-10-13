@@ -3,10 +3,21 @@
 
 const express = require('express');
 const konten = require('./konten.repo');
+const banner = require('./banner');
 const { sukses, galat } = require('../../util/respons');
 const { keTanggal } = require('../../util/waktu');
 
 const router = express.Router();
+
+// LANJUT_073 — banner Beranda dari server/config/banner-beranda.json (bukan tabel).
+// Berkas rusak → `banner: []` + peringatan di log (lihat banner.js), bukan galat.
+router.get('/banner', async (req, res, next) => {
+  try {
+    sukses(res, { banner: await banner.bannerAktif() });
+  } catch (err) {
+    next(err);
+  }
+});
 
 router.get('/linimasa', async (req, res, next) => {
   try {

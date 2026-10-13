@@ -186,6 +186,19 @@ const PETA = [
         di: 'Beranda, seksi Info Penting, di bawah judul seksi — hanya bila semua tahapan terverifikasi sudah lewat (WIB).',
         oleh: 'Kelas 12.',
       },
+      {
+        task: 'LANJUT_073',
+        awal: '**Banner — label sumber',
+        nama: 'Banner Beranda — label sumber',
+        di: 'Beranda, kartu banner tepat di bawah sapaan; hanya bila ada satu banner terverifikasi yang berlaku hari ini (WIB).',
+        oleh: 'Semua akun.',
+        faktual: {
+          klaim:
+            'Isi banner (judul, isi, sumber, url_sumber, tanggal) berasal dari server/config/banner-beranda.json — dikurasi tim, bukan berita dari internet. Saat LANJUT_073 berkas itu masih kosong.',
+          sumber:
+            'Isi banner WAJIB dicek manusia ke sumber resmi (url_sumber) sebelum status_verifikasi diubah menjadi terverifikasi; diperiksa_pada diisi tanggal pengecekan itu, bukan tanggal sumber.',
+        },
+      },
     ],
   },
   {

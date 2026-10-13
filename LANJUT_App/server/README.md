@@ -761,6 +761,30 @@ ulang dengan `npm run dokumen-skenario-ai`.
   Untuk melihat rencana tanpa memanggil apa pun dan tanpa biaya:
   `npm run evaluasi-ai -- --kering`.
 
+## 2e. Banner Beranda (LANJUT_073)
+
+Banner pengumuman di Beranda diambil dari `server/config/banner-beranda.json`
+(bukan tabel, tanpa migrasi), lewat `GET /api/v1/konten/banner` (publik).
+Isinya dikurasi tim — **bukan** berita otomatis dari internet. Saat LANJUT_073
+berkas ini sengaja kosong: `{ "versi": 1, "banner": [] }`.
+
+- Setiap item wajib punya `id` (unik), `judul` (≤ 80 karakter), `isi`
+  (≤ 200 karakter), `tanggal_mulai` dan `tanggal_selesai` (`YYYY-MM-DD`, WIB),
+  `sumber`, `url_sumber` (wajib `https://`), dan `status_verifikasi`
+  (`belum_diverifikasi` / `terverifikasi`). `diperiksa_pada` = tanggal
+  pengecekan manusia; tanpa medan ini item dianggap belum terverifikasi.
+- **Isi banner wajib dicek manusia ke sumber resmi sebelum `status_verifikasi`
+  diubah menjadi `terverifikasi`.**
+- Yang dikirim: paling banyak satu item terverifikasi yang berlaku hari ini (WIB),
+  yang `tanggal_mulai`-nya paling baru (seri → `id` terkecil), hanya medan `id`,
+  `judul`, `isi`, `sumber`, `url_sumber`, `tanggal_selesai`.
+- Berkas dibaca setiap permintaan, jadi perubahan berlaku tanpa menyalakan ulang
+  server. Gagal-tertutup: JSON rusak, struktur salah, atau **satu** item tidak sah
+  (medan kosong, terlalu panjang, tanggal salah, bukan https, `id` ganda) membuat
+  banner kosong dan mencatat `[banner-beranda] banner dikosongkan: …` di log
+  (hanya letak medan, tanpa isi banner). Server tidak pernah mati karena berkas ini.
+- Kode: `src/modul/konten/banner.js`; tes: `tests/konten-banner.test.js`.
+
 ## 3. Menjalankan server
 
 ```bash
@@ -1145,6 +1169,7 @@ curl -s http://localhost:3000/api/v1/auth/saya -H "Authorization: Bearer <token>
 
 # Konten publik, tanpa login:
 curl -s http://localhost:3000/api/v1/konten/linimasa
+curl -s http://localhost:3000/api/v1/konten/banner
 curl -s http://localhost:3000/api/v1/konten/checklist?kelas=12&jalur=SNBP
 curl -s "http://localhost:3000/api/v1/konten/checklist?kelas=12&jalur=SNBP&rumpun=Teknologi%20%26%20Rekayasa"
 ```

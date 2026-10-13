@@ -21,7 +21,8 @@ export type LinimasaTerkini = {
   momen: Momen | null;
 };
 
-function uraiTanggal(iso: string | null | undefined): number {
+/** "YYYY-MM-DD" → tengah malam UTC (ms), NaN bila tidak terbaca. Diekspor untuk banner Beranda (LANJUT_073). */
+export function uraiTanggal(iso: string | null | undefined): number {
   if (typeof iso !== 'string') return NaN;
   const bagian = iso.slice(0, 10).split('-').map(Number);
   if (bagian.length !== 3 || bagian.some((n) => Number.isNaN(n))) return NaN;
