@@ -212,7 +212,7 @@ sini" (kartu pintu), lalu kartu catatan. Kartu pintu tidak punya tombol teks "Bu
 seluruh kartu adalah tautan dengan ikon panah (`KartuPintu`). Kelas 12 dan akun tanpa
 kelas tidak berubah.
 
-- **A1 Kartu pembuka kelas 7–9:** judul "Kamu lagi di tahap mana?" · teks "Sebelum memilih apa pun, kenali dulu dirimu. LANJUT bisa membantu kamu mulai dari hal yang paling dekat: minat dan cara belajarmu." · tombol "Mulai eksplorasi" (ke `/eksplorasi-tujuan`)
+- **A1 Kartu pembuka kelas 7–9:** judul "Kamu lagi di tahap mana?" · teks "Sebelum memilih apa pun, kenali dulu dirimu. LANJUT bisa membantu kamu mulai dari hal yang paling dekat: minat dan cara belajarmu." · tombol "Mulai eksplorasi" (ke `/gaya-belajar`) — catatan LANJUT_071: tujuan tombol diubah dari `/eksplorasi-tujuan` ke Gaya Belajar (keputusan PM) karena Gaya Belajar tidak bergantung pada profil prodi yang belum terverifikasi; bunyi tombol tetap, dan Eksplorasi Tujuan tetap terbuka dari pintu A2.
 - **A2 Pintu Eksplorasi Tujuan kelas 7–9:** judul "Eksplorasi Tujuan" · teks "Coba cari tahu apa yang kamu suka, lalu lihat bidang apa saja yang bisa dipelajari dari situ."
 - **A3 Pintu Gaya Belajar kelas 7–9:** judul "Gaya Belajar" · teks "Setiap orang belajar dengan cara yang berbeda. Kenali caramu supaya belajar terasa lebih mudah."
 - **A4 Kartu catatan kelas 7–9:** judul "SMA, SMK, atau MA?" · teks "Ketiganya adalah jenjang setelah SMP, dengan fokus yang berbeda." · "SMA (Sekolah Menengah Atas): pendidikan umum dengan banyak pilihan mata pelajaran." · "SMK (Sekolah Menengah Kejuruan): pendidikan umum sekaligus keterampilan untuk bidang kerja tertentu." · "MA (Madrasah Aliyah): pendidikan umum dengan muatan keagamaan yang lebih kuat." · catatan "Keterangan ini sedang kami cek ulang." (Tambahan-069 no. 4)
@@ -250,6 +250,12 @@ Kalimat butirnya sama dengan PWA dan disusun server (`butir-pribadi.layanan.js`)
 - **Dari Eksplorasi Tujuan (kategori Riset Kampus, belum tercentang):** Cari tahu lebih lanjut soal [nama prodi]
 - **Tombol di butir milik akun:** Hapus
 - **Galat centang/hapus:** Perubahan terakhir belum tersimpan. Coba lagi. (sebelumnya "Centang terakhir belum tersimpan. Coba lagi.", diganti karena kini juga berlaku untuk hapus)
+
+*Catatan LANJUT_071 (keputusan PM, tanpa teks baru):* opsi Pilih Mapel "Masih belum tahu,
+tampilkan rangkuman umum" disembunyikan untuk kelas 10–11, karena "Simpan ke Daftar Periksa"
+di rangkuman umum mencentang butir umum `mapel-tka` yang hanya dipakai kelas 12. Kelas 12
+(dan kelas lain) tetap melihatnya. Server ikut menolak centang `mapel-tka` dari akun kelas
+10–11 (404 `TIDAK_DITEMUKAN`, kode yang sudah dipakai rute itu). Bunyi teks opsi tidak berubah.
 
 ### 4.5 Arsip Belajar
 
@@ -466,7 +472,10 @@ tahapan), Daftar Periksa, dan Cek Posisi berisi SNBP/SNBT/TKA, jadi hanya
 tampil untuk kelas 12. Kelas 7–11 dan akun tanpa kelas melihat placeholder
 ini sampai konten per jenjang didesain (`components/screens/KhususKelas12.tsx`).
 Pengecualian sejak LANJUT_069: Daftar Periksa kelas 10–11 memakai kalimat netral
-di §4.2 (blok LANJUT_069), bukan placeholder ini.
+di §4.2 (blok LANJUT_069), bukan placeholder ini. Letak sebenarnya (diperiksa
+LANJUT_071): placeholder ini hanya dirender di Cek Posisi Gue dan Daftar Periksa;
+Beranda (Linimasa) untuk kelas selain 12 sejak LANJUT_064 tidak menampilkan bagian
+tenggat maupun placeholder ini.
 
 - **Kelas 7–11 — judul:** Bagian ini untuk kelas 12.
 - **Kelas 7–11 — isi:** Isinya jadwal dan persiapan SNBP, SNBT, dan TKA. Versi untuk kelas [kelas] sedang kami siapkan.

@@ -125,6 +125,29 @@ describe('LANJUT_069 §A: set kartu per kelas', () => {
   });
 });
 
+describe('LANJUT_071 §A: tombol "Mulai eksplorasi" SMP ke Gaya Belajar', () => {
+  test('Kelas 7–9 yang menekan "Mulai eksplorasi" dibawa ke Gaya Belajar, bukan Eksplorasi Tujuan', () => {
+    for (const kelas of ['7', '8', '9']) {
+      const { pembuka } = isiJenjangSaya(kelas);
+      assert.equal(pembuka.labelTombol, 'Mulai eksplorasi', 'bunyi tombol tidak berubah');
+      assert.equal(pembuka.href, '/gaya-belajar');
+      assert.notEqual(pembuka.href, '/eksplorasi-tujuan');
+    }
+  });
+
+  test('Eksplorasi Tujuan tetap bisa dibuka dari pintu A2 (SMP) dan pintu kelas 10–11', () => {
+    for (const kelas of ['7', '10']) {
+      const pintu = isiJenjangSaya(kelas).pintu.find((p) => p.id === 'eksplorasi-tujuan');
+      assert.ok(pintu, `pintu Eksplorasi Tujuan harus ada untuk kelas ${kelas}`);
+      assert.equal(pintu.href, '/eksplorasi-tujuan');
+    }
+  });
+
+  test('Kartu pembuka kelas 10–11 tidak ikut berubah', () => {
+    assert.equal(isiJenjangSaya('10').pembuka.href, '/pilih-mapel');
+  });
+});
+
 describe('LANJUT_069 §B: teks sama persis dengan salinan-teks-lanjut.md (DRAF)', () => {
   test('Setiap teks SMP dan kelas 10–11 ada persis di blok LANJUT_069', () => {
     const blok = blokSalinan069();

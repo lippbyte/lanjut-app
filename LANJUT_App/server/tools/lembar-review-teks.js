@@ -328,7 +328,7 @@ const PETA = [
         },
       },
       // LANJUT_069 — isi kelas 7–9 dan 10–11 (lib/jenjangSaya.ts).
-      { task: 'LANJUT_069', awal: '**A1 Kartu pembuka', nama: 'Kartu pembuka kelas 7–9', di: 'Jenjang Saya, kartu di bawah judul, dengan tombol ke Eksplorasi Tujuan.', oleh: 'Kelas 7–9.' },
+      { task: 'LANJUT_069', awal: '**A1 Kartu pembuka', nama: 'Kartu pembuka kelas 7–9', di: 'Jenjang Saya, kartu di bawah judul, dengan tombol ke Gaya Belajar (sejak LANJUT_071; sebelumnya Eksplorasi Tujuan).', oleh: 'Kelas 7–9.' },
       { task: 'LANJUT_069', awal: '**A2 Pintu Eksplorasi', nama: 'Pintu Eksplorasi Tujuan kelas 7–9', di: 'Jenjang Saya, seksi pintu.', oleh: 'Kelas 7–9.' },
       { task: 'LANJUT_069', awal: '**A3 Pintu Gaya Belajar', nama: 'Pintu Gaya Belajar kelas 7–9', di: 'Jenjang Saya, seksi pintu.', oleh: 'Kelas 7–9.' },
       {
@@ -369,14 +369,18 @@ const PETA = [
     ],
   },
   {
-    kelompok: 'Bagian khusus kelas 12 (Beranda, Daftar Periksa, Cek Posisi) — pengganti untuk kelas lain',
+    // LANJUT_071: letak diperiksa ke kode. Komponen BukanKelas12
+    // (components/screens/KhususKelas12.tsx) hanya dirender di CekPosisiScreen
+    // dan DaftarPeriksaScreen. Beranda tidak memakainya: sejak LANJUT_064 bagian
+    // tenggat hanya dirender untuk kelas 12, untuk kelas lain tidak ada apa pun.
+    kelompok: 'Bagian khusus kelas 12 (Cek Posisi, Daftar Periksa) — pengganti untuk kelas lain',
     butir: [
       {
         task: 'LANJUT_035',
         awal: '**Kelas 7–11 — judul:**',
         nama: 'Pengganti kelas 7–11 — judul',
-        di: 'Beranda (bagian tenggat), Daftar Periksa, dan Cek Posisi Gue, menggantikan isinya.',
-        oleh: 'Kelas 7–11.',
+        di: 'Cek Posisi Gue (kelas 7–11) dan Daftar Periksa (kelas 7–9 saja; kelas 10–11 sejak LANJUT_069 melihat kalimat netral), menggantikan isinya. Tidak tampil di Beranda.',
+        oleh: 'Kelas 7–11 (di Daftar Periksa hanya kelas 7–9).',
         faktual: {
           klaim: 'Bersama isi di bawahnya: jadwal dan persiapan SNBP, SNBT, dan TKA hanya untuk kelas 12.',
           sumber: 'Kemendikdasmen (TKA: jenjang yang diikutkan), SNPMB (SNBP/SNBT). Perlu dipastikan apakah ada TKA untuk jenjang lain yang relevan bagi siswa kelas 7–9.',
@@ -386,15 +390,15 @@ const PETA = [
         task: 'LANJUT_035',
         awal: '**Kelas 7–11 — isi:**',
         nama: 'Pengganti kelas 7–11 — isi',
-        di: 'Beranda (bagian tenggat), Daftar Periksa, dan Cek Posisi Gue.',
-        oleh: 'Kelas 7–11.',
+        di: 'Sama dengan butir judul di atasnya: Cek Posisi Gue (kelas 7–11) dan Daftar Periksa (kelas 7–9).',
+        oleh: 'Kelas 7–11 (di Daftar Periksa hanya kelas 7–9).',
         faktual: {
           klaim: 'Isi bagian ini adalah jadwal dan persiapan SNBP, SNBT, dan TKA (lihat butir judul di atasnya).',
           sumber: 'Sama dengan butir judul di atasnya.',
         },
       },
-      { task: 'LANJUT_035', awal: '**Kelas 7–11 — tombol:**', nama: 'Pengganti kelas 7–11 — tombol', di: 'Beranda (bagian tenggat), Daftar Periksa, dan Cek Posisi Gue.', oleh: 'Kelas 7–11.' },
-      { task: 'LANJUT_035', awal: '**Kelas kosong — judul:**', nama: 'Pengganti tanpa kelas — judul', di: 'Beranda (bagian tenggat), Daftar Periksa, dan Cek Posisi Gue (jaring pengaman; biasanya tertahan di gerbang isi kelas dulu).', oleh: 'Akun tanpa kelas.' },
+      { task: 'LANJUT_035', awal: '**Kelas 7–11 — tombol:**', nama: 'Pengganti kelas 7–11 — tombol', di: 'Sama dengan butir judul di atasnya: Cek Posisi Gue (kelas 7–11) dan Daftar Periksa (kelas 7–9).', oleh: 'Kelas 7–11 (di Daftar Periksa hanya kelas 7–9).' },
+      { task: 'LANJUT_035', awal: '**Kelas kosong — judul:**', nama: 'Pengganti tanpa kelas — judul', di: 'Cek Posisi Gue dan Daftar Periksa (jaring pengaman; biasanya tertahan di gerbang isi kelas dulu). Tidak tampil di Beranda.', oleh: 'Akun tanpa kelas.' },
       { task: 'LANJUT_035', awal: '**Kelas kosong — isi:**', nama: 'Pengganti tanpa kelas — isi', di: 'Sama dengan butir di atasnya.', oleh: 'Akun tanpa kelas.' },
       { task: 'LANJUT_035', awal: '**Kelas kosong — tombol:**', nama: 'Pengganti tanpa kelas — tombol', di: 'Sama dengan butir di atasnya.', oleh: 'Akun tanpa kelas.' },
     ],

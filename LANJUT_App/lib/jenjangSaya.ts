@@ -39,7 +39,10 @@ const PEMBUKA_SMP: PembukaJenjang = {
   judul: 'Kamu lagi di tahap mana?',
   teks: 'Sebelum memilih apa pun, kenali dulu dirimu. LANJUT bisa membantu kamu mulai dari hal yang paling dekat: minat dan cara belajarmu.',
   labelTombol: 'Mulai eksplorasi',
-  href: '/eksplorasi-tujuan',
+  // LANJUT_071 (keputusan PM): ke Gaya Belajar, bukan Eksplorasi Tujuan — Gaya
+  // Belajar tidak bergantung pada profil prodi yang belum terverifikasi.
+  // Eksplorasi Tujuan tetap terbuka dari pintu A2 di bawah.
+  href: '/gaya-belajar',
 };
 
 const PINTU_SMP: PintuJenjang[] = [

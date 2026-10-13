@@ -1,4 +1,5 @@
 import type { MapelUntukProdi } from '../api/types';
+import type { Kelas } from './jenjang';
 
 /**
  * F3 — Penolong Pilih Mapel (docs/prd-sdd-lanjut.md Bagian 6 & 13). Logika
@@ -8,6 +9,16 @@ import type { MapelUntukProdi } from '../api/types';
 
 /** Butir "Pilih 2 mapel pilihan TKA" di /konten/checklist, dicentang oleh Pilih Mapel. */
 export const BUTIR_MAPEL_TKA = 'mapel-tka';
+
+/**
+ * LANJUT_071 (keputusan PM): opsi "rangkuman umum" mencentang butir umum
+ * `mapel-tka` yang hanya dipakai kelas 12, jadi disembunyikan untuk kelas
+ * 10–11. Server ikut menolak centang `mapel-tka` dari kelas 10–11
+ * (server/src/modul/kemajuan/kemajuan.rute.js).
+ */
+export function tampilkanRangkumanUmum(kelas: Kelas | null | undefined): boolean {
+  return kelas !== '10' && kelas !== '11';
+}
 
 /**
  * Arti `prodi_mapel.bobot`, disalin apa adanya dari `_bobot` di

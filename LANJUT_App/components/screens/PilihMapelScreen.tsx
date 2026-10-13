@@ -7,7 +7,7 @@ import type { Prodi } from '../../api/types';
 import { useAgregasiMapelLintasProdi } from '../../hooks/useAgregasiMapelLintasProdi';
 import { useSimpanButirPribadi } from '../../hooks/useButirPribadi';
 import { useTandaiKemajuan } from '../../hooks/useKemajuan';
-import { BUTIR_MAPEL_TKA, labelBobot } from '../../lib/pilihMapel';
+import { BUTIR_MAPEL_TKA, labelBobot, tampilkanRangkumanUmum } from '../../lib/pilihMapel';
 import { useProdi } from '../../hooks/useProdi';
 import { useProdiMapel } from '../../hooks/useProdiMapel';
 import { useSesi } from '../../providers/AuthProvider';
@@ -53,6 +53,8 @@ export function PilihMapelScreen() {
   const daftarProdi = prodiQuery.data ?? [];
 
   const prodiAkun = pengguna?.prodi_impian ?? null;
+  // LANJUT_071: "rangkuman umum" (mencentang `mapel-tka`) tidak untuk kelas 10–11.
+  const rangkumanUmum = tampilkanRangkumanUmum(pengguna?.kelas);
   const [langkahDipilih, setLangkah] = useState<Langkah | null>(null);
   const prodiAkunValid = prodiAkun && daftarProdi.some((p) => p.id === prodiAkun) ? prodiAkun : null;
   const langkah: Langkah =
@@ -73,6 +75,7 @@ export function PilihMapelScreen() {
           daftarProdi={daftarProdi}
           prodiTarget={prodiAkunValid}
           belumTahu={langkah.belumTahu}
+          tampilRangkuman={rangkumanUmum}
           onPilih={(prodiId) => setLangkah({ nama: 'hasil', prodiId })}
         />
       ) : (
@@ -114,6 +117,7 @@ function LangkahDaftar({
   daftarProdi,
   prodiTarget,
   belumTahu,
+  tampilRangkuman,
   onPilih,
 }: {
   daftarProdi: Prodi[];
@@ -121,6 +125,8 @@ function LangkahDaftar({
   prodiTarget: string | null;
   /** Rangkuman umum ditaruh paling atas, bukan di bawah semua prodi. */
   belumTahu: boolean;
+  /** LANJUT_071: false untuk kelas 10–11 (lib/pilihMapel.ts tampilkanRangkumanUmum). */
+  tampilRangkuman: boolean;
   onPilih: (id: string | null) => void;
 }) {
   const perRumpun = new Map<string, Prodi[]>();
@@ -129,14 +135,14 @@ function LangkahDaftar({
     perRumpun.get(p.rumpun)!.push(p);
   }
 
-  const rangkuman = (
+  const rangkuman = tampilRangkuman ? (
     <KartuPintu
       varian="soft"
       judul="Masih belum tahu, tampilkan rangkuman umum"
       keterangan="Mapel yang paling sering jadi penentu di banyak prodi."
       onPress={() => onPilih(null)}
     />
-  );
+  ) : null;
 
   return (
     <View style={s.daftar}>
