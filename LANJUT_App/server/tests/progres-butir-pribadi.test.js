@@ -197,7 +197,7 @@ describe('LANJUT_070 §B: jalur butir pribadi lewat server (tanpa PUT /kemajuan)
     assert.equal(s0.progres.total, 3);
     assert.equal(s0.punyaKemajuan, false, 'akun baru melihat "Mulai dari Sini"');
 
-    // Jalur Saya: isi prodi impian -> 1 dari 3
+    // Data Akun: isi prodi impian -> 1 dari 3
     const ubah = await panggil('PATCH', '/pengguna/saya', token, { prodi_impian: 'farmasi' });
     assert.equal(ubah.status, 200);
     const s1 = await keadaanBeranda(token);

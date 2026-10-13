@@ -18,7 +18,7 @@ const adalahKelas = (k: string | null | undefined): k is Kelas => !!k && (KELAS_
  * Gerbang wajib isi kelas (LANJUT_036) — dirender oleh app/(app)/_layout.tsx
  * menggantikan seluruh app selama kelas AKUN kosong (akun lama dari sebelum
  * form Daftar menanyakan kelas). Tidak ada tab bar, jadi tidak ada jalan ke
- * layar lain selain menyimpan kelas, membuka Jalur Saya, atau keluar.
+ * layar lain selain menyimpan kelas, membuka Data Akun, atau keluar.
  *
  * Kelas yang dulu dipilih di Daftar Periksa (tersimpan di perangkat) hanya
  * jadi usulan terpilih — siswa tetap harus menekan Simpan sendiri.
@@ -44,7 +44,7 @@ export function IsiKelasScreen() {
       {
         // Pengguna di AuthProvider sudah berkelas → layout melepas gerbang ini
         // (kelas 10–12 lanjut ke gerbang jenis sekolah, LANJUT_038). Kelas di
-        // perangkat ikut diganti, sama seperti simpan di Jalur Saya.
+        // perangkat ikut diganti, sama seperti simpan di Data Akun.
         onSuccess: () => {
           setSaringan({ kelas });
           router.replace('/linimasa');
@@ -56,7 +56,7 @@ export function IsiKelasScreen() {
   return (
     <AuthLayout
       judul="Kamu kelas berapa sekarang?"
-      pengantar="Isi sekali ini saja supaya LANJUT menampilkan yang sesuai buat kamu. Nanti bisa diubah di Jalur Saya."
+      pengantar="Isi sekali ini saja supaya LANJUT menampilkan yang sesuai buat kamu. Nanti bisa diubah di Data Akun."
     >
       <View style={authStyles.form}>
         <Field label="Kelas" hint="SMP kelas 7–9, SMA/SMK kelas 10–12." galat={galat ?? undefined}>
@@ -108,7 +108,7 @@ export function IsiJenisSekolahScreen() {
   return (
     <AuthLayout
       judul="Kamu sekolah di mana?"
-      pengantar={`Kelas ${pengguna?.kelas ?? ''}: pilih jenis sekolahmu supaya isi LANJUT pas buat kamu. Nanti bisa diubah di Jalur Saya.`}
+      pengantar={`Kelas ${pengguna?.kelas ?? ''}: pilih jenis sekolahmu supaya isi LANJUT pas buat kamu. Nanti bisa diubah di Data Akun.`}
     >
       <View style={authStyles.form}>
         <Field label="Jenis sekolah" galat={galat ?? undefined}>
@@ -134,7 +134,7 @@ export function IsiJenisSekolahScreen() {
   );
 }
 
-/** Satu-satunya jalan keluar gerbang selain menyimpan: Jalur Saya dan Keluar. */
+/** Satu-satunya jalan keluar gerbang selain menyimpan: Data Akun dan Keluar. */
 function KakiGerbang() {
   const router = useRouter();
   const { keluar } = useSesi();
@@ -145,7 +145,7 @@ function KakiGerbang() {
   };
   return (
     <View style={s.lain}>
-      <Tombol label="Buka Jalur Saya" varian="hantu" onPress={() => router.push('/akun')} />
+      <Tombol label="Buka Data Akun" varian="hantu" onPress={() => router.push('/akun')} />
       <Tombol label={mengeluarkan ? 'Mengeluarkan…' : 'Keluar'} varian="garis" proses={mengeluarkan} onPress={onKeluar} />
     </View>
   );

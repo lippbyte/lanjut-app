@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'expo-router';
 import {
   KeyboardAvoidingView,
@@ -20,6 +20,7 @@ import { usePersetujuan } from '../../hooks/usePersetujuan';
 import { labelGayaBelajar } from '../../lib/gayaBelajar';
 import { keadaanKebijakan } from '../../lib/kebijakanPrivasi';
 import { PANJANG_PESAN_MAKS, TEKS_NGOBROL } from '../../lib/ngobrol';
+import { BAHASA_PENGENALAN, cariPengenalSuara, gabungDraf, teksDariHasil, type PengenalSuara } from '../../lib/suara';
 import { useSesi } from '../../providers/AuthProvider';
 import { useObrolan, type Pesan } from '../../providers/ObrolanProvider';
 import { color, font, layout, radius, spacing, teks } from '../../theme/tokens';
@@ -141,6 +142,85 @@ function PanelBantuan() {
   );
 }
 
+/**
+ * Ucapan → teks (LANJUT_074 §F) lewat pengenal suara PERAMBAN (lib/suara.ts); hanya
+ * web — di Android/iOS tanpa paket native `didukung` false dan tombolnya tidak ada.
+ * Mikrofon baru hidup setelah siswa menekan tombol, dan mati saat tombol ditekan
+ * lagi, saat siswa selesai bicara, saat pesan dikirim, atau saat layar ditutup.
+ * App tidak menyentuh audio: yang diterima hanya teks, dan teks itu masuk ke kotak
+ * pesan (tidak terkirim otomatis). Galat (mis. izin mikrofon ditolak) diam saja:
+ * tombol kembali ke keadaan awal.
+ */
+function useUcapan(onTeks: (teks: string) => void) {
+  const [Pengenal] = useState(() => (Platform.OS === 'web' ? cariPengenalSuara() : null));
+  const [mendengar, setMendengar] = useState(false);
+  const aktif = useRef<PengenalSuara | null>(null);
+  const onTeksRef = useRef(onTeks);
+  onTeksRef.current = onTeks;
+
+  useEffect(
+    () => () => {
+      const p = aktif.current;
+      aktif.current = null;
+      p?.abort();
+    },
+    []
+  );
+
+  const selesai = (p: PengenalSuara) => {
+    if (aktif.current !== p) return;
+    aktif.current = null;
+    setMendengar(false);
+  };
+
+  const mulai = () => {
+    if (!Pengenal || aktif.current) return;
+    try {
+      const p = new Pengenal();
+      p.lang = BAHASA_PENGENALAN;
+      p.continuous = false;
+      p.interimResults = false;
+      p.maxAlternatives = 1;
+      p.onresult = (e) => {
+        const t = teksDariHasil(e);
+        if (t && aktif.current === p) onTeksRef.current(t);
+      };
+      p.onerror = () => selesai(p);
+      p.onend = () => selesai(p);
+      aktif.current = p;
+      setMendengar(true);
+      p.start();
+    } catch {
+      aktif.current = null;
+      setMendengar(false);
+    }
+  };
+
+  /** Berhenti tanpa memakai sisa hasil (dipakai saat pesan dikirim). */
+  const batal = () => {
+    const p = aktif.current;
+    if (!p) return;
+    selesai(p);
+    try {
+      p.abort();
+    } catch {
+      // diam: pengenal sudah berhenti
+    }
+  };
+
+  const tekan = () => {
+    const p = aktif.current;
+    if (!p) return mulai();
+    try {
+      p.stop(); // hasil terakhir masih masuk, lalu onend
+    } catch {
+      selesai(p);
+    }
+  };
+
+  return { didukung: !!Pengenal, mendengar, tekan, batal };
+}
+
 function Obrolan() {
   const { pengguna } = useSesi();
   const { pesan, mengetik, kirim: kirimPesan, cobaLagi } = useObrolan();
@@ -148,12 +228,14 @@ function Obrolan() {
   const gulir = useRef<ScrollView>(null);
   const [draf, setDraf] = useState('');
   const [fokus, setFokus] = useState(false);
+  const ucapan = useUcapan((t) => setDraf((d) => gabungDraf(d, t, PANJANG_PESAN_MAKS)));
 
   const labelGaya = labelGayaBelajar(pengguna?.gaya_belajar ?? null);
 
   const kirim = () => {
     const isi = draf.trim();
     if (!isi || mengetik) return;
+    ucapan.batal();
     setDraf('');
     kirimPesan(isi);
   };
@@ -235,7 +317,7 @@ function Obrolan() {
           value={draf}
           onChangeText={setDraf}
           onKeyPress={tekanTombol}
-          placeholder={TEKS_NGOBROL.placeholder}
+          placeholder={ucapan.mendengar ? TEKS_NGOBROL.mendengarkan : TEKS_NGOBROL.placeholder}
           placeholderTextColor={color.textSubtle}
           onFocus={() => setFokus(true)}
           onBlur={() => setFokus(false)}
@@ -245,6 +327,17 @@ function Obrolan() {
           style={StyleSheet.flatten([s.input, fokus && s.inputFokus])}
           accessibilityLabel="Pesan"
         />
+        {ucapan.didukung ? (
+          <Pressable
+            onPress={ucapan.tekan}
+            accessibilityRole="button"
+            accessibilityLabel={TEKS_NGOBROL.ucapkanPesan}
+            aria-pressed={ucapan.mendengar}
+            style={({ pressed }) => StyleSheet.flatten([s.mik, ucapan.mendengar && s.mikAktif, pressed && s.mikTekan])}
+          >
+            <Ikon nama="mikrofon" ukuran={22} warna={ucapan.mendengar ? color.white : color.blue600} tebal={2} />
+          </Pressable>
+        ) : null}
         <Pressable
           onPress={kirim}
           disabled={!bisaKirim}
@@ -370,4 +463,17 @@ const s = StyleSheet.create({
   },
   kirimMati: { backgroundColor: color.ink300 },
   kirimTekan: { backgroundColor: color.textMuted },
+  // LANJUT_074 §F — tombol mikrofon: garis saat diam, terisi blue600 saat mendengarkan.
+  mik: {
+    width: 44,
+    height: 44,
+    borderRadius: radius.pill,
+    borderWidth: 1.5,
+    borderColor: color.blue600,
+    backgroundColor: color.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mikAktif: { backgroundColor: color.blue600 },
+  mikTekan: { opacity: 0.7 },
 });

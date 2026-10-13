@@ -29,7 +29,7 @@ import {
 
 // Penafian F3 — wajib tampil di setiap hasil (PRD Bagian 6).
 const PENAFIAN = 'Ini rangkuman, bukan keputusan resmi. Cek laman SNPMB.';
-// Istilah yang sama dengan baris "Target prodi" di Jalur Saya.
+// Istilah yang sama dengan baris "Target prodi" di Data Akun.
 const LABEL_TARGET = 'Target prodi';
 
 // `belumTahu`: datang dari pintu "Belum, bantu aku eksplorasi".
@@ -121,7 +121,7 @@ function LangkahDaftar({
   onPilih,
 }: {
   daftarProdi: Prodi[];
-  /** prodi_impian akun (Jalur Saya) — ditandai supaya mudah ditemukan lagi. */
+  /** prodi_impian akun (Data Akun) — ditandai supaya mudah ditemukan lagi. */
   prodiTarget: string | null;
   /** Rangkuman umum ditaruh paling atas, bukan di bawah semua prodi. */
   belumTahu: boolean;

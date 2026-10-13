@@ -3,8 +3,11 @@
 // lib/beranda.ts milik app langsung (muat-ts-app.js), jadi yang diuji adalah
 // aturan yang dipakai LinimasaScreen:
 // - teksSapaan: nama tampilan → nama pengguna → "Halo" saja
-// - urutanBeranda: sapaan paling atas, Info Penting sesudah grid dan
-//   "Mulai dari Sini", tidak ada bagian yang hilang atau ganda
+// - urutanBeranda: sapaan paling atas, tidak ada bagian yang hilang atau ganda.
+//   Susunan LANJUT_072 diganti LANJUT_074 (keputusan Khalifa): sapaan, hero
+//   (kelas 12), progres, grid, Info Penting (kelas 12), carousel; kalimat K1 dan
+//   "Mulai dari Sini" di paling bawah (pilihan percakapan, belum disetujui PM).
+//   Tes khusus 074 ada di beranda-hero-navigasi.test.js.
 // - sapaan tercatat DRAF di salinan-teks-lanjut.md
 // - lintas akun: sapaan tiap akun memakai nama akunnya sendiri
 
@@ -51,53 +54,56 @@ describe('LANJUT_072: teks sapaan', () => {
   });
 });
 
-describe('LANJUT_072: urutan Beranda', () => {
+describe('LANJUT_072/074: urutan Beranda', () => {
   const SEMUA_KELAS = ['7', '8', '9', '10', '11', '12', null];
 
   test('Sapaan selalu di indeks pertama', () => {
     for (const kelas of SEMUA_KELAS) {
       for (const tampilMulaiDariSini of [true, false]) {
-        assert.equal(urutanBeranda({ kelas, tampilMulaiDariSini })[0], 'sapaan', `kelas ${kelas}`);
+        for (const tampilBanner of [true, false]) {
+          assert.equal(urutanBeranda({ kelas, tampilMulaiDariSini, tampilBanner })[0], 'sapaan', `kelas ${kelas}`);
+        }
       }
     }
   });
 
-  test('Kelas 12: Info Penting sesudah grid dan sesudah "Mulai dari Sini"; tenggat menempel di atasnya', () => {
+  test('Kelas 12 (LANJUT_074): sapaan, hero, progres, grid, Info Penting, lalu K1 dan "Mulai dari Sini"', () => {
     const u = urutanBeranda({ kelas: '12', tampilMulaiDariSini: true });
-    assert.deepEqual(u, ['sapaan', 'judul', 'progres', 'grid', 'mulai_dari_sini', 'tenggat', 'info_penting']);
+    assert.deepEqual(u, ['sapaan', 'hero', 'progres', 'grid', 'info_penting', 'judul', 'mulai_dari_sini']);
     assert.ok(u.indexOf('info_penting') > u.indexOf('grid'));
-    assert.ok(u.indexOf('info_penting') > u.indexOf('mulai_dari_sini'));
-    assert.ok(u.indexOf('mulai_dari_sini') > u.indexOf('grid'));
-    assert.equal(u.indexOf('tenggat') + 1, u.indexOf('info_penting'));
   });
 
-  test('Baris progres tepat di atas grid (LANJUT_065), judul tepat di bawah sapaan', () => {
+  test('Baris progres tepat di atas grid (LANJUT_065)', () => {
     for (const kelas of SEMUA_KELAS) {
-      const u = urutanBeranda({ kelas, tampilMulaiDariSini: true });
-      assert.equal(u.indexOf('progres') + 1, u.indexOf('grid'), `kelas ${kelas}`);
-      assert.equal(u.indexOf('judul'), 1, `kelas ${kelas}`);
+      for (const tampilBanner of [true, false]) {
+        const u = urutanBeranda({ kelas, tampilMulaiDariSini: true, tampilBanner });
+        assert.equal(u.indexOf('progres') + 1, u.indexOf('grid'), `kelas ${kelas}`);
+      }
     }
   });
 
   test('Kelas 12 tanpa "Mulai dari Sini": Info Penting tetap sesudah grid', () => {
     const u = urutanBeranda({ kelas: '12', tampilMulaiDariSini: false });
-    assert.deepEqual(u, ['sapaan', 'judul', 'progres', 'grid', 'tenggat', 'info_penting']);
+    assert.deepEqual(u, ['sapaan', 'hero', 'progres', 'grid', 'info_penting', 'judul']);
   });
 
-  test('Bukan kelas 12: tanpa tenggat dan Info Penting', () => {
+  test('Bukan kelas 12: tanpa hero dan Info Penting', () => {
     for (const kelas of ['7', '8', '9', '10', '11', null]) {
-      assert.deepEqual(urutanBeranda({ kelas, tampilMulaiDariSini: true }), ['sapaan', 'judul', 'progres', 'grid', 'mulai_dari_sini']);
-      assert.deepEqual(urutanBeranda({ kelas, tampilMulaiDariSini: false }), ['sapaan', 'judul', 'progres', 'grid']);
+      assert.deepEqual(urutanBeranda({ kelas, tampilMulaiDariSini: true }), ['sapaan', 'progres', 'grid', 'judul', 'mulai_dari_sini']);
+      assert.deepEqual(urutanBeranda({ kelas, tampilMulaiDariSini: false }), ['sapaan', 'progres', 'grid', 'judul']);
     }
   });
 
   test('Tidak ada bagian yang hilang atau ganda', () => {
     for (const kelas of SEMUA_KELAS) {
       for (const tampilMulaiDariSini of [true, false]) {
-        const u = urutanBeranda({ kelas, tampilMulaiDariSini });
-        assert.equal(new Set(u).size, u.length, `ganda: ${u}`);
-        for (const wajib of ['sapaan', 'judul', 'progres', 'grid']) assert.ok(u.includes(wajib), `${wajib} hilang (kelas ${kelas})`);
-        assert.equal(u.includes('mulai_dari_sini'), tampilMulaiDariSini);
+        for (const tampilBanner of [true, false]) {
+          const u = urutanBeranda({ kelas, tampilMulaiDariSini, tampilBanner });
+          assert.equal(new Set(u).size, u.length, `ganda: ${u}`);
+          for (const wajib of ['sapaan', 'judul', 'progres', 'grid']) assert.ok(u.includes(wajib), `${wajib} hilang (kelas ${kelas})`);
+          assert.equal(u.includes('mulai_dari_sini'), tampilMulaiDariSini);
+          assert.equal(u.includes('banner'), tampilBanner);
+        }
       }
     }
   });

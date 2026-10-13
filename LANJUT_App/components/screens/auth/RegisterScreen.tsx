@@ -52,7 +52,7 @@ const PETUNJUK_BELUM_CENTANG = 'Centang kotak kebijakan privasi di atas dulu sup
 // Medan & salinan teks mengikuti MVP-PWA/daftar.html: nama pengguna, email
 // (opsional), kata sandi, prodi impian (wajib, "belum" jawaban sah).
 // Kelas (LANJUT_035) wajib di form ini: menentukan apakah Linimasa, Daftar
-// Periksa, dan Cek Posisi tampil (kelas 12) atau placeholder (7–11).
+// Periksa, dan Jalur Saya (/cek-posisi) tampil (kelas 12) atau placeholder (7–11).
 export function RegisterScreen() {
   const router = useRouter();
   const { register, loading, error, medan } = useAuth();

@@ -107,7 +107,7 @@ Dipakai di: beranda, notifikasi, layar kosong.
 
 - **Tenggat terdekat:** Berikutnya: pendaftaran TKA — tutup 27 September
 - **Tenggat terdekat yang belum dimulai:** Berikutnya: pelaksanaan TKA — mulai 26 Oktober
-  *(Tahapan yang belum dimulai dihitung ke tanggal mulai; yang sudah berjalan — termasuk pada hari pertamanya — ke tanggal tutup. Berlaku sama di Beranda dan Cek Posisi Gue, LANJUT_021.)*
+  *(Tahapan yang belum dimulai dihitung ke tanggal mulai; yang sudah berjalan — termasuk pada hari pertamanya — ke tanggal tutup. Berlaku sama di Beranda dan Jalur Saya `/cek-posisi`, LANJUT_021.)*
 - **Sesudah lewat:** Sudah lewat. Tenggat berikutnya ada di bawah.
 - **Penanda sumber:** Diperbarui dari laman resmi SNPMB · dicek 6 Agustus 2026
   *(Nama lembaga mengikuti `url_sumber` tiap tahapan, mis. "laman resmi Kemendikdasmen" untuk TKA — lihat `LANJUT_App/lib/sumber.ts`.)*
@@ -128,7 +128,7 @@ Dipakai di: beranda, notifikasi, layar kosong.
   - **Kelas 12:**
     - Judul: Mulai dari Sini
     - Penjelas: Cek posisi persiapanmu sekarang dan langkah yang perlu diambil.
-    - Tombol: Cek Posisi Gue (ke `/cek-posisi`)
+    - Tombol: Jalur Saya (ke `/cek-posisi`; nama sejak LANJUT_074)
   - **Tanpa kelas / umum:**
     - Judul: Mulai dari Sini
     - Penjelas: Mulai kenali pilihan jenjang dan arah langkahmu.
@@ -151,7 +151,7 @@ Dipakai di: beranda, notifikasi, layar kosong.
   - Level-In
   - Ngobrol Bareng (dari "Ngobrol Bareng LANJUT")
   - Cerita Alumni
-  - Cek Posisi (dari "Cek Posisi Gue")
+  - Jalur Saya (`/cek-posisi`; nama sejak LANJUT_074)
   - Pilih Mapel
   - Daftar Periksa
 
@@ -167,11 +167,8 @@ Dipakai di: beranda, notifikasi, layar kosong.
 
 **LANJUT_App (LANJUT_072) — Sapaan Beranda. DRAF, belum disetujui Khalifa.** Tampil paling
 atas Beranda (`lib/beranda.ts` `teksSapaan`); nama panjang dipotong di baris kedua dengan "…".
-Urutan Beranda sejak LANJUT_072 (susunan "berkelompok", `urutanBeranda`; letak judul, baris
-progres, dan kartu tenggat adalah keputusan agen, bukan persetujuan PM):
-sapaan, kalimat K1, baris progres, grid menu, kartu "Mulai dari Sini" (akun baru), lalu
-kartu tenggat dan Info Penting (keduanya hanya kelas 12). Hanya urutan yang berubah; bunyi
-teks lain tetap.
+Urutan Beranda yang dulu ditetapkan di sini (susunan "berkelompok" LANJUT_072) sudah diganti
+LANJUT_074 — lihat blok LANJUT_074 di bawah. Bunyi sapaan tetap.
 
 - **Sapaan:** Halo, [nama tampilan] (bila nama tampilan kosong: Halo, [nama pengguna]; bila keduanya kosong: Halo, tanpa koma)
 
@@ -179,23 +176,41 @@ teks lain tetap.
 disetujui Khalifa.** Info Penting di Beranda tidak menampilkan tahapan yang tanggal selesainya
 sudah lewat menurut tanggal hari ini di Asia/Jakarta (WIB). Tahapan yang selesai hari ini tetap
 tampil sampai akhir hari; tahapan tanpa tanggal selesai tetap tampil walau tanggal mulainya
-sudah lewat. Kartu tenggat dan Cek Posisi Gue memakai "hari ini" yang sama (`hariIniWib` di
+sudah lewat. Kartu tenggat (sejak LANJUT_074 kartu hero) dan Jalur Saya `/cek-posisi` memakai "hari ini" yang sama (`hariIniWib` di
 `lib/linimasa.ts`). Data tidak dihapus. Bila tidak ada data terverifikasi sama sekali, seksi
 tetap hilang (aturan LANJUT_066); kalimat di bawah hanya tampil bila semua tahapan
 terverifikasi sudah lewat, di bawah judul seksi "Info Penting".
 
 - **Info Penting kosong (semua tahapan terverifikasi sudah lewat):** Belum ada info penting untuk saat ini.
 
-**LANJUT_App (LANJUT_073) — Banner Beranda. DRAF, belum disetujui Khalifa.** Satu kartu
-banner pengumuman tepat di bawah sapaan (`urutanBeranda`), dari `server/config/banner-beranda.json`
-lewat `GET /api/v1/konten/banner`. Hanya satu banner terverifikasi yang berlaku hari ini (WIB)
-yang tampil. Judul, isi, dan nama sumber berasal dari berkas itu (dikurasi tim, bukan berita
-dari internet) dan wajib dicek manusia ke sumber resmi sebelum `status_verifikasi` diubah
-menjadi `terverifikasi`. Tanpa banner, atau bila endpoint gagal, seksi ini tidak tampil sama
-sekali, tanpa teks pengganti. Tidak ada judul seksi. Kartu tidak bisa ditekan; hanya tautan
-sumber.
+**LANJUT_App (LANJUT_073) — Banner Beranda. DRAF, belum disetujui Khalifa.** Banner
+pengumuman dari `server/config/banner-beranda.json` lewat `GET /api/v1/konten/banner`. Sejak
+LANJUT_074 tampil sebagai carousel: paling banyak tiga banner terverifikasi yang berlaku hari
+ini (WIB), `tanggal_mulai` paling baru dulu, digeser ke samping, dengan titik penanda bila
+lebih dari satu; letaknya di bawah Info Penting (kelas 12) atau di bawah grid (kelas lain).
+Di LANJUT_073 hanya satu kartu, tepat di bawah sapaan. Judul, isi, dan nama sumber berasal
+dari berkas itu (dikurasi tim, bukan berita dari internet) dan wajib dicek manusia ke sumber
+resmi sebelum `status_verifikasi` diubah menjadi `terverifikasi`. Tanpa banner, atau bila
+endpoint gagal, carousel tidak tampil sama sekali, tanpa teks pengganti. Tidak ada judul
+seksi dan tidak ada tombol tutup. Kartu tidak bisa ditekan; hanya tautan sumber.
 
-- **Banner — label sumber:** Sumber: [sumber] (tautan ke `url_sumber`, satu-satunya bagian banner yang bisa ditekan)
+- **Banner — label sumber:** Sumber: [sumber] (tautan ke `url_sumber`, satu-satunya bagian banner yang bisa ditekan; sama di tiap kartu carousel)
+
+**LANJUT_App (LANJUT_074) — Beranda gaya hero, tab bar lima tab, nama "Jalur Saya" dan
+"Data Akun". DRAF, belum disetujui Khalifa.** Urutan Beranda dari atas (keputusan Khalifa
+di LANJUT_074, `lib/beranda.ts` `urutanBeranda`): sapaan, kartu hero tenggat (kelas 12),
+baris progres, grid menu, Info Penting (kelas 12), carousel banner. Kalimat K1 dan kartu
+"Mulai dari Sini" (akun baru) tidak disebut di task, jadi ditaruh paling bawah dengan urutan
+lama (pilihan di percakapan, belum disetujui PM). Kartu hero memakai teks kartu tenggat yang
+sama ("[n] hari" · "menuju [tahapan] dimulai/ditutup, [tanggal].") tanpa teks baru; selama
+memuat atau bila gagal, kartu tidak tampil, tanpa pesan. Carousel tanpa judul seksi. Teks
+yang menunjuk ke halaman akun ikut diganti di butir masing-masing (§4.2, §4.10–§4.14),
+kecuali isi kebijakan privasi (`lib/kebijakan-privasi.json`) yang menunggu review hukum.
+
+- **Tab tengah — label:** Ngobrol (tab ketiga dari lima, di antara Jenjang Saya dan Pilih Mapel; lingkaran lebih besar berisi huruf "L" sampai aset ikon kelinci dari Khalifa tersedia; membuka Ngobrol Bareng LANJUT)
+- **Nama fitur `/cek-posisi`:** Jalur Saya (judul bilah halaman dan kartu pintu di Data Akun, serta — khusus kelas 12 — label grid Beranda, tombol kartu "Mulai dari Sini", dan pintu Jenjang Saya; menggantikan nama lama)
+- **Nama halaman akun `/akun`:** Data Akun (judul bilah halaman dan judul bagian di kartu akun; isi bagiannya tidak berubah)
+- **Data Akun — judul form ubah:** Ubah Data Akun
 
 ### 4.2 Khusus SMK → Jenjang Saya
 
@@ -218,12 +233,12 @@ kartu "Belum perlu mikirin jadwal daftar") tidak dipakai lagi dan dihapus dari d
 - **Pendamping kelas 7–9:** Kelas [kelas] SMP: waktunya kenalan sama minat dan bakatmu.
 - **Pendamping kelas 10–11:** Kelas [kelas]: mulai kenalan sama jurusan yang kamu incar.
 - **Pendamping kelas 12:** Kelas 12: yang perlu kamu siapkan sebelum daftar kuliah.
-- **Pendamping tanpa kelas:** Isi kelasmu di Jalur Saya supaya isi halaman ini pas buat kamu.
+- **Pendamping tanpa kelas:** Isi kelasmu di Data Akun supaya isi halaman ini pas buat kamu.
 - **Seksi pintu:** Mulai dari sini
   - Ngobrol Bareng LANJUT — Cerita soal yang kamu suka, nanti dibantu cari arahnya. (tanpa kelas)
   - Eksplorasi Tujuan — Intip prodi kuliah: belajar apa dan lulusannya kerja di mana. (tanpa kelas)
   - Pilih Mapel — Lihat mapel yang mendukung jurusan incaranmu, dan mana yang ada di sekolahmu. (tanpa kelas)
-  - Cek Posisi Gue — Lihat kamu lagi di tahap mana dan langkah berikutnya. (kelas 12)
+  - Jalur Saya — Lihat kamu lagi di tahap mana dan langkah berikutnya. (kelas 12; nama sejak LANJUT_074)
   - Daftar Periksa — Satu per satu, tidak perlu sekaligus. (kelas 12)
 - **Seksi SMK (kelas 10–12 dengan jenis sekolah SMK, LANJUT_038):** Kalau kamu anak SMK
   - **Pembuka kelas 10–11:** Beberapa hal memang beda buat anak SMK. Yang ini sudah bisa kamu siapkan dari sekarang.
@@ -495,17 +510,17 @@ muncul (dan wajib) bila kelas yang dipilih 10–12; kelas 7–9 tidak ditanya
 
 - **Label:** Jenis sekolah · **pilihan:** SMA · SMK · MA (Madrasah Aliyah)
 - **Galat:** Pilih jenis sekolahmu.
-- **Jalur Saya:** baris "Sekolah" di kartu; medan yang sama di form Ubah, hanya untuk kelas 10–12.
+- **Data Akun:** baris "Sekolah" di kartu; medan yang sama di form Ubah, hanya untuk kelas 10–12.
 
 ### 4.11 Bukan kelas 12 (placeholder sementara)
 
 **LANJUT_035 — DRAF belum disetujui Khalifa.** Linimasa (bagian tenggat &
-tahapan), Daftar Periksa, dan Cek Posisi berisi SNBP/SNBT/TKA, jadi hanya
+tahapan), Daftar Periksa, dan Jalur Saya `/cek-posisi` berisi SNBP/SNBT/TKA, jadi hanya
 tampil untuk kelas 12. Kelas 7–11 dan akun tanpa kelas melihat placeholder
 ini sampai konten per jenjang didesain (`components/screens/KhususKelas12.tsx`).
 Pengecualian sejak LANJUT_069: Daftar Periksa kelas 10–11 memakai kalimat netral
 di §4.2 (blok LANJUT_069), bukan placeholder ini. Letak sebenarnya (diperiksa
-LANJUT_071): placeholder ini hanya dirender di Cek Posisi Gue dan Daftar Periksa;
+LANJUT_071): placeholder ini hanya dirender di layar Jalur Saya `/cek-posisi` dan Daftar Periksa;
 Beranda (Linimasa) untuk kelas selain 12 sejak LANJUT_064 tidak menampilkan bagian
 tenggat maupun placeholder ini.
 
@@ -513,9 +528,9 @@ tenggat maupun placeholder ini.
 - **Kelas 7–11 — isi:** Isinya jadwal dan persiapan SNBP, SNBT, dan TKA. Versi untuk kelas [kelas] sedang kami siapkan.
 - **Kelas 7–11 — tombol:** Buka Jenjang Saya (sebelum LANJUT_037: Buka Khusus SMK)
 - **Kelas kosong — judul:** Isi kelasmu dulu.
-- **Kelas kosong — isi:** Isi bagian ini menyesuaikan kelasmu. Isi kelas di Jalur Saya, ya.
-- **Kelas kosong — tombol:** Isi kelas di Jalur Saya · Buka Jenjang Saya
-- **Jalur Saya, kartu Kemajuan:** Kemajuan persiapan SNBP, SNBT, dan TKA tampil di sini saat kamu kelas 12.
+- **Kelas kosong — isi:** Isi bagian ini menyesuaikan kelasmu. Isi kelas di Data Akun, ya.
+- **Kelas kosong — tombol:** Isi kelas di Data Akun · Buka Jenjang Saya
+- **Data Akun, kartu Kemajuan:** Kemajuan persiapan SNBP, SNBT, dan TKA tampil di sini saat kamu kelas 12.
 
 Sejak LANJUT_036, akun tanpa kelas tertahan di gerbang §4.12 dulu, jadi
 keadaan "Kelas kosong" di atas hanya jaring pengaman.
@@ -527,17 +542,17 @@ belum punya kelas, menggantikan seluruh app sampai kelas disimpan
 (`components/screens/IsiKelasScreen.tsx`).
 
 - **Judul:** Kamu kelas berapa sekarang?
-- **Pengantar:** Isi sekali ini saja supaya LANJUT menampilkan yang sesuai buat kamu. Nanti bisa diubah di Jalur Saya.
+- **Pengantar:** Isi sekali ini saja supaya LANJUT menampilkan yang sesuai buat kamu. Nanti bisa diubah di Data Akun.
 - **Medan:** Kelas · petunjuk: SMP kelas 7–9, SMA/SMK kelas 10–12. · galat: Pilih kelasmu.
 - **Bila kelas pernah dipilih di Daftar Periksa (perangkat ini):** Terpilih dari pilihanmu sebelumnya di Daftar Periksa. Cek lagi sebelum menyimpan.
-- **Tombol:** Simpan dan lanjut (proses: Menyimpan…) · Buka Jalur Saya · Keluar
+- **Tombol:** Simpan dan lanjut (proses: Menyimpan…) · Buka Data Akun · Keluar
 
 **Langkah 2 — jenis sekolah (LANJUT_038), DRAF.** Untuk kelas 10–12 yang
 belum memilih jenis sekolah; muncul sesudah langkah kelas, tidak pernah
 satu layar dengannya. Kelas 7–9 tidak pernah melihatnya.
 
 - **Judul:** Kamu sekolah di mana?
-- **Pengantar:** Kelas [kelas]: pilih jenis sekolahmu supaya isi LANJUT pas buat kamu. Nanti bisa diubah di Jalur Saya.
+- **Pengantar:** Kelas [kelas]: pilih jenis sekolahmu supaya isi LANJUT pas buat kamu. Nanti bisa diubah di Data Akun.
 - **Medan:** Jenis sekolah · pilihan: SMA · SMK · MA (Madrasah Aliyah) · galat: Pilih jenis sekolahmu.
 - **Tombol:** sama dengan langkah 1.
 
@@ -560,9 +575,9 @@ bawah tombol Daftar.
 - **Petunjuk selama belum dicentang (tombol Daftar nonaktif):** Centang kotak kebijakan privasi di atas dulu supaya bisa mendaftar.
 - **Galat versi kebijakan usang (dari server):** Kebijakan privasi sudah diperbarui. Muat ulang aplikasi, lalu baca dan centang versi terbaru.
 - **Kebijakan lengkap (modal di Daftar & halaman /kebijakan-privasi):** judul Kebijakan Privasi · pengantar halaman: Data apa yang disimpan LANJUT, untuk apa, dan apa hakmu. · penanda: DRAF — belum berlaku. Wajib direview ahli hukum sebelum dipakai. · Versi [n] · tombol Tutup (modal) / Kembali (halaman)
-- **Jalur Saya — baris:** Persetujuan orang tua/wali · nilai: Sudah / Belum (Belum bisa dimuat bila gagal)
-- **Jalur Saya — penjelas:** Orang tua atau walimu memberi persetujuan lewat surat dari sekolah. Persetujuan ini dibutuhkan untuk fitur AI nanti; fitur lain tetap bisa kamu pakai seperti biasa.
-- **Jalur Saya — tautan:** Baca kebijakan privasi
+- **Data Akun — baris:** Persetujuan orang tua/wali · nilai: Sudah / Belum (Belum bisa dimuat bila gagal)
+- **Data Akun — penjelas:** Orang tua atau walimu memberi persetujuan lewat surat dari sekolah. Persetujuan ini dibutuhkan untuk fitur AI nanti; fitur lain tetap bisa kamu pakai seperti biasa.
+- **Data Akun — tautan:** Baca kebijakan privasi
 
 ### 4.14 Terima kebijakan privasi (akun lama & terima ulang)
 
@@ -582,7 +597,7 @@ Ringkasan dan tautan kebijakan lengkap memakai teks §4.13 apa adanya.
 - **Galat simpan:** Belum tersimpan. Coba lagi sebentar lagi. (atau pesan dari server)
 - **Sudah diterima (halaman):** Kebijakan privasi versi [n] sudah kamu terima.
 - **Belum bisa dimuat:** Kebijakan privasi belum bisa dimuat. Coba lagi sebentar lagi.
-- **Jalur Saya — baris:** Kebijakan privasi · nilai: Diterima (versi [n]) / Perlu diterima ulang / Belum diterima (Belum bisa dimuat bila gagal) · tombol: Baca dan terima
+- **Data Akun — baris:** Kebijakan privasi · nilai: Diterima (versi [n]) / Perlu diterima ulang / Belum diterima (Belum bisa dimuat bila gagal) · tombol: Baca dan terima
 - **Ngobrol — ajakan:** Terima kebijakan privasi dulu supaya fitur AI bisa diaktifkan nanti. · tautan: Baca dan terima
 
 ### 4.15 Ngobrol Bareng LANJUT dengan AI
@@ -599,6 +614,17 @@ LANJUT_047) tidak tampil lagi. Salam pembuka bot tetap teks LANJUT_032.
 - **Ngobrol — status belum bisa dimuat:** Status fitur AI belum bisa dimuat. Coba lagi sebentar lagi.
 - **Ngobrol — galat kirim:** Fitur AI belum aktif untuk akunmu. / Fitur AI sedang belum bisa dipakai. Coba lagi nanti. / Maaf, aku belum bisa menjawab sekarang. Coba kirim lagi sebentar lagi. / Pesanmu sudah banyak. Istirahat sebentar, lalu coba lagi. / Pesanmu belum terkirim karena tidak tersambung. Coba lagi. / Ada yang tidak beres. Coba kirim lagi. · tombol: Coba lagi
 - **Beranda — kartu Ngobrol:** Cerita soal minat, cara belajar, atau rencana kuliahmu. (dulu diakhiri "Versi uji coba.")
+
+**LANJUT_App (LANJUT_074) — Ngobrol: tombol mikrofon (ucapan → teks). DRAF, belum
+disetujui Khalifa.** Tombol mikrofon di samping kotak pesan, hanya bila peramban punya
+pengenal suara (Web Speech API); di Android/iOS dan di peramban tanpa fitur itu tombolnya
+tidak ada, tanpa pesan. Mikrofon baru hidup setelah tombol ditekan, dan mati saat tombol
+ditekan lagi, saat siswa selesai bicara, atau saat pesan dikirim. Teks hasil pengenalan masuk
+ke kotak pesan (tidak terkirim otomatis); app tidak mengirim atau menyimpan audio. Galat
+(mis. izin mikrofon ditolak) tidak menampilkan pesan; tombol kembali ke keadaan awal.
+
+- **Ngobrol — tombol mikrofon (label pembaca layar):** Ucapkan pesan
+- **Ngobrol — petunjuk di kotak pesan saat mendengarkan:** Mendengarkan…
 
 ### 4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi
 

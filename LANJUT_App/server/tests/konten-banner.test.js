@@ -1,5 +1,6 @@
 // tests/konten-banner.test.js
-// Pengujian otomatis LANJUT_073 — banner Beranda.
+// Pengujian otomatis LANJUT_073 — banner Beranda. LANJUT_074: endpoint mengirim
+// paling banyak tiga (carousel), dan carousel ada di bawah Info Penting.
 // Server: GET /konten/banner dari server/config/banner-beranda.json. Berkas
 // tidak pernah diubah oleh tes: isinya diganti lewat t.mock.method pada
 // banner.bacaBerkas (pola konten-linimasa.test.js). Semua data banner di sini
@@ -135,13 +136,25 @@ describe('LANJUT_073 §B: GET /konten/banner', () => {
     assert.equal((await pada(Date.UTC(2026, 9, 20, 17, 0, 0))).length, 0, '00.00 WIB 21 Okt: sudah lewat');
   });
 
-  test('Paling banyak satu: tanggal_mulai paling baru; bila sama, id terkecil', async (t) => {
+  // LANJUT_074: batas naik dari satu (LANJUT_073) menjadi tiga.
+  test('Paling banyak tiga: tanggal_mulai paling baru dulu; bila sama, id terkecil', async (t) => {
+    assert.equal(bannerModul.MAKS_BANNER, 3);
     const lama = item({ id: 'lama', tanggal_mulai: iso(HARI - 9 * SEHARI) });
+    const tengah = item({ id: 'tengah', tanggal_mulai: iso(HARI - 5 * SEHARI) });
+    const sedang = item({ id: 'sedang', tanggal_mulai: iso(HARI - 3 * SEHARI) });
     const baruB = item({ id: 'baru-b', tanggal_mulai: iso(HARI - SEHARI) });
     const baruA = item({ id: 'baru-a', tanggal_mulai: iso(HARI - SEHARI) });
-    const { banner } = await ambilDengan(t, berkas([lama, baruB, baruA]));
-    assert.equal(banner.length, 1);
-    assert.equal(banner[0].id, 'baru-a');
+    const { banner } = await ambilDengan(t, berkas([lama, tengah, baruB, sedang, baruA]));
+    assert.deepEqual(banner.map((b) => b.id), ['baru-a', 'baru-b', 'sedang']);
+  });
+
+  test('Kurang dari tiga yang berlaku → semuanya, tanpa pengisi', async (t) => {
+    const satu = item({ id: 'satu', tanggal_mulai: iso(HARI - 2 * SEHARI) });
+    const dua = item({ id: 'dua', tanggal_mulai: iso(HARI - SEHARI) });
+    const belum = item({ id: 'belum', status_verifikasi: 'belum_diverifikasi' });
+    const { banner } = await ambilDengan(t, berkas([satu, dua, belum]));
+    assert.deepEqual(banner.map((b) => b.id), ['dua', 'satu']);
+    for (const b of banner) assert.deepEqual(Object.keys(b).sort(), MEDAN_PUBLIK);
   });
 
   test('JSON rusak → banner [], peringatan di log, server tetap melayani', async (t) => {
@@ -261,50 +274,59 @@ describe('LANJUT_073 §B: GET /konten/banner', () => {
   });
 });
 
-describe('LANJUT_073 §C: app (lib/beranda.ts)', () => {
+describe('LANJUT_073 §C / LANJUT_074: app (lib/beranda.ts)', () => {
   const B = { id: 'a', judul: 'J', isi: 'I', sumber: 'S', url_sumber: 'https://contoh.invalid', tanggal_selesai: '2026-10-20' };
   const H13 = Date.UTC(2026, 9, 13);
 
-  test('bannerUntukBeranda: kosong / tidak ada data → null (seksi tidak tampil); satu item → item', () => {
-    assert.equal(appBeranda.bannerUntukBeranda([], H13), null);
-    assert.equal(appBeranda.bannerUntukBeranda(undefined, H13), null);
-    assert.equal(appBeranda.bannerUntukBeranda(null, H13), null);
-    assert.deepEqual(appBeranda.bannerUntukBeranda([B], H13), B);
+  test('bannerBeranda: kosong / tidak ada data → [] (carousel tidak tampil); satu item → [item]', () => {
+    assert.deepEqual(appBeranda.bannerBeranda([], H13), []);
+    assert.deepEqual(appBeranda.bannerBeranda(undefined, H13), []);
+    assert.deepEqual(appBeranda.bannerBeranda(null, H13), []);
+    assert.deepEqual(appBeranda.bannerBeranda([B], H13), [B]);
   });
 
-  test('bannerUntukBeranda: tanggal_selesai lewat menurut WIB → null; hari terakhir tetap tampil', () => {
-    assert.deepEqual(appBeranda.bannerUntukBeranda([B], Date.UTC(2026, 9, 20)), B);
-    assert.equal(appBeranda.bannerUntukBeranda([B], Date.UTC(2026, 9, 21)), null);
-    assert.equal(appBeranda.bannerUntukBeranda([{ ...B, tanggal_selesai: 'bukan-tanggal' }], H13), null);
+  test('bannerBeranda: tanggal_selesai lewat menurut WIB → dibuang; hari terakhir tetap tampil', () => {
+    assert.deepEqual(appBeranda.bannerBeranda([B], Date.UTC(2026, 9, 20)), [B]);
+    assert.deepEqual(appBeranda.bannerBeranda([B], Date.UTC(2026, 9, 21)), []);
+    assert.deepEqual(appBeranda.bannerBeranda([{ ...B, tanggal_selesai: 'bukan-tanggal' }], H13), []);
   });
 
-  test('bannerUntukBeranda: tautan bukan https → null; hanya item pertama yang dipakai', () => {
-    assert.equal(appBeranda.bannerUntukBeranda([{ ...B, url_sumber: 'http://contoh.invalid' }], H13), null);
-    assert.deepEqual(appBeranda.bannerUntukBeranda([B, { ...B, id: 'b' }], H13).id, 'a');
+  test('bannerBeranda: tautan bukan https dibuang; sisanya tetap, urutan server dipertahankan', () => {
+    assert.deepEqual(appBeranda.bannerBeranda([{ ...B, url_sumber: 'http://contoh.invalid' }], H13), []);
+    const hasil = appBeranda.bannerBeranda([B, { ...B, id: 'http', url_sumber: 'http://contoh.invalid' }, { ...B, id: 'c' }], H13);
+    assert.deepEqual(hasil.map((b) => b.id), ['a', 'c']);
   });
 
-  test('urutanBeranda: banner tepat di bawah sapaan, di atas judul dan progres', () => {
+  test('bannerBeranda: paling banyak tiga (MAKS_BANNER_BERANDA, sama dengan server)', () => {
+    assert.equal(appBeranda.MAKS_BANNER_BERANDA, 3);
+    assert.equal(appBeranda.MAKS_BANNER_BERANDA, bannerModul.MAKS_BANNER);
+    const lima = ['a', 'b', 'c', 'd', 'e'].map((id) => ({ ...B, id }));
+    assert.deepEqual(appBeranda.bannerBeranda(lima, H13).map((b) => b.id), ['a', 'b', 'c']);
+    assert.equal(appBeranda.bannerBeranda(lima.slice(0, 3), H13).length, 3);
+  });
+
+  test('urutanBeranda: carousel sesudah Info Penting (kelas 12) atau sesudah grid (lainnya), sekali saja', () => {
     for (const kelas of ['7', '10', '12', null]) {
       const u = appBeranda.urutanBeranda({ kelas, tampilMulaiDariSini: true, tampilBanner: true });
-      assert.equal(u[0], 'sapaan');
-      assert.equal(u[1], 'banner');
-      assert.ok(u.indexOf('banner') < u.indexOf('judul') && u.indexOf('banner') < u.indexOf('progres'));
+      const sebelum = kelas === '12' ? 'info_penting' : 'grid';
+      assert.equal(u.indexOf('banner'), u.indexOf(sebelum) + 1, `kelas ${kelas}: ${u}`);
       assert.equal(u.filter((b) => b === 'banner').length, 1);
     }
   });
 
-  test('urutanBeranda: tanpa banner, urutan LANJUT_072 tidak berubah', () => {
+  test('urutanBeranda: tanpa banner, tidak ada bagian banner', () => {
     assert.deepEqual(appBeranda.urutanBeranda({ kelas: '12', tampilMulaiDariSini: true }), [
-      'sapaan', 'judul', 'progres', 'grid', 'mulai_dari_sini', 'tenggat', 'info_penting',
+      'sapaan', 'hero', 'progres', 'grid', 'info_penting', 'judul', 'mulai_dari_sini',
     ]);
     assert.deepEqual(appBeranda.urutanBeranda({ kelas: '12', tampilMulaiDariSini: true, tampilBanner: false }), [
-      'sapaan', 'judul', 'progres', 'grid', 'mulai_dari_sini', 'tenggat', 'info_penting',
+      'sapaan', 'hero', 'progres', 'grid', 'info_penting', 'judul', 'mulai_dari_sini',
     ]);
   });
 
-  test('Layar: banner lewat bannerUntukBeranda, gagal → tidak tampil, tanpa logika tanggal sendiri', () => {
+  test('Layar: banner lewat bannerBeranda, gagal → tidak tampil, tanpa logika tanggal sendiri', () => {
     const layar = fs.readFileSync(path.join(AKAR_REPO, 'LANJUT_App', 'components', 'screens', 'LinimasaScreen.tsx'), 'utf8');
-    assert.ok(layar.includes('bannerQuery.isError ? null : bannerUntukBeranda('));
+    assert.ok(layar.includes('bannerQuery.isError ? [] : bannerBeranda('));
+    assert.ok(layar.includes('tampilBanner: banner.length > 0'));
     assert.ok(!/belum ada pengumuman/i.test(layar), 'tidak boleh ada teks "belum ada pengumuman"');
     for (const pola of [/new Date\(/, /Date\.now\(/, /Date\.UTC\(/]) assert.ok(!pola.test(layar), `LinimasaScreen.tsx memuat ${pola}`);
   });

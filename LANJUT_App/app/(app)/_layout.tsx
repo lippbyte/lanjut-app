@@ -11,7 +11,7 @@ import { useSesi } from '../../providers/AuthProvider';
 import { ObrolanProvider } from '../../providers/ObrolanProvider';
 
 // Satu-satunya layar yang tetap terbuka selama gerbang isi kelas / jenis
-// sekolah: Jalur Saya (tempat mengisi keduanya, juga tombol Keluar).
+// sekolah: Data Akun (tempat mengisi keduanya, juga tombol Keluar).
 const TERBUKA_TANPA_KELAS = '/akun';
 
 // Pelindung rute, berurutan:

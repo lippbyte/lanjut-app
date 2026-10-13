@@ -56,10 +56,11 @@ export const KARTU_CERITA_ALUMNI: KartuBeranda = {
   varian: 'outline',
 };
 
+// LANJUT_074: fitur /cek-posisi kini bernama "Jalur Saya" (DRAF). id & rute tetap.
 export const KARTU_CEK_POSISI: KartuBeranda = {
   id: 'cek-posisi',
-  judul: 'Cek Posisi Gue',
-  labelPendek: 'Cek Posisi',
+  judul: 'Jalur Saya',
+  labelPendek: 'Jalur Saya',
   keterangan: 'Lihat kamu lagi di tahap mana dan langkah yang cocok berikutnya.',
   ikon: 'posisi',
   href: '/cek-posisi',
@@ -104,15 +105,15 @@ export const KARTU_DAFTAR_PERIKSA: KartuBeranda = {
 /**
  * Menentukan daftar kartu pintu Beranda berdasarkan kelas akun (LANJUT_064).
  *
- * - SMP (kelas 7–9): TIDAK menampilkan "Cek Posisi Gue". Digantikan dengan kartu
+ * - SMP (kelas 7–9): TIDAK menampilkan "Jalur Saya" (/cek-posisi). Digantikan dengan kartu
  *   dari "Jenjang Saya" untuk SMP (Eksplorasi Tujuan, Gaya Belajar) plus kartu
  *   umum (Arsip Belajar, Level-In, Ngobrol Bareng LANJUT, Cerita Alumni).
  * - Kelas 10–11: kartu dari "Jenjang Saya" untuk 10–11 (Pilih Mapel, Eksplorasi Tujuan,
  *   Gaya Belajar) plus kartu umum (Arsip Belajar, Level-In, Ngobrol Bareng LANJUT,
  *   Daftar Periksa, Cerita Alumni).
- * - Kelas 12: kartu tetap seperti sebelumnya (Cek Posisi Gue, Arsip Belajar,
- *   Level-In, Ngobrol Bareng LANJUT, Cerita Alumni). Catatan: Tenggat dirender
- *   terpisah di atas kartu-kartu ini hanya untuk kelas 12.
+ * - Kelas 12: kartu tetap seperti sebelumnya (Jalur Saya, Arsip Belajar,
+ *   Level-In, Ngobrol Bareng LANJUT, Cerita Alumni). Catatan: kartu hero tenggat
+ *   dirender terpisah di atas kartu-kartu ini hanya untuk kelas 12 (LANJUT_074).
  * - Tanpa kelas / tidak dikenal: fallback ke kartu umum tanpa galat.
  *
  * Aturan umum: kartu tanpa isi tidak pernah ditampilkan kosong.
@@ -199,7 +200,7 @@ export function infoMulaiDariSini(kelas: Kelas | null | undefined): InfoMulaiDar
     return {
       judul: 'Mulai dari Sini',
       penjelas: 'Cek posisi persiapanmu sekarang dan langkah yang perlu diambil.',
-      labelTombol: 'Cek Posisi Gue',
+      labelTombol: 'Jalur Saya',
       href: '/cek-posisi',
     };
   }
@@ -224,56 +225,61 @@ export function teksSapaan(
   return nama ? `Halo, ${nama}` : 'Halo';
 }
 
+/** Paling banyak banner di carousel Beranda (LANJUT_074; sama dengan batas server). */
+export const MAKS_BANNER_BERANDA = 3;
+
 /**
- * Banner yang tampil di Beranda (LANJUT_073), dari jawaban GET /konten/banner.
- * Server sudah menyaring (terverifikasi, berlaku hari ini WIB, https, paling
- * banyak satu). Di app hanya penjaga kedua — mis. jawaban lama di cache sesudah
- * tengah malam: dibuang bila tanggal_selesai sudah lewat menurut hariIniWib
- * (LANJUT_072b) atau tautannya bukan https. null → seksi banner tidak tampil.
+ * Banner carousel Beranda (LANJUT_073, carousel sejak LANJUT_074), dari jawaban
+ * GET /konten/banner. Server sudah menyaring (terverifikasi, berlaku hari ini WIB,
+ * https, paling banyak tiga, tanggal_mulai paling baru dulu). Di app hanya penjaga
+ * kedua — mis. jawaban lama di cache sesudah tengah malam: banner dibuang bila
+ * tanggal_selesai sudah lewat menurut hariIniWib (LANJUT_072b) atau tautannya bukan
+ * https, lalu dibatasi MAKS_BANNER_BERANDA. [] → carousel tidak tampil.
  */
-export function bannerUntukBeranda(
+export function bannerBeranda(
   daftar: readonly BannerBeranda[] | null | undefined,
   hariIniMs: number = hariIniWib()
-): BannerBeranda | null {
-  const banner = daftar?.[0];
-  if (!banner) return null;
-  const selesai = uraiTanggal(banner.tanggal_selesai);
-  if (Number.isNaN(selesai) || selesai < hariIniMs) return null;
-  if (!banner.url_sumber?.startsWith('https://')) return null;
-  return banner;
+): BannerBeranda[] {
+  return (daftar ?? [])
+    .filter((b) => {
+      const selesai = uraiTanggal(b.tanggal_selesai);
+      return !Number.isNaN(selesai) && selesai >= hariIniMs && Boolean(b.url_sumber?.startsWith('https://'));
+    })
+    .slice(0, MAKS_BANNER_BERANDA);
 }
 
 export type BagianBeranda =
   | 'sapaan'
-  | 'banner'
-  | 'judul'
+  | 'hero'
   | 'progres'
   | 'grid'
-  | 'mulai_dari_sini'
-  | 'tenggat'
-  | 'info_penting';
+  | 'info_penting'
+  | 'banner'
+  | 'judul'
+  | 'mulai_dari_sini';
 
 /**
- * Urutan bagian Beranda dari atas ke bawah (LANJUT_072). Susunan "berkelompok"
- * adalah keputusan agen di LANJUT_072, BUKAN persetujuan PM: letak judul, baris
- * progres, dan kartu tenggat tidak ada di spesifikasi. Empat bagian yang disebut task berurutan sapaan →
- * grid → "Mulai dari Sini" → Info Penting; bagian lain ikut bagian terdekatnya:
- * judul K1 di bawah sapaan, baris progres tepat di atas grid (LANJUT_065), dan
- * kartu tenggat menempel di atas Info Penting (keduanya hanya kelas 12, LANJUT_066).
- * LANJUT_073: banner (bila ada) disisipkan tepat di bawah sapaan, di atas judul
- * dan baris progres; urutan bagian lain tidak berubah.
- * Setiap bagian paling banyak muncul sekali.
+ * Urutan bagian Beranda dari atas ke bawah — keputusan Khalifa di LANJUT_074
+ * (menggantikan susunan LANJUT_072 yang dinyatakan tidak berlaku): sapaan, kartu
+ * hero tenggat (kelas 12), baris progres, grid ikon, Info Penting (kelas 12), lalu
+ * carousel banner (LANJUT_073). Task 074 tidak menyebut kalimat K1 dan kartu
+ * "Mulai dari Sini"; keduanya ditaruh di paling bawah dengan urutan lama (pilihan
+ * "harfiah" di percakapan LANJUT_074, belum disetujui PM).
+ * Setiap bagian paling banyak muncul sekali; yang tidak tampil tidak meninggalkan ruang.
  */
 export function urutanBeranda(data: {
   kelas?: Kelas | null;
   tampilMulaiDariSini: boolean;
   tampilBanner?: boolean;
 }): BagianBeranda[] {
+  const kelas12 = kelompokJenjang(data.kelas) === 'kelas12';
   const urutan: BagianBeranda[] = ['sapaan'];
+  if (kelas12) urutan.push('hero');
+  urutan.push('progres', 'grid');
+  if (kelas12) urutan.push('info_penting');
   if (data.tampilBanner) urutan.push('banner');
-  urutan.push('judul', 'progres', 'grid');
+  urutan.push('judul');
   if (data.tampilMulaiDariSini) urutan.push('mulai_dari_sini');
-  if (kelompokJenjang(data.kelas) === 'kelas12') urutan.push('tenggat', 'info_penting');
   return urutan;
 }
 

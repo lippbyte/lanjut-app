@@ -7,14 +7,14 @@ import { useSesi } from '../../providers/AuthProvider';
 import { spacing } from '../../theme/tokens';
 import { Kartu, Kosong, Tombol } from '../ui';
 
-/** true kalau kelas akun = 12 (lib/jenjang.ts). Berubah langsung saat kelas diubah di Jalur Saya. */
+/** true kalau kelas akun = 12 (lib/jenjang.ts). Berubah langsung saat kelas diubah di Data Akun. */
 export function useUntukKelas12(): boolean {
   const { pengguna } = useSesi();
   return untukKelas12(pengguna?.kelas);
 }
 
 /**
- * Gerbang LANJUT_035 untuk Linimasa, Daftar Periksa, dan Cek Posisi: kelas 12
+ * Gerbang LANJUT_035 untuk Linimasa, Daftar Periksa, dan Jalur Saya (/cek-posisi): kelas 12
  * → `children` apa adanya (tidak berubah dari sebelumnya); selain itu →
  * placeholder. `children` tidak dirender sama sekali untuk non-12, jadi
  * tanggal/hitungan SNBP-SNBT-TKA di dalamnya tidak pernah diambil maupun tampil.
@@ -45,10 +45,10 @@ export function BukanKelas12() {
       ) : (
         <Kosong
           judul="Isi kelasmu dulu."
-          teks="Isi bagian ini menyesuaikan kelasmu. Isi kelas di Jalur Saya, ya."
+          teks="Isi bagian ini menyesuaikan kelasmu. Isi kelas di Data Akun, ya."
           aksi={
             <View style={s.aksi}>
-              <Tombol label="Isi kelas di Jalur Saya" varian="sekunder" onPress={() => router.push('/akun')} />
+              <Tombol label="Isi kelas di Data Akun" varian="sekunder" onPress={() => router.push('/akun')} />
               <Tombol label="Buka Jenjang Saya" varian="hantu" onPress={keJenjang} />
             </View>
           }

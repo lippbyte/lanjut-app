@@ -144,7 +144,7 @@ describe('LANJUT_072b: kalimat bila semua tersaring', () => {
 });
 
 describe('LANJUT_072b: satu tempat untuk logika tanggal', () => {
-  test('Kartu tenggat, Info Penting, dan Cek Posisi memakai "hari ini" yang sama (default = hariIniWib)', () => {
+  test('Kartu tenggat (hero), Info Penting, dan Jalur Saya (/cek-posisi) memakai "hari ini" yang sama (default = hariIniWib)', () => {
     const data = [LEWAT, KEMARIN, HARI_INI, BERJALAN, MENDATANG];
     assert.deepEqual(turunkanLinimasa(data), turunkanLinimasa(data, hariIniWib()));
     assert.deepEqual(infoPentingLinimasa(data, '12'), infoPentingLinimasa(data, '12', hariIniWib()));

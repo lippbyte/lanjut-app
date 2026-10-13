@@ -36,7 +36,7 @@ async function panggil(metode, path, token, body) {
 }
 
 describe('LANJUT_064: Logika Kartu Beranda per Jenjang', () => {
-  test('SMP (kelas 7–9): Cek Posisi Gue disembunyikan, diganti kartu Jenjang Saya (Eksplorasi Tujuan, Gaya Belajar) + kartu umum', () => {
+  test('SMP (kelas 7–9): Jalur Saya disembunyikan, diganti kartu Jenjang Saya (Eksplorasi Tujuan, Gaya Belajar) + kartu umum', () => {
     for (const k of ['7', '8', '9']) {
       const kartu = daftarKartuBeranda(k);
       const judul = kartu.map((x) => x.judul);
@@ -51,7 +51,7 @@ describe('LANJUT_064: Logika Kartu Beranda per Jenjang', () => {
       ]);
 
       // Verifikasi eksplisit: kartu kelas 12 TIDAK boleh muncul
-      assert.ok(!judul.includes('Cek Posisi Gue'), `kelas ${k} tidak boleh melihat Cek Posisi Gue`);
+      assert.ok(!judul.includes('Jalur Saya'), `kelas ${k} tidak boleh melihat Jalur Saya`);
       assert.ok(!judul.includes('Pilih Mapel'), `kelas ${k} tidak boleh melihat Pilih Mapel di Beranda`);
       assert.ok(!judul.includes('Daftar Periksa'), `kelas ${k} tidak boleh melihat Daftar Periksa di Beranda`);
       assert.ok(!judul.includes('Cerita Alumni SMK'), 'judul harus netral');
@@ -79,8 +79,8 @@ describe('LANJUT_064: Logika Kartu Beranda per Jenjang', () => {
         'Cerita Alumni',
       ]);
 
-      // Verifikasi eksplisit: Cek Posisi Gue TIDAK boleh muncul
-      assert.ok(!judul.includes('Cek Posisi Gue'), `kelas ${k} tidak boleh melihat Cek Posisi Gue`);
+      // Verifikasi eksplisit: Jalur Saya TIDAK boleh muncul
+      assert.ok(!judul.includes('Jalur Saya'), `kelas ${k} tidak boleh melihat Jalur Saya`);
       assert.ok(!judul.includes('Cerita Alumni SMK'), 'judul harus netral');
 
       // Tidak ada kartu kosong
@@ -90,20 +90,22 @@ describe('LANJUT_064: Logika Kartu Beranda per Jenjang', () => {
     }
   });
 
-  test('Kelas 12: kartu pintu tidak berubah (Cek Posisi Gue, Arsip, Level-In, Ngobrol, Cerita Alumni netral)', () => {
+  // LANJUT_074: kartu /cek-posisi kini berlabel "Jalur Saya"; urutan & isi lain tetap.
+  test('Kelas 12: kartu pintu tetap (Jalur Saya, Arsip, Level-In, Ngobrol, Cerita Alumni netral)', () => {
     const kartu = daftarKartuBeranda('12');
     const judul = kartu.map((x) => x.judul);
 
     assert.deepEqual(judul, [
-      'Cek Posisi Gue',
+      'Jalur Saya',
       'Arsip Belajar',
       'Level-In',
       'Ngobrol Bareng LANJUT',
       'Cerita Alumni',
     ]);
 
-    // Verifikasi Cek Posisi Gue ADA untuk kelas 12
-    assert.ok(judul.includes('Cek Posisi Gue'));
+    // Verifikasi Jalur Saya ADA untuk kelas 12, dan tetap menuju /cek-posisi
+    assert.ok(judul.includes('Jalur Saya'));
+    assert.equal(kartu.find((x) => x.judul === 'Jalur Saya').href, '/cek-posisi');
     assert.ok(!judul.includes('Cerita Alumni SMK'), 'judul harus netral');
   });
 
@@ -160,13 +162,13 @@ describe('LANJUT_064: Tes Lintas Akun (Cross-Account Isolation)', () => {
     // 3. Verifikasi Beranda untuk Akun A (kelas 7)
     const kartuA = daftarKartuBeranda(profilA.kelas);
     const judulA = kartuA.map((x) => x.judul);
-    assert.ok(!judulA.includes('Cek Posisi Gue'), 'Akun A kelas 7 TIDAK boleh memiliki kartu Cek Posisi Gue');
+    assert.ok(!judulA.includes('Jalur Saya'), 'Akun A kelas 7 TIDAK boleh memiliki kartu Jalur Saya');
     assert.equal(kelompokJenjang(profilA.kelas), 'smp', 'Kelompok jenjang Akun A harus smp (bukan kelas12)');
 
     // 4. Verifikasi Beranda untuk Akun B (kelas 12)
     const kartuB = daftarKartuBeranda(profilB.kelas);
     const judulB = kartuB.map((x) => x.judul);
-    assert.ok(judulB.includes('Cek Posisi Gue'), 'Akun B kelas 12 memiliki kartu Cek Posisi Gue');
+    assert.ok(judulB.includes('Jalur Saya'), 'Akun B kelas 12 memiliki kartu Jalur Saya');
     assert.equal(kelompokJenjang(profilB.kelas), 'kelas12', 'Kelompok jenjang Akun B harus kelas12');
 
     // 5. Isolasi modifikasi profil: Ubah kelas Akun A tidak merusak Akun B
@@ -179,6 +181,6 @@ describe('LANJUT_064: Tes Lintas Akun (Cross-Account Isolation)', () => {
 
     // 6. Kartu Akun A tetap SMP dan tidak melihat data kelas 12
     const kartuASetelah = daftarKartuBeranda(profilASetelah.kelas);
-    assert.ok(!kartuASetelah.map((x) => x.judul).includes('Cek Posisi Gue'));
+    assert.ok(!kartuASetelah.map((x) => x.judul).includes('Jalur Saya'));
   });
 });

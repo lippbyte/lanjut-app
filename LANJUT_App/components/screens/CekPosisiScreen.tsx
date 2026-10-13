@@ -19,7 +19,7 @@ const LABEL_PETA: Record<Tahap, string> = {
 };
 
 /**
- * Cek Posisi Gue (v1.1, LANJUT_005): Posisi Kamu → Fokus Sekarang →
+ * Jalur Saya (v1.1, LANJUT_005; nama baru sejak LANJUT_074): Posisi Kamu → Fokus Sekarang →
  * Langkah Berikutnya. Tahap dihitung dari data akun (lib/cekPosisi.ts),
  * jadi tidak ada kuis yang menanyakan ulang hal yang app sudah tahu.
  */
@@ -124,7 +124,7 @@ function Hasil({ kebingungan, onUlang }: { kebingungan: Kebingungan | null; onUl
       <Tombol label="Ganti jawaban kebingungan" varian="hantu" kecil onPress={onUlang} />
 
       <Penafian>
-        Posisi ini dihitung dari target prodi di Jalur Saya dan kemajuan Daftar Periksa. Ini cuma gambaran, keputusannya
+        Posisi ini dihitung dari target prodi di Data Akun dan kemajuan Daftar Periksa. Ini cuma gambaran, keputusannya
         tetap di tanganmu.
       </Penafian>
     </View>

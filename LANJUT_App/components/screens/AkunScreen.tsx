@@ -25,7 +25,8 @@ import { BilahProgres, Kartu, KartuPintu, Memuat, Penafian, SeksiJudul, Tombol, 
 import { BELUM, DaftarOpsi, Field, Input, OpsiPil, PesanGalat, PilihProdi } from './auth/AuthUI';
 import { useUntukKelas12 } from './KhususKelas12';
 
-// "Jalur Saya" (v1.1, LANJUT_004) di atas padanan MVP-PWA/akun.html
+// "Data Akun" (v1.1 LANJUT_004 menamainya Jalur Saya; nama itu dipindah ke
+// /cek-posisi sejak LANJUT_074) di atas padanan MVP-PWA/akun.html
 // (keadaan "sudah masuk"). Keadaan tamu tidak ada di sini karena layar ini
 // hanya bisa dibuka setelah login. Semua isi dibaca dari `pengguna` di
 // AuthProvider — hasil GET /auth/saya milik akun yang sedang masuk.
@@ -47,7 +48,7 @@ export function AkunScreen() {
       <KartuJalur key={pengguna.id} pengguna={pengguna} />
       <KartuPintu
         ikon="posisi"
-        judul="Cek Posisi Gue"
+        judul="Jalur Saya"
         keterangan="Tahap kamu sekarang, dihitung dari jalur dan kemajuanmu."
         onPress={() => router.push('/cek-posisi')}
       />
@@ -86,7 +87,8 @@ function KartuJalur({ pengguna }: { pengguna: Pengguna }) {
 
   return (
     <Kartu>
-      <Text style={s.eyebrow}>Jalur Saya</Text>
+      {/* LANJUT_074: judul bagian "Data Akun" (DRAF); isinya tidak berubah. */}
+      <Text style={s.eyebrow}>Data Akun</Text>
       <Text style={s.nama}>{pengguna.nama_tampilan}</Text>
       <View style={s.daftar}>
         <Baris label="Kelas" nilai={pengguna.kelas ? `Kelas ${pengguna.kelas}` : null} />
@@ -155,7 +157,7 @@ function FormJalur({ pengguna, onSelesai }: { pengguna: Pengguna; onSelesai: () 
 
   return (
     <Kartu style={s.form}>
-      <Text style={s.eyebrow}>Ubah Jalur Saya</Text>
+      <Text style={s.eyebrow}>Ubah Data Akun</Text>
       <Field label="Nama tampilan" galat={galatNama ?? medan?.nama_tampilan}>
         <Input
           value={nama}

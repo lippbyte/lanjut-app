@@ -201,7 +201,7 @@ export function KotakCentang({ label, tercentang, onAlih }: { label: string; ter
 /** Nilai pilihan "Belum, aku belum tahu" — tidak pernah dikirim ke server. */
 export const BELUM = 'belum';
 
-// Keping pilihan prodi (MVP-PWA/daftar.html) — dipakai Daftar & Jalur Saya.
+// Keping pilihan prodi (MVP-PWA/daftar.html) — dipakai Daftar & Data Akun.
 export function PilihProdi({ nilai, onPilih }: { nilai: string | null; onPilih: (id: string) => void }) {
   const prodiQuery = useProdi();
   return (

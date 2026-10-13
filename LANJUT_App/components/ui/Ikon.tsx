@@ -45,7 +45,7 @@ const IKON = {
       <Path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6" />
     </>
   ),
-  // Pin peta untuk Cek Posisi Gue (tidak ada di PWA, gaya garis yang sama).
+  // Pin peta untuk Jalur Saya, layar /cek-posisi (tidak ada di PWA, gaya garis yang sama).
   posisi: (
     <>
       <Path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" />
@@ -73,6 +73,14 @@ const IKON = {
       <Path d="M10.3 3.9 2.5 18a1 1 0 0 0 .9 1.5h17.2a1 1 0 0 0 .9-1.5L13.7 3.9a1 1 0 0 0-1.7 0Z" />
       <Path d="M12 9v4" />
       <Path d="M12 16.5h.01" />
+    </>
+  ),
+  // Mikrofon generik untuk masukan suara di Ngobrol (LANJUT_074), gaya garis yang sama.
+  mikrofon: (
+    <>
+      <Rect x="9" y="3" width="6" height="11" rx="3" />
+      <Path d="M5 11a7 7 0 0 0 14 0" />
+      <Path d="M12 18v3" />
     </>
   ),
   kembali: <Path d="m15 6-6 6 6 6" />,

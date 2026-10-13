@@ -7,8 +7,9 @@
 // (`banner: []`) plus satu peringatan di log — server tidak pernah mati karenanya.
 //
 // Gagal-tertutup: SATU masalah di berkas (JSON rusak, struktur salah, satu item
-// tidak sah) membuat seluruh banner kosong. Yang terkirim paling banyak satu item
-// terverifikasi yang berlaku hari ini (WIB), hanya medan publik.
+// tidak sah) membuat seluruh banner kosong. Yang terkirim paling banyak MAKS_BANNER
+// item terverifikasi yang berlaku hari ini (WIB), hanya medan publik — tiga sejak
+// LANJUT_074 (carousel Beranda), sebelumnya satu (LANJUT_073).
 // Log hanya penanda & letak medan; isi banner tidak pernah dicatat.
 
 const fs = require('fs');
@@ -19,6 +20,7 @@ const { hariIniWib, uraiTanggal } = require('../../util/linimasa');
 const BERKAS_BANNER = path.join(__dirname, '..', '..', '..', 'config', 'banner-beranda.json');
 const MAKS_JUDUL = 80;
 const MAKS_ISI = 200;
+const MAKS_BANNER = 3;
 const MEDAN_PUBLIK = ['id', 'judul', 'isi', 'sumber', 'url_sumber', 'tanggal_selesai'];
 
 /** Jumlah karakter (code point), bukan unit UTF-16 — emoji dihitung satu. */
@@ -101,14 +103,14 @@ function periksaBerkas(teks) {
   return hasil.data.banner;
 }
 
-/** Item sah → paling banyak satu banner publik yang berlaku pada `hariIniMs` (WIB). */
+/** Item sah → paling banyak MAKS_BANNER banner publik yang berlaku pada `hariIniMs` (WIB). */
 function pilihBanner(daftar, hariIniMs) {
   return daftar
     .filter((b) => b.status_verifikasi === 'terverifikasi' && Boolean(b.diperiksa_pada))
     .filter((b) => uraiTanggal(b.tanggal_mulai) <= hariIniMs && hariIniMs <= uraiTanggal(b.tanggal_selesai))
     // tanggal_mulai paling baru; bila sama, id terkecil (urutan tetap, tidak bergantung urutan berkas).
     .sort((a, b) => uraiTanggal(b.tanggal_mulai) - uraiTanggal(a.tanggal_mulai) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
-    .slice(0, 1)
+    .slice(0, MAKS_BANNER)
     .map((b) => Object.fromEntries(MEDAN_PUBLIK.map((k) => [k, b[k]])));
 }
 
@@ -129,6 +131,7 @@ module.exports = {
   BERKAS_BANNER,
   MAKS_JUDUL,
   MAKS_ISI,
+  MAKS_BANNER,
   MEDAN_PUBLIK,
   bacaBerkas,
   periksaBerkas,

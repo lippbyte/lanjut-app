@@ -18,8 +18,8 @@ export type SaringanDaftarPeriksa = {
  * Kelas, jalur, dan rumpun yang menyaring Daftar Periksa. Kelas pilihan di
  * perangkat mengalahkan kelas akun; jalur hanya ada di perangkat; rumpun
  * diturunkan dari target prodi akun (`prodi.rumpun` di /konten/prodi, sama
- * seperti Pilih Mapel). Dipakai Daftar Periksa, Jalur Saya, dan Cek Posisi
- * supaya ketiganya menyaring sama persis.
+ * seperti Pilih Mapel). Dipakai Daftar Periksa, Data Akun, dan Jalur Saya
+ * (/cek-posisi) supaya ketiganya menyaring sama persis.
  */
 export function useSaringDaftarPeriksa() {
   const { pengguna } = useSesi();
@@ -44,8 +44,8 @@ export function useSaringDaftarPeriksa() {
 
 /**
  * Butir tersaring + butir pribadi + centang akun + X/Y — satu-satunya tempat
- * semuanya digabung, jadi Daftar Periksa, Jalur Saya, dan Cek Posisi
- * menghitung X/Y yang sama. Tanpa kelas/jalur, atau selama saringan masih
+ * semuanya digabung, jadi Daftar Periksa, Data Akun, dan Jalur Saya
+ * (/cek-posisi) menghitung X/Y yang sama. Tanpa kelas/jalur, atau selama saringan masih
  * dimuat, query butir tidak dijalankan. Terima hasil useSaringDaftarPeriksa()
  * apa adanya.
  */

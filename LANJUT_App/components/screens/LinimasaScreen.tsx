@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Article, H1 } from '@expo/html-elements';
 import { useRouter } from 'expo-router';
-import { Linking, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import {
+  Linking,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+} from 'react-native';
 
 import type { BannerBeranda } from '../../api/types';
 import { useTahapanLinimasa } from '../../hooks/useTahapanLinimasa';
@@ -12,7 +22,7 @@ import { useRiwayatLatihan } from '../../hooks/useLatihan';
 import { useKartuSaya } from '../../hooks/useKartu';
 import {
   apakahPunyaKemajuan,
-  bannerUntukBeranda,
+  bannerBeranda,
   daftarKartuBeranda,
   hitungJumlahCentang,
   hitungProgresBeranda,
@@ -37,8 +47,6 @@ import {
   BilahProgres,
   Ikon,
   Kartu,
-  KeadaanGalat,
-  Memuat,
   SeksiJudul,
   Sumber,
   Tombol,
@@ -48,11 +56,11 @@ import {
 const LAMAN_SNPMB = 'https://snpmb.bppp.kemdikbud.go.id/';
 
 /**
- * Tab Beranda — padanan MVP-PWA/beranda.html. Dari atas (LANJUT_072,
- * lib/beranda.ts `urutanBeranda`): sapaan, banner pengumuman bila ada (LANJUT_073),
- * kalimat K1, baris progres, grid menu launcher per jenjang (LANJUT_065), kartu
- * "Mulai dari Sini" bila baru, lalu — hanya kelas 12 — kartu tenggat terdekat
- * dan "Info Penting" dari data terverifikasi (LANJUT_066).
+ * Tab Beranda — padanan MVP-PWA/beranda.html. Dari atas (LANJUT_074,
+ * lib/beranda.ts `urutanBeranda`): sapaan, kartu hero tenggat (kelas 12), baris
+ * progres, grid menu launcher per jenjang (LANJUT_065), Info Penting dari data
+ * terverifikasi (kelas 12, LANJUT_066/072b), carousel banner (LANJUT_073/074),
+ * lalu kalimat K1 dan kartu "Mulai dari Sini" bila akun baru.
  */
 export function LinimasaScreen() {
   const router = useRouter();
@@ -91,18 +99,16 @@ export function LinimasaScreen() {
   const memuatData =
     kemajuanQuery.isPending || butirPribadiQuery.isPending || latihanQuery.isPending || kartuQuery.isPending;
 
-  // LANJUT_073: banner hanya bila endpoint berhasil dan ada satu banner yang masih
-  // berlaku. Memuat, kosong, atau gagal → seksi tidak tampil, tanpa teks pengganti.
+  // LANJUT_073/074: carousel hanya bila endpoint berhasil dan ada banner yang masih
+  // berlaku (maks. 3). Memuat, kosong, atau gagal → tidak tampil, tanpa teks pengganti.
   const bannerQuery = useBannerBeranda();
-  const banner = bannerQuery.isError ? null : bannerUntukBeranda(bannerQuery.data?.banner);
+  const banner = bannerQuery.isError ? [] : bannerBeranda(bannerQuery.data?.banner);
 
-  // LANJUT_072: urutan tampil sepenuhnya ditentukan urutanBeranda (lib/beranda.ts) —
-  // sapaan, banner (LANJUT_073), judul, progres, grid, "Mulai dari Sini", lalu tenggat
-  // & Info Penting (kelas 12).
+  // Urutan tampil sepenuhnya ditentukan urutanBeranda (lib/beranda.ts, LANJUT_074).
   const urutan = urutanBeranda({
     kelas,
     tampilMulaiDariSini: !memuatData && !punyaKemajuan,
-    tampilBanner: banner !== null,
+    tampilBanner: banner.length > 0,
   });
 
   const bagian: Record<BagianBeranda, React.ReactNode> = {
@@ -112,7 +118,9 @@ export function LinimasaScreen() {
         {teksSapaan(pengguna)}
       </Text>
     ),
-    banner: banner ? <KartuBanner banner={banner} /> : null,
+    // LANJUT_074: kartu hero tenggat (kelas 12; urutanBeranda hanya memasukkannya untuk kelas 12).
+    hero: <KartuHero />,
+    banner: banner.length ? <KarouselBanner daftar={banner} /> : null,
     judul: <H1 style={s.k1}>Tahu harus ngapain hari ini.</H1>,
     // LANJUT_065 §C: satu baris progres, tepat di atas grid.
     progres: (
@@ -153,8 +161,7 @@ export function LinimasaScreen() {
     ),
     // LANJUT_065 §B: kartu "Mulai dari Sini" untuk akun baru / belum punya kemajuan.
     mulai_dari_sini: <KartuMulaiDariSini kelas={kelas} onPress={(href) => router.push(href as any)} />,
-    // LANJUT_035, LANJUT_064, LANJUT_066: tenggat & Info Penting terverifikasi HANYA untuk kelas 12.
-    tenggat: <TenggatTerdekat />,
+    // LANJUT_035, LANJUT_064, LANJUT_066: Info Penting terverifikasi HANYA untuk kelas 12.
     info_penting: <InfoPenting kelas={kelas} />,
   };
 
@@ -163,6 +170,47 @@ export function LinimasaScreen() {
       {urutan.map((b) => (
         <React.Fragment key={b}>{bagian[b]}</React.Fragment>
       ))}
+    </View>
+  );
+}
+
+// LANJUT_074: carousel banner (paling banyak 3 dari bannerBeranda) — satu kartu per
+// halaman, digeser horizontal, indikator titik bila lebih dari satu. Tanpa judul seksi
+// dan tanpa tombol tutup.
+function KarouselBanner({ daftar }: { daftar: BannerBeranda[] }) {
+  const [lebar, setLebar] = useState(0);
+  const [aktif, setAktif] = useState(0);
+  const saatGeser = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (!lebar) return;
+    const ke = Math.round(e.nativeEvent.contentOffset.x / lebar);
+    setAktif(Math.max(0, Math.min(daftar.length - 1, ke)));
+  };
+
+  return (
+    <View style={s.karousel} onLayout={(e) => setLebar(e.nativeEvent.layout.width)}>
+      {lebar ? (
+        <ScrollView
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onScroll={saatGeser}
+          scrollEventThrottle={16}
+          contentContainerStyle={s.karouselIsi}
+        >
+          {daftar.map((b) => (
+            <View key={b.id} style={StyleSheet.flatten([s.karouselHalaman, { width: lebar }])}>
+              <KartuBanner banner={b} />
+            </View>
+          ))}
+        </ScrollView>
+      ) : null}
+      {daftar.length > 1 ? (
+        <View style={s.karouselTitikBaris} aria-hidden importantForAccessibility="no-hide-descendants">
+          {daftar.map((b, i) => (
+            <View key={b.id} style={StyleSheet.flatten([s.karouselTitik, i === aktif && s.karouselTitikAktif])} />
+          ))}
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -204,15 +252,15 @@ function KartuMulaiDariSini({
   );
 }
 
-// LANJUT_072: tenggat dan Info Penting dirender terpisah (urutanBeranda menaruhnya
-// berdampingan) dari satu query yang sama. Memuat/galat tampil sekali saja, di slot
-// tenggat yang lebih dulu. LANJUT_066: tanpa data terverifikasi yang relevan, tidak
-// ada kartu sama sekali. "Hari ini" untuk keduanya = hariIniWib (LANJUT_072b), lewat
-// default turunkanLinimasa.
-function TenggatTerdekat() {
+// LANJUT_074: kartu hero tenggat terdekat (kelas 12) — latar penuh color.blue600 dengan
+// teks putih (kontras ±5,7:1), lebih besar dari kartu lain. Isi sama dengan kartu
+// tenggat sebelumnya, tanpa teks baru. Memuat atau gagal → tidak tampil, tanpa pesan.
+// Tenggat dan Info Penting memakai satu query yang sama; "hari ini" untuk keduanya =
+// hariIniWib (LANJUT_072b), lewat default turunkanLinimasa. LANJUT_066: tanpa data
+// terverifikasi yang relevan, tidak ada kartu sama sekali.
+function KartuHero() {
   const { data, isPending, isError } = useTahapanLinimasa();
-  if (isPending) return <Memuat />;
-  if (isError) return <KeadaanGalat />;
+  if (isPending || isError) return null;
 
   // Angka hari biasa, bukan hitungan detik (§4.1). Belum dimulai → menuju
   // tanggal mulai; sudah berjalan → menuju tutup.
@@ -220,13 +268,13 @@ function TenggatTerdekat() {
   if (!terdekat || !momen || sisaHari === null || sisaHari < 0) return null;
 
   return (
-    <Kartu varian="brand">
-      <Text style={s.tenggatAngka}>{sisaHari} hari</Text>
-      <Text style={s.tenggatTeks}>
+    <View style={s.hero}>
+      <Text style={s.heroAngka}>{sisaHari} hari</Text>
+      <Text style={s.heroTeks}>
         menuju {terdekat.judul} {momen === 'mulai' ? 'dimulai' : 'ditutup'},{' '}
         {formatTanggal(tanggalMomen(terdekat, momen))}.
       </Text>
-    </Kartu>
+    </View>
   );
 }
 
@@ -280,10 +328,25 @@ function KartuInfoPenting({ butir }: { butir: TahapanTurunan }) {
 const s = StyleSheet.create({
   sapaan: { ...teks.title, fontFamily: font.semibold, color: color.textBody },
   k1: { ...teks.title, color: color.textBody, marginVertical: 0 },
-  // Teks gelap di kartu gradasi biru muda (LANJUT_027): putih hanya 1,3–2,0:1 di
-  // blue200→blue300. textBody 8,7:1, textMuted 4,9:1 di ujung terburuk gradasi.
-  tenggatAngka: { ...teks.h1, color: color.textBody },
-  tenggatTeks: { ...teks.bodySm, color: color.textMuted, marginTop: 6 },
+  // LANJUT_074: kartu hero tenggat — latar penuh blue600 (#456A8C), bukan gradasi
+  // biru muda (putih di gradasi itu hanya 1,3–2,0:1, LANJUT_027). Putih di blue600 ±5,7:1.
+  hero: {
+    backgroundColor: color.blue600,
+    borderRadius: radius.lg,
+    paddingVertical: spacing.s6,
+    paddingHorizontal: spacing.s5,
+    gap: spacing.s2,
+    boxShadow: shadow.s2,
+  },
+  heroAngka: { ...teks.h1, fontSize: 40, lineHeight: 46, color: color.white },
+  heroTeks: { ...teks.bodyLg, color: color.white },
+  // LANJUT_074: carousel banner
+  karousel: { gap: spacing.s2 },
+  karouselIsi: { alignItems: 'stretch' },
+  karouselHalaman: { alignSelf: 'stretch' },
+  karouselTitikBaris: { flexDirection: 'row', justifyContent: 'center', gap: spacing.s2 },
+  karouselTitik: { width: 8, height: 8, borderRadius: 4, backgroundColor: color.ink300 },
+  karouselTitikAktif: { backgroundColor: color.blue600 },
   seksi: { gap: spacing.s3 },
   butir: { flexDirection: 'row', gap: spacing.s4 },
   butirLewat: { opacity: 0.55 },
@@ -334,8 +397,9 @@ const s = StyleSheet.create({
     color: color.blue600,
     textDecorationLine: 'underline',
   },
-  // LANJUT_073: Banner Beranda
+  // LANJUT_073: Banner Beranda (satu kartu; di carousel mengisi tinggi halaman)
   bannerKartu: {
+    flex: 1,
     gap: spacing.s2,
     padding: spacing.s4,
   },

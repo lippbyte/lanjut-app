@@ -289,7 +289,7 @@ ke OpenRouter; lihat bagian 2d.
   Tes menolak bila versi di app berbeda dari konfigurasi.
 - **Terima ulang (LANJUT_048).** Begitu versi berlaku naik, semua akun yang
   menerima versi lama melihat jendela kebijakan lagi setelah login (sekali
-  per sesi, sesudah gerbang kelas & jenis sekolah), dan Jalur Saya
+  per sesi, sesudah gerbang kelas & jenis sekolah), dan Data Akun
   menampilkan "Perlu diterima ulang". App hanya mengirim versi TEKS yang ia
   tampilkan; selama app yang terpasang masih membawa teks lama, jendela hanya
   meminta memuat ulang/memperbarui app (tanpa tombol Terima). Jadi
@@ -775,9 +775,10 @@ berkas ini sengaja kosong: `{ "versi": 1, "banner": [] }`.
   pengecekan manusia; tanpa medan ini item dianggap belum terverifikasi.
 - **Isi banner wajib dicek manusia ke sumber resmi sebelum `status_verifikasi`
   diubah menjadi `terverifikasi`.**
-- Yang dikirim: paling banyak satu item terverifikasi yang berlaku hari ini (WIB),
-  yang `tanggal_mulai`-nya paling baru (seri → `id` terkecil), hanya medan `id`,
-  `judul`, `isi`, `sumber`, `url_sumber`, `tanggal_selesai`.
+- Yang dikirim: paling banyak **tiga** item terverifikasi yang berlaku hari ini (WIB),
+  diurutkan dari `tanggal_mulai` paling baru (seri → `id` terkecil), hanya medan `id`,
+  `judul`, `isi`, `sumber`, `url_sumber`, `tanggal_selesai`. Sejak LANJUT_074 app
+  menampilkannya sebagai carousel di bawah Info Penting (sebelumnya satu banner).
 - Berkas dibaca setiap permintaan, jadi perubahan berlaku tanpa menyalakan ulang
   server. Gagal-tertutup: JSON rusak, struktur salah, atau **satu** item tidak sah
   (medan kosong, terlalu panjang, tanggal salah, bukan https, `id` ganda) membuat

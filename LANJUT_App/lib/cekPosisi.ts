@@ -1,5 +1,5 @@
 /**
- * Cek Posisi Gue (v1.1, LANJUT_005) — tahap siswa dihitung dari data yang
+ * Jalur Saya (v1.1, LANJUT_005; nama baru sejak LANJUT_074, rute tetap /cek-posisi) — tahap siswa dihitung dari data yang
  * app sudah tahu, rule-based, tanpa kuis. Logika murni dipisah dari
  * komponen, mengikuti pola lib/daftarPeriksa.ts.
  *
@@ -153,7 +153,7 @@ const ISI: Record<Tahap, (s: SinyalPosisi) => IsiTahap> = {
     fokus: [
       'Pastikan dokumen dan jalur yang kamu pilih sudah siap.',
       'Sisa langkah di Daftar Periksa bisa jadi pegangan terakhir.',
-      ...(s.adaProdi ? [] : ['Target prodi belum tercatat di Jalur Saya — mungkin bisa diisi kalau sudah ada.']),
+      ...(s.adaProdi ? [] : ['Target prodi belum tercatat di Data Akun — mungkin bisa diisi kalau sudah ada.']),
     ],
     langkah: { label: 'Lihat sisa Daftar Periksa', tujuan: '/daftar-periksa' },
   }),

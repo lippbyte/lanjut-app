@@ -31,7 +31,8 @@ const PENGANTAR: Record<KelompokJenjang, (kelas: string) => string> = {
   kelas10_11: (k) => `Kelas ${k}: mulai kenalan sama jurusan yang kamu incar.`,
   kelas12: () => 'Kelas 12: yang perlu kamu siapkan sebelum daftar kuliah.',
 };
-const PENGANTAR_TANPA_KELAS = 'Isi kelasmu di Jalur Saya supaya isi halaman ini pas buat kamu.';
+// LANJUT_074: halaman akun bernama "Data Akun" (dulu disebut Jalur Saya).
+const PENGANTAR_TANPA_KELAS = 'Isi kelasmu di Data Akun supaya isi halaman ini pas buat kamu.';
 
 // --- Kelas 7–9 (draf LANJUT_069 A1–A5) ---------------------------------------
 
@@ -155,7 +156,8 @@ const PINTU_037_MAPEL: PintuJenjang = {
   href: '/pilih-mapel',
 };
 const PINTU_KELAS_12: PintuJenjang[] = [
-  { id: 'cek-posisi', ikon: 'posisi', judul: 'Cek Posisi Gue', keterangan: 'Lihat kamu lagi di tahap mana dan langkah berikutnya.', href: '/cek-posisi' },
+  // LANJUT_074: judul pintu /cek-posisi menjadi "Jalur Saya"; keterangan tetap.
+  { id: 'cek-posisi', ikon: 'posisi', judul: 'Jalur Saya', keterangan: 'Lihat kamu lagi di tahap mana dan langkah berikutnya.', href: '/cek-posisi' },
   { id: 'daftar-periksa', ikon: 'checklist', judul: 'Daftar Periksa', keterangan: 'Satu per satu, tidak perlu sekaligus.', href: '/daftar-periksa' },
 ];
 const PINTU_TANPA_KELAS: PintuJenjang[] = [PINTU_037_MAPEL, PINTU_037_EKSPLORASI, PINTU_037_NGOBROL];

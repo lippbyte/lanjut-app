@@ -4,7 +4,7 @@ import * as authApi from '../api/auth';
 import type { DataUbahProfil } from '../api/auth';
 import { useSesi } from '../providers/AuthProvider';
 
-// Jalur Saya — PATCH /pengguna/saya (pengguna.rute.js, dijaga wajibLogin).
+// Data Akun — PATCH /pengguna/saya (pengguna.rute.js, dijaga wajibLogin).
 // Tampilan hanya berubah setelah server menjawab sukses: yang tampil selalu
 // yang benar-benar tersimpan, tidak ada pembaruan optimistis.
 export function useUbahProfil() {

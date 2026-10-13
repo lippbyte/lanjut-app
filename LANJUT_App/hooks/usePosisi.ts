@@ -7,9 +7,9 @@ import { useProgresDaftarPeriksa, useSaringDaftarPeriksa } from './useProgresDaf
 import { useTahapanLinimasa } from './useTahapanLinimasa';
 
 /**
- * Cek Posisi Gue — menggabungkan sinyal yang app sudah punya: prodi impian
+ * Jalur Saya (/cek-posisi, LANJUT_074) — menggabungkan sinyal yang app sudah punya: prodi impian
  * dari akun, centang `mapel-tka`, progres Daftar Periksa (hitungan yang
- * sama dengan Jalur Saya), dan tenggat Linimasa terdekat (tenggat yang sama
+ * sama dengan Data Akun), dan tenggat Linimasa terdekat (tenggat yang sama
  * dengan Beranda). Galat pemuatan tidak menghentikan hasil: sinyal yang
  * gagal dianggap belum ada, jadi user baru tetap dapat tahap awal.
  */

@@ -149,7 +149,7 @@ const PETA = [
         task: 'LANJUT_047',
         awal: '**Kebijakan lengkap',
         nama: 'Kebijakan lengkap — bingkai',
-        di: 'Modal di layar Daftar, dan halaman /kebijakan-privasi (dari Jalur Saya). Isi kebijakan sendiri direview di docs/kebijakan-privasi-DRAF.md.',
+        di: 'Modal di layar Daftar, dan halaman /kebijakan-privasi (dari Data Akun). Isi kebijakan sendiri direview di docs/kebijakan-privasi-DRAF.md.',
         oleh: 'Semua pendaftar dan semua akun.',
       },
       { task: 'LANJUT_036', awal: '**Judul:** Kamu kelas berapa sekarang?', nama: 'Gerbang isi kelas — judul', di: 'Gerbang isi kelas, menggantikan seluruh app sampai kelas disimpan.', oleh: 'Akun lama yang belum punya kelas.' },
@@ -176,7 +176,7 @@ const PETA = [
         task: 'LANJUT_072',
         awal: '**Sapaan:**',
         nama: 'Sapaan Beranda',
-        di: 'Beranda, baris paling atas (di atas kalimat "Tahu harus ngapain hari ini.").',
+        di: 'Beranda, baris paling atas (sejak LANJUT_074 di atas kartu hero tenggat untuk kelas 12, atau di atas baris progres untuk kelas lain).',
         oleh: 'Semua akun.',
       },
       {
@@ -190,7 +190,7 @@ const PETA = [
         task: 'LANJUT_073',
         awal: '**Banner — label sumber',
         nama: 'Banner Beranda — label sumber',
-        di: 'Beranda, kartu banner tepat di bawah sapaan; hanya bila ada satu banner terverifikasi yang berlaku hari ini (WIB).',
+        di: 'Beranda, tiap kartu carousel banner (paling banyak tiga, sejak LANJUT_074), di bawah Info Penting (kelas 12) atau di bawah grid (kelas lain); hanya banner terverifikasi yang berlaku hari ini (WIB).',
         oleh: 'Semua akun.',
         faktual: {
           klaim:
@@ -202,34 +202,56 @@ const PETA = [
     ],
   },
   {
-    kelompok: 'Jalur Saya (halaman akun)',
+    // LANJUT_074: tab bar lima tab dan dua nama halaman.
+    kelompok: 'Navigasi & nama halaman',
+    butir: [
+      {
+        task: 'LANJUT_074',
+        awal: '**Tab tengah — label:**',
+        nama: 'Tab tengah Ngobrol',
+        di: 'Tab bar bawah, tab ketiga dari lima (lingkaran lebih besar berisi huruf "L" sampai aset ikon kelinci tersedia); membuka Ngobrol Bareng LANJUT.',
+        oleh: 'Semua akun (akun tanpa persetujuan orang tua/wali atau tanpa kebijakan diterima melihat layar terkunci).',
+      },
+      {
+        task: 'LANJUT_074',
+        awal: '**Nama fitur `/cek-posisi`:**',
+        nama: 'Nama "Jalur Saya" untuk /cek-posisi',
+        di: 'Judul bilah halaman /cek-posisi dan kartu pintu di Data Akun; label grid Beranda, tombol "Mulai dari Sini", dan pintu Jenjang Saya.',
+        oleh: 'Bilah halaman & kartu pintu di Data Akun: semua akun (kelas 7–11 melihat pengganti kelas 12). Grid, "Mulai dari Sini", pintu Jenjang Saya: kelas 12.',
+      },
+      { task: 'LANJUT_074', awal: '**Nama halaman akun `/akun`:**', nama: 'Nama "Data Akun" untuk halaman akun', di: 'Judul bilah halaman /akun dan judul bagian di kartu akun (sebelumnya "Jalur Saya").', oleh: 'Semua akun.' },
+      { task: 'LANJUT_074', awal: '**Data Akun — judul form ubah:**', nama: 'Judul form ubah', di: 'Data Akun, sesudah menekan "Ubah" atau "Lengkapi jalurmu".', oleh: 'Semua akun.' },
+    ],
+  },
+  {
+    kelompok: 'Data Akun (halaman akun; sebelum LANJUT_074 bernama Jalur Saya)',
     butir: [
       {
         task: 'LANJUT_038',
-        awal: '**Jalur Saya:**',
+        awal: '**Data Akun:**',
         nama: 'Baris Sekolah & medan di form Ubah',
-        di: 'Jalur Saya: baris "Sekolah" di kartu akun (berisi "Belum diisi" bila kosong); medan Jenis sekolah di form Ubah.',
+        di: 'Data Akun: baris "Sekolah" di kartu akun (berisi "Belum diisi" bila kosong); medan Jenis sekolah di form Ubah.',
         oleh: 'Baris: semua akun (kelas 7–9 tampil SMP). Medan di form Ubah: kelas 10–12.',
       },
-      { task: 'LANJUT_035', awal: '**Jalur Saya, kartu Kemajuan:**', nama: 'Kartu Kemajuan bukan kelas 12', di: 'Jalur Saya, kartu Kemajuan (kelas 12 melihat ringkasan kemajuan).', oleh: 'Kelas 7–11 dan akun tanpa kelas.' },
-      { task: 'LANJUT_047', awal: '**Jalur Saya — baris:**', nama: 'Baris persetujuan orang tua/wali', di: 'Jalur Saya, kartu Akun (hanya baca).', oleh: 'Semua akun.' },
+      { task: 'LANJUT_035', awal: '**Data Akun, kartu Kemajuan:**', nama: 'Kartu Kemajuan bukan kelas 12', di: 'Data Akun, kartu Kemajuan (kelas 12 melihat ringkasan kemajuan).', oleh: 'Kelas 7–11 dan akun tanpa kelas.' },
+      { task: 'LANJUT_047', awal: '**Data Akun — baris:**', nama: 'Baris persetujuan orang tua/wali', di: 'Data Akun, kartu Akun (hanya baca).', oleh: 'Semua akun.' },
       {
         task: 'LANJUT_047',
-        awal: '**Jalur Saya — penjelas:**',
+        awal: '**Data Akun — penjelas:**',
         nama: 'Penjelas persetujuan',
-        di: 'Jalur Saya, kartu Akun, di bawah baris persetujuan.',
+        di: 'Data Akun, kartu Akun, di bawah baris persetujuan.',
         oleh: 'Semua akun.',
         faktual: {
           klaim: 'Persetujuan diberikan lewat surat dari sekolah, dibutuhkan untuk fitur AI, dan fitur lain tidak diblokir.',
           sumber: 'Keputusan Khalifa & ahli hukum soal persetujuan untuk fitur dasar (pertanyaan terbuka LANJUT_047).',
         },
       },
-      { task: 'LANJUT_047', awal: '**Jalur Saya — tautan:**', nama: 'Tautan kebijakan privasi', di: 'Jalur Saya, kartu Akun.', oleh: 'Semua akun.' },
+      { task: 'LANJUT_047', awal: '**Data Akun — tautan:**', nama: 'Tautan kebijakan privasi', di: 'Data Akun, kartu Akun.', oleh: 'Semua akun.' },
       {
         task: 'LANJUT_048',
-        awal: '**Jalur Saya — baris:**',
+        awal: '**Data Akun — baris:**',
         nama: 'Baris kebijakan privasi & tombol',
-        di: 'Jalur Saya, kartu Akun, di atas baris persetujuan orang tua/wali; tombol hanya selama belum diterima.',
+        di: 'Data Akun, kartu Akun, di atas baris persetujuan orang tua/wali; tombol hanya selama belum diterima.',
         oleh: 'Semua akun.',
       },
     ],
@@ -330,6 +352,20 @@ const PETA = [
         oleh: 'Akun yang membuka panel saat tidak tersambung.',
         faktual: { klaim: '112 sebagai nomor darurat.', sumber: 'Nomor darurat nasional (terverifikasi di kartu-bantuan.json).' },
       },
+      {
+        task: 'LANJUT_074',
+        awal: '**Ngobrol — tombol mikrofon',
+        nama: 'Tombol mikrofon (label pembaca layar)',
+        di: 'Ngobrol, di samping kotak pesan; hanya di peramban yang punya pengenal suara (tidak ada di Android/iOS).',
+        oleh: 'Akun dengan fitur AI aktif; labelnya dibacakan pembaca layar.',
+      },
+      {
+        task: 'LANJUT_074',
+        awal: '**Ngobrol — petunjuk di kotak pesan saat mendengarkan',
+        nama: 'Petunjuk saat mendengarkan',
+        di: 'Ngobrol, teks samar di kotak pesan yang masih kosong, selama mikrofon hidup.',
+        oleh: 'Akun dengan fitur AI aktif, di peramban yang punya pengenal suara.',
+      },
     ],
   },
   {
@@ -346,7 +382,7 @@ const PETA = [
       { task: 'LANJUT_037', awal: 'Ngobrol Bareng LANJUT', nama: 'Pintu Ngobrol Bareng LANJUT (tanpa kelas)', di: 'Jenjang Saya, seksi pintu.', oleh: 'Akun tanpa kelas.' },
       { task: 'LANJUT_037', awal: 'Eksplorasi Tujuan', nama: 'Pintu Eksplorasi Tujuan (tanpa kelas)', di: 'Jenjang Saya, seksi pintu.', oleh: 'Akun tanpa kelas.' },
       { task: 'LANJUT_037', awal: 'Pilih Mapel', nama: 'Pintu Pilih Mapel (tanpa kelas)', di: 'Jenjang Saya, seksi pintu.', oleh: 'Akun tanpa kelas.' },
-      { task: 'LANJUT_037', awal: 'Cek Posisi Gue', nama: 'Pintu Cek Posisi Gue', di: 'Jenjang Saya, seksi pintu.', oleh: 'Kelas 12.' },
+      { task: 'LANJUT_037', awal: 'Jalur Saya', nama: 'Pintu Jalur Saya (/cek-posisi; nama sejak LANJUT_074)', di: 'Jenjang Saya, seksi pintu.', oleh: 'Kelas 12.' },
       { task: 'LANJUT_037', awal: 'Daftar Periksa', nama: 'Pintu Daftar Periksa', di: 'Jenjang Saya, seksi pintu.', oleh: 'Kelas 12.' },
       { task: 'LANJUT_037', awal: '**Seksi SMK', nama: 'Judul seksi SMK', di: 'Jenjang Saya, seksi SMK.', oleh: 'Kelas 10–12 dengan jenis sekolah SMK.' },
       {
@@ -406,13 +442,13 @@ const PETA = [
     // (components/screens/KhususKelas12.tsx) hanya dirender di CekPosisiScreen
     // dan DaftarPeriksaScreen. Beranda tidak memakainya: sejak LANJUT_064 bagian
     // tenggat hanya dirender untuk kelas 12, untuk kelas lain tidak ada apa pun.
-    kelompok: 'Bagian khusus kelas 12 (Cek Posisi, Daftar Periksa) — pengganti untuk kelas lain',
+    kelompok: 'Bagian khusus kelas 12 (Jalur Saya /cek-posisi, Daftar Periksa) — pengganti untuk kelas lain',
     butir: [
       {
         task: 'LANJUT_035',
         awal: '**Kelas 7–11 — judul:**',
         nama: 'Pengganti kelas 7–11 — judul',
-        di: 'Cek Posisi Gue (kelas 7–11) dan Daftar Periksa (kelas 7–9 saja; kelas 10–11 sejak LANJUT_069 melihat kalimat netral), menggantikan isinya. Tidak tampil di Beranda.',
+        di: 'Jalur Saya /cek-posisi (kelas 7–11) dan Daftar Periksa (kelas 7–9 saja; kelas 10–11 sejak LANJUT_069 melihat kalimat netral), menggantikan isinya. Tidak tampil di Beranda.',
         oleh: 'Kelas 7–11 (di Daftar Periksa hanya kelas 7–9).',
         faktual: {
           klaim: 'Bersama isi di bawahnya: jadwal dan persiapan SNBP, SNBT, dan TKA hanya untuk kelas 12.',
@@ -423,15 +459,15 @@ const PETA = [
         task: 'LANJUT_035',
         awal: '**Kelas 7–11 — isi:**',
         nama: 'Pengganti kelas 7–11 — isi',
-        di: 'Sama dengan butir judul di atasnya: Cek Posisi Gue (kelas 7–11) dan Daftar Periksa (kelas 7–9).',
+        di: 'Sama dengan butir judul di atasnya: Jalur Saya /cek-posisi (kelas 7–11) dan Daftar Periksa (kelas 7–9).',
         oleh: 'Kelas 7–11 (di Daftar Periksa hanya kelas 7–9).',
         faktual: {
           klaim: 'Isi bagian ini adalah jadwal dan persiapan SNBP, SNBT, dan TKA (lihat butir judul di atasnya).',
           sumber: 'Sama dengan butir judul di atasnya.',
         },
       },
-      { task: 'LANJUT_035', awal: '**Kelas 7–11 — tombol:**', nama: 'Pengganti kelas 7–11 — tombol', di: 'Sama dengan butir judul di atasnya: Cek Posisi Gue (kelas 7–11) dan Daftar Periksa (kelas 7–9).', oleh: 'Kelas 7–11 (di Daftar Periksa hanya kelas 7–9).' },
-      { task: 'LANJUT_035', awal: '**Kelas kosong — judul:**', nama: 'Pengganti tanpa kelas — judul', di: 'Cek Posisi Gue dan Daftar Periksa (jaring pengaman; biasanya tertahan di gerbang isi kelas dulu). Tidak tampil di Beranda.', oleh: 'Akun tanpa kelas.' },
+      { task: 'LANJUT_035', awal: '**Kelas 7–11 — tombol:**', nama: 'Pengganti kelas 7–11 — tombol', di: 'Sama dengan butir judul di atasnya: Jalur Saya /cek-posisi (kelas 7–11) dan Daftar Periksa (kelas 7–9).', oleh: 'Kelas 7–11 (di Daftar Periksa hanya kelas 7–9).' },
+      { task: 'LANJUT_035', awal: '**Kelas kosong — judul:**', nama: 'Pengganti tanpa kelas — judul', di: 'Jalur Saya /cek-posisi dan Daftar Periksa (jaring pengaman; biasanya tertahan di gerbang isi kelas dulu). Tidak tampil di Beranda.', oleh: 'Akun tanpa kelas.' },
       { task: 'LANJUT_035', awal: '**Kelas kosong — isi:**', nama: 'Pengganti tanpa kelas — isi', di: 'Sama dengan butir di atasnya.', oleh: 'Akun tanpa kelas.' },
       { task: 'LANJUT_035', awal: '**Kelas kosong — tombol:**', nama: 'Pengganti tanpa kelas — tombol', di: 'Sama dengan butir di atasnya.', oleh: 'Akun tanpa kelas.' },
     ],

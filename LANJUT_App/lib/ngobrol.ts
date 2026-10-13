@@ -22,6 +22,9 @@ export const TEKS_NGOBROL = {
   dariModul: 'Dari modulmu',
   dariWeb: 'Dari web',
   webHabis: 'Kuota pencarian web hari ini sudah habis, jadi jawaban ini tanpa pencarian web.',
+  // Salinan teks LANJUT_074 (tombol mikrofon) — DRAF belum disetujui Khalifa.
+  ucapkanPesan: 'Ucapkan pesan',
+  mendengarkan: 'Mendengarkan…',
 };
 
 // Batas di app = batas server (ngobrol.skema.js).

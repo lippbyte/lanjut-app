@@ -13,7 +13,7 @@ import { PesanGalat } from './auth/AuthUI';
 /**
  * Preferensi gaya belajar (LANJUT_032). Disimpan ke akun lewat
  * PATCH /pengguna/saya (kolom pengguna.gaya_belajar, migrasi 007), dan bisa
- * diubah lagi dari sini atau dari form Jalur Saya.
+ * diubah lagi dari sini atau dari form Data Akun.
  */
 export function GayaBelajarScreen() {
   const { pengguna } = useSesi();

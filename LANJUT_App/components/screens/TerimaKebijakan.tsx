@@ -140,7 +140,7 @@ export function PromptKebijakan() {
   );
 }
 
-/** Halaman /terima-kebijakan — dari Jalur Saya dan Ngobrol (LANJUT_048). */
+/** Halaman /terima-kebijakan — dari Data Akun dan Ngobrol (LANJUT_048). */
 export function TerimaKebijakanScreen() {
   const router = useRouter();
   const { data, isPending, isError } = usePersetujuan();

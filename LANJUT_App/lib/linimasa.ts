@@ -37,7 +37,7 @@ const SELISIH_WIB_MS = 7 * 60 * 60 * 1000;
  * Tanggal hari ini di Asia/Jakarta, sebagai tengah malam UTC — skala yang sama
  * dengan `uraiTanggal` (LANJUT_072b). Tidak bergantung pada zona waktu perangkat:
  * hanya memakai getter UTC, tanpa Intl. Satu-satunya sumber "hari ini" untuk
- * kartu tenggat, Info Penting, dan Cek Posisi Gue (lewat turunkanLinimasa).
+ * kartu tenggat, Info Penting, dan Jalur Saya /cek-posisi (lewat turunkanLinimasa).
  */
 export function hariIniWib(sekarangMs: number = Date.now()): number {
   const wib = new Date(sekarangMs + SELISIH_WIB_MS);

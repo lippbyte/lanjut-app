@@ -7,7 +7,7 @@ export const KELAS_OPSI = ['7', '8', '9', '10', '11', '12'] as const;
 export type Kelas = (typeof KELAS_OPSI)[number];
 
 /**
- * Linimasa, Daftar Periksa, dan Cek Posisi berisi SNBP/SNBT/TKA — murni untuk
+ * Linimasa, Daftar Periksa, dan Jalur Saya (/cek-posisi) berisi SNBP/SNBT/TKA — murni untuk
  * kelas 12 (keputusan Khalifa, 1 Okt 2026). Penentunya kelas AKUN, bukan
  * pilihan kelas di perangkat. Kelas kosong (akun lama) dianggap BUKAN kelas
  * 12 sampai siswa mengisinya — jangan menebak 12.

@@ -96,7 +96,9 @@ describe('LANJUT_069 §A: set kartu per kelas', () => {
     }
   });
 
-  test('Kelas 12 dan akun tanpa kelas tidak berubah (teks LANJUT_037)', () => {
+  // LANJUT_074 hanya mengganti dua nama: pintu /cek-posisi → "Jalur Saya", dan
+  // halaman akun di pengantar tanpa kelas → "Data Akun". Teks lain tetap LANJUT_037.
+  test('Kelas 12 dan akun tanpa kelas tidak berubah (teks LANJUT_037, nama LANJUT_074)', () => {
     const k12 = isiJenjangSaya('12');
     assert.equal(k12.pengantar, 'Kelas 12: yang perlu kamu siapkan sebelum daftar kuliah.');
     assert.equal(k12.pembuka, null);
@@ -104,14 +106,14 @@ describe('LANJUT_069 §A: set kartu per kelas', () => {
     assert.deepEqual(
       k12.pintu.map((p) => [p.judul, p.keterangan, p.href]),
       [
-        ['Cek Posisi Gue', 'Lihat kamu lagi di tahap mana dan langkah berikutnya.', '/cek-posisi'],
+        ['Jalur Saya', 'Lihat kamu lagi di tahap mana dan langkah berikutnya.', '/cek-posisi'],
         ['Daftar Periksa', 'Satu per satu, tidak perlu sekaligus.', '/daftar-periksa'],
       ]
     );
 
     const tanpa = isiJenjangSaya(null);
     assert.equal(tanpa.kelompok, null);
-    assert.equal(tanpa.pengantar, 'Isi kelasmu di Jalur Saya supaya isi halaman ini pas buat kamu.');
+    assert.equal(tanpa.pengantar, 'Isi kelasmu di Data Akun supaya isi halaman ini pas buat kamu.');
     assert.equal(tanpa.pembuka, null);
     assert.equal(tanpa.catatan, null);
     assert.deepEqual(
