@@ -165,6 +165,15 @@ Dipakai di: beranda, notifikasi, layar kosong.
     - Tautan Sumber: `Buka sumber resmi ↗` (tautan langsung ke `url_sumber`)
   - **Aturan keterlihatan:** Hanya kartu dengan `status_verifikasi = terverifikasi` yang tampil. Bila tidak ada data terverifikasi yang relevan, seksi ini hilang sama sekali (tanpa kartu kosong atau teks "belum ada info").
 
+**LANJUT_App (LANJUT_072) — Sapaan Beranda. DRAF, belum disetujui Khalifa.** Tampil paling
+atas Beranda (`lib/beranda.ts` `teksSapaan`); nama panjang dipotong di baris kedua dengan "…".
+Urutan Beranda sejak LANJUT_072 (keputusan Khalifa, susunan "berkelompok", `urutanBeranda`):
+sapaan, kalimat K1, baris progres, grid menu, kartu "Mulai dari Sini" (akun baru), lalu
+kartu tenggat dan Info Penting (keduanya hanya kelas 12). Hanya urutan yang berubah; bunyi
+teks lain tetap.
+
+- **Sapaan:** Halo, [nama tampilan] (bila nama tampilan kosong: Halo, [nama pengguna]; bila keduanya kosong: Halo, tanpa koma)
+
 ### 4.2 Khusus SMK → Jenjang Saya
 
 **Judul:** Khusus SMK

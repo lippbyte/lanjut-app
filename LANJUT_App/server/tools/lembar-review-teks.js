@@ -169,6 +169,18 @@ const PETA = [
     ],
   },
   {
+    kelompok: 'Beranda',
+    butir: [
+      {
+        task: 'LANJUT_072',
+        awal: '**Sapaan:**',
+        nama: 'Sapaan Beranda',
+        di: 'Beranda, baris paling atas (di atas kalimat "Tahu harus ngapain hari ini.").',
+        oleh: 'Semua akun.',
+      },
+    ],
+  },
+  {
     kelompok: 'Jalur Saya (halaman akun)',
     butir: [
       {

@@ -3,7 +3,6 @@ import { Article, H1 } from '@expo/html-elements';
 import { useRouter } from 'expo-router';
 import { Linking, Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 
-import type { TahapanLinimasa } from '../../api/types';
 import { useTahapanLinimasa } from '../../hooks/useTahapanLinimasa';
 import { useButirPribadi } from '../../hooks/useButirPribadi';
 import { useKemajuan } from '../../hooks/useKemajuan';
@@ -15,8 +14,11 @@ import {
   hitungJumlahCentang,
   hitungProgresBeranda,
   infoMulaiDariSini,
+  teksSapaan,
+  urutanBeranda,
+  type BagianBeranda,
 } from '../../lib/beranda';
-import { kelompokJenjang, type Kelas } from '../../lib/jenjang';
+import type { Kelas } from '../../lib/jenjang';
 import {
   formatRentang,
   formatTanggal,
@@ -43,17 +45,17 @@ import {
 const LAMAN_SNPMB = 'https://snpmb.bppp.kemdikbud.go.id/';
 
 /**
- * Tab Beranda — padanan MVP-PWA/beranda.html: kalimat K1, kartu tenggat
- * terdekat (gradasi untuk kelas 12), kartu "Info Penting" dari data terverifikasi (LANJUT_066),
- * kartu "Mulai dari Sini" bila baru, baris progres,
- * dan grid menu launcher 4 kolom (3 kolom < 360 px) per jenjang (LANJUT_065).
+ * Tab Beranda — padanan MVP-PWA/beranda.html. Dari atas (LANJUT_072,
+ * lib/beranda.ts `urutanBeranda`): sapaan, kalimat K1, baris progres, grid menu
+ * launcher per jenjang (LANJUT_065), kartu "Mulai dari Sini" bila baru, lalu —
+ * hanya kelas 12 — kartu tenggat terdekat dan "Info Penting" dari data
+ * terverifikasi (LANJUT_066).
  */
 export function LinimasaScreen() {
   const router = useRouter();
   const { pengguna } = useSesi();
   const { width } = useWindowDimensions();
   const kelas = pengguna?.kelas ?? null;
-  const kelompok = kelompokJenjang(kelas);
   const kartu = daftarKartuBeranda(kelas);
 
   // Ambil data progres & aktivitas pengguna dari server
@@ -86,32 +88,29 @@ export function LinimasaScreen() {
   const memuatData =
     kemajuanQuery.isPending || butirPribadiQuery.isPending || latihanQuery.isPending || kartuQuery.isPending;
 
-  return (
-    <View style={gaya.layarIsi}>
-      <H1 style={s.k1}>Tahu harus ngapain hari ini.</H1>
+  // LANJUT_072: urutan tampil sepenuhnya ditentukan urutanBeranda (lib/beranda.ts) —
+  // sapaan, judul, progres, grid, "Mulai dari Sini", lalu tenggat & Info Penting (kelas 12).
+  const urutan = urutanBeranda({ kelas, tampilMulaiDariSini: !memuatData && !punyaKemajuan });
 
-      {/* LANJUT_035, LANJUT_064, LANJUT_066: tenggat & Info Penting terverifikasi HANYA untuk kelas 12.
-          Bila tidak ada data terverifikasi yang relevan, kartu tidak tampil (tidak merender kartu kosong). */}
-      {kelompok === 'kelas12' ? <Tenggat kelas={kelas} /> : null}
-
-      {/* LANJUT_065 §B: Kartu "Mulai dari Sini" untuk akun baru / belum punya kemajuan */}
-      {!memuatData && !punyaKemajuan ? (
-        <KartuMulaiDariSini kelas={kelas} onPress={(href) => router.push(href as any)} />
-      ) : null}
-
-      {/* LANJUT_065 §C: Satu baris progres di atas grid */}
+  const bagian: Record<BagianBeranda, React.ReactNode> = {
+    // Nama panjang (nama_tampilan maks. 60 karakter) dipotong di baris kedua dengan "…".
+    sapaan: (
+      <Text style={s.sapaan} numberOfLines={2}>
+        {teksSapaan(pengguna)}
+      </Text>
+    ),
+    judul: <H1 style={s.k1}>Tahu harus ngapain hari ini.</H1>,
+    // LANJUT_065 §C: satu baris progres, tepat di atas grid.
+    progres: (
       <View style={s.barisProgres}>
         <View style={s.progresTeksBaris}>
           <Text style={s.progresLabel}>{`${progres.selesai} dari ${progres.total} langkah selesai`}</Text>
         </View>
-        <BilahProgres
-          selesai={progres.selesai}
-          total={progres.total}
-          label="Progres langkah awal"
-        />
+        <BilahProgres selesai={progres.selesai} total={progres.total} label="Progres langkah awal" />
       </View>
-
-      {/* LANJUT_065 §A: Grid menu launcher 4 kolom (3 kolom bila lebar layar < 360 px) */}
+    ),
+    // LANJUT_065 §A: grid menu launcher 4 kolom (3 kolom bila lebar layar < 360 px).
+    grid: (
       <View style={s.gridWadah}>
         {kartu.map((k) => {
           const label = k.labelPendek ?? k.judul;
@@ -137,6 +136,19 @@ export function LinimasaScreen() {
           );
         })}
       </View>
+    ),
+    // LANJUT_065 §B: kartu "Mulai dari Sini" untuk akun baru / belum punya kemajuan.
+    mulai_dari_sini: <KartuMulaiDariSini kelas={kelas} onPress={(href) => router.push(href as any)} />,
+    // LANJUT_035, LANJUT_064, LANJUT_066: tenggat & Info Penting terverifikasi HANYA untuk kelas 12.
+    tenggat: <TenggatTerdekat />,
+    info_penting: <InfoPenting kelas={kelas} />,
+  };
+
+  return (
+    <View style={gaya.layarIsi}>
+      {urutan.map((b) => (
+        <React.Fragment key={b}>{bagian[b]}</React.Fragment>
+      ))}
     </View>
   );
 }
@@ -159,48 +171,46 @@ function KartuMulaiDariSini({
   );
 }
 
-function Tenggat({ kelas }: { kelas: Kelas | null | undefined }) {
+// LANJUT_072: tenggat dan Info Penting dirender terpisah (urutanBeranda menaruhnya
+// berdampingan) dari satu query yang sama. Memuat/galat tampil sekali saja, di slot
+// tenggat yang lebih dulu. LANJUT_066: tanpa data terverifikasi yang relevan, tidak
+// ada kartu sama sekali (bukan kartu kosong atau kalimat "belum ada info").
+function TenggatTerdekat() {
   const { data, isPending, isError } = useTahapanLinimasa();
-  return isPending ? <Memuat /> : isError ? <KeadaanGalat /> : <Isi data={data} kelas={kelas} />;
-}
+  if (isPending) return <Memuat />;
+  if (isError) return <KeadaanGalat />;
 
-function Isi({ data, kelas }: { data: TahapanLinimasa[] | undefined; kelas: Kelas | null | undefined }) {
-  const hasil = turunkanLinimasa(data ?? []);
-  const infoPenting = infoPentingLinimasa(data ?? [], kelas);
-
-  // LANJUT_066: Bila tidak ada data terverifikasi yang relevan, kartu tidak tampil sama sekali
-  // (jangan menampilkan kartu kosong atau kalimat "belum ada info").
-  if (!hasil.butir.length) {
-    return null;
-  }
-
-  const { terdekat, sisaHari, momen } = hasil;
-  const adaTenggat = terdekat && momen && sisaHari !== null && sisaHari >= 0;
+  // Angka hari biasa, bukan hitungan detik (§4.1). Belum dimulai → menuju
+  // tanggal mulai; sudah berjalan → menuju tutup.
+  const { terdekat, sisaHari, momen } = turunkanLinimasa(data ?? []);
+  if (!terdekat || !momen || sisaHari === null || sisaHari < 0) return null;
 
   return (
-    <>
-      {/* Tenggat terdekat: angka hari biasa, bukan hitungan detik (§4.1).
-          Belum dimulai → menuju tanggal mulai; sudah berjalan → menuju tutup. */}
-      {adaTenggat ? (
-        <Kartu varian="brand">
-          <Text style={s.tenggatAngka}>{sisaHari} hari</Text>
-          <Text style={s.tenggatTeks}>
-            menuju {terdekat.judul} {momen === 'mulai' ? 'dimulai' : 'ditutup'},{' '}
-            {formatTanggal(tanggalMomen(terdekat, momen))}.
-          </Text>
-        </Kartu>
-      ) : null}
+    <Kartu varian="brand">
+      <Text style={s.tenggatAngka}>{sisaHari} hari</Text>
+      <Text style={s.tenggatTeks}>
+        menuju {terdekat.judul} {momen === 'mulai' ? 'dimulai' : 'ditutup'},{' '}
+        {formatTanggal(tanggalMomen(terdekat, momen))}.
+      </Text>
+    </Kartu>
+  );
+}
 
-      {/* LANJUT_066 §A: Paling banyak tiga kartu "Info Penting" dari data terverifikasi */}
-      {infoPenting.length > 0 ? (
-        <View style={s.seksi}>
-          <SeksiJudul>Info Penting</SeksiJudul>
-          {infoPenting.map((b) => (
-            <KartuInfoPenting key={b.id} butir={b} />
-          ))}
-        </View>
-      ) : null}
-    </>
+// LANJUT_066 §A: paling banyak tiga kartu "Info Penting" dari data terverifikasi.
+function InfoPenting({ kelas }: { kelas: Kelas | null | undefined }) {
+  const { data, isPending, isError } = useTahapanLinimasa();
+  if (isPending || isError) return null;
+
+  const infoPenting = infoPentingLinimasa(data ?? [], kelas);
+  if (!infoPenting.length) return null;
+
+  return (
+    <View style={s.seksi}>
+      <SeksiJudul>Info Penting</SeksiJudul>
+      {infoPenting.map((b) => (
+        <KartuInfoPenting key={b.id} butir={b} />
+      ))}
+    </View>
   );
 }
 
@@ -230,6 +240,7 @@ function KartuInfoPenting({ butir }: { butir: TahapanTurunan }) {
 }
 
 const s = StyleSheet.create({
+  sapaan: { ...teks.title, fontFamily: font.semibold, color: color.textBody },
   k1: { ...teks.title, color: color.textBody, marginVertical: 0 },
   // Teks gelap di kartu gradasi biru muda (LANJUT_027): putih hanya 1,3–2,0:1 di
   // blue200→blue300. textBody 8,7:1, textMuted 4,9:1 di ujung terburuk gradasi.

@@ -210,6 +210,35 @@ export function infoMulaiDariSini(kelas: Kelas | null | undefined): InfoMulaiDar
   };
 }
 
+/**
+ * Sapaan paling atas Beranda (LANJUT_072, TEKS DRAF — salinan-teks-lanjut.md
+ * §4.1): "Halo, {nama_tampilan}", jatuh ke nama_pengguna bila nama tampilan
+ * kosong, dan "Halo" saja (tanpa koma) bila keduanya kosong.
+ */
+export function teksSapaan(
+  pengguna: { nama_tampilan?: string | null; nama_pengguna?: string | null } | null | undefined
+): string {
+  const nama = pengguna?.nama_tampilan?.trim() || pengguna?.nama_pengguna?.trim() || '';
+  return nama ? `Halo, ${nama}` : 'Halo';
+}
+
+export type BagianBeranda = 'sapaan' | 'judul' | 'progres' | 'grid' | 'mulai_dari_sini' | 'tenggat' | 'info_penting';
+
+/**
+ * Urutan bagian Beranda dari atas ke bawah (LANJUT_072; keputusan Khalifa:
+ * urutan "berkelompok"). Empat bagian yang disebut task berurutan sapaan →
+ * grid → "Mulai dari Sini" → Info Penting; bagian lain ikut bagian terdekatnya:
+ * judul K1 di bawah sapaan, baris progres tepat di atas grid (LANJUT_065), dan
+ * kartu tenggat menempel di atas Info Penting (keduanya hanya kelas 12, LANJUT_066).
+ * Setiap bagian paling banyak muncul sekali.
+ */
+export function urutanBeranda(data: { kelas?: Kelas | null; tampilMulaiDariSini: boolean }): BagianBeranda[] {
+  const urutan: BagianBeranda[] = ['sapaan', 'judul', 'progres', 'grid'];
+  if (data.tampilMulaiDariSini) urutan.push('mulai_dari_sini');
+  if (kelompokJenjang(data.kelas) === 'kelas12') urutan.push('tenggat', 'info_penting');
+  return urutan;
+}
+
 type BarisCentang = { selesai_pada: string | null };
 
 /**
