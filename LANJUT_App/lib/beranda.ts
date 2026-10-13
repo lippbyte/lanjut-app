@@ -240,30 +240,26 @@ export type HasilProgresBeranda = {
 };
 
 /**
- * Hitungan progres sederhana Beranda (LANJUT_065 §C).
+ * Hitungan progres sederhana Beranda (LANJUT_065 §C, diperbaiki LANJUT_067 §A).
  *
- * Dihitung dari data yang sudah ada di server:
- * 1. Isi kelas: pengguna.kelas terisi di akun
- * 2. Isi prodi impian: pengguna.prodi_impian terisi di akun
- * 3. Centang Daftar Periksa: minimal 1 butir terselesaikan di /kemajuan
- * 4. Coba Latihan: minimal 1 sesi latihan di /sesi-latihan
+ * Langkah "isi_kelas" dihapus pada LANJUT_067 karena onboarding mewajibkan
+ * pengisian kelas, sehingga setiap pengguna baru tampak "1 dari 4".
+ *
+ * Dihitung dari 3 langkah yang benar-benar bisa diubah oleh pengguna:
+ * 1. Isi prodi impian: pengguna.prodi_impian terisi di akun
+ * 2. Centang Daftar Periksa: minimal 1 butir terselesaikan di /kemajuan
+ * 3. Coba Latihan: minimal 1 sesi latihan di /sesi-latihan
  *
  * Catatan penting (LANJUT_065 §C):
  * Langkah "buka Arsip" tidak dihitung karena server tidak memiliki pencatatan
  * pembukaan layar/navigasi (tidak ada tabel pelacakan telemetri buka halaman).
  */
 export function hitungProgresBeranda(data: {
-  kelas?: string | null;
   prodiImpian?: string | null;
   jumlahCentang?: number;
   jumlahLatihan?: number;
 }): HasilProgresBeranda {
   const langkah: LangkahProgres[] = [
-    {
-      id: 'isi_kelas',
-      label: 'Isi kelas',
-      selesai: Boolean(data.kelas && data.kelas.trim() !== ''),
-    },
     {
       id: 'isi_prodi_impian',
       label: 'Isi prodi impian',

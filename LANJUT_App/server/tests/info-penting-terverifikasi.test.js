@@ -63,6 +63,16 @@ describe('LANJUT_066 §A & §B: Logika Kartu Info Penting & Penyaringan', () => 
       url_sumber: 'https://snpmb.bppp.kemdikbud.go.id/',
     },
     {
+      id: 'tahap-belum-berisi-tanggal',
+      judul: 'Tahapan Belum Diverifikasi Tapi Ada Tanggal',
+      tanggal_mulai: '2026-08-05',
+      tanggal_selesai: '2026-08-18',
+      jalur: 'TKA',
+      status_verifikasi: 'belum_diverifikasi',
+      diperiksa_pada: '2026-08-01',
+      url_sumber: 'https://snpmb.bppp.kemdikbud.go.id/',
+    },
+    {
       id: 'tahap-3',
       judul: 'Tahapan Ketiga Terverifikasi',
       tanggal_mulai: '2026-09-01',

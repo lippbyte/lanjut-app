@@ -70,7 +70,6 @@ export function LinimasaScreen() {
   });
 
   const progres = hitungProgresBeranda({
-    kelas,
     prodiImpian: pengguna?.prodi_impian,
     jumlahCentang,
     jumlahLatihan,

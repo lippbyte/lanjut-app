@@ -187,15 +187,11 @@ function apakahPunyaKemajuan(data = {}) {
 }
 
 /**
- * Hitungan progres sederhana Beranda (LANJUT_065 §C).
+ * Hitungan progres sederhana Beranda (LANJUT_065 §C, diperbaiki LANJUT_067 §A).
+ * Langkah isi_kelas dihapus karena onboarding mewajibkan kelas, menyisakan 3 langkah.
  */
 function hitungProgresBeranda(data = {}) {
   const langkah = [
-    {
-      id: 'isi_kelas',
-      label: 'Isi kelas',
-      selesai: Boolean(data.kelas && String(data.kelas).trim() !== ''),
-    },
     {
       id: 'isi_prodi_impian',
       label: 'Isi prodi impian',

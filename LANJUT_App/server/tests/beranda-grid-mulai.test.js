@@ -158,65 +158,53 @@ describe('LANJUT_065 §B: Kartu "Mulai dari Sini"', () => {
   });
 });
 
-describe('LANJUT_065 §C: Progres Sederhana Beranda', () => {
-  test('Definisi langkah dan hitungan progres dari data server', () => {
-    // 0 dari 4: belum isi kelas & prodi, belum ada centang/latihan
+describe('LANJUT_065 §C & LANJUT_067 §A: Progres Sederhana Beranda', () => {
+  test('Definisi langkah dan hitungan progres dari data server (3 langkah)', () => {
+    // 0 dari 3: belum isi prodi impian, belum ada centang/latihan
     const p0 = hitungProgresBeranda({
-      kelas: null,
       prodiImpian: null,
       jumlahCentang: 0,
       jumlahLatihan: 0,
     });
     assert.equal(p0.selesai, 0);
-    assert.equal(p0.total, 4);
+    assert.equal(p0.total, 3);
 
-    // 1 dari 4: hanya isi kelas (akun baru mendaftar)
+    // 1 dari 3: isi prodi impian
     const p1 = hitungProgresBeranda({
-      kelas: '10',
-      prodiImpian: null,
+      prodiImpian: 'teknik-informatika',
       jumlahCentang: 0,
       jumlahLatihan: 0,
     });
     assert.equal(p1.selesai, 1);
-    assert.equal(p1.total, 4);
-    assert.equal(p1.langkah[0].id, 'isi_kelas');
+    assert.equal(p1.total, 3);
+    assert.equal(p1.langkah[0].id, 'isi_prodi_impian');
     assert.equal(p1.langkah[0].selesai, true);
 
-    // 2 dari 4: isi kelas + prodi impian
+    // 2 dari 3: isi prodi impian + 1 centang
     const p2 = hitungProgresBeranda({
-      kelas: '12',
-      prodiImpian: 'teknik-informatika',
-      jumlahCentang: 0,
-      jumlahLatihan: 0,
-    });
-    assert.equal(p2.selesai, 2);
-    assert.equal(p2.total, 4);
-
-    // 3 dari 4: isi kelas + prodi impian + 1 centang
-    const p3 = hitungProgresBeranda({
-      kelas: '12',
       prodiImpian: 'teknik-informatika',
       jumlahCentang: 2,
       jumlahLatihan: 0,
     });
-    assert.equal(p3.selesai, 3);
-    assert.equal(p3.total, 4);
+    assert.equal(p2.selesai, 2);
+    assert.equal(p2.total, 3);
 
-    // 4 dari 4: semua langkah selesai
-    const p4 = hitungProgresBeranda({
-      kelas: '12',
+    // 3 dari 3: semua langkah selesai (prodi + centang + latihan)
+    const p3 = hitungProgresBeranda({
       prodiImpian: 'teknik-informatika',
       jumlahCentang: 3,
       jumlahLatihan: 1,
     });
-    assert.equal(p4.selesai, 4);
-    assert.equal(p4.total, 4);
+    assert.equal(p3.selesai, 3);
+    assert.equal(p3.total, 3);
 
-    // Verifikasi catatan LANJUT_065 §C:
+    // Verifikasi catatan LANJUT_065 §C & LANJUT_067 §A:
     // Langkah "buka Arsip" tidak dihitung karena server tidak memiliki
     // pencatatan telemetri pembukaan layar.
-    const ids = p4.langkah.map((l) => l.id);
+    const ids = p3.langkah.map((l) => l.id);
     assert.ok(!ids.includes('buka_arsip'), 'buka_arsip tidak boleh ada karena datanya belum ada di server');
+    // Langkah "isi_kelas" dihapus pada LANJUT_067
+    assert.ok(!ids.includes('isi_kelas'), 'isi_kelas harus dihapus dari daftar langkah');
   });
 });
 
@@ -240,7 +228,7 @@ describe('LANJUT_065 §D: Tes Lintas Akun (Cross-Account Isolation)', () => {
     assert.equal(latihanA, 0);
     assert.equal(totalKartuA, 0);
 
-    // Akun A adalah akun baru: Mulai dari Sini tampil, progres = 1 dari 4 (isi kelas)
+    // Akun A adalah akun baru: Mulai dari Sini tampil, progres = 0 dari 3 (LANJUT_067)
     assert.equal(apakahPunyaKemajuan({ jumlahCentang: centangA, jumlahLatihan: latihanA, jumlahKartu: totalKartuA }), false);
     const progresAwalA = hitungProgresBeranda({
       kelas: profilA.kelas,
@@ -248,8 +236,8 @@ describe('LANJUT_065 §D: Tes Lintas Akun (Cross-Account Isolation)', () => {
       jumlahCentang: centangA,
       jumlahLatihan: latihanA,
     });
-    assert.equal(progresAwalA.selesai, 1);
-    assert.equal(progresAwalA.total, 4);
+    assert.equal(progresAwalA.selesai, 0);
+    assert.equal(progresAwalA.total, 3);
 
     // 2. Daftarkan Akun B (kelas 12 SMA)
     const { json: daftarB } = await daftarPenggunaBaru(baseUrl, { kelas: '12', jenis_sekolah: 'SMA' });
@@ -295,8 +283,8 @@ describe('LANJUT_065 §D: Tes Lintas Akun (Cross-Account Isolation)', () => {
       jumlahCentang: centangB,
       jumlahLatihan: latihanB,
     });
-    assert.equal(progresB.selesai, 4);
-    assert.equal(progresB.total, 4);
+    assert.equal(progresB.selesai, 3);
+    assert.equal(progresB.total, 3);
 
     // 4. Verifikasi ISOLASI LINTAS AKUN:
     // Data Akun A diperiksa ulang dari server — harus sama sekali tidak berubah
@@ -311,7 +299,7 @@ describe('LANJUT_065 §D: Tes Lintas Akun (Cross-Account Isolation)', () => {
     assert.equal(latihanASetelah, 0, 'Sesi latihan Akun B tidak boleh bocor ke Akun A');
     assert.equal(profilASetelah.prodi_impian, null, 'Prodi impian Akun B tidak boleh bocor ke Akun A');
 
-    // Akun A TETAP dianggap belum punya kemajuan dan progres TETAP 1 dari 4
+    // Akun A TETAP dianggap belum punya kemajuan dan progres TETAP 0 dari 3
     assert.equal(
       apakahPunyaKemajuan({ jumlahCentang: centangASetelah, jumlahLatihan: latihanASetelah }),
       false,
@@ -324,7 +312,7 @@ describe('LANJUT_065 §D: Tes Lintas Akun (Cross-Account Isolation)', () => {
       jumlahCentang: centangASetelah,
       jumlahLatihan: latihanASetelah,
     });
-    assert.equal(progresASetelah.selesai, 1, 'Progres Akun A harus tetap 1 dari 4');
-    assert.equal(progresASetelah.total, 4);
+    assert.equal(progresASetelah.selesai, 0, 'Progres Akun A harus tetap 0 dari 3');
+    assert.equal(progresASetelah.total, 3);
   });
 });

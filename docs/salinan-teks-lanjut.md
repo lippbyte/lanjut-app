@@ -134,13 +134,13 @@ Dipakai di: beranda, notifikasi, layar kosong.
     - Penjelas: Mulai kenali pilihan jenjang dan arah langkahmu.
     - Tombol: Buka Jenjang Saya (ke `/jenjang-saya`)
 
-- **Progres Sederhana:**
-  - Format: `[X] dari [Y] langkah selesai` (misal: "1 dari 4 langkah selesai")
-  - Langkah yang dihitung (4 langkah dari data server):
-    1. Isi kelas (`pengguna.kelas`)
-    2. Isi prodi impian (`pengguna.prodi_impian`)
-    3. Centang Daftar Periksa (minimal 1 butir di `/kemajuan`)
-    4. Coba Latihan (minimal 1 sesi di `/sesi-latihan`)
+- **Progres Sederhana (draf LANJUT_067, belum disetujui Khalifa):**
+  - Format: `[X] dari [Y] langkah selesai` (misal: "0 dari 3 langkah selesai")
+  - Total langkah: 3 (langkah `isi_kelas` dihapus di LANJUT_067 karena pengguna baru wajib mengisi kelas saat onboarding, sehingga selalu mulai dari 1 dari 4 dan menyesatkan).
+  - Langkah yang dihitung (3 langkah dari data server yang benar-benar bisa diubah oleh pengguna):
+    1. Isi prodi impian (`pengguna.prodi_impian`)
+    2. Centang Daftar Periksa (minimal 1 butir di `/kemajuan`)
+    3. Coba Latihan (minimal 1 sesi di `/sesi-latihan`)
   - *Catatan:* Langkah "buka Arsip" tidak dihitung karena server tidak memiliki pencatatan telemetri pembukaan layar.
 
 - **Grid Menu Launcher (label pendek):**

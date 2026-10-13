@@ -1,6 +1,6 @@
 # Lembar Review Draf Teks LANJUT
 
-Disusun otomatis dengan `npm run lembar-review-teks` (folder `LANJUT_App/server`) dari `docs/salinan-teks-lanjut.md` (sidik `406e64ec9a56`). Lembar ini **hanya bacaan**: mengisinya tidak mengubah teks apa pun di app. Bunyi teks disalin persis dari berkas sumber.
+Disusun otomatis dengan `npm run lembar-review-teks` (folder `LANJUT_App/server`) dari `docs/salinan-teks-lanjut.md` (sidik `d9fb352bbe32`). Lembar ini **hanya bacaan**: mengisinya tidak mengubah teks apa pun di app. Bunyi teks disalin persis dari berkas sumber.
 
 **134 butir** dari 19 blok DRAF menunggu keputusan. 4 baris lain di blok DRAF tidak dijadikan butir karena sudah disetujui atau bukan teks yang tampil (lihat Lampiran).
 
@@ -67,7 +67,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 1. Medan Kelas
 
-- **Asal:** §4.10 Daftar (buat akun) · LANJUT_035 · baris 377
+- **Asal:** §4.10 Daftar (buat akun) · LANJUT_035 · baris 428
 - **Tampil di:** Layar Daftar (buat akun), medan Kelas.
 - **Dilihat oleh:** Semua pendaftar baru.
 
@@ -89,7 +89,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 2. Galat medan Kelas
 
-- **Asal:** §4.10 Daftar (buat akun) · LANJUT_035 · baris 378
+- **Asal:** §4.10 Daftar (buat akun) · LANJUT_035 · baris 429
 - **Tampil di:** Layar Daftar, saat menekan Daftar tanpa memilih kelas.
 - **Dilihat oleh:** Semua pendaftar baru.
 
@@ -111,7 +111,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 3. Medan Jenis sekolah
 
-- **Asal:** §4.10 Daftar (buat akun) · LANJUT_038 · baris 384
+- **Asal:** §4.10 Daftar (buat akun) · LANJUT_038 · baris 435
 - **Tampil di:** Layar Daftar, muncul sesudah kelas 10–12 dipilih.
 - **Dilihat oleh:** Pendaftar kelas 10–12 (kelas 7–9 tidak ditanya).
 
@@ -133,7 +133,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 4. Galat medan Jenis sekolah
 
-- **Asal:** §4.10 Daftar (buat akun) · LANJUT_038 · baris 385
+- **Asal:** §4.10 Daftar (buat akun) · LANJUT_038 · baris 436
 - **Tampil di:** Layar Daftar, kelas 10–12 tanpa jenis sekolah.
 - **Dilihat oleh:** Pendaftar kelas 10–12.
 
@@ -155,7 +155,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 5. Kebijakan — judul blok
 
-- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 436
+- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 487
 - **Tampil di:** Layar Daftar, blok kebijakan privasi di atas tombol Daftar.
 - **Dilihat oleh:** Semua pendaftar baru.
 
@@ -177,7 +177,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 6. Kebijakan — ringkasan 1 ⚠
 
-- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 437
+- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 488
 - **Tampil di:** Layar Daftar, blok kebijakan privasi (dari lib/kebijakan-privasi.json).
 - **Dilihat oleh:** Semua pendaftar baru.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -200,7 +200,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 7. Kebijakan — ringkasan 2 ⚠
 
-- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 438
+- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 489
 - **Tampil di:** Layar Daftar, blok kebijakan privasi (dari lib/kebijakan-privasi.json).
 - **Dilihat oleh:** Semua pendaftar baru.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -223,7 +223,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 8. Kebijakan — ringkasan 3 ⚠
 
-- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 439
+- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 490
 - **Tampil di:** Layar Daftar, blok kebijakan privasi (dari lib/kebijakan-privasi.json).
 - **Dilihat oleh:** Semua pendaftar baru.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -246,7 +246,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 9. Kebijakan — ringkasan 4 ⚠
 
-- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 440
+- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 491
 - **Tampil di:** Layar Daftar, blok kebijakan privasi (dari lib/kebijakan-privasi.json).
 - **Dilihat oleh:** Semua pendaftar baru.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -269,7 +269,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 10. Kebijakan — tautan lengkap
 
-- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 441
+- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 492
 - **Tampil di:** Layar Daftar, membuka kebijakan lengkap sebagai modal.
 - **Dilihat oleh:** Semua pendaftar baru.
 
@@ -291,7 +291,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 11. Kebijakan — kotak centang
 
-- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 442
+- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 493
 - **Tampil di:** Layar Daftar; tombol Daftar baru aktif setelah dicentang.
 - **Dilihat oleh:** Semua pendaftar baru.
 
@@ -313,7 +313,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 12. Kebijakan — petunjuk belum dicentang
 
-- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 443
+- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 494
 - **Tampil di:** Layar Daftar, di bawah tombol Daftar selama kotak belum dicentang.
 - **Dilihat oleh:** Semua pendaftar baru.
 
@@ -335,7 +335,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 13. Kebijakan — galat versi usang
 
-- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 444
+- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 495
 - **Tampil di:** Layar Daftar, bila versi kebijakan di app bukan versi yang berlaku di server.
 - **Dilihat oleh:** Pendaftar yang memakai versi app lama.
 
@@ -357,7 +357,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 14. Kebijakan lengkap — bingkai
 
-- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 445
+- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 496
 - **Tampil di:** Modal di layar Daftar, dan halaman /kebijakan-privasi (dari Jalur Saya). Isi kebijakan sendiri direview di docs/kebijakan-privasi-DRAF.md.
 - **Dilihat oleh:** Semua pendaftar dan semua akun.
 
@@ -379,7 +379,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 15. Gerbang isi kelas — judul
 
-- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_036 · baris 412
+- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_036 · baris 463
 - **Tampil di:** Gerbang isi kelas, menggantikan seluruh app sampai kelas disimpan.
 - **Dilihat oleh:** Akun lama yang belum punya kelas.
 
@@ -401,7 +401,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 16. Gerbang isi kelas — pengantar
 
-- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_036 · baris 413
+- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_036 · baris 464
 - **Tampil di:** Gerbang isi kelas.
 - **Dilihat oleh:** Akun lama yang belum punya kelas.
 
@@ -423,7 +423,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 17. Gerbang isi kelas — medan
 
-- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_036 · baris 414
+- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_036 · baris 465
 - **Tampil di:** Gerbang isi kelas.
 - **Dilihat oleh:** Akun lama yang belum punya kelas.
 
@@ -445,7 +445,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 18. Gerbang isi kelas — usulan dari perangkat
 
-- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_036 · baris 415
+- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_036 · baris 466
 - **Tampil di:** Gerbang isi kelas, bila di perangkat ini tersimpan kelas yang pernah dipilih di Daftar Periksa dan siswa belum memilih ulang.
 - **Dilihat oleh:** Akun tanpa kelas yang punya pilihan kelas tersimpan di perangkat.
 
@@ -467,7 +467,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 19. Gerbang isi kelas — tombol
 
-- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_036 · baris 416
+- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_036 · baris 467
 - **Tampil di:** Gerbang isi kelas.
 - **Dilihat oleh:** Akun lama yang belum punya kelas.
 
@@ -489,7 +489,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 20. Gerbang jenis sekolah — judul
 
-- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_038 · baris 422
+- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_038 · baris 473
 - **Tampil di:** Gerbang langkah 2, sesudah kelas tersimpan (tidak pernah satu layar dengan langkah kelas).
 - **Dilihat oleh:** Kelas 10–12 yang belum memilih jenis sekolah.
 
@@ -511,7 +511,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 21. Gerbang jenis sekolah — pengantar
 
-- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_038 · baris 423
+- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_038 · baris 474
 - **Tampil di:** Gerbang langkah 2.
 - **Dilihat oleh:** Kelas 10–12 yang belum memilih jenis sekolah.
 
@@ -533,7 +533,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 22. Gerbang jenis sekolah — medan
 
-- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_038 · baris 424
+- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_038 · baris 475
 - **Tampil di:** Gerbang langkah 2.
 - **Dilihat oleh:** Kelas 10–12 yang belum memilih jenis sekolah.
 
@@ -555,7 +555,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 23. Gerbang jenis sekolah — tombol
 
-- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_038 · baris 425
+- **Asal:** §4.12 Gerbang wajib isi kelas · LANJUT_038 · baris 476
 - **Tampil di:** Gerbang langkah 2.
 - **Dilihat oleh:** Kelas 10–12 yang belum memilih jenis sekolah.
 
@@ -579,7 +579,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 24. Baris Sekolah & medan di form Ubah
 
-- **Asal:** §4.10 Daftar (buat akun) · LANJUT_038 · baris 386
+- **Asal:** §4.10 Daftar (buat akun) · LANJUT_038 · baris 437
 - **Tampil di:** Jalur Saya: baris "Sekolah" di kartu akun (berisi "Belum diisi" bila kosong); medan Jenis sekolah di form Ubah.
 - **Dilihat oleh:** Baris: semua akun (kelas 7–9 tampil SMP). Medan di form Ubah: kelas 10–12.
 
@@ -601,7 +601,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 25. Kartu Kemajuan bukan kelas 12
 
-- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 401
+- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 452
 - **Tampil di:** Jalur Saya, kartu Kemajuan (kelas 12 melihat ringkasan kemajuan).
 - **Dilihat oleh:** Kelas 7–11 dan akun tanpa kelas.
 
@@ -623,7 +623,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 26. Baris persetujuan orang tua/wali
 
-- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 446
+- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 497
 - **Tampil di:** Jalur Saya, kartu Akun (hanya baca).
 - **Dilihat oleh:** Semua akun.
 
@@ -645,7 +645,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 27. Penjelas persetujuan ⚠
 
-- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 447
+- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 498
 - **Tampil di:** Jalur Saya, kartu Akun, di bawah baris persetujuan.
 - **Dilihat oleh:** Semua akun.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -668,7 +668,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 28. Tautan kebijakan privasi
 
-- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 448
+- **Asal:** §4.13 Kebijakan privasi & persetujuan orang tua/wali · LANJUT_047 · baris 499
 - **Tampil di:** Jalur Saya, kartu Akun.
 - **Dilihat oleh:** Semua akun.
 
@@ -690,7 +690,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 29. Baris kebijakan privasi & tombol
 
-- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 468
+- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 519
 - **Tampil di:** Jalur Saya, kartu Akun, di atas baris persetujuan orang tua/wali; tombol hanya selama belum diterima.
 - **Dilihat oleh:** Semua akun.
 
@@ -714,7 +714,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 30. Judul
 
-- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 459
+- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 510
 - **Tampil di:** Jendela setelah login dan halaman /terima-kebijakan.
 - **Dilihat oleh:** Akun yang belum menerima kebijakan versi berlaku.
 
@@ -736,7 +736,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 31. Pengantar — belum pernah menerima ⚠
 
-- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 460
+- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 511
 - **Tampil di:** Jendela setelah login (sekali per sesi, sesudah gerbang kelas & jenis sekolah) dan halaman /terima-kebijakan.
 - **Dilihat oleh:** Akun yang belum pernah menerima kebijakan (akun lama sebelum LANJUT_047).
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -759,7 +759,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 32. Pengantar — perlu menerima ulang
 
-- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 461
+- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 512
 - **Tampil di:** Jendela setelah login dan halaman /terima-kebijakan, bila versi naik.
 - **Dilihat oleh:** Akun yang pernah menerima versi lama.
 
@@ -781,7 +781,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 33. Versi di aplikasi berbeda
 
-- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 462
+- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 513
 - **Tampil di:** Jendela setelah login dan halaman /terima-kebijakan, bila versi berlaku di server bukan versi teks di aplikasi (tombol Terima tidak tampil).
 - **Dilihat oleh:** Akun yang memakai aplikasi versi lama saat kebijakan naik.
 
@@ -803,7 +803,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 34. Tautan buka/tutup kebijakan lengkap
 
-- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 463
+- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 514
 - **Tampil di:** Jendela dan halaman penerimaan.
 - **Dilihat oleh:** Akun yang belum menerima kebijakan.
 
@@ -825,7 +825,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 35. Tombol Terima / Nanti saja / Kembali
 
-- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 464
+- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 515
 - **Tampil di:** Jendela dan halaman penerimaan.
 - **Dilihat oleh:** Akun yang belum menerima kebijakan.
 
@@ -847,7 +847,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 36. Galat simpan
 
-- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 465
+- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 516
 - **Tampil di:** Jendela dan halaman penerimaan, bila Terima gagal tersimpan.
 - **Dilihat oleh:** Akun yang menekan Terima.
 
@@ -869,7 +869,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 37. Sudah diterima
 
-- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 466
+- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 517
 - **Tampil di:** Halaman /terima-kebijakan setelah diterima.
 - **Dilihat oleh:** Akun yang sudah menerima.
 
@@ -891,7 +891,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 38. Belum bisa dimuat
 
-- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 467
+- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 518
 - **Tampil di:** Halaman /terima-kebijakan bila versi berlaku belum ada di server.
 - **Dilihat oleh:** Jarang; konfigurasi server belum lengkap.
 
@@ -915,7 +915,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 39. Ajakan menerima kebijakan
 
-- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 469
+- **Asal:** §4.14 Terima kebijakan privasi (akun lama & terima ulang) · LANJUT_048 · baris 520
 - **Tampil di:** Ngobrol Bareng LANJUT, layar terkunci, di bawah penjelasan; hanya selama kebijakan belum diterima.
 - **Dilihat oleh:** Akun yang belum menerima kebijakan versi berlaku.
 
@@ -937,7 +937,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 40. Catatan AI di atas obrolan ⚠
 
-- **Asal:** §4.15 Ngobrol Bareng LANJUT dengan AI · LANJUT_051 · baris 479
+- **Asal:** §4.15 Ngobrol Bareng LANJUT dengan AI · LANJUT_051 · baris 530
 - **Tampil di:** Ngobrol Bareng LANJUT, paling atas daftar pesan.
 - **Dilihat oleh:** Akun dengan persetujuan orang tua/wali dan kebijakan diterima.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -960,7 +960,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 41. Layar terkunci — judul
 
-- **Asal:** §4.15 Ngobrol Bareng LANJUT dengan AI · LANJUT_051 · baris 480
+- **Asal:** §4.15 Ngobrol Bareng LANJUT dengan AI · LANJUT_051 · baris 531
 - **Tampil di:** Ngobrol Bareng LANJUT, bila fitur AI belum aktif.
 - **Dilihat oleh:** Akun tanpa persetujuan orang tua/wali atau tanpa kebijakan diterima.
 
@@ -982,7 +982,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 42. Layar terkunci — penjelasan ⚠
 
-- **Asal:** §4.15 Ngobrol Bareng LANJUT dengan AI · LANJUT_051 · baris 481
+- **Asal:** §4.15 Ngobrol Bareng LANJUT dengan AI · LANJUT_051 · baris 532
 - **Tampil di:** Ngobrol Bareng LANJUT, bila fitur AI belum aktif.
 - **Dilihat oleh:** Akun tanpa persetujuan orang tua/wali atau tanpa kebijakan diterima.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -1005,7 +1005,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 43. Status AI belum bisa dimuat
 
-- **Asal:** §4.15 Ngobrol Bareng LANJUT dengan AI · LANJUT_051 · baris 482
+- **Asal:** §4.15 Ngobrol Bareng LANJUT dengan AI · LANJUT_051 · baris 533
 - **Tampil di:** Ngobrol Bareng LANJUT, bila status persetujuan gagal dimuat.
 - **Dilihat oleh:** Semua akun, saat tidak tersambung.
 
@@ -1027,7 +1027,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 44. Pesan gagal kirim
 
-- **Asal:** §4.15 Ngobrol Bareng LANJUT dengan AI · LANJUT_051 · baris 483
+- **Asal:** §4.15 Ngobrol Bareng LANJUT dengan AI · LANJUT_051 · baris 534
 - **Tampil di:** Ngobrol Bareng LANJUT, gelembung abu-abu di bawah pesan siswa, dengan tombol Coba lagi.
 - **Dilihat oleh:** Akun dengan fitur AI aktif, saat pesan gagal dijawab.
 
@@ -1049,7 +1049,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 45. Kartu Ngobrol di Beranda
 
-- **Asal:** §4.15 Ngobrol Bareng LANJUT dengan AI · LANJUT_051 · baris 484
+- **Asal:** §4.15 Ngobrol Bareng LANJUT dengan AI · LANJUT_051 · baris 535
 - **Tampil di:** Beranda, kartu pintu Ngobrol Bareng LANJUT.
 - **Dilihat oleh:** Semua akun.
 
@@ -1071,7 +1071,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 46. Balasan tetap saat tanda bahaya akut ⚠
 
-- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 495
+- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 546
 - **Tampil di:** Ngobrol, sebagai balasan bot, diikuti kartu bantuan. Dibuat server; AI tidak dipanggil.
 - **Dilihat oleh:** Siswa yang pesannya cocok daftar tanda bahaya akut (server/config/tanda-bahaya.json, DRAF review guru BK).
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -1094,7 +1094,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 47. Kartu bantuan — judul
 
-- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 496
+- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 547
 - **Tampil di:** Ngobrol, kartu bantuan (di balasan tanda bahaya dan di panel "Butuh bicara dengan orang?").
 - **Dilihat oleh:** Akun yang membuka Ngobrol.
 
@@ -1116,7 +1116,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 48. Kartu bantuan — penutup
 
-- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 497
+- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 548
 - **Tampil di:** Ngobrol, di bawah daftar layanan pada kartu bantuan.
 - **Dilihat oleh:** Akun yang membuka Ngobrol.
 
@@ -1138,7 +1138,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 49. Kalimat tetap: di luar topik
 
-- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 498
+- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 549
 - **Tampil di:** Ngobrol, diucapkan AI persis saat siswa meminta hal di luar topik.
 - **Dilihat oleh:** Akun dengan fitur AI aktif.
 
@@ -1160,7 +1160,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 50. Kalimat tetap: menolak mengabaikan aturan
 
-- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 499
+- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 550
 - **Tampil di:** Ngobrol, diucapkan AI persis saat diminta mengabaikan/menampilkan aturannya.
 - **Dilihat oleh:** Akun dengan fitur AI aktif.
 
@@ -1182,7 +1182,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 51. Balasan uji coba saat AI dimatikan
 
-- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 500
+- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 551
 - **Tampil di:** Ngobrol, sebagai balasan bot berlabel uji coba, saat ai_aktif = 0.
 - **Dilihat oleh:** Semua akun dengan fitur AI aktif, selama saklar mati.
 
@@ -1204,7 +1204,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 52. Label balasan uji coba
 
-- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 501
+- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 552
 - **Tampil di:** Ngobrol, di atas gelembung balasan saat AI dimatikan.
 - **Dilihat oleh:** Semua akun dengan fitur AI aktif, selama saklar mati.
 
@@ -1226,7 +1226,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 53. Peringatan data pribadi
 
-- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 502
+- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 553
 - **Tampil di:** Ngobrol, paling atas daftar pesan.
 - **Dilihat oleh:** Akun dengan fitur AI aktif.
 
@@ -1248,7 +1248,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 54. Tautan "Butuh bicara dengan orang?"
 
-- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 503
+- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 554
 - **Tampil di:** Ngobrol, selalu tampil di atas obrolan dan di layar terkunci.
 - **Dilihat oleh:** Semua akun yang membuka Ngobrol.
 
@@ -1270,7 +1270,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 55. Penanda data disamarkan
 
-- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 504
+- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 555
 - **Tampil di:** Ngobrol, di bawah pesan siswa yang data pribadinya disamarkan.
 - **Dilihat oleh:** Akun dengan fitur AI aktif.
 
@@ -1292,7 +1292,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 56. Catatan: materi & modul dikirim ke penyedia AI ⚠
 
-- **Asal:** §4.17 Ngobrol: materi dari modul Arsip dan web · LANJUT_055 · baris 515
+- **Asal:** §4.17 Ngobrol: materi dari modul Arsip dan web · LANJUT_055 · baris 566
 - **Tampil di:** Ngobrol, catatan di atas obrolan.
 - **Dilihat oleh:** Akun dengan fitur AI aktif.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -1315,7 +1315,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 57. Bagian "Dari modulmu"
 
-- **Asal:** §4.17 Ngobrol: materi dari modul Arsip dan web · LANJUT_055 · baris 516
+- **Asal:** §4.17 Ngobrol: materi dari modul Arsip dan web · LANJUT_055 · baris 567
 - **Tampil di:** Ngobrol, di bawah balasan yang memakai modul.
 - **Dilihat oleh:** Akun dengan fitur AI aktif yang punya modul.
 
@@ -1337,7 +1337,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 58. Bagian "Dari web"
 
-- **Asal:** §4.17 Ngobrol: materi dari modul Arsip dan web · LANJUT_055 · baris 517
+- **Asal:** §4.17 Ngobrol: materi dari modul Arsip dan web · LANJUT_055 · baris 568
 - **Tampil di:** Ngobrol, di bawah balasan yang memakai hasil web (saat pencarian web aktif).
 - **Dilihat oleh:** Akun dengan fitur AI aktif.
 
@@ -1359,7 +1359,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 59. Kuota pencarian web habis
 
-- **Asal:** §4.17 Ngobrol: materi dari modul Arsip dan web · LANJUT_055 · baris 518
+- **Asal:** §4.17 Ngobrol: materi dari modul Arsip dan web · LANJUT_055 · baris 569
 - **Tampil di:** Ngobrol, di bawah balasan saat kuota web harian akun habis.
 - **Dilihat oleh:** Akun dengan fitur AI aktif, saat pencarian web aktif.
 
@@ -1381,7 +1381,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 60. Kartu bantuan gagal dimuat ⚠
 
-- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 505
+- **Asal:** §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi · LANJUT_053 · baris 556
 - **Tampil di:** Ngobrol, panel "Butuh bicara dengan orang?" saat server tidak bisa dihubungi.
 - **Dilihat oleh:** Akun yang membuka panel saat tidak tersambung.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -1406,7 +1406,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 61. Judul halaman
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 130
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 180
 - **Tampil di:** Jenjang Saya.
 - **Dilihat oleh:** Semua akun.
 
@@ -1428,7 +1428,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 62. Pendamping kelas 7–9
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 131
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 181
 - **Tampil di:** Jenjang Saya, di bawah judul.
 - **Dilihat oleh:** Kelas 7–9.
 
@@ -1450,7 +1450,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 63. Pendamping kelas 10–11
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 132
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 182
 - **Tampil di:** Jenjang Saya, di bawah judul.
 - **Dilihat oleh:** Kelas 10–11.
 
@@ -1472,7 +1472,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 64. Pendamping kelas 12
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 133
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 183
 - **Tampil di:** Jenjang Saya, di bawah judul.
 - **Dilihat oleh:** Kelas 12.
 
@@ -1494,7 +1494,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 65. Pendamping tanpa kelas
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 134
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 184
 - **Tampil di:** Jenjang Saya, di bawah judul (jaring pengaman; akun tanpa kelas biasanya tertahan di gerbang dulu).
 - **Dilihat oleh:** Akun tanpa kelas.
 
@@ -1516,7 +1516,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 66. Judul seksi pintu
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 135
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 185
 - **Tampil di:** Jenjang Saya, seksi pintu.
 - **Dilihat oleh:** Semua akun.
 
@@ -1538,7 +1538,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 67. Pintu Ngobrol Bareng LANJUT
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 136
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 186
 - **Tampil di:** Jenjang Saya, seksi pintu.
 - **Dilihat oleh:** Kelas 7–9.
 
@@ -1560,7 +1560,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 68. Pintu Gaya Belajar
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 137
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 187
 - **Tampil di:** Jenjang Saya, seksi pintu.
 - **Dilihat oleh:** Kelas 7–11.
 
@@ -1582,7 +1582,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 69. Pintu Eksplorasi Tujuan
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 138
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 188
 - **Tampil di:** Jenjang Saya, seksi pintu.
 - **Dilihat oleh:** Kelas 7–11.
 
@@ -1604,7 +1604,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 70. Pintu Pilih Mapel
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 139
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 189
 - **Tampil di:** Jenjang Saya, seksi pintu.
 - **Dilihat oleh:** Kelas 10–11.
 
@@ -1626,7 +1626,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 71. Pintu Cek Posisi Gue
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 140
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 190
 - **Tampil di:** Jenjang Saya, seksi pintu.
 - **Dilihat oleh:** Kelas 12.
 
@@ -1648,7 +1648,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 72. Pintu Daftar Periksa
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 141
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 191
 - **Tampil di:** Jenjang Saya, seksi pintu.
 - **Dilihat oleh:** Kelas 12.
 
@@ -1670,7 +1670,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 73. Kartu "SMA, SMK, atau MA?" ⚠
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 142
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 192
 - **Tampil di:** Jenjang Saya, kartu informasi.
 - **Dilihat oleh:** Kelas 7–9.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -1693,7 +1693,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 74. Kartu "Belum perlu mikirin jadwal daftar" ⚠
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 143
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 193
 - **Tampil di:** Jenjang Saya, kartu informasi.
 - **Dilihat oleh:** Kelas 10–11.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -1716,7 +1716,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 75. Judul seksi SMK
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 144
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 194
 - **Tampil di:** Jenjang Saya, seksi SMK.
 - **Dilihat oleh:** Kelas 10–12 dengan jenis sekolah SMK.
 
@@ -1738,7 +1738,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 76. Pembuka seksi SMK kelas 10–11 ⚠
 
-- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 145
+- **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 195
 - **Tampil di:** Jenjang Saya, seksi SMK, di atas butir Khusus SMK.
 - **Dilihat oleh:** Kelas 10–11 SMK.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -1763,7 +1763,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 77. Pengganti kelas 7–11 — judul ⚠
 
-- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 395
+- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 446
 - **Tampil di:** Beranda (bagian tenggat), Daftar Periksa, dan Cek Posisi Gue, menggantikan isinya.
 - **Dilihat oleh:** Kelas 7–11.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -1786,7 +1786,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 78. Pengganti kelas 7–11 — isi ⚠
 
-- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 396
+- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 447
 - **Tampil di:** Beranda (bagian tenggat), Daftar Periksa, dan Cek Posisi Gue.
 - **Dilihat oleh:** Kelas 7–11.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -1809,7 +1809,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 79. Pengganti kelas 7–11 — tombol
 
-- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 397
+- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 448
 - **Tampil di:** Beranda (bagian tenggat), Daftar Periksa, dan Cek Posisi Gue.
 - **Dilihat oleh:** Kelas 7–11.
 
@@ -1831,7 +1831,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 80. Pengganti tanpa kelas — judul
 
-- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 398
+- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 449
 - **Tampil di:** Beranda (bagian tenggat), Daftar Periksa, dan Cek Posisi Gue (jaring pengaman; biasanya tertahan di gerbang isi kelas dulu).
 - **Dilihat oleh:** Akun tanpa kelas.
 
@@ -1853,7 +1853,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 81. Pengganti tanpa kelas — isi
 
-- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 399
+- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 450
 - **Tampil di:** Sama dengan butir di atasnya.
 - **Dilihat oleh:** Akun tanpa kelas.
 
@@ -1875,7 +1875,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 82. Pengganti tanpa kelas — tombol
 
-- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 400
+- **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 451
 - **Tampil di:** Sama dengan butir di atasnya.
 - **Dilihat oleh:** Akun tanpa kelas.
 
@@ -1899,7 +1899,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 83. Butir dari Pilih Mapel ⚠
 
-- **Asal:** §4.4 Daftar Periksa · LANJUT_034 · baris 175
+- **Asal:** §4.4 Daftar Periksa · LANJUT_034 · baris 226
 - **Tampil di:** Dibuat saat menekan "Simpan ke Daftar Periksa" di hasil Pilih Mapel (dengan prodi); tampil di Daftar Periksa, kategori Pendaftaran, langsung tercentang.
 - **Dilihat oleh:** Daftar Periksa hanya tampil untuk kelas 12; butirnya bisa dibuat dari kelas mana pun lewat Pilih Mapel.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -1922,7 +1922,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 84. Butir dari Eksplorasi Tujuan
 
-- **Asal:** §4.4 Daftar Periksa · LANJUT_034 · baris 176
+- **Asal:** §4.4 Daftar Periksa · LANJUT_034 · baris 227
 - **Tampil di:** Dibuat saat menekan "Simpan ke Daftar Periksa" di profil Eksplorasi Tujuan; tampil di Daftar Periksa, kategori Riset Kampus, belum tercentang.
 - **Dilihat oleh:** Daftar Periksa hanya tampil untuk kelas 12.
 
@@ -1944,7 +1944,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 85. Tombol Hapus
 
-- **Asal:** §4.4 Daftar Periksa · LANJUT_034 · baris 177
+- **Asal:** §4.4 Daftar Periksa · LANJUT_034 · baris 228
 - **Tampil di:** Daftar Periksa, pada butir milik akun.
 - **Dilihat oleh:** Kelas 12.
 
@@ -1966,7 +1966,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 86. Galat centang/hapus
 
-- **Asal:** §4.4 Daftar Periksa · LANJUT_034 · baris 178
+- **Asal:** §4.4 Daftar Periksa · LANJUT_034 · baris 229
 - **Tampil di:** Daftar Periksa, saat centang atau hapus gagal tersimpan.
 - **Dilihat oleh:** Kelas 12.
 
@@ -1990,7 +1990,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 87. Belum ada profil — judul
 
-- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_031 · baris 327
+- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_031 · baris 378
 - **Tampil di:** Eksplorasi Tujuan, selama belum ada satu pun profil terverifikasi (keadaan semua siswa saat ini).
 - **Dilihat oleh:** Semua akun yang membuka Eksplorasi Tujuan (pintu kelas 7–11 di Jenjang Saya, atau dari hasil Pilih Mapel).
 
@@ -2012,7 +2012,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 88. Belum ada profil — isi ⚠
 
-- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_031 · baris 328
+- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_031 · baris 379
 - **Tampil di:** Sama dengan butir di atasnya.
 - **Dilihat oleh:** Sama dengan butir di atasnya.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -2035,7 +2035,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 89. Tombol kembali & prodi lain
 
-- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_031 · baris 329
+- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_031 · baris 380
 - **Tampil di:** Eksplorasi Tujuan: di keadaan kosong, dan di bawah profil.
 - **Dilihat oleh:** Semua akun yang membuka Eksplorasi Tujuan.
 
@@ -2057,7 +2057,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 90. Lencana "Relevan untuk RPL/TKJ/Teknik" ⚠
 
-- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_031 · baris 330
+- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_031 · baris 381
 - **Tampil di:** Profil Eksplorasi Tujuan, di bawah nama prodi, hanya untuk profil yang ditandai relevan.
 - **Dilihat oleh:** Semua akun yang membuka profil itu.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -2080,7 +2080,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 91. Baris sumber angka pendaftar ⚠
 
-- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_031 · baris 331
+- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_031 · baris 382
 - **Tampil di:** Profil Eksplorasi Tujuan, kartu angka pendaftar.
 - **Dilihat oleh:** Semua akun yang membuka profil.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -2103,7 +2103,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 92. Penjelas label "Perkiraan" ⚠
 
-- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_044 · baris 343
+- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_044 · baris 394
 - **Tampil di:** Profil Eksplorasi Tujuan, tepat di bawah lencana "Perkiraan" pada setiap bagian yang berlabel itu (saat ini mata kuliah dan profesi).
 - **Dilihat oleh:** Semua akun yang membuka profil dengan bagian "Perkiraan".
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -2126,7 +2126,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 93. Kaki halaman — semua bagian terverifikasi ⚠
 
-- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_045 · baris 356
+- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_045 · baris 407
 - **Tampil di:** Profil Eksplorasi Tujuan, kaki halaman, bila keempat bagian "Terverifikasi".
 - **Dilihat oleh:** Semua akun yang membuka profil seperti itu (saat ini 4 dari 18 profil).
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -2149,7 +2149,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 94. Kaki halaman — ada bagian Perkiraan ⚠
 
-- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_045 · baris 357
+- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_045 · baris 408
 - **Tampil di:** Profil Eksplorasi Tujuan, kaki halaman, bila ada bagian "Perkiraan".
 - **Dilihat oleh:** Semua akun yang membuka profil seperti itu (saat ini 14 dari 18 profil).
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -2172,7 +2172,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 95. Kaki halaman — ada bagian tanpa status ⚠
 
-- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_045 · baris 358
+- **Asal:** §4.9 Eksplorasi Tujuan · LANJUT_045 · baris 409
 - **Tampil di:** Profil Eksplorasi Tujuan, kaki halaman, bila ada bagian tanpa status di data (tidak terjadi di data saat ini).
 - **Dilihat oleh:** Saat ini tidak ada.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -2197,7 +2197,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 96. Pintu di Beranda
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 194
+- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 245
 - **Tampil di:** Beranda (Linimasa), kartu pintu.
 - **Dilihat oleh:** Semua kelas.
 
@@ -2219,7 +2219,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 97. Daftar kartu
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 195
+- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 246
 - **Tampil di:** Arsip Belajar, daftar kartu.
 - **Dilihat oleh:** Semua akun.
 
@@ -2241,7 +2241,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 98. Judul halaman
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 196
+- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 247
 - **Tampil di:** Arsip Belajar, bilah judul tiap halaman.
 - **Dilihat oleh:** Semua akun.
 
@@ -2263,7 +2263,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 99. Formulir kartu
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 197
+- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 248
 - **Tampil di:** Arsip Belajar, tulis/ubah kartu.
 - **Dilihat oleh:** Semua akun.
 
@@ -2285,7 +2285,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 100. Galat formulir
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 198
+- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 249
 - **Tampil di:** Arsip Belajar, saat menyimpan kartu yang belum lengkap.
 - **Dilihat oleh:** Semua akun.
 
@@ -2307,7 +2307,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 101. Lihat kartu
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 199
+- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 250
 - **Tampil di:** Arsip Belajar, halaman satu kartu.
 - **Dilihat oleh:** Semua akun.
 
@@ -2329,7 +2329,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 102. Konfirmasi hapus
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 200
+- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 251
 - **Tampil di:** Arsip Belajar, sebelum kartu dihapus.
 - **Dilihat oleh:** Semua akun.
 
@@ -2351,7 +2351,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 103. Kartu tidak ditemukan
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 201
+- **Asal:** §4.5 Arsip Belajar · LANJUT_039 · baris 252
 - **Tampil di:** Arsip Belajar, membuka kartu yang sudah tidak ada.
 - **Dilihat oleh:** Semua akun.
 
@@ -2375,7 +2375,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 104. Bagian Modul
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 210
+- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 261
 - **Tampil di:** Arsip Belajar, di bawah daftar kartu.
 - **Dilihat oleh:** Semua akun.
 
@@ -2397,7 +2397,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 105. Daftar modul
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 211
+- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 262
 - **Tampil di:** Arsip Belajar, bagian Modul.
 - **Dilihat oleh:** Akun yang punya modul.
 
@@ -2419,7 +2419,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 106. Cari di modul
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 212
+- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 263
 - **Tampil di:** Arsip Belajar, bagian Modul (hanya modul sendiri).
 - **Dilihat oleh:** Akun yang punya modul.
 
@@ -2441,7 +2441,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 107. Hapus semua modul
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 213
+- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 264
 - **Tampil di:** Arsip Belajar, bagian Modul; konfirmasi dua langkah.
 - **Dilihat oleh:** Akun yang punya modul.
 
@@ -2463,7 +2463,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 108. Lihat & hapus modul
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 214
+- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 265
 - **Tampil di:** Halaman satu modul (/arsip-modul).
 - **Dilihat oleh:** Pemilik modul.
 
@@ -2485,7 +2485,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 109. Modul tidak ditemukan
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 215
+- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 266
 - **Tampil di:** Halaman satu modul, bila modul sudah dihapus atau milik akun lain.
 - **Dilihat oleh:** Semua akun.
 
@@ -2507,7 +2507,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 110. Peringatan sebelum unggah ⚠
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 216
+- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 267
 - **Tampil di:** Formulir unggah modul, paling atas.
 - **Dilihat oleh:** Semua akun yang mengunggah modul.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -2530,7 +2530,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 111. Formulir unggah
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 217
+- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 268
 - **Tampil di:** Formulir unggah modul (/arsip-modul-unggah).
 - **Dilihat oleh:** Semua akun yang mengunggah modul.
 
@@ -2552,7 +2552,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 112. Galat formulir
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 218
+- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 269
 - **Tampil di:** Formulir unggah, sebelum dikirim.
 - **Dilihat oleh:** Semua akun yang mengunggah modul.
 
@@ -2574,7 +2574,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 113. Galat unggah (tipe, ukuran, karakter, jumlah, PDF)
 
-- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 219
+- **Asal:** §4.5 Arsip Belajar · LANJUT_049 · baris 270
 - **Tampil di:** Formulir unggah, bila server menolak.
 - **Dilihat oleh:** Semua akun yang mengunggah modul.
 
@@ -2598,7 +2598,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 114. Pintu di Arsip Belajar
 
-- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 248
+- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 299
 - **Tampil di:** Arsip Belajar, tombol menuju Latihan.
 - **Dilihat oleh:** Semua akun.
 
@@ -2620,7 +2620,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 115. Sebelum mulai
 
-- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 246
+- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 297
 - **Tampil di:** Latihan, sebelum sesi dimulai.
 - **Dilihat oleh:** Semua akun yang punya kartu.
 
@@ -2642,7 +2642,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 116. Arsip kosong
 
-- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 247
+- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 298
 - **Tampil di:** Latihan, bila belum ada kartu sama sekali.
 - **Dilihat oleh:** Akun tanpa kartu.
 
@@ -2664,7 +2664,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 117. Selama sesi
 
-- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 249
+- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 300
 - **Tampil di:** Latihan, kartu satu per satu.
 - **Dilihat oleh:** Semua akun yang berlatih.
 
@@ -2686,7 +2686,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 118. Sesudah selesai
 
-- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 250
+- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 301
 - **Tampil di:** Latihan, ringkasan akhir sesi.
 - **Dilihat oleh:** Semua akun yang berlatih.
 - **Catatan:** Potongan "Beres. [b] benar dari [i]." sudah disetujui (kepala blok); yang diputuskan adalah bagian lain di butir ini.
@@ -2709,7 +2709,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 119. Penyimpanan hasil
 
-- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 251
+- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 302
 - **Tampil di:** Latihan, ringkasan akhir sesi.
 - **Dilihat oleh:** Semua akun yang berlatih.
 
@@ -2731,7 +2731,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 120. Tombol akhir
 
-- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 252
+- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 303
 - **Tampil di:** Latihan, ringkasan akhir sesi.
 - **Dilihat oleh:** Semua akun yang berlatih.
 
@@ -2753,7 +2753,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 121. Galat mulai
 
-- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 253
+- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 304
 - **Tampil di:** Latihan, bila sesi gagal dimulai.
 - **Dilihat oleh:** Semua akun.
 
@@ -2775,7 +2775,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 122. Riwayat Latihan
 
-- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 254
+- **Asal:** §4.7 Sesi Latihan Harian · LANJUT_041 · baris 305
 - **Tampil di:** Riwayat Latihan.
 - **Dilihat oleh:** Semua akun.
 
@@ -2797,7 +2797,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 123. Pertanyaan keyakinan
 
-- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 528
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 579
 - **Tampil di:** Latihan, tiap kartu sebelum jawaban dibuka.
 - **Dilihat oleh:** Semua akun yang berlatih.
 
@@ -2819,7 +2819,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 124. Keyakinan setelah jawaban dibuka
 
-- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 529
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 580
 - **Tampil di:** Latihan, di atas jawaban.
 - **Dilihat oleh:** Semua akun yang berlatih.
 
@@ -2841,7 +2841,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 125. Tombol ke Level-In
 
-- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 530
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 581
 - **Tampil di:** Latihan, sebelum mulai dan ringkasan akhir sesi.
 - **Dilihat oleh:** Semua akun.
 
@@ -2865,7 +2865,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 126. Pintu di Beranda
 
-- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 531
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 582
 - **Tampil di:** Beranda, di bawah Arsip Belajar.
 - **Dilihat oleh:** Semua akun (kelas 7–12).
 
@@ -2887,7 +2887,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 127. Judul & pengantar
 
-- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 532
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 583
 - **Tampil di:** Level-In (/level-in).
 - **Dilihat oleh:** Semua akun.
 
@@ -2909,7 +2909,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 128. Belum pernah latihan
 
-- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 533
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 584
 - **Tampil di:** Level-In, akun tanpa jawaban latihan.
 - **Dilihat oleh:** Akun yang belum pernah berlatih.
 
@@ -2931,7 +2931,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 129. Galat
 
-- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 534
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 585
 - **Tampil di:** Level-In, bila server tidak bisa dihubungi.
 - **Dilihat oleh:** Semua akun.
 
@@ -2953,7 +2953,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 130. Per mapel
 
-- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 535
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 586
 - **Tampil di:** Level-In, satu kartu per mapel yang sudah dilatih.
 - **Dilihat oleh:** Akun yang sudah berlatih.
 
@@ -2975,7 +2975,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 131. Level dan artinya ⚠
 
-- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 536
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 587
 - **Tampil di:** Level-In, kartu mapel dengan level.
 - **Dilihat oleh:** Akun dengan jawaban cukup di satu mapel.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -2998,7 +2998,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 132. Belum cukup data
 
-- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 537
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 588
 - **Tampil di:** Level-In, kartu mapel tanpa level.
 - **Dilihat oleh:** Akun dengan jawaban sedikit di satu mapel.
 
@@ -3020,7 +3020,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 133. Keyakinan ⚠
 
-- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 538
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 589
 - **Tampil di:** Level-In, seksi Keyakinanmu.
 - **Dilihat oleh:** Akun yang sudah berlatih.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -3043,7 +3043,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 134. Saran hari ini
 
-- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 539
+- **Asal:** §4.18 Level-In dan keyakinan di Latihan · LANJUT_058 · baris 590
 - **Tampil di:** Level-In, kartu saran.
 - **Dilihat oleh:** Akun yang sudah berlatih.
 
@@ -3065,11 +3065,11 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ## Lampiran: baris di blok DRAF yang tidak dijadikan butir
 
-- §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 146 — Memakai pembuka lama §4.2 yang bukan DRAF; kepala blok menyebutnya dikecualikan.
+- §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 196 — Memakai pembuka lama §4.2 yang bukan DRAF; kepala blok menyebutnya dikecualikan.
 
 > **Pembuka kelas 12:** pembuka lama di atas.
 
-- §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 147 — Aturan butir Khusus SMK mana yang tampil per kelas, bukan teks yang tampil. Isi butirnya sendiri diperiksa di lembar verifikasi konten (bagian Khusus SMK).
+- §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 197 — Aturan butir Khusus SMK mana yang tampil per kelas, bukan teks yang tampil. Isi butirnya sendiri diperiksa di lembar verifikasi konten (bagian Khusus SMK).
 
 > **Butir SMK per kelas:** kelas 12 melihat keenam butir. Kelas 10–11 hanya
 > butir tanpa SNBP/PDSS/UTBK/kuota/periode pendaftaran: `portofolio` dan
@@ -3077,12 +3077,12 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 > disembunyikan, tidak ditulis ulang, supaya tidak ada klaim baru tanpa sumber.
 > Kelas 7–9 tidak melihat bagian SMK.
 
-- §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 152 — Catatan perilaku (siapa yang melihat seksi SMK), bukan teks yang tampil.
+- §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 202 — Catatan perilaku (siapa yang melihat seksi SMK), bukan teks yang tampil.
 
 > **Sejak LANJUT_038:** akun punya `jenis_sekolah`, jadi seksi SMK hanya tampil
 > untuk siswa SMK. Siswa SMA/MA kelas 10–12 tidak melihatnya.
 
-- §4.9 Eksplorasi Tujuan · LANJUT_031 · baris 332 — Catatan bahwa tombol memakai teks PWA §4.9 yang bukan DRAF; tidak ada teks baru.
+- §4.9 Eksplorasi Tujuan · LANJUT_031 · baris 383 — Catatan bahwa tombol memakai teks PWA §4.9 yang bukan DRAF; tidak ada teks baru.
 
 > Tombol **Simpan ke Daftar Periksa** ada di Expo sejak LANJUT_034, memakai teks PWA di atas (butir milik akun; lihat §4.4).
 
@@ -3090,23 +3090,23 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 | Bagian | Task | Baris | Butir di blok |
 |---|---|---|---|
-| §4.2 Khusus SMK → Jenjang Saya | LANJUT_037 | 125 | 19 |
-| §4.4 Daftar Periksa | LANJUT_034 | 172 | 4 |
-| §4.5 Arsip Belajar | LANJUT_039 | 189 | 8 |
-| §4.5 Arsip Belajar | LANJUT_049 | 203 | 10 |
-| §4.7 Sesi Latihan Harian | LANJUT_041 | 239 | 9 |
-| §4.9 Eksplorasi Tujuan | LANJUT_031 | 322 | 6 |
-| §4.9 Eksplorasi Tujuan | LANJUT_044 | 334 | 1 |
-| §4.9 Eksplorasi Tujuan | LANJUT_045 | 345 | 3 |
-| §4.10 Daftar (buat akun) | LANJUT_035 | 375 | 2 |
-| §4.10 Daftar (buat akun) | LANJUT_038 | 380 | 3 |
-| §4.11 Bukan kelas 12 (placeholder sementara) | LANJUT_035 | 390 | 7 |
-| §4.12 Gerbang wajib isi kelas | LANJUT_036 | 408 | 5 |
-| §4.12 Gerbang wajib isi kelas | LANJUT_038 | 418 | 4 |
-| §4.13 Kebijakan privasi & persetujuan orang tua/wali | LANJUT_047 | 429 | 13 |
-| §4.14 Terima kebijakan privasi (akun lama & terima ulang) | LANJUT_048 | 452 | 11 |
-| §4.15 Ngobrol Bareng LANJUT dengan AI | LANJUT_051 | 473 | 6 |
-| §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi | LANJUT_053 | 488 | 11 |
-| §4.17 Ngobrol: materi dari modul Arsip dan web | LANJUT_055 | 509 | 4 |
-| §4.18 Level-In dan keyakinan di Latihan | LANJUT_058 | 522 | 12 |
+| §4.2 Khusus SMK → Jenjang Saya | LANJUT_037 | 175 | 19 |
+| §4.4 Daftar Periksa | LANJUT_034 | 223 | 4 |
+| §4.5 Arsip Belajar | LANJUT_039 | 240 | 8 |
+| §4.5 Arsip Belajar | LANJUT_049 | 254 | 10 |
+| §4.7 Sesi Latihan Harian | LANJUT_041 | 290 | 9 |
+| §4.9 Eksplorasi Tujuan | LANJUT_031 | 373 | 6 |
+| §4.9 Eksplorasi Tujuan | LANJUT_044 | 385 | 1 |
+| §4.9 Eksplorasi Tujuan | LANJUT_045 | 396 | 3 |
+| §4.10 Daftar (buat akun) | LANJUT_035 | 426 | 2 |
+| §4.10 Daftar (buat akun) | LANJUT_038 | 431 | 3 |
+| §4.11 Bukan kelas 12 (placeholder sementara) | LANJUT_035 | 441 | 7 |
+| §4.12 Gerbang wajib isi kelas | LANJUT_036 | 459 | 5 |
+| §4.12 Gerbang wajib isi kelas | LANJUT_038 | 469 | 4 |
+| §4.13 Kebijakan privasi & persetujuan orang tua/wali | LANJUT_047 | 480 | 13 |
+| §4.14 Terima kebijakan privasi (akun lama & terima ulang) | LANJUT_048 | 503 | 11 |
+| §4.15 Ngobrol Bareng LANJUT dengan AI | LANJUT_051 | 524 | 6 |
+| §4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi | LANJUT_053 | 539 | 11 |
+| §4.17 Ngobrol: materi dari modul Arsip dan web | LANJUT_055 | 560 | 4 |
+| §4.18 Level-In dan keyakinan di Latihan | LANJUT_058 | 573 | 12 |
 | **Jumlah** | | | **138** (134 butir keputusan + 4 di lampiran) |
