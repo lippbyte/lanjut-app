@@ -176,7 +176,11 @@ Dipakai di: beranda, notifikasi, layar kosong.
 **LANJUT_App (LANJUT_037, LANJUT_064) — halaman jadi "Jenjang Saya" (`/jenjang-saya`,
 tab "Jenjang Saya" — draf LANJUT_064, sebelumnya "Jenjang"; `/khusus-smk` dialihkan). Teks di bawah DRAF, belum
 disetujui Khalifa**, kecuali pembuka SMK kelas 12 yang memakai pembuka lama
-di atas apa adanya. Isi menurut kelas akun (`components/screens/JenjangSayaScreen.tsx`):
+di atas apa adanya. Isi menurut kelas akun (`components/screens/JenjangSayaScreen.tsx`,
+sejak LANJUT_069 `lib/jenjangSaya.ts`). Sejak LANJUT_069, kartu pembuka, pintu, dan
+kartu catatan kelas 7–9 dan 10–11 memakai blok LANJUT_069 di bawah; pintu dan kartu
+lama 037 untuk kedua kelompok itu (Gaya Belajar, kartu "SMA, SMK, atau MA?" lama,
+kartu "Belum perlu mikirin jadwal daftar") tidak dipakai lagi dan dihapus dari daftar ini:
 
 - **Judul:** Jenjang Saya
 - **Pendamping kelas 7–9:** Kelas [kelas] SMP: waktunya kenalan sama minat dan bakatmu.
@@ -184,14 +188,11 @@ di atas apa adanya. Isi menurut kelas akun (`components/screens/JenjangSayaScree
 - **Pendamping kelas 12:** Kelas 12: yang perlu kamu siapkan sebelum daftar kuliah.
 - **Pendamping tanpa kelas:** Isi kelasmu di Jalur Saya supaya isi halaman ini pas buat kamu.
 - **Seksi pintu:** Mulai dari sini
-  - Ngobrol Bareng LANJUT — Cerita soal yang kamu suka, nanti dibantu cari arahnya. (kelas 7–9)
-  - Gaya Belajar — Kenali cara belajar yang paling nyambung buat kamu. (kelas 7–11)
-  - Eksplorasi Tujuan — Intip prodi kuliah: belajar apa dan lulusannya kerja di mana. (kelas 7–11)
-  - Pilih Mapel — Lihat mapel yang mendukung jurusan incaranmu, dan mana yang ada di sekolahmu. (kelas 10–11)
+  - Ngobrol Bareng LANJUT — Cerita soal yang kamu suka, nanti dibantu cari arahnya. (tanpa kelas)
+  - Eksplorasi Tujuan — Intip prodi kuliah: belajar apa dan lulusannya kerja di mana. (tanpa kelas)
+  - Pilih Mapel — Lihat mapel yang mendukung jurusan incaranmu, dan mana yang ada di sekolahmu. (tanpa kelas)
   - Cek Posisi Gue — Lihat kamu lagi di tahap mana dan langkah berikutnya. (kelas 12)
   - Daftar Periksa — Satu per satu, tidak perlu sekaligus. (kelas 12)
-- **Kartu kelas 7–9 — SMA, SMK, atau MA?:** Habis SMP, kamu bisa lanjut ke SMA, SMK, atau MA. SMA dan MA lebih banyak belajar teori sebagai bekal kuliah. SMK langsung belajar keahlian lewat praktik dan PKL, dan lulusannya tetap bisa kuliah. Pilih yang paling cocok sama minatmu, bukan cuma ikut teman.
-- **Kartu kelas 10–11 — Belum perlu mikirin jadwal daftar:** Jadwal pendaftaran kuliah belum perlu dipikirkan sekarang. Fokus dulu cari jurusan yang cocok, lalu jaga nilai mapel yang mendukungnya.
 - **Seksi SMK (kelas 10–12 dengan jenis sekolah SMK, LANJUT_038):** Kalau kamu anak SMK
   - **Pembuka kelas 10–11:** Beberapa hal memang beda buat anak SMK. Yang ini sudah bisa kamu siapkan dari sekarang.
   - **Pembuka kelas 12:** pembuka lama di atas.
@@ -202,6 +203,27 @@ di atas apa adanya. Isi menurut kelas akun (`components/screens/JenjangSayaScree
   Kelas 7–9 tidak melihat bagian SMK.
 - **Sejak LANJUT_038:** akun punya `jenis_sekolah`, jadi seksi SMK hanya tampil
   untuk siswa SMK. Siswa SMA/MA kelas 10–12 tidak melihatnya.
+
+**LANJUT_App (LANJUT_069) — isi Jenjang Saya kelas 7–9 dan 10–11. DRAF, belum disetujui Khalifa**
+dan belum ditinjau tim konten. Teks dari `docs/DRAF-Konten-Jenjang-Saya-SMP-dan-10-11.md`
+(A1–A5, B1–B6) dan keputusan PM di `docs/Tambahan-069-Keputusan-PM.md`; isi di
+`lib/jenjangSaya.ts`. Urutan di layar: pengantar 037, kartu pembuka, seksi "Mulai dari
+sini" (kartu pintu), lalu kartu catatan. Kartu pintu tidak punya tombol teks "Buka":
+seluruh kartu adalah tautan dengan ikon panah (`KartuPintu`). Kelas 12 dan akun tanpa
+kelas tidak berubah.
+
+- **A1 Kartu pembuka kelas 7–9:** judul "Kamu lagi di tahap mana?" · teks "Sebelum memilih apa pun, kenali dulu dirimu. LANJUT bisa membantu kamu mulai dari hal yang paling dekat: minat dan cara belajarmu." · tombol "Mulai eksplorasi" (ke `/eksplorasi-tujuan`)
+- **A2 Pintu Eksplorasi Tujuan kelas 7–9:** judul "Eksplorasi Tujuan" · teks "Coba cari tahu apa yang kamu suka, lalu lihat bidang apa saja yang bisa dipelajari dari situ."
+- **A3 Pintu Gaya Belajar kelas 7–9:** judul "Gaya Belajar" · teks "Setiap orang belajar dengan cara yang berbeda. Kenali caramu supaya belajar terasa lebih mudah."
+- **A4 Kartu catatan kelas 7–9:** judul "SMA, SMK, atau MA?" · teks "Ketiganya adalah jenjang setelah SMP, dengan fokus yang berbeda." · "SMA (Sekolah Menengah Atas): pendidikan umum dengan banyak pilihan mata pelajaran." · "SMK (Sekolah Menengah Kejuruan): pendidikan umum sekaligus keterampilan untuk bidang kerja tertentu." · "MA (Madrasah Aliyah): pendidikan umum dengan muatan keagamaan yang lebih kuat." · catatan "Keterangan ini sedang kami cek ulang." (Tambahan-069 no. 4)
+- **A5 Pintu Ngobrol kelas 7–9:** judul "Ngobrol Bareng LANJUT" · teks "Tanya apa saja tentang minat, cara belajar, atau rencana sekolahmu. Fitur ini butuh persetujuan orang tua/wali dulu." (gerbang persetujuan tetap di layar Ngobrol dan di server)
+- **B1 Kartu pembuka kelas 10–11:** judul "Yuk, siapkan langkahmu" · teks "Kelas 10 dan 11 adalah waktu yang tepat untuk mulai memilih mata pelajaran dan memahami jalur masuk perguruan tinggi." · tombol "Pilih mapel" (ke `/pilih-mapel`)
+- **B2 Pintu Pilih Mapel kelas 10–11:** judul "Pilih Mapel" · teks "Pilihan mata pelajaranmu bisa membuka beberapa bidang studi. Coba lihat mana yang paling dekat dengan minatmu."
+- **B3 Pintu Eksplorasi Tujuan kelas 10–11:** judul "Eksplorasi Tujuan" · teks "Lihat gambaran program studi dan profesi yang berkaitan dengan minatmu. Informasi ini masih dalam tahap pengecekan." (label "Perkiraan" tetap hanya di layar Eksplorasi Tujuan, Tambahan-069 no. 3)
+- **B4 Pintu Arsip Belajar kelas 10–11:** judul "Arsip Belajar" · teks "Simpan catatan dan soal latihanmu per mata pelajaran."
+- **B5 Pintu Level-In kelas 10–11:** judul "Level-In" · teks "Lihat seberapa kuat kamu di tiap mata pelajaran, dari latihanmu."
+- **B6 Pintu Daftar Periksa kelas 10–11:** judul "Daftar Periksa" · teks "Catat langkah-langkahmu supaya tidak ada yang terlewat."
+- **Daftar Periksa kelas 10–11, pengganti pesan "Bagian ini untuk kelas 12":** "Catat langkah-langkahmu supaya tidak ada yang terlewat." (Tambahan-069 no. 2; butir pribadi tetap tampil di bawahnya)
 
 ### 4.3 Cerita Alumni
 
@@ -443,6 +465,8 @@ muncul (dan wajib) bila kelas yang dipilih 10–12; kelas 7–9 tidak ditanya
 tahapan), Daftar Periksa, dan Cek Posisi berisi SNBP/SNBT/TKA, jadi hanya
 tampil untuk kelas 12. Kelas 7–11 dan akun tanpa kelas melihat placeholder
 ini sampai konten per jenjang didesain (`components/screens/KhususKelas12.tsx`).
+Pengecualian sejak LANJUT_069: Daftar Periksa kelas 10–11 memakai kalimat netral
+di §4.2 (blok LANJUT_069), bukan placeholder ini.
 
 - **Kelas 7–11 — judul:** Bagian ini untuk kelas 12.
 - **Kelas 7–11 — isi:** Isinya jadwal dan persiapan SNBP, SNBT, dan TKA. Versi untuk kelas [kelas] sedang kami siapkan.

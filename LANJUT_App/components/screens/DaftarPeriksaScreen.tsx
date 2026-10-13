@@ -10,6 +10,8 @@ import {
   useSaringDaftarPeriksa,
 } from '../../hooks/useProgresDaftarPeriksa';
 import { gabungButirPribadi, type Progres } from '../../lib/daftarPeriksa';
+import { teksDaftarPeriksaBukanKelas12 } from '../../lib/jenjangSaya';
+import { useSesi } from '../../providers/AuthProvider';
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Ikon, Kartu, KeadaanGalat, Kepala, Kosong, Memuat, SeksiJudul, Sumber, gaya } from '../ui';
 import { BukanKelas12, useUntukKelas12 } from './KhususKelas12';
@@ -41,11 +43,15 @@ export function DaftarPeriksaScreen() {
 // LANJUT_035: butir umum (persiapan SNBP/SNBT/TKA) hanya untuk kelas 12.
 // Butir pribadi dari Pilih Mapel & Eksplorasi Tujuan tetap tampil — itu
 // rencana siswa sendiri, bukan tenggat — supaya "Simpan" tetap ada gunanya.
+// LANJUT_069 (Tambahan-069 no. 2): kelas 10–11 tidak melihat pesan "khusus
+// kelas 12", tetapi kalimat netral DRAF (lib/jenjangSaya.ts).
 function DaftarPeriksaBukanKelas12() {
+  const { pengguna } = useSesi();
+  const teksNetral = teksDaftarPeriksaBukanKelas12(pengguna?.kelas ?? null);
   return (
     <View style={gaya.layarIsi}>
       <Kepala judul="Daftar Periksa" pengantar="Satu per satu, tidak perlu sekaligus." />
-      <BukanKelas12 />
+      {teksNetral ? <Text style={gaya.teksBody}>{teksNetral}</Text> : <BukanKelas12 />}
       <ButirPribadiSaja />
     </View>
   );
