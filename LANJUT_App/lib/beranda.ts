@@ -225,8 +225,9 @@ export function teksSapaan(
 export type BagianBeranda = 'sapaan' | 'judul' | 'progres' | 'grid' | 'mulai_dari_sini' | 'tenggat' | 'info_penting';
 
 /**
- * Urutan bagian Beranda dari atas ke bawah (LANJUT_072; keputusan Khalifa:
- * urutan "berkelompok"). Empat bagian yang disebut task berurutan sapaan →
+ * Urutan bagian Beranda dari atas ke bawah (LANJUT_072). Susunan "berkelompok"
+ * adalah keputusan agen di LANJUT_072, BUKAN persetujuan PM: letak judul, baris
+ * progres, dan kartu tenggat tidak ada di spesifikasi. Empat bagian yang disebut task berurutan sapaan →
  * grid → "Mulai dari Sini" → Info Penting; bagian lain ikut bagian terdekatnya:
  * judul K1 di bawah sapaan, baris progres tepat di atas grid (LANJUT_065), dan
  * kartu tenggat menempel di atas Info Penting (keduanya hanya kelas 12, LANJUT_066).

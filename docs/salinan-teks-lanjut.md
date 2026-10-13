@@ -167,12 +167,24 @@ Dipakai di: beranda, notifikasi, layar kosong.
 
 **LANJUT_App (LANJUT_072) — Sapaan Beranda. DRAF, belum disetujui Khalifa.** Tampil paling
 atas Beranda (`lib/beranda.ts` `teksSapaan`); nama panjang dipotong di baris kedua dengan "…".
-Urutan Beranda sejak LANJUT_072 (keputusan Khalifa, susunan "berkelompok", `urutanBeranda`):
+Urutan Beranda sejak LANJUT_072 (susunan "berkelompok", `urutanBeranda`; letak judul, baris
+progres, dan kartu tenggat adalah keputusan agen, bukan persetujuan PM):
 sapaan, kalimat K1, baris progres, grid menu, kartu "Mulai dari Sini" (akun baru), lalu
 kartu tenggat dan Info Penting (keduanya hanya kelas 12). Hanya urutan yang berubah; bunyi
 teks lain tetap.
 
 - **Sapaan:** Halo, [nama tampilan] (bila nama tampilan kosong: Halo, [nama pengguna]; bila keduanya kosong: Halo, tanpa koma)
+
+**LANJUT_App (LANJUT_072b) — Info Penting tanpa tahapan yang sudah lewat. DRAF, belum
+disetujui Khalifa.** Info Penting di Beranda tidak menampilkan tahapan yang tanggal selesainya
+sudah lewat menurut tanggal hari ini di Asia/Jakarta (WIB). Tahapan yang selesai hari ini tetap
+tampil sampai akhir hari; tahapan tanpa tanggal selesai tetap tampil walau tanggal mulainya
+sudah lewat. Kartu tenggat dan Cek Posisi Gue memakai "hari ini" yang sama (`hariIniWib` di
+`lib/linimasa.ts`). Data tidak dihapus. Bila tidak ada data terverifikasi sama sekali, seksi
+tetap hilang (aturan LANJUT_066); kalimat di bawah hanya tampil bila semua tahapan
+terverifikasi sudah lewat, di bawah judul seksi "Info Penting".
+
+- **Info Penting kosong (semua tahapan terverifikasi sudah lewat):** Belum ada info penting untuk saat ini.
 
 ### 4.2 Khusus SMK → Jenjang Saya
 

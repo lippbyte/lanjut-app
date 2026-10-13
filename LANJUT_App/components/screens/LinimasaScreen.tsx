@@ -22,7 +22,7 @@ import type { Kelas } from '../../lib/jenjang';
 import {
   formatRentang,
   formatTanggal,
-  infoPentingLinimasa,
+  tampilanInfoPenting,
   tanggalMomen,
   turunkanLinimasa,
   type TahapanTurunan,
@@ -174,7 +174,8 @@ function KartuMulaiDariSini({
 // LANJUT_072: tenggat dan Info Penting dirender terpisah (urutanBeranda menaruhnya
 // berdampingan) dari satu query yang sama. Memuat/galat tampil sekali saja, di slot
 // tenggat yang lebih dulu. LANJUT_066: tanpa data terverifikasi yang relevan, tidak
-// ada kartu sama sekali (bukan kartu kosong atau kalimat "belum ada info").
+// ada kartu sama sekali. "Hari ini" untuk keduanya = hariIniWib (LANJUT_072b), lewat
+// default turunkanLinimasa.
 function TenggatTerdekat() {
   const { data, isPending, isError } = useTahapanLinimasa();
   if (isPending) return <Memuat />;
@@ -197,19 +198,23 @@ function TenggatTerdekat() {
 }
 
 // LANJUT_066 §A: paling banyak tiga kartu "Info Penting" dari data terverifikasi.
+// LANJUT_072b: tanpa tahapan yang sudah lewat; bila semuanya sudah lewat, satu
+// kalimat netral. Aturan tanggalnya hanya di lib/linimasa.ts (tampilanInfoPenting).
 function InfoPenting({ kelas }: { kelas: Kelas | null | undefined }) {
   const { data, isPending, isError } = useTahapanLinimasa();
   if (isPending || isError) return null;
 
-  const infoPenting = infoPentingLinimasa(data ?? [], kelas);
-  if (!infoPenting.length) return null;
+  const tampilan = tampilanInfoPenting(data ?? [], kelas);
+  if (tampilan.jenis === 'sembunyi') return null;
 
   return (
     <View style={s.seksi}>
       <SeksiJudul>Info Penting</SeksiJudul>
-      {infoPenting.map((b) => (
-        <KartuInfoPenting key={b.id} butir={b} />
-      ))}
+      {tampilan.jenis === 'kartu' ? (
+        tampilan.butir.map((b) => <KartuInfoPenting key={b.id} butir={b} />)
+      ) : (
+        <Text style={gaya.teksKecil}>{tampilan.kalimat}</Text>
+      )}
     </View>
   );
 }

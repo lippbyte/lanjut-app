@@ -24,6 +24,13 @@ let baseUrl;
 
 const ID_SIMULASI = ['uji-066-terverifikasi', 'uji-066-belum-dicek'];
 
+// LANJUT_072b: Info Penting kini menyaring tahapan yang tanggal selesainya sudah
+// lewat. Tes 066 di bawah menguji verifikasi, urutan, dan batas tiga kartu — bukan
+// tanggal — jadi "hari ini" dipatok sebelum semua tanggal data uji (Agustus–
+// November 2026) supaya hasilnya tidak bergantung pada tanggal tes dijalankan.
+// Perilaku tanggal diuji di tests/info-penting-tanggal.test.js.
+const HARI_UJI = Date.UTC(2026, 6, 1);
+
 async function hapusSimulasi() {
   await pool.query('DELETE FROM tahapan_linimasa WHERE id IN (?)', [ID_SIMULASI]);
 }
@@ -105,7 +112,7 @@ describe('LANJUT_066 §A & §B: Logika Kartu Info Penting & Penyaringan', () => 
   ];
 
   test('Hanya data dengan status_verifikasi = "terverifikasi" dan diperiksa_pada != null yang muncul', () => {
-    const hasil = infoPentingLinimasa(dataUji, '12');
+    const hasil = infoPentingLinimasa(dataUji, '12', HARI_UJI);
     assert.ok(hasil.length > 0);
     for (const item of hasil) {
       assert.equal(item.status_verifikasi, 'terverifikasi');
@@ -115,7 +122,7 @@ describe('LANJUT_066 §A & §B: Logika Kartu Info Penting & Penyaringan', () => 
   });
 
   test('Paling banyak 3 kartu yang dikembalikan, terurut dari tanggal mulai terdekat ASC', () => {
-    const hasil = infoPentingLinimasa(dataUji, '12');
+    const hasil = infoPentingLinimasa(dataUji, '12', HARI_UJI);
     assert.equal(hasil.length, 3, 'harus membatasi maksimal 3 kartu');
     assert.equal(hasil[0].id, 'tahap-1');
     assert.equal(hasil[1].id, 'tahap-3');
@@ -124,7 +131,7 @@ describe('LANJUT_066 §A & §B: Logika Kartu Info Penting & Penyaringan', () => 
   });
 
   test('Format rentang tanggal, label sumber, dan tanggal periksa sesuai spesifikasi', () => {
-    const hasil = infoPentingLinimasa(dataUji, '12');
+    const hasil = infoPentingLinimasa(dataUji, '12', HARI_UJI);
     const item1 = hasil[0];
 
     const rentang = formatRentang(item1.tanggal_mulai, item1.tanggal_selesai);
@@ -154,24 +161,24 @@ describe('LANJUT_066 §A & §B: Logika Kartu Info Penting & Penyaringan', () => 
 
   test('Relevansi jenjang: kelas 12 dapat kartu, SMP dan kelas 10–11 dapat array kosong', () => {
     // Kelas 12
-    const hasilKelas12 = infoPentingLinimasa(dataUji, '12');
+    const hasilKelas12 = infoPentingLinimasa(dataUji, '12', HARI_UJI);
     assert.equal(hasilKelas12.length, 3);
 
     // SMP (kelas 7, 8, 9)
     for (const k of ['7', '8', '9']) {
-      const hasilSmp = infoPentingLinimasa(dataUji, k);
+      const hasilSmp = infoPentingLinimasa(dataUji, k, HARI_UJI);
       assert.deepEqual(hasilSmp, [], `SMP kelas ${k} harus menghasilkan array kosong`);
     }
 
     // Kelas 10 & 11
     for (const k of ['10', '11']) {
-      const hasil1011 = infoPentingLinimasa(dataUji, k);
+      const hasil1011 = infoPentingLinimasa(dataUji, k, HARI_UJI);
       assert.deepEqual(hasil1011, [], `Kelas ${k} harus menghasilkan array kosong`);
     }
 
     // Tanpa kelas / umum
-    assert.deepEqual(infoPentingLinimasa(dataUji, null), []);
-    assert.deepEqual(infoPentingLinimasa(dataUji, undefined), []);
+    assert.deepEqual(infoPentingLinimasa(dataUji, null, HARI_UJI), []);
+    assert.deepEqual(infoPentingLinimasa(dataUji, undefined, HARI_UJI), []);
   });
 });
 
@@ -308,11 +315,11 @@ describe('LANJUT_066 §C: Tes Isolasi Lintas Akun', () => {
 
     // Olah di sisi klien berdasarkan kelas akun masing-masing:
     // Akun A (kelas 12) memperoleh Info Penting terverifikasi
-    const infoA = infoPentingLinimasa(jsonA.data, jsonProfilA.data.kelas);
+    const infoA = infoPentingLinimasa(jsonA.data, jsonProfilA.data.kelas, HARI_UJI);
     assert.ok(infoA.length > 0);
 
     // Akun B (kelas 10) tidak memperoleh Info Penting linimasa
-    const infoB = infoPentingLinimasa(jsonB.data, jsonProfilB.data.kelas);
+    const infoB = infoPentingLinimasa(jsonB.data, jsonProfilB.data.kelas, HARI_UJI);
     assert.deepEqual(infoB, []);
   });
 });

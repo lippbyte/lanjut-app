@@ -29,9 +29,18 @@ function uraiTanggal(iso: string | null | undefined): number {
   return Date.UTC(tahun, bulan - 1, tanggal);
 }
 
-function hariIniUtc(): number {
-  const kini = new Date();
-  return Date.UTC(kini.getFullYear(), kini.getMonth(), kini.getDate());
+// Asia/Jakarta (WIB) = UTC+7 tetap, tanpa waktu musim panas.
+const SELISIH_WIB_MS = 7 * 60 * 60 * 1000;
+
+/**
+ * Tanggal hari ini di Asia/Jakarta, sebagai tengah malam UTC — skala yang sama
+ * dengan `uraiTanggal` (LANJUT_072b). Tidak bergantung pada zona waktu perangkat:
+ * hanya memakai getter UTC, tanpa Intl. Satu-satunya sumber "hari ini" untuk
+ * kartu tenggat, Info Penting, dan Cek Posisi Gue (lewat turunkanLinimasa).
+ */
+export function hariIniWib(sekarangMs: number = Date.now()): number {
+  const wib = new Date(sekarangMs + SELISIH_WIB_MS);
+  return Date.UTC(wib.getUTCFullYear(), wib.getUTCMonth(), wib.getUTCDate());
 }
 
 function tanggalTeks(ms: number, opsi: Intl.DateTimeFormatOptions): string {
@@ -82,7 +91,7 @@ export function formatRentang(mulai: string, selesai: string): string {
  */
 export function turunkanLinimasa(
   data: TahapanLinimasa[],
-  hariIniMs: number = hariIniUtc()
+  hariIniMs: number = hariIniWib()
 ): LinimasaTerkini {
   const terverifikasi = (data ?? []).filter(
     (t) => t.status_verifikasi === 'terverifikasi' && t.diperiksa_pada != null
@@ -135,17 +144,51 @@ export function tanggalMomen(tahapan: TahapanLinimasa, momen: Momen): string {
 /**
  * Mengambil paling banyak tiga butir Info Penting dari data terverifikasi (LANJUT_066).
  * Relevansi jenjang mengikuti kelompokJenjang: hanya relevan untuk kelas 12.
+ *
+ * LANJUT_072b: tahapan yang tanggal selesainya sudah lewat (status 'done' dari
+ * turunkanLinimasa — logika tanggal yang sama dengan kartu tenggat) tidak diambil.
+ * Yang selesai HARI INI tetap tampil sampai akhir hari (WIB); tahapan tanpa
+ * tanggal selesai tetap tampil walau tanggal mulainya sudah lewat. Data tidak
+ * dihapus — hanya tidak ditampilkan di Info Penting.
  */
 export function infoPentingLinimasa(
   data: TahapanLinimasa[],
   kelas?: Kelas | null | undefined,
-  hariIniMs: number = hariIniUtc()
+  hariIniMs: number = hariIniWib()
 ): TahapanTurunan[] {
   const kelompok = kelompokJenjang(kelas);
   if (kelompok !== 'kelas12') {
     return [];
   }
   const hasil = turunkanLinimasa(data, hariIniMs);
-  return hasil.butir.slice(0, 3);
+  return hasil.butir.filter((b) => b.status !== 'done').slice(0, 3);
+}
+
+/** TEKS DRAF (LANJUT_072b) — salinan-teks-lanjut.md §4.1. */
+export const KALIMAT_INFO_PENTING_KOSONG = 'Belum ada info penting untuk saat ini.';
+
+export type TampilanInfoPenting =
+  | { jenis: 'sembunyi' }
+  | { jenis: 'kartu'; butir: TahapanTurunan[] }
+  | { jenis: 'kosong'; kalimat: string };
+
+/**
+ * Apa yang tampil di seksi Info Penting Beranda (LANJUT_072b):
+ *   - 'kartu'    → ada tahapan terverifikasi yang belum lewat;
+ *   - 'kosong'   → ada tahapan terverifikasi, tetapi semuanya sudah lewat →
+ *                  satu kalimat netral, bukan seksi kosong;
+ *   - 'sembunyi' → bukan kelas 12, atau tidak ada data terverifikasi sama sekali
+ *                  (aturan LANJUT_066: tanpa kartu kosong maupun kalimat).
+ */
+export function tampilanInfoPenting(
+  data: TahapanLinimasa[],
+  kelas?: Kelas | null | undefined,
+  hariIniMs: number = hariIniWib()
+): TampilanInfoPenting {
+  if (kelompokJenjang(kelas) !== 'kelas12') return { jenis: 'sembunyi' };
+  const butir = infoPentingLinimasa(data, kelas, hariIniMs);
+  if (butir.length) return { jenis: 'kartu', butir };
+  const adaTerverifikasi = turunkanLinimasa(data, hariIniMs).butir.length > 0;
+  return adaTerverifikasi ? { jenis: 'kosong', kalimat: KALIMAT_INFO_PENTING_KOSONG } : { jenis: 'sembunyi' };
 }
 

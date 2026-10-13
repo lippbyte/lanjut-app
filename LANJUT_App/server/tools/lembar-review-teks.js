@@ -81,7 +81,8 @@ function bacaBlokDraf(isi) {
     paragraf.push(b);
     const isiParagraf = paragraf.join(' ');
     if (!aktif && /\bDRAF\b/.test(isiParagraf)) {
-      const task = (/LANJUT_\d{3}/.exec(isiParagraf) || ['(tidak disebut)'])[0];
+      // Akhiran huruf ikut (mis. LANJUT_072b), tetapi bukan awal kata lain.
+      const task = (/LANJUT_\d{3}[a-z]?(?![A-Za-z])/.exec(isiParagraf) || ['(tidak disebut)'])[0];
       aktif = { bagian, judulBagian, task, baris: i + 1 - (paragraf.length - 1), kepala: isiParagraf, butir: [] };
       blok.push(aktif);
     }
@@ -177,6 +178,13 @@ const PETA = [
         nama: 'Sapaan Beranda',
         di: 'Beranda, baris paling atas (di atas kalimat "Tahu harus ngapain hari ini.").',
         oleh: 'Semua akun.',
+      },
+      {
+        task: 'LANJUT_072b',
+        awal: '**Info Penting kosong',
+        nama: 'Info Penting kosong',
+        di: 'Beranda, seksi Info Penting, di bawah judul seksi — hanya bila semua tahapan terverifikasi sudah lewat (WIB).',
+        oleh: 'Kelas 12.',
       },
     ],
   },
