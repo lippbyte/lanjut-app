@@ -1,5 +1,6 @@
 const { z } = require('zod');
 const { KELAS, JENIS_SEKOLAH } = require('../../util/kelas');
+const { MAKS_MAPEL_PILIHAN } = require('./mapel-pilihan');
 
 // LANJUT_075 — bidang minat (rumpun) untuk Eksplorasi Kampus. Batas jumlah di
 // sini; isinya (harus ada di daftar rumpun prodi) dicek di pengguna.layanan.js.
@@ -18,6 +19,13 @@ const ubahProfilSkema = z.object({
     .array(z.string().trim().min(1).max(60))
     .max(MAKS_MINAT_RUMPUN, `Bidang minat paling banyak ${MAKS_MINAT_RUMPUN}.`)
     .refine((daftar) => new Set(daftar).size === daftar.length, 'Bidang minat tidak boleh ganda.')
+    .optional(),
+  // LANJUT_079 — id mapel; [] mengosongkan. Batas 5 untuk SEMUA kelas, hanya di
+  // sini. Id harus ada dan (kelas 12) termasuk rumpun favorit: pengguna.layanan.js.
+  mapel_pilihan: z
+    .array(z.string().trim().min(1).max(64))
+    .max(MAKS_MAPEL_PILIHAN, `Mapel pilihan paling banyak ${MAKS_MAPEL_PILIHAN}.`)
+    .refine((daftar) => new Set(daftar).size === daftar.length, 'Mapel pilihan tidak boleh ganda.')
     .optional(),
 });
 

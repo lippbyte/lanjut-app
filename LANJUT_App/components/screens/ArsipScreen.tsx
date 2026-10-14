@@ -6,6 +6,8 @@ import type { Kartu as DataKartu } from '../../api/types';
 import { useKartuSaya } from '../../hooks/useKartu';
 import { useMapel } from '../../hooks/useMapel';
 import { jenisKartu, mapelBerkartu, namaMapel } from '../../lib/arsip';
+import { urutkanMapelPilihan } from '../../lib/mapelPilihan';
+import { useSesi } from '../../providers/AuthProvider';
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { Ikon, Kartu, KeadaanGalat, Kepala, Kosong, Lencana, Memuat, Tombol, gaya } from '../ui';
 import { DaftarOpsi, OpsiPil } from './auth/AuthUI';
@@ -23,6 +25,7 @@ export function ArsipScreen() {
   const router = useRouter();
   const kartuQuery = useKartuSaya();
   const mapelQuery = useMapel();
+  const { pengguna } = useSesi();
   const [saring, setSaring] = useState<string>(SEMUA);
 
   const isi = () => {
@@ -33,7 +36,8 @@ export function ArsipScreen() {
       return <Kosong judul="Belum ada kartu." teks="Mulai dari satu saja — catatan hari ini juga boleh." />;
     }
 
-    const perMapel = mapelBerkartu(kartu, mapelQuery.data ?? []);
+    // LANJUT_079: mapel pilihan (Mapel Saya / Pilih Mapel) tampil lebih dulu.
+    const perMapel = mapelBerkartu(kartu, urutkanMapelPilihan(mapelQuery.data ?? [], pengguna?.mapel_pilihan));
     // Saringan yang mapelnya sudah tidak punya kartu (mis. sesudah dihapus) kembali ke Semua.
     const aktif = saring !== SEMUA && perMapel.some((m) => m.id === saring) ? saring : SEMUA;
     const tampil = aktif === SEMUA ? kartu : kartu.filter((k) => k.mapel_id === aktif);

@@ -23,6 +23,9 @@ export type Pengguna = {
   // LANJUT_075: nama rumpun (bidang minat), [] = belum memilih. Opsional di tipe:
   // sesi yang tersimpan sebelum LANJUT_075 belum punya medan ini.
   minat_rumpun?: string[];
+  // LANJUT_079: id mapel pilihan (kelas 12: Pilih Mapel per rumpun; 7–11: Mapel Saya),
+  // [] = belum memilih. Opsional di tipe: sesi sebelum LANJUT_079 belum punya medan ini.
+  mapel_pilihan?: string[];
   dibuat_pada: string | null;
   terakhir_masuk_pada: string | null;
 };
@@ -86,6 +89,9 @@ export type DataUbahProfil = {
   // LANJUT_075: [] mengosongkan. Server menolak nilai di luar daftar rumpun
   // (RUMPUN_TIDAK_SAH) dan akun yang belum menerima kebijakan (AI_BELUM_DIIZINKAN).
   minat_rumpun?: string[];
+  // LANJUT_079: [] mengosongkan. Maks. 5; kelas 12 hanya mapel dari rumpun favoritnya
+  // (400 VALIDASI_GAGAL, medan mapel_pilihan).
+  mapel_pilihan?: string[];
 };
 
 /** PATCH /pengguna/saya — mengembalikan profil terbaru (bentuk sama dengan /auth/saya). */

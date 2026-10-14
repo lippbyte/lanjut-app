@@ -307,6 +307,17 @@ const PETA = [
           sumber: 'Kode server: konteks.js ringkasanKonteks (hanya kolom yang tercantum), dijaga tests/ngobrol-penghubung.test.js. Tinjauan ahli hukum (UU PDP).',
         },
       },
+      {
+        task: 'LANJUT_079',
+        awal: '**Usulan — mapel pilihan yang disimpan:**',
+        nama: 'Usulan: mapel pilihan (mapel_pilihan) di kebijakan privasi (menunggu tinjauan hukum)',
+        di: 'Belum tampil di layar mana pun. Usulan untuk kebijakan privasi versi berikutnya (data yang disimpan).',
+        oleh: 'Semua akun, setelah versi kebijakan baru disetujui dan dirilis.',
+        faktual: {
+          klaim: 'Paling banyak lima mapel pilihan disimpan untuk urutan tampil di Arsip dan Latihan; tidak dikirim ke penyedia AI; bisa diubah atau dikosongkan.',
+          sumber: 'Kode server: pengguna.skema.js (maks. 5), pengguna.layanan.js, ngobrol.layanan.js pesanSistem (tanpa mapel_pilihan), dijaga tests/mapel-pilihan.test.js. Tinjauan ahli hukum (UU PDP).',
+        },
+      },
     ],
   },
   {
@@ -741,6 +752,32 @@ const PETA = [
           sumber: 'Sama dengan butir di atasnya.',
         },
       },
+    ],
+  },
+  {
+    // LANJUT_079 — tab Pilih Mapel (components/screens/MapelPilihan.tsx, teks di lib/mapelPilihan.ts).
+    kelompok: 'Pilih Mapel per rumpun (kelas 12) & Mapel Saya (kelas 7–11)',
+    butir: [
+      { task: 'LANJUT_079', awal: '**Pilih Mapel kelas 12 — judul seksi:**', nama: 'Judul seksi "Mapel pilihanmu"', di: 'Tab Pilih Mapel, seksi berbingkai di atas alur prodi (F3).', oleh: 'Kelas 12.' },
+      { task: 'LANJUT_079', awal: '**Pilih Mapel kelas 12 — pengantar:**', nama: 'Pengantar Pilih Mapel kelas 12', di: 'Tab Pilih Mapel, di bawah judul seksi, setelah rumpun favorit dipilih.', oleh: 'Kelas 12 yang sudah memilih rumpun.' },
+      { task: 'LANJUT_079', awal: '**Pilih Mapel kelas 12 — ajakan', nama: 'Ajakan memilih rumpun dulu', di: 'Tab Pilih Mapel, seksi atas, selama rumpun favorit belum dipilih; diikuti pilihan rumpun. Tidak ada daftar mapel.', oleh: 'Kelas 12 yang belum memilih rumpun.' },
+      {
+        task: 'LANJUT_079',
+        awal: '**Pilih Mapel kelas 12 — catatan pengelompokan:**',
+        nama: 'Catatan: pengelompokan belum dicek ke sumber resmi',
+        di: 'Tab Pilih Mapel, di atas kelompok mapel per rumpun.',
+        oleh: 'Kelas 12 yang sudah memilih rumpun.',
+        faktual: {
+          klaim: 'Pengelompokan rumpun → mapel bersifat sementara dan belum dicek ke sumber resmi.',
+          sumber: 'konten.repo.js ambilMapelPerRumpun (prodi_mapel bobot ≥ 2 dari data benih MVP-PWA/data/prodi*.json, 0 dari 19 prodi terverifikasi). Verifikasi oleh tim konten.',
+        },
+      },
+      { task: 'LANJUT_079', awal: '**Pilih Mapel kelas 12 — judul kelompok:**', nama: 'Judul kelompok = nama rumpun', di: 'Tab Pilih Mapel, di atas pil mapel tiap rumpun favorit.', oleh: 'Kelas 12 yang sudah memilih rumpun.' },
+      { task: 'LANJUT_079', awal: '**Pilih Mapel kelas 12 — tombol ubah rumpun:**', nama: 'Tombol "Ubah rumpun favorit"', di: 'Tab Pilih Mapel, bawah seksi; membuka pilihan rumpun di layar yang sama.', oleh: 'Kelas 12 yang sudah memilih rumpun.' },
+      { task: 'LANJUT_079', awal: '**Rumpun favorit', nama: 'Pilihan rumpun favorit (1–3)', di: 'Jalur Saya /cek-posisi (sesudah Langkah Berikutnya) dan ajakan di tab Pilih Mapel.', oleh: 'Kelas 12.' },
+      { task: 'LANJUT_079', awal: '**Mapel Saya — judul & pengantar:**', nama: 'Mapel Saya — judul & pengantar', di: 'Tab Pilih Mapel: judul layar untuk kelas 7–9; judul seksi di atas alur prodi untuk kelas 10–11.', oleh: 'Kelas 7–11.' },
+      { task: 'LANJUT_079', awal: '**Pilihan mapel — hitungan & batas:**', nama: 'Hitungan dan batas pilihan', di: 'Tab Pilih Mapel (mapel) dan pilihan rumpun (batas saja).', oleh: 'Kelas 7–12.' },
+      { task: 'LANJUT_079', awal: '**Pilihan mapel — tombol:**', nama: 'Tombol "Simpan mapel"', di: 'Tab Pilih Mapel, tampil bila pilihan berubah.', oleh: 'Kelas 7–12.' },
     ],
   },
   {

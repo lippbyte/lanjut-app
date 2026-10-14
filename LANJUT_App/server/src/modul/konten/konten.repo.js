@@ -93,6 +93,27 @@ async function ambilDaftarRumpun() {
   return baris.map((b) => b.rumpun);
 }
 
+/**
+ * LANJUT_079 — pengelompokan INTERNAL mapel per rumpun untuk Pilih Mapel kelas
+ * 12: mapel yang muncul di prodi_mapel dengan bobot >= `bobotMin` untuk
+ * setidaknya satu prodi di rumpun itu. Sumbernya data benih prodi/prodi_mapel
+ * yang BELUM terverifikasi, jadi tidak boleh ditampilkan sebagai fakta.
+ * Urut rumpun lalu nama mapel (bukan "paling penting").
+ */
+async function ambilMapelPerRumpun(bobotMin) {
+  const [baris] = await pool.execute(
+    `SELECT p.rumpun, m.id, m.nama
+       FROM prodi_mapel pm
+       JOIN prodi p ON p.id = pm.prodi_id
+       JOIN mapel m ON m.id = pm.mapel_id
+      WHERE pm.bobot >= ?
+      GROUP BY p.rumpun, m.id, m.nama
+      ORDER BY p.rumpun ASC, m.nama ASC`,
+    [bobotMin]
+  );
+  return baris;
+}
+
 /** F4 — WAJIB menyaring izin_tayang=1 AND tayang=1 (§4.4). Disaring di sini,
  * bukan di rute, supaya tidak bisa terlewat. */
 async function ambilCeritaAlumniTayang() {
@@ -166,6 +187,7 @@ module.exports = {
   ambilAgregasiMapelLintasProdi,
   prodiAda,
   ambilDaftarRumpun,
+  ambilMapelPerRumpun,
   ambilCeritaAlumniTayang,
   ambilChecklist,
 };

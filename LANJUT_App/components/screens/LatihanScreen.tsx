@@ -20,6 +20,8 @@ import {
   type KodeKeyakinan,
 } from '../../lib/latihan';
 import { TEKS_LEVELIN } from '../../lib/levelin';
+import { urutkanMapelPilihan } from '../../lib/mapelPilihan';
+import { useSesi } from '../../providers/AuthProvider';
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Kartu, KeadaanGalat, Kepala, Kosong, Memuat, Tombol, gaya } from '../ui';
 import { DaftarOpsi, OpsiPil, PesanGalat } from './auth/AuthUI';
@@ -44,6 +46,7 @@ type Sesi = { id: string; mapelId: string | null; batas: number; antrian: DataKa
 export function LatihanScreen() {
   const kartuQuery = useKartuSaya();
   const mapelQuery = useMapel();
+  const { pengguna } = useSesi();
   const mulaiSesi = useMulaiSesi();
   const simpan = useSimpanHasilSesi();
   const param = useLocalSearchParams<{ mapel?: string; asal?: string }>();
@@ -98,7 +101,8 @@ export function LatihanScreen() {
   if (sesi) return <LangkahSesi key={sesi.id} sesi={sesi} mapel={mapel} onSelesai={selesai} />;
 
   // Saringan yang mapelnya sudah tidak punya kartu kembali ke Semua.
-  const perMapel = mapelBerkartu(kartu, mapel);
+  // LANJUT_079: mapel pilihan (Mapel Saya / Pilih Mapel) tampil lebih dulu.
+  const perMapel = mapelBerkartu(kartu, urutkanMapelPilihan(mapel, pengguna?.mapel_pilihan));
   const aktif = pilihanMapel !== SEMUA && perMapel.some((m) => m.id === pilihanMapel) ? pilihanMapel : SEMUA;
   const mapelId = aktif === SEMUA ? null : aktif;
   return (

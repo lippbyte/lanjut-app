@@ -8,6 +8,8 @@ import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Ikon, Kartu, Kepala, Lencana, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
 import { DaftarOpsi, OpsiPil } from './auth/AuthUI';
 import { BukanKelas12, useUntukKelas12 } from './KhususKelas12';
+import { PilihRumpunFavorit } from './MapelPilihan';
+import { TEKS_MAPEL_PILIHAN } from '../../lib/mapelPilihan';
 
 const URUTAN: Tahap[] = ['eksplorasi', 'pemantapan', 'persiapan', 'menjelang'];
 // Satu kata per tahap supaya muat di kolom peta tanpa terpotong di tengah kata.
@@ -122,6 +124,10 @@ function Hasil({ kebingungan, onUlang }: { kebingungan: Kebingungan | null; onUl
       <SeksiJudul>Langkah Berikutnya</SeksiJudul>
       <Tombol label={posisi.langkah.label} besar penuh onPress={() => router.push(posisi.langkah.tujuan)} />
       <Tombol label="Ganti jawaban kebingungan" varian="hantu" kecil onPress={onUlang} />
+
+      {/* LANJUT_079: rumpun favorit (1–3) untuk Pilih Mapel per rumpun; disimpan ke minat_rumpun. */}
+      <SeksiJudul>{TEKS_MAPEL_PILIHAN.rumpun.judul}</SeksiJudul>
+      <PilihRumpunFavorit />
 
       <Penafian>
         Posisi ini dihitung dari target prodi di Data Akun dan kemajuan Daftar Periksa. Ini cuma gambaran, keputusannya

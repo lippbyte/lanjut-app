@@ -37,7 +37,7 @@ async function pastikanProdiValid(prodiTujuan) {
   }
 }
 
-/** Kolom minat_rumpun → larik string; NULL atau isi tak terbaca → []. */
+/** Kolom JSON larik (minat_rumpun, mapel_pilihan) → larik string; NULL atau isi tak terbaca → []. */
 function larikMinat(nilai) {
   let isi = nilai;
   if (typeof isi === 'string') {
@@ -68,6 +68,8 @@ function bentukProfil(baris) {
     // LANJUT_075: larik nama rumpun; NULL (belum memilih) → []. JSON bisa datang
     // sebagai larik (MySQL) atau teks (MariaDB menyimpan JSON sebagai LONGTEXT).
     minat_rumpun: larikMinat(baris.minat_rumpun),
+    // LANJUT_079: larik id mapel (Pilih Mapel kelas 12 / Mapel Saya kelas 7–11); NULL → [].
+    mapel_pilihan: larikMinat(baris.mapel_pilihan),
     dibuat_pada: keIso(baris.dibuat_pada),
     terakhir_masuk_pada: keIso(baris.terakhir_masuk_pada),
   };
@@ -213,4 +215,5 @@ module.exports = {
   petakanProdiTujuan,
   pastikanProdiValid,
   bentukProfil,
+  larikMinat,
 };

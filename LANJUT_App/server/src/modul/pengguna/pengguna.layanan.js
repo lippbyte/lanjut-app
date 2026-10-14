@@ -3,10 +3,12 @@ const { tentukanJenisSekolah } = require('../../util/kelas');
 const penggunaRepo = require('./pengguna.repo');
 const kontenRepo = require('../konten/konten.repo');
 const persetujuanLayanan = require('../persetujuan/persetujuan.layanan');
+const mapelPilihan = require('./mapel-pilihan');
 const {
   petakanProdiTujuan,
   pastikanProdiValid,
   bentukProfil,
+  larikMinat,
 } = require('../auth/auth.layanan');
 
 /**
@@ -25,15 +27,37 @@ async function pastikanMinatRumpunBoleh(penggunaId, minatRumpun) {
   }
 }
 
-async function ubahProfil(penggunaId, { kelas, jenis_sekolah, prodi_impian, nama_tampilan, gaya_belajar, minat_rumpun }) {
+/**
+ * LANJUT_079: mapel pilihan harus id mapel yang ada; untuk kelas 12 juga harus
+ * termasuk kelompok rumpun favoritnya. Batas 5 sudah dicek skema. Tanpa gerbang
+ * AI/kebijakan (task 079 §C.12).
+ */
+async function pastikanMapelPilihanBoleh(kelas, minatRumpun, daftar) {
+  const ada = new Set((await kontenRepo.ambilMapel()).map((m) => m.id));
+  if (daftar.some((id) => !ada.has(id))) {
+    throw new GalatApi('VALIDASI_GAGAL', 'Mapel pilihan tidak dikenal.', { mapel_pilihan: 'Mapel tidak dikenal.' });
+  }
+  if (mapelPilihan.modePilihan(kelas) === 'rumpun') {
+    const boleh = await mapelPilihan.mapelBoleh(kelas, minatRumpun);
+    if (daftar.some((id) => !boleh.has(id))) {
+      throw new GalatApi('VALIDASI_GAGAL', 'Mapel pilihan harus dari rumpun favoritmu.', {
+        mapel_pilihan: 'Mapel harus dari rumpun favoritmu.',
+      });
+    }
+  }
+}
+
+async function ubahProfil(penggunaId, { kelas, jenis_sekolah, prodi_impian, nama_tampilan, gaya_belajar, minat_rumpun, mapel_pilihan }) {
   const perubahan = {};
+  const perluLama = kelas !== undefined || jenis_sekolah !== undefined || minat_rumpun !== undefined || mapel_pilihan !== undefined;
+  const lama = perluLama ? await penggunaRepo.cariProfil(penggunaId) : null;
+  if (perluLama && !lama) throw new GalatApi('TIDAK_DITEMUKAN', 'Pengguna tidak ditemukan.');
+  const kelasBaru = kelas !== undefined ? kelas : lama && lama.kelas;
+
   if (kelas !== undefined) perubahan.kelas = kelas;
   // LANJUT_038: jenis sekolah selalu diselaraskan dengan kelas yang berlaku
   // sesudah perubahan (mis. kelas 8 → 11 mengosongkan SMP lama).
   if (kelas !== undefined || jenis_sekolah !== undefined) {
-    const lama = await penggunaRepo.cariProfil(penggunaId);
-    if (!lama) throw new GalatApi('TIDAK_DITEMUKAN', 'Pengguna tidak ditemukan.');
-    const kelasBaru = kelas !== undefined ? kelas : lama.kelas;
     perubahan.jenisSekolah = tentukanJenisSekolah(kelasBaru, jenis_sekolah, lama.jenis_sekolah);
   }
   if (prodi_impian !== undefined) {
@@ -48,7 +72,25 @@ async function ubahProfil(penggunaId, { kelas, jenis_sekolah, prodi_impian, nama
   // mengubah medan lain yang ikut dikirim.
   if (minat_rumpun !== undefined) {
     await pastikanMinatRumpunBoleh(penggunaId, minat_rumpun);
+    // LANJUT_079: rumpun favorit kelas 12 paling banyak 3 (kelas lain tetap batas skema, 5).
+    if (mapelPilihan.modePilihan(kelasBaru) === 'rumpun' && minat_rumpun.length > mapelPilihan.MAKS_RUMPUN_KELAS12) {
+      throw new GalatApi('VALIDASI_GAGAL', `Rumpun favorit paling banyak ${mapelPilihan.MAKS_RUMPUN_KELAS12}.`, {
+        minat_rumpun: `Paling banyak ${mapelPilihan.MAKS_RUMPUN_KELAS12} untuk kelas 12.`,
+      });
+    }
     perubahan.minatRumpun = minat_rumpun;
+  }
+  const minatBaru = minat_rumpun !== undefined ? minat_rumpun : lama && larikMinat(lama.minat_rumpun);
+  if (mapel_pilihan !== undefined) {
+    await pastikanMapelPilihanBoleh(kelasBaru, minatBaru, mapel_pilihan);
+    perubahan.mapelPilihan = mapel_pilihan;
+  } else if (mapelPilihan.modePilihan(kelasBaru) === 'rumpun' && (minat_rumpun !== undefined || kelas !== undefined)) {
+    // LANJUT_079: kelas 12 yang mengganti rumpun (atau baru naik ke kelas 12) —
+    // mapel tersimpan yang tidak lagi termasuk rumpun favoritnya dilepas.
+    const tersimpan = larikMinat(lama.mapel_pilihan);
+    const boleh = await mapelPilihan.mapelBoleh(kelasBaru, minatBaru);
+    const sisa = tersimpan.filter((id) => boleh.has(id));
+    if (sisa.length !== tersimpan.length) perubahan.mapelPilihan = sisa;
   }
 
   await penggunaRepo.updateProfil(penggunaId, perubahan);
@@ -58,4 +100,22 @@ async function ubahProfil(penggunaId, { kelas, jenis_sekolah, prodi_impian, nama
   return bentukProfil(profil);
 }
 
-module.exports = { ubahProfil };
+/** GET /pengguna/saya — profil yang sama dengan /auth/saya. */
+async function profilSaya(penggunaId) {
+  const profil = await penggunaRepo.cariProfil(penggunaId);
+  if (!profil) throw new GalatApi('TIDAK_DITEMUKAN', 'Pengguna tidak ditemukan.');
+  return bentukProfil(profil);
+}
+
+/** GET /pengguna/saya/pilihan-mapel — isi layar Pilih Mapel (kelas 12) / Mapel Saya (kelas lain). */
+async function pilihanMapel(penggunaId) {
+  const profil = await penggunaRepo.cariProfil(penggunaId);
+  if (!profil) throw new GalatApi('TIDAK_DITEMUKAN', 'Pengguna tidak ditemukan.');
+  return mapelPilihan.isiLayar({
+    kelas: profil.kelas,
+    minatRumpun: larikMinat(profil.minat_rumpun),
+    mapelPilihan: larikMinat(profil.mapel_pilihan),
+  });
+}
+
+module.exports = { ubahProfil, profilSaya, pilihanMapel };

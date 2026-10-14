@@ -707,6 +707,14 @@ untuk versi kebijakan berikutnya, sesudah tinjauan ahli hukum.
 - **Usulan — ringkasan fitur yang dikirim ke penyedia AI:** Kalau pertanyaanmu di Ngobrol Bareng LANJUT menyangkut latihan atau ujian, server LANJUT ikut mengirim ringkasan singkat dari akunmu ke OpenRouter dan penyedia model AI: nama mapel dan jenis saran latihanmu (dihitung dari hasil latihanmu), atau jenis, tanggal, dan mapel satu ujian terdekat yang kamu catat di Persiapan Event. Untuk pertanyaan pelajaran, yang ikut dikirim adalah judul dan ringkasan satu modul milikmu yang paling berkaitan, paling panjang 600 karakter, setelah disamarkan. Catatan materi ujianmu, jawaban latihan per kartu, dan modul lainmu tidak ikut dikirim. Jawaban AI tidak disimpan di server LANJUT.
 - **Usulan — pengganti butir "data lain di akunmu" (bagian Fitur AI: apa yang tidak dikirim):** Data lain di akunmu, seperti isi kartu, jawaban latihan per kartu, centang Daftar Periksa, dan catatan materi ujian. Ringkasan singkat di atas adalah satu-satunya bagian dari data latihan dan Persiapan Event yang bisa ikut dikirim.
 
+**LANJUT_079 — usulan kalimat kebijakan privasi untuk mapel pilihan. DRAF, menunggu
+tinjauan hukum; belum disetujui Khalifa; BELUM dipakai di layar.** Sejak LANJUT_079 akun
+menyimpan `mapel_pilihan` (paling banyak 5 id mapel dari Pilih Mapel kelas 12 atau Mapel
+Saya kelas 7–11). Kebijakan draf v2 belum menyebutnya. `LANJUT_App/lib/kebijakan-privasi.json`
+dan versinya tidak diubah; kalimat ini usulan untuk versi kebijakan berikutnya.
+
+- **Usulan — mapel pilihan yang disimpan:** Kami menyimpan paling banyak lima mapel yang kamu pilih di Pilih Mapel atau Mapel Saya, untuk menampilkan mapel itu lebih dulu di Arsip Belajar dan Latihan. Mapel pilihan tidak ikut dikirim ke penyedia AI di Ngobrol Bareng LANJUT, dan bisa kamu ubah atau kosongkan kapan saja.
+
 ### 4.14 Terima kebijakan privasi (akun lama & terima ulang)
 
 **LANJUT_048 — DRAF belum disetujui Khalifa.** Untuk akun yang belum
@@ -835,6 +843,33 @@ belum ada, atau gagal dimuat → kartu tidak tampil dan tidak ada teks pengganti
 Letaknya tepat sesudah grid ikon, sebelum Info Penting (kelas 12) atau carousel banner.
 
 - **Beranda — kartu Latihan berikutnya:** label: Latihan berikutnya · isi: [nama mapel] · tombol: Mulai latihan (membuka Latihan dengan mapel itu)
+
+### 4.19 Pilih Mapel per rumpun favorit dan Mapel Saya
+
+**LANJUT_App (LANJUT_079) — Pilih Mapel per rumpun favorit (kelas 12) dan Mapel Saya
+(kelas 7–11). DRAF, belum disetujui Khalifa.** Teks di `lib/mapelPilihan.ts`
+(`TEKS_MAPEL_PILIHAN`); teks tersimpan, gagal, dan perlu kebijakan memakai kalimat
+§4.9 (LANJUT_075) yang sudah ada. Isi daftar dari server (`GET /pengguna/saya/pilihan-mapel`).
+Kelas 12: tab Pilih Mapel memuat seksi ini di atas alur prodi (F3, tidak diubah); belum
+memilih rumpun → ajakan dengan pilihan rumpun, tanpa daftar mapel; sudah → mapel hanya
+dari rumpun favoritnya, dikelompokkan per rumpun (judul kelompok = nama rumpun).
+Pengelompokan rumpun → mapel diturunkan dari data prodi yang **belum terverifikasi**,
+jadi selalu disertai catatan "belum dicek ke sumber resmi". Pilihan rumpun favorit (1–3)
+juga tampil sebagai seksi di layar Jalur Saya `/cek-posisi`, dan "Ubah rumpun favorit"
+membukanya di layar Pilih Mapel itu sendiri. Kelas 10–11: Mapel Saya di atas F3. Kelas 7–9: tab hanya
+berisi Mapel Saya (judul layar "Mapel Saya"). Maks. 5 mapel untuk semua kelas; mapel
+pilihan tampil lebih dulu di Arsip dan Latihan, tanpa label tambahan.
+
+- **Pilih Mapel kelas 12 — judul seksi:** Mapel pilihanmu
+- **Pilih Mapel kelas 12 — pengantar:** Pilih paling banyak 5 mapel dari rumpun favoritmu. Mapel ini tampil lebih dulu di Arsip dan Latihan.
+- **Pilih Mapel kelas 12 — ajakan (belum memilih rumpun):** judul: Pilih rumpun favoritmu dulu · teks: Pilih satu sampai tiga rumpun yang paling kamu minati. Setelah itu, mapel di sini dikelompokkan per rumpun.
+- **Pilih Mapel kelas 12 — catatan pengelompokan:** Pengelompokan ini sementara, untuk memudahkan memilih. Belum dicek ke sumber resmi.
+- **Pilih Mapel kelas 12 — judul kelompok:** [nama rumpun] (Ekonomi & Bisnis · Kesehatan · Sosial & Humaniora · Teknologi & Rekayasa)
+- **Pilih Mapel kelas 12 — tombol ubah rumpun:** Ubah rumpun favorit (membuka pilihan rumpun di layar yang sama)
+- **Rumpun favorit (Jalur Saya kelas 12 dan ajakan Pilih Mapel):** judul seksi (Jalur Saya): Rumpun favorit · petunjuk: Pilih satu sampai tiga rumpun yang paling kamu minati. · tombol: Simpan rumpun
+- **Mapel Saya — judul & pengantar:** Mapel Saya · Pilih paling banyak 5 mapel yang kamu sukai atau ingin kamu perdalam. Mapel ini tampil lebih dulu di Arsip dan Latihan.
+- **Pilihan mapel — hitungan & batas:** [n] dari 5 dipilih · batas tercapai: Paling banyak [maks]. Lepas satu dulu untuk memilih yang lain. (dipakai juga untuk rumpun, maks. 3)
+- **Pilihan mapel — tombol:** Simpan mapel
 
 ---
 

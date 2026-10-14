@@ -348,3 +348,21 @@ export type TautanNgobrol =
   | { jenis: 'event'; jenis_event: JenisEvent; tanggal: string; judul: string | null };
 /** GET /ngobrol/status (LANJUT_078). */
 export type StatusNgobrol = { ai_aktif: boolean };
+
+/**
+ * GET /pengguna/saya/pilihan-mapel (LANJUT_079). Kelas 12 → 'rumpun': hanya kelompok
+ * rumpun favoritnya (kosong bila belum memilih rumpun), tidak pernah daftar semua mapel.
+ * Kelas lain → 'mapel_saya': semua mapel sekolah, tanpa rumpun.
+ */
+export type MapelRingkas = { id: string; nama: string };
+export type PilihanMapel =
+  | {
+      mode: 'rumpun';
+      maks_mapel: number;
+      maks_rumpun: number;
+      mapel_pilihan: string[];
+      minat_rumpun: string[];
+      kelompok: { rumpun: string; mapel: MapelRingkas[] }[];
+      pengelompokan_terverifikasi: boolean;
+    }
+  | { mode: 'mapel_saya'; maks_mapel: number; mapel_pilihan: string[]; mapel: MapelRingkas[] };

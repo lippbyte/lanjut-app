@@ -8,6 +8,7 @@ import { useAgregasiMapelLintasProdi } from '../../hooks/useAgregasiMapelLintasP
 import { useSimpanButirPribadi } from '../../hooks/useButirPribadi';
 import { useTandaiKemajuan } from '../../hooks/useKemajuan';
 import { BUTIR_MAPEL_TKA, labelBobot, tampilkanRangkumanUmum } from '../../lib/pilihMapel';
+import { TEKS_MAPEL_PILIHAN, bagianPilihMapel } from '../../lib/mapelPilihan';
 import { useProdi } from '../../hooks/useProdi';
 import { useProdiMapel } from '../../hooks/useProdiMapel';
 import { useSesi } from '../../providers/AuthProvider';
@@ -26,6 +27,7 @@ import {
   Tombol,
   gaya,
 } from '../ui';
+import { SeksiPilihanMapel } from './MapelPilihan';
 
 // Penafian F3 — wajib tampil di setiap hasil (PRD Bagian 6).
 const PENAFIAN = 'Ini rangkuman, bukan keputusan resmi. Cek laman SNPMB.';
@@ -46,8 +48,26 @@ type BarisMapel = { id: string; nama: string; tersedia: boolean; ket?: string };
  *   daftar → prodi dikelompokkan per rumpun + "rangkuman umum"
  *   hasil  → mapel pendukung + ketersediaan di SMK + saran 2 mapel TKA
  * Kalau akun sudah punya prodi impian, langsung ke hasil (sama dengan PWA).
+ *
+ * LANJUT_079 (lib/mapelPilihan.ts bagianPilihMapel): kelas 12 mendapat Pilih Mapel
+ * per rumpun favorit di atas F3; kelas 10–11 Mapel Saya di atas F3; kelas 7–9
+ * hanya Mapel Saya (tanpa prodi). F3 sendiri tidak diubah.
  */
 export function PilihMapelScreen() {
+  const { pengguna } = useSesi();
+  const bagian = bagianPilihMapel(pengguna?.kelas);
+  if (!bagian.includes('f3')) {
+    return (
+      <View style={gaya.layarIsiRapat}>
+        <Kepala judul={TEKS_MAPEL_PILIHAN.mapelSaya.judul} pengantar={TEKS_MAPEL_PILIHAN.mapelSaya.pengantar} />
+        <SeksiPilihanMapel denganJudul={false} />
+      </View>
+    );
+  }
+  return <PilihMapelDenganF3 pilihanDiAtas={bagian.includes('rumpun') || bagian.includes('mapel_saya')} />;
+}
+
+function PilihMapelDenganF3({ pilihanDiAtas }: { pilihanDiAtas: boolean }) {
   const { pengguna } = useSesi();
   const prodiQuery = useProdi();
   const daftarProdi = prodiQuery.data ?? [];
@@ -63,6 +83,7 @@ export function PilihMapelScreen() {
   return (
     <View style={gaya.layarIsiRapat}>
       <Kepala judul="Penolong Pilih Mapel" pengantar="Prodi tujuan, mapel pendukung, dan mana yang ada di SMK." />
+      {pilihanDiAtas ? <SeksiPilihanMapel denganJudul /> : null}
 
       {prodiQuery.isPending ? (
         <Memuat />
