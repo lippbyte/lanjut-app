@@ -358,7 +358,9 @@ test('berkas asli tidak tersimpan di disk server setelah ekstraksi', async () =>
 
 test('kunci modul_* tidak ikut terkirim di endpoint konfigurasi publik', async () => {
   const { status, json } = await panggil('GET', '/konfigurasi/levelin');
-  assert.equal(status, 200);
+  // LANJUT_075b: isi jawaban ikut di pesan supaya kegagalan sesekali (pernah sekali di
+  // run penuh 074) bisa dibaca penyebabnya. Asersinya tidak berubah.
+  assert.equal(status, 200, `status ${status}: ${JSON.stringify(json)}`);
   assert.equal(Object.keys(json.data).some((k) => k.startsWith('modul')), false);
 });
 

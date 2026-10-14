@@ -205,8 +205,10 @@ describe('LANJUT_074 §D: tab bar lima tab', () => {
     assert.ok(!/<Svg|<Path|<Image[^>]*kelinci/i.test(tabBar), 'tab tengah tidak menggambar ikon sendiri');
     // Lima tab di 360 px: label panjang boleh dua baris supaya nama tab lama tidak terpotong.
     assert.ok(tabBar.includes('numberOfLines={2}'));
-    // Di /ngobrol tab tengah yang menyala; page bar "Ngobrol Bareng LANJUT" tetap ada.
-    assert.ok(shell.includes("'/ngobrol': '/ngobrol'"));
+    // Di /ngobrol tab tengah yang menyala (aturan tab di lib/navigasi.ts sejak LANJUT_075b);
+    // page bar "Ngobrol Bareng LANJUT" tetap ada.
+    assert.equal(navigasi.tabAktif('/ngobrol', '12', true), '/ngobrol');
+    assert.equal(navigasi.tabAktif('/ngobrol', '7', true), '/ngobrol');
     assert.ok(shell.includes("'/ngobrol': 'Ngobrol Bareng LANJUT'"));
   });
 

@@ -257,6 +257,23 @@ const PETA = [
     ],
   },
   {
+    // LANJUT_075b — DRAF untuk versi kebijakan berikutnya; lib/kebijakan-privasi.json tidak diubah.
+    kelompok: 'Kebijakan privasi — usulan kalimat (belum tampil)',
+    butir: [
+      {
+        task: 'LANJUT_075b',
+        awal: '**Usulan — bidang minat yang disimpan:**',
+        nama: 'Usulan: bidang minat (minat_rumpun) di kebijakan privasi',
+        di: 'Belum tampil di layar mana pun. Usulan untuk kebijakan privasi versi berikutnya (ringkasan "data yang disimpan" dan kebijakan lengkap).',
+        oleh: 'Semua akun, setelah versi kebijakan baru disetujui dan dirilis.',
+        faktual: {
+          klaim: 'Bidang minat disimpan untuk menampilkan Eksplorasi Kampus; tidak ikut dikirim ke penyedia AI di Ngobrol; bisa diubah atau dikosongkan kapan saja.',
+          sumber: 'Kode server: pengguna.layanan.js (simpan & kosongkan lewat PATCH /pengguna/saya) dan ngobrol.layanan.js pesanSistem (profil yang dikirim ke AI tanpa minat_rumpun), dijaga tests/eksplorasi-kampus.test.js. Tinjauan ahli hukum (UU PDP) sebelum masuk kebijakan.',
+        },
+      },
+    ],
+  },
+  {
     kelompok: 'Terima kebijakan privasi (jendela setelah login & halaman /terima-kebijakan)',
     butir: [
       { task: 'LANJUT_048', awal: '**Judul (jendela & halaman):**', nama: 'Judul', di: 'Jendela setelah login dan halaman /terima-kebijakan.', oleh: 'Akun yang belum menerima kebijakan versi berlaku.' },
@@ -309,7 +326,13 @@ const PETA = [
       },
       { task: 'LANJUT_051', awal: '**Ngobrol — status belum bisa dimuat:**', nama: 'Status AI belum bisa dimuat', di: 'Ngobrol Bareng LANJUT, bila status persetujuan gagal dimuat.', oleh: 'Semua akun, saat tidak tersambung.' },
       { task: 'LANJUT_051', awal: '**Ngobrol — galat kirim:**', nama: 'Pesan gagal kirim', di: 'Ngobrol Bareng LANJUT, gelembung abu-abu di bawah pesan siswa, dengan tombol Coba lagi.', oleh: 'Akun dengan fitur AI aktif, saat pesan gagal dijawab.' },
-      { task: 'LANJUT_051', awal: '**Beranda — kartu Ngobrol:**', nama: 'Kartu Ngobrol di Beranda', di: 'Beranda, kartu pintu Ngobrol Bareng LANJUT.', oleh: 'Semua akun.' },
+      {
+        task: 'LANJUT_051',
+        awal: '**Beranda — kartu Ngobrol:**',
+        nama: 'Kartu Ngobrol di Beranda',
+        di: 'Tidak tampil lagi: kartu Ngobrol dihapus dari grid Beranda (LANJUT_075b); sejak grid LANJUT_065 keterangan kartu pun tidak ditampilkan. Ngobrol dibuka dari tab tengah.',
+        oleh: 'Tidak ada (teks tidak dipakai).',
+      },
       {
         task: 'LANJUT_053',
         awal: '**Balasan tanda bahaya akut (server):**',

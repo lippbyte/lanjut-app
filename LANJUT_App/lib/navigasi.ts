@@ -1,4 +1,6 @@
 import type { NamaIkon } from '../components/ui/Ikon';
+import { versiEksplorasi } from './eksplorasiKampus';
+import type { Kelas } from './jenjang';
 
 /**
  * Tab bar bawah (LANJUT_074): lima tab — dua kiri, tab tengah Ngobrol Bareng,
@@ -39,3 +41,26 @@ export const TINGGI_IKON_TAB = 28;
  * atas garis tab bar (padding atas tab bar 8 + padding tab 6).
  */
 export const UKURAN_TAB_TENGAH = 56;
+
+/**
+ * Tab yang tetap menyala untuk halaman anak. Bawaannya Beranda. F10 adalah
+ * lanjutan langsung Pilih Mapel, jadi tab itu yang menyala (SDD-F10 §E.1);
+ * Ngobrol menyalakan tab tengahnya sendiri (LANJUT_074).
+ */
+export const TAB_INDUK: Readonly<Record<string, HrefTab>> = {
+  '/eksplorasi-tujuan': '/pilih-mapel',
+  '/ngobrol': '/ngobrol',
+};
+
+/**
+ * Tab yang menyala untuk `pathname`; null = tidak ada tab yang menyala.
+ * LANJUT_075b: di /eksplorasi-tujuan aturan F10 (Pilih Mapel) hanya untuk layar F10
+ * (kelas 12 & akun tanpa kelas). SMP dan kelas 10–11 melihat layar minat yang dibuka
+ * dari grid Beranda ATAU pintu Jenjang Saya — layar asalnya tidak diketahui, jadi
+ * tidak ada tab yang menyala (bukan Pilih Mapel).
+ */
+export function tabAktif(pathname: string, kelas: Kelas | null | undefined, halamanAnak: boolean): HrefTab | null {
+  if (pathname === '/eksplorasi-tujuan' && versiEksplorasi(kelas) !== 'f10') return null;
+  if (halamanAnak) return TAB_INDUK[pathname] ?? '/linimasa';
+  return TAB_BAWAH.find((t) => pathname.startsWith(t.href))?.href ?? '/linimasa';
+}

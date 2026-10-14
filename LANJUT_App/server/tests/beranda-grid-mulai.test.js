@@ -43,17 +43,17 @@ async function panggil(metode, path, token, body) {
 
 describe('LANJUT_065 §A: Grid Menu Beranda per Jenjang', () => {
   test('Jumlah item grid dan label pendek per jenjang', () => {
-    // SMP (kelas 7–9): 6 item
+    // LANJUT_075b: kartu Ngobrol dihapus dari grid semua jenjang (tab tengah navigasi).
+    // SMP (kelas 7–9): 5 item
     for (const k of ['7', '8', '9']) {
       const kartu = daftarKartuBeranda(k);
-      assert.equal(kartu.length, 6, `kelas ${k} harus memiliki 6 item grid`);
+      assert.equal(kartu.length, 5, `kelas ${k} harus memiliki 5 item grid`);
       const rute = kartu.map((x) => x.href);
       assert.deepEqual(rute, [
         '/eksplorasi-tujuan',
         '/gaya-belajar',
         '/arsip',
         '/level-in',
-        '/ngobrol',
         '/cerita-alumni',
       ]);
       // Semua item memiliki label pendek maksimal 2 kata/baris
@@ -63,10 +63,10 @@ describe('LANJUT_065 §A: Grid Menu Beranda per Jenjang', () => {
       }
     }
 
-    // Kelas 10–11: 8 item
+    // Kelas 10–11: 7 item
     for (const k of ['10', '11']) {
       const kartu = daftarKartuBeranda(k);
-      assert.equal(kartu.length, 8, `kelas ${k} harus memiliki 8 item grid`);
+      assert.equal(kartu.length, 7, `kelas ${k} harus memiliki 7 item grid`);
       const rute = kartu.map((x) => x.href);
       assert.deepEqual(rute, [
         '/pilih-mapel',
@@ -74,7 +74,6 @@ describe('LANJUT_065 §A: Grid Menu Beranda per Jenjang', () => {
         '/gaya-belajar',
         '/arsip',
         '/level-in',
-        '/ngobrol',
         '/daftar-periksa',
         '/cerita-alumni',
       ]);
@@ -83,28 +82,26 @@ describe('LANJUT_065 §A: Grid Menu Beranda per Jenjang', () => {
       }
     }
 
-    // Kelas 12: 6 item (LANJUT_075 menambah Eksplorasi Kampus; grid belum penuh, 5 dari 8)
+    // Kelas 12: 5 item (LANJUT_075 menambah Eksplorasi Kampus — menunggu keputusan PM)
     const kartu12 = daftarKartuBeranda('12');
-    assert.equal(kartu12.length, 6, 'kelas 12 harus memiliki 6 item grid');
+    assert.equal(kartu12.length, 5, 'kelas 12 harus memiliki 5 item grid');
     assert.deepEqual(kartu12.map((x) => x.href), [
       '/cek-posisi',
       '/eksplorasi-tujuan',
       '/arsip',
       '/level-in',
-      '/ngobrol',
       '/cerita-alumni',
     ]);
     for (const item of kartu12) {
       assert.ok(item.labelPendek);
     }
 
-    // Fallback tanpa kelas: 4 item
+    // Fallback tanpa kelas: 3 item
     const fallback = daftarKartuBeranda(null);
-    assert.equal(fallback.length, 4);
+    assert.equal(fallback.length, 3);
     assert.deepEqual(fallback.map((x) => x.href), [
       '/arsip',
       '/level-in',
-      '/ngobrol',
       '/cerita-alumni',
     ]);
   });

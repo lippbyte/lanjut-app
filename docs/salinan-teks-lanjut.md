@@ -145,11 +145,11 @@ Dipakai di: beranda, notifikasi, layar kosong.
   - *Catatan:* Langkah "buka Arsip" tidak dihitung karena server tidak memiliki pencatatan telemetri pembukaan layar.
 
 - **Grid Menu Launcher (label pendek):**
-  - Eksplorasi Tujuan
+  - Eksplorasi Kampus (`/eksplorasi-tujuan`; dulu "Eksplorasi Tujuan", LANJUT_075)
   - Gaya Belajar
   - Arsip Belajar
   - Level-In
-  - Ngobrol Bareng (dari "Ngobrol Bareng LANJUT")
+  - ~~Ngobrol Bareng~~ — dihapus dari grid semua jenjang sejak LANJUT_075b (Ngobrol ada di tab tengah navigasi)
   - Cerita Alumni
   - Jalur Saya (`/cek-posisi`; nama sejak LANJUT_074)
   - Pilih Mapel
@@ -496,8 +496,9 @@ prodi (Ekonomi & Bisnis, Kesehatan, Sosial & Humaniora, Teknologi & Rekayasa); y
 disimpan ke akun hanya nama rumpun (`minat_rumpun`), dan hanya bila kebijakan privasi
 versi berlaku sudah diterima. Tidak ada daftar prodi, tanggal, biaya, daya tampung,
 atau peluang. Seksi bidang dan jalur berlabel "Perkiraan" dengan penjelas LANJUT_044
-di atas. Nama kartu grid, judul bilah halaman per jenjang, dan kartu baru di grid
-kelas 12 adalah pilihan di percakapan, belum disetujui PM.
+di atas. LANJUT_075b: penggantian nama kartu SMP dan kelas 10–11 menjadi "Eksplorasi
+Kampus" disetujui PM pada 14 Oktober, dan judul bilah halaman per jenjang dipertahankan;
+kartu tambahan di grid kelas 12 masih menunggu keputusan PM.
 
 - **Kartu grid Beranda:** Eksplorasi Kampus (ke `/eksplorasi-tujuan`; label kartu yang sama di grid SMP dan 10–11, sebelumnya "Eksplorasi Tujuan"; kartu baru di grid kelas 12)
 - **Judul bilah halaman SMP:** Kenali Minatmu
@@ -617,6 +618,15 @@ bawah tombol Daftar.
 - **Data Akun — penjelas:** Orang tua atau walimu memberi persetujuan lewat surat dari sekolah. Persetujuan ini dibutuhkan untuk fitur AI nanti; fitur lain tetap bisa kamu pakai seperti biasa.
 - **Data Akun — tautan:** Baca kebijakan privasi
 
+**LANJUT_075b — usulan kalimat kebijakan privasi untuk bidang minat. DRAF, belum
+disetujui Khalifa; BELUM dipakai di layar.** Sejak LANJUT_075 akun menyimpan
+`minat_rumpun` (bidang minat yang dipilih di Eksplorasi Kampus), tetapi kebijakan
+privasi versi berlaku belum menyebutnya. `LANJUT_App/lib/kebijakan-privasi.json` dan
+versinya tidak diubah; kalimat ini usulan untuk versi kebijakan berikutnya, sesudah
+tinjauan ahli hukum.
+
+- **Usulan — bidang minat yang disimpan:** Kami menyimpan bidang minat yang kamu pilih, misalnya Kesehatan atau Teknologi & Rekayasa, untuk menampilkan Eksplorasi Kampus yang sesuai jenjangmu. Bidang minat tidak ikut dikirim ke penyedia AI di Ngobrol Bareng LANJUT, dan bisa kamu ubah atau kosongkan kapan saja.
+
 ### 4.14 Terima kebijakan privasi (akun lama & terima ulang)
 
 **LANJUT_048 — DRAF belum disetujui Khalifa.** Untuk akun yang belum
@@ -651,7 +661,7 @@ LANJUT_047) tidak tampil lagi. Salam pembuka bot tetap teks LANJUT_032.
 - **Ngobrol terkunci — isi:** Ngobrol Bareng LANJUT dijawab AI dari penyedia pihak ketiga. Fitur ini baru aktif setelah orang tua atau walimu memberi persetujuan lewat sekolah, dan kamu sudah menerima kebijakan privasi.
 - **Ngobrol — status belum bisa dimuat:** Status fitur AI belum bisa dimuat. Coba lagi sebentar lagi.
 - **Ngobrol — galat kirim:** Fitur AI belum aktif untuk akunmu. / Fitur AI sedang belum bisa dipakai. Coba lagi nanti. / Maaf, aku belum bisa menjawab sekarang. Coba kirim lagi sebentar lagi. / Pesanmu sudah banyak. Istirahat sebentar, lalu coba lagi. / Pesanmu belum terkirim karena tidak tersambung. Coba lagi. / Ada yang tidak beres. Coba kirim lagi. · tombol: Coba lagi
-- **Beranda — kartu Ngobrol:** Cerita soal minat, cara belajar, atau rencana kuliahmu. (dulu diakhiri "Versi uji coba.")
+- **Beranda — kartu Ngobrol:** Cerita soal minat, cara belajar, atau rencana kuliahmu. (dulu diakhiri "Versi uji coba.") — tidak tampil lagi: kartu Ngobrol dihapus dari grid Beranda sejak LANJUT_075b
 
 **LANJUT_App (LANJUT_074) — Ngobrol: tombol mikrofon (ucapan → teks). DRAF, belum
 disetujui Khalifa.** Tombol mikrofon di samping kotak pesan, hanya bila peramban punya

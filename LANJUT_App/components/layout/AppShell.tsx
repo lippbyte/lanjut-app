@@ -5,7 +5,7 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { judulEksplorasi } from '../../lib/eksplorasiKampus';
-import { PLACEHOLDER_TAB_TENGAH, TAB_BAWAH, TINGGI_IKON_TAB, UKURAN_TAB_TENGAH, type HrefTab } from '../../lib/navigasi';
+import { PLACEHOLDER_TAB_TENGAH, TAB_BAWAH, TINGGI_IKON_TAB, UKURAN_TAB_TENGAH, tabAktif, type HrefTab } from '../../lib/navigasi';
 import { useSesi } from '../../providers/AuthProvider';
 import { color, font, gradient, layout, radius, shadow, spacing, teks } from '../../theme/tokens';
 import { Ikon } from '../ui/Ikon';
@@ -41,28 +41,19 @@ const HALAMAN_ANAK: Record<string, string> = {
   '/terima-kebijakan': 'Kebijakan Privasi',
 };
 
-// Tab yang tetap aktif untuk halaman anak. Bawaannya Beranda; F10 adalah
-// lanjutan langsung Pilih Mapel, jadi tab itu yang menyala (SDD-F10 §E.1).
+// Tab yang tetap aktif untuk halaman anak: lib/navigasi.ts `tabAktif` (TAB_INDUK,
+// aturan F10, dan LANJUT_075b: layar minat SMP & 10–11 tanpa tab yang menyala).
 // Ngobrol tetap punya page bar (judul "Ngobrol Bareng LANJUT"), tetapi sejak
 // LANJUT_074 tab tengahnya sendiri yang menyala.
-const TAB_INDUK: Record<string, HrefTab> = {
-  '/eksplorasi-tujuan': '/pilih-mapel',
-  '/ngobrol': '/ngobrol',
-};
 
 // Layar yang mengatur gulirnya sendiri (chat: daftar pesan bergulir, kolom
 // input tetap di bawah), jadi tidak dibungkus ScrollView halaman.
 const TANPA_GULIR_HALAMAN = new Set(['/ngobrol']);
 
-function tabAktif(pathname: string): HrefTab {
-  if (pathname in HALAMAN_ANAK) return TAB_INDUK[pathname] ?? '/linimasa';
-  return TAB_BAWAH.find((t) => pathname.startsWith(t.href))?.href ?? '/linimasa';
-}
-
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { pengguna } = useSesi();
-  // LANJUT_075: judul /eksplorasi-tujuan mengikuti jenjang (pilihan di percakapan, belum disetujui PM).
+  // LANJUT_075: judul /eksplorasi-tujuan mengikuti jenjang (dipertahankan di LANJUT_075b).
   const judulAnak = pathname === '/eksplorasi-tujuan' ? judulEksplorasi(pengguna?.kelas) : HALAMAN_ANAK[pathname];
 
   return (
@@ -79,7 +70,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </ScrollView>
         )}
       </Main>
-      <TabBar aktif={tabAktif(pathname)} />
+      <TabBar aktif={tabAktif(pathname, pengguna?.kelas, pathname in HALAMAN_ANAK)} />
     </View>
   );
 }
@@ -138,7 +129,7 @@ function PageBar({ judul }: { judul: string }) {
 }
 
 /** .tabbar — lima tab; tab tengah (Ngobrol) berupa lingkaran yang menonjol (LANJUT_074). */
-function TabBar({ aktif }: { aktif: HrefTab }) {
+function TabBar({ aktif }: { aktif: HrefTab | null }) {
   const { bottom } = useSafeAreaInsets();
   return (
     <Nav style={StyleSheet.flatten([s.tabbar, { paddingBottom: spacing.s3 + bottom }])}>

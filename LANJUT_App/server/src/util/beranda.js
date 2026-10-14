@@ -26,14 +26,7 @@ const KARTU_LEVEL_IN = {
   href: '/level-in',
 };
 
-const KARTU_NGOBROL = {
-  id: 'ngobrol',
-  judul: 'Ngobrol Bareng LANJUT',
-  labelPendek: 'Ngobrol Bareng',
-  keterangan: 'Cerita soal minat, cara belajar, atau rencana kuliahmu.',
-  ikon: 'obrolan',
-  href: '/ngobrol',
-};
+// LANJUT_075b: kartu Ngobrol dihapus dari grid semua jenjang (tab tengah navigasi).
 
 const KARTU_CERITA_ALUMNI = {
   id: 'cerita-alumni',
@@ -100,7 +93,6 @@ function daftarKartuBeranda(kelas) {
       KARTU_GAYA_BELAJAR,
       KARTU_ARSIP,
       KARTU_LEVEL_IN,
-      KARTU_NGOBROL,
       KARTU_CERITA_ALUMNI,
     ];
   }
@@ -112,7 +104,6 @@ function daftarKartuBeranda(kelas) {
       KARTU_GAYA_BELAJAR,
       KARTU_ARSIP,
       KARTU_LEVEL_IN,
-      KARTU_NGOBROL,
       KARTU_DAFTAR_PERIKSA,
       KARTU_CERITA_ALUMNI,
     ];
@@ -124,7 +115,6 @@ function daftarKartuBeranda(kelas) {
       KARTU_EKSPLORASI_TUJUAN,
       KARTU_ARSIP,
       KARTU_LEVEL_IN,
-      KARTU_NGOBROL,
       KARTU_CERITA_ALUMNI,
     ];
   }
@@ -132,7 +122,6 @@ function daftarKartuBeranda(kelas) {
   return [
     KARTU_ARSIP,
     KARTU_LEVEL_IN,
-    KARTU_NGOBROL,
     KARTU_CERITA_ALUMNI,
   ];
 }
@@ -239,7 +228,6 @@ module.exports = {
   hitungProgresBeranda,
   KARTU_ARSIP,
   KARTU_LEVEL_IN,
-  KARTU_NGOBROL,
   KARTU_CERITA_ALUMNI,
   KARTU_CEK_POSISI,
   KARTU_PILIH_MAPEL,

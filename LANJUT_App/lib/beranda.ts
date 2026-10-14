@@ -37,14 +37,8 @@ export const KARTU_LEVEL_IN: KartuBeranda = {
   href: '/level-in',
 };
 
-export const KARTU_NGOBROL: KartuBeranda = {
-  id: 'ngobrol',
-  judul: 'Ngobrol Bareng LANJUT',
-  labelPendek: 'Ngobrol Bareng',
-  keterangan: 'Cerita soal minat, cara belajar, atau rencana kuliahmu.',
-  ikon: 'obrolan',
-  href: '/ngobrol',
-};
+// LANJUT_075b (keputusan PM): kartu "Ngobrol Bareng" dihapus dari grid semua jenjang —
+// Ngobrol sudah ada di tab tengah. Pintu Ngobrol di Jenjang Saya tidak diubah.
 
 export const KARTU_CERITA_ALUMNI: KartuBeranda = {
   id: 'cerita-alumni',
@@ -75,9 +69,10 @@ export const KARTU_PILIH_MAPEL: KartuBeranda = {
   href: '/pilih-mapel',
 };
 
-// LANJUT_075: kartu grid ke /eksplorasi-tujuan bernama "Eksplorasi Kampus" (DRAF) untuk
-// semua jenjang — kartu yang sama diganti nama di SMP & 10–11, ditambah di kelas 12
-// (pilihan di percakapan, belum disetujui PM). Pintu Jenjang Saya tetap "Eksplorasi Tujuan".
+// LANJUT_075: kartu grid ke /eksplorasi-tujuan bernama "Eksplorasi Kampus" (DRAF). SMP &
+// 10–11: kartu yang sama diganti nama — disetujui PM 14 Okt (LANJUT_075b). Kelas 12: kartu
+// tambahan, MENUNGGU keputusan PM (dipertahankan sesuai 075b). Pintu Jenjang Saya tetap
+// "Eksplorasi Tujuan".
 export const KARTU_EKSPLORASI_TUJUAN: KartuBeranda = {
   id: 'eksplorasi-tujuan',
   judul: 'Eksplorasi Kampus',
@@ -110,14 +105,14 @@ export const KARTU_DAFTAR_PERIKSA: KartuBeranda = {
  *
  * - SMP (kelas 7–9): TIDAK menampilkan "Jalur Saya" (/cek-posisi). Digantikan dengan kartu
  *   dari "Jenjang Saya" untuk SMP (Eksplorasi Kampus, Gaya Belajar) plus kartu
- *   umum (Arsip Belajar, Level-In, Ngobrol Bareng LANJUT, Cerita Alumni).
+ *   umum (Arsip Belajar, Level-In, Cerita Alumni).
  * - Kelas 10–11: kartu dari "Jenjang Saya" untuk 10–11 (Pilih Mapel, Eksplorasi Kampus,
- *   Gaya Belajar) plus kartu umum (Arsip Belajar, Level-In, Ngobrol Bareng LANJUT,
- *   Daftar Periksa, Cerita Alumni).
+ *   Gaya Belajar) plus kartu umum (Arsip Belajar, Level-In, Daftar Periksa, Cerita Alumni).
  * - Kelas 12: Jalur Saya, Eksplorasi Kampus (LANJUT_075), Arsip Belajar,
- *   Level-In, Ngobrol Bareng LANJUT, Cerita Alumni. Catatan: kartu hero tenggat
- *   dirender terpisah di atas kartu-kartu ini hanya untuk kelas 12 (LANJUT_074).
+ *   Level-In, Cerita Alumni. Catatan: kartu hero tenggat dirender terpisah di atas
+ *   kartu-kartu ini hanya untuk kelas 12 (LANJUT_074).
  * - Tanpa kelas / tidak dikenal: fallback ke kartu umum tanpa galat.
+ * - Ngobrol tidak ada di grid sejak LANJUT_075b (tab tengah navigasi).
  *
  * Aturan umum: kartu tanpa isi tidak pernah ditampilkan kosong.
  */
@@ -130,7 +125,6 @@ export function daftarKartuBeranda(kelas: Kelas | null | undefined): KartuBerand
       KARTU_GAYA_BELAJAR,
       KARTU_ARSIP,
       KARTU_LEVEL_IN,
-      KARTU_NGOBROL,
       KARTU_CERITA_ALUMNI,
     ];
   }
@@ -142,7 +136,6 @@ export function daftarKartuBeranda(kelas: Kelas | null | undefined): KartuBerand
       KARTU_GAYA_BELAJAR,
       KARTU_ARSIP,
       KARTU_LEVEL_IN,
-      KARTU_NGOBROL,
       KARTU_DAFTAR_PERIKSA,
       KARTU_CERITA_ALUMNI,
     ];
@@ -154,7 +147,6 @@ export function daftarKartuBeranda(kelas: Kelas | null | undefined): KartuBerand
       KARTU_EKSPLORASI_TUJUAN,
       KARTU_ARSIP,
       KARTU_LEVEL_IN,
-      KARTU_NGOBROL,
       KARTU_CERITA_ALUMNI,
     ];
   }
@@ -163,7 +155,6 @@ export function daftarKartuBeranda(kelas: Kelas | null | undefined): KartuBerand
   return [
     KARTU_ARSIP,
     KARTU_LEVEL_IN,
-    KARTU_NGOBROL,
     KARTU_CERITA_ALUMNI,
   ];
 }
