@@ -523,6 +523,15 @@ kartu tambahan di grid kelas 12 masih menunggu keputusan PM.
 - **SMP — kalimat penutup:** Ini baru gambaran awal. Kamu masih punya waktu untuk menentukan.
 - **Kelas 10–11 — pengganti daftar prodi:** Daftar prodi dan syaratnya akan muncul setelah dicek ke sumber resmi.
 
+**LANJUT_App (LANJUT_075c) — keterangan kartu Eksplorasi Kampus untuk SMP dan kelas
+10–11. DRAF, belum disetujui Khalifa.** Menggantikan "Intip prodi kuliah: belajar apa
+dan lulusannya kerja di mana." untuk kedua jenjang itu, karena layar mereka tidak
+menampilkan prodi. Kelas 12 tetap memakai keterangan lama (kartu tambahan kelas 12
+menunggu keputusan PM). Saat ini grid Beranda hanya menampilkan label kartu, jadi
+keterangan ini belum terlihat di layar.
+
+- **Keterangan kartu Eksplorasi Kampus (SMP & kelas 10–11):** Kenali bidang yang cocok untukmu.
+
 ### 4.10 Daftar (buat akun)
 
 Berlaku untuk **LANJUT_App** (layar Daftar Expo, `RegisterScreen`). Belum

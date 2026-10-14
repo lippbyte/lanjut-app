@@ -659,6 +659,13 @@ const PETA = [
       { task: 'LANJUT_075', awal: '**Daftar bidang gagal dimuat:**', nama: 'Daftar bidang gagal dimuat', di: 'Seksi bidang, bila data prodi tidak bisa dimuat.', oleh: 'Kelas 7–11, saat tidak tersambung.' },
       { task: 'LANJUT_075', awal: '**SMP — kalimat penutup:**', nama: 'Kalimat penutup SMP', di: 'Kenali Minatmu, paling bawah.', oleh: 'Kelas 7–9.' },
       { task: 'LANJUT_075', awal: '**Kelas 10–11 — pengganti daftar prodi:**', nama: 'Pengganti daftar prodi', di: 'Jalur dan Bidangmu, paling bawah.', oleh: 'Kelas 10–11.' },
+      {
+        task: 'LANJUT_075c',
+        awal: '**Keterangan kartu Eksplorasi Kampus',
+        nama: 'Keterangan kartu Eksplorasi Kampus (SMP & 10–11)',
+        di: 'Data kartu grid Beranda (lib/beranda.ts). Belum terlihat di layar: grid hanya menampilkan label.',
+        oleh: 'Kelas 7–11.',
+      },
     ],
   },
   {

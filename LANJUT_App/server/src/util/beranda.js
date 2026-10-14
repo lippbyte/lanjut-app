@@ -66,6 +66,12 @@ const KARTU_EKSPLORASI_TUJUAN = {
   href: '/eksplorasi-tujuan',
 };
 
+// LANJUT_075c: SMP & 10–11 — keterangan netral tanpa "prodi"; kelas 12 tetap yang lama.
+const KARTU_EKSPLORASI_KAMPUS_MINAT = {
+  ...KARTU_EKSPLORASI_TUJUAN,
+  keterangan: 'Kenali bidang yang cocok untukmu.',
+};
+
 const KARTU_GAYA_BELAJAR = {
   id: 'gaya-belajar',
   judul: 'Gaya Belajar',
@@ -89,7 +95,7 @@ function daftarKartuBeranda(kelas) {
 
   if (kelompok === 'smp') {
     return [
-      KARTU_EKSPLORASI_TUJUAN,
+      KARTU_EKSPLORASI_KAMPUS_MINAT,
       KARTU_GAYA_BELAJAR,
       KARTU_ARSIP,
       KARTU_LEVEL_IN,
@@ -100,7 +106,7 @@ function daftarKartuBeranda(kelas) {
   if (kelompok === 'kelas10_11') {
     return [
       KARTU_PILIH_MAPEL,
-      KARTU_EKSPLORASI_TUJUAN,
+      KARTU_EKSPLORASI_KAMPUS_MINAT,
       KARTU_GAYA_BELAJAR,
       KARTU_ARSIP,
       KARTU_LEVEL_IN,

@@ -68,6 +68,36 @@ describe('LANJUT_075b: grid Beranda per jenjang', () => {
   });
 });
 
+describe('LANJUT_075c: keterangan kartu Eksplorasi Kampus', () => {
+  const kartuEksplorasi = (daftar, kelas) => daftar(kelas).find((k) => k.href === '/eksplorasi-tujuan');
+
+  for (const [nama, daftar] of [['app', beranda.daftarKartuBeranda], ['cermin server', cermin.daftarKartuBeranda]]) {
+    test(`SMP & kelas 10–11 (${nama}): keterangan kartu tidak memuat kata "prodi"`, () => {
+      for (const kelas of ['7', '8', '9', '10', '11']) {
+        const k = kartuEksplorasi(daftar, kelas);
+        assert.ok(k.keterangan.trim(), `kelas ${kelas}: keterangan kosong`);
+        assert.ok(!/prodi/i.test(k.keterangan), `kelas ${kelas}: "${k.keterangan}"`);
+        assert.equal(k.keterangan, 'Kenali bidang yang cocok untukmu.');
+      }
+    });
+
+    test(`Kelas 12 (${nama}): kartu tambahan tidak diubah (menunggu keputusan PM)`, () => {
+      const k = kartuEksplorasi(daftar, '12');
+      assert.equal(k.labelPendek, 'Eksplorasi Kampus');
+      assert.equal(k.keterangan, 'Intip prodi kuliah: belajar apa dan lulusannya kerja di mana.');
+    });
+  }
+
+  test('Keterangan baru tercatat DRAF di salinan teks', () => {
+    const salinan = fs.readFileSync(path.join(AKAR_REPO, 'docs', 'salinan-teks-lanjut.md'), 'utf8');
+    const awal = salinan.indexOf('**LANJUT_App (LANJUT_075c)');
+    assert.ok(awal >= 0, 'blok LANJUT_075c harus ada');
+    const blok = salinan.slice(awal, salinan.indexOf('\n### ', awal));
+    assert.match(blok.slice(0, blok.indexOf('\n\n')), /\bDRAF\b/);
+    assert.ok(blok.includes('Kenali bidang yang cocok untukmu.'));
+  });
+});
+
 describe('LANJUT_075b: pintu Ngobrol yang tersisa', () => {
   test('Tab tengah tetap membuka /ngobrol; layar terkunci tetap untuk akun tanpa persetujuan', () => {
     const tengah = navigasi.TAB_BAWAH.filter((t) => t.tengah);

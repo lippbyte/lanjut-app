@@ -82,6 +82,16 @@ export const KARTU_EKSPLORASI_TUJUAN: KartuBeranda = {
   href: '/eksplorasi-tujuan',
 };
 
+/**
+ * LANJUT_075c: kartu yang sama untuk SMP & kelas 10–11, dengan keterangan netral (DRAF)
+ * tanpa kata "prodi" — layar mereka tidak menampilkan prodi. Kelas 12 tetap memakai
+ * KARTU_EKSPLORASI_TUJUAN (keterangan lama, layar F10).
+ */
+export const KARTU_EKSPLORASI_KAMPUS_MINAT: KartuBeranda = {
+  ...KARTU_EKSPLORASI_TUJUAN,
+  keterangan: 'Kenali bidang yang cocok untukmu.',
+};
+
 export const KARTU_GAYA_BELAJAR: KartuBeranda = {
   id: 'gaya-belajar',
   judul: 'Gaya Belajar',
@@ -121,7 +131,7 @@ export function daftarKartuBeranda(kelas: Kelas | null | undefined): KartuBerand
 
   if (kelompok === 'smp') {
     return [
-      KARTU_EKSPLORASI_TUJUAN,
+      KARTU_EKSPLORASI_KAMPUS_MINAT,
       KARTU_GAYA_BELAJAR,
       KARTU_ARSIP,
       KARTU_LEVEL_IN,
@@ -132,7 +142,7 @@ export function daftarKartuBeranda(kelas: Kelas | null | undefined): KartuBerand
   if (kelompok === 'kelas10_11') {
     return [
       KARTU_PILIH_MAPEL,
-      KARTU_EKSPLORASI_TUJUAN,
+      KARTU_EKSPLORASI_KAMPUS_MINAT,
       KARTU_GAYA_BELAJAR,
       KARTU_ARSIP,
       KARTU_LEVEL_IN,
