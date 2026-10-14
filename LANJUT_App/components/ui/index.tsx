@@ -253,7 +253,10 @@ export function Memuat() {
 
 /** Keadaan galat pemuatan (salinan-teks-lanjut.md §6). */
 export function KeadaanGalat() {
-  return <Peringatan>Sedang tidak tersambung. Yang sudah pernah dibuka masih bisa dilihat.</Peringatan>;
+  // LANJUT_080b (DRAF, salinan §6): kalimat lama menjanjikan isi yang pernah dibuka tetap
+  // terlihat saat luring. Itu tidak benar — cache hanya di memori, hilang saat app
+  // ditutup — dan galat ini juga tampil untuk galat server, bukan hanya putus sambungan.
+  return <Peringatan>Belum bisa dimuat. Periksa sambungan internetmu, lalu coba lagi.</Peringatan>;
 }
 
 export const gaya = StyleSheet.create({

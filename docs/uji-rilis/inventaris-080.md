@@ -81,6 +81,13 @@ Bahasa Indonesia, Bahasa Inggris, Biologi, Ekonomi, Fisika, Geografi, Informatik
 - **Belum di-push:** `git status -sb` → `main...origin/main [ahead 105]` sebelum commit task ini. Bila laptop rusak, pekerjaan sejak LANJUT_030 hilang. Push adalah keputusan Khalifa.
 - **Server lokal :4000** (dinyalakan di sesi pengembangan) masih menjalankan kode sebelum LANJUT_078. Perlu dinyalakan ulang bila dipakai untuk uji. Task ini tidak menyalakan atau mematikan server.
 - **Mikrofon Ngobrol (LANJUT_074)** memakai pengenal suara bawaan peramban. App tidak mengirim audio, tetapi di Chrome pengenalan suara umumnya diproses oleh layanan penyedia peramban. Ini perlu dicek dan, bila benar, dicantumkan di kebijakan.
+  - **Pembaruan LANJUT_080b:** tombol mikrofon kini **disembunyikan secara bawaan** untuk uji rilis. Kodenya tetap ada, di balik konfigurasi build `EXPO_PUBLIC_MIKROFON_NGOBROL=1` (`LANJUT_App/app.config.ts` → `extra.mikrofonNgobrol` → `lib/fiturApp.ts`). Kotak tulis Ngobrol tetap ada.
+  - **Keputusan menyalakannya kembali menunggu tinjauan hukum** (kebijakan privasi belum menyebut pemrosesan suara oleh penyedia peramban).
+
+### Pembaruan LANJUT_080b (perbaikan kecil sebelum uji)
+- **Pesan galat muat:** "Sedang tidak tersambung. Yang sudah pernah dibuka masih bisa dilihat." diganti di `LANJUT_App/components/ui/index.tsx` (komponen `KeadaanGalat`, 13 layar) menjadi "Belum bisa dimuat. Periksa sambungan internetmu, lalu coba lagi." (DRAF, salinan §6). Janji lama tidak benar: cache React Query hanya di memori dan hilang saat app ditutup (peta 059, A15). MVP-PWA masih memakai kalimat lama; MVP-PWA tidak dipakai di uji rilis.
+- **Mikrofon Ngobrol:** disembunyikan secara bawaan (lihat di atas).
+- **Galat `minat_rumpun`:** galat tipe per butir kini memakai `medan: { minat_rumpun: "…" }`, sama dengan `mapel_pilihan` (079b).
 
 ## 2. Fitur 072–079b
 

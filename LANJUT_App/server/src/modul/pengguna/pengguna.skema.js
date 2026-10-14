@@ -10,6 +10,8 @@ const MAKS_MINAT_RUMPUN = 5;
 // bukan z.array(idMapel), supaya galat tipe per butir tetap di kunci medan
 // `mapel_pilihan` (bukan `mapel_pilihan.0`), sama dengan galat jumlah dan id tak dikenal.
 const idMapel = z.string().trim().min(1).max(64);
+// LANJUT_080b — satu butir minat_rumpun, diperiksa dengan cara yang sama.
+const namaRumpun = z.string().trim().min(1).max(60);
 
 const ubahProfilSkema = z.object({
   kelas: z.enum(KELAS).nullable().optional(),
@@ -19,10 +21,18 @@ const ubahProfilSkema = z.object({
   nama_tampilan: z.string().trim().min(1).max(60).nullable().optional(),
   // LANJUT_032 — null mengosongkan pilihan.
   gaya_belajar: z.enum(['visual', 'auditori', 'kinestetik', 'baca_tulis']).nullable().optional(),
-  // [] mengosongkan pilihan.
+  // [] mengosongkan pilihan. LANJUT_080b: butir diperiksa di tingkat larik (seperti
+  // mapel_pilihan, 079b) supaya galat tipe per butir tetap di kunci medan `minat_rumpun`
+  // (bukan `minat_rumpun.0`).
   minat_rumpun: z
-    .array(z.string().trim().min(1).max(60))
+    .array(z.unknown())
     .max(MAKS_MINAT_RUMPUN, `Bidang minat paling banyak ${MAKS_MINAT_RUMPUN}.`)
+    .superRefine((daftar, ctx) => {
+      if (!daftar.every((x) => namaRumpun.safeParse(x).success)) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Bidang minat harus berisi nama rumpun.' });
+      }
+    })
+    .transform((daftar) => daftar.map((x) => namaRumpun.parse(x)))
     .refine((daftar) => new Set(daftar).size === daftar.length, 'Bidang minat tidak boleh ganda.')
     .optional(),
   // LANJUT_079 — id mapel; [] mengosongkan. Batas 5 untuk SEMUA kelas, hanya di

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import {
   KeyboardAvoidingView,
@@ -18,6 +19,7 @@ import type { KartuBantuan, TautanNgobrol } from '../../api/types';
 import { useKartuBantuan } from '../../hooks/useKartuBantuan';
 import { usePersetujuan } from '../../hooks/usePersetujuan';
 import { useStatusNgobrol } from '../../hooks/useStatusNgobrol';
+import { mikrofonNgobrolAktif } from '../../lib/fiturApp';
 import { labelGayaBelajar } from '../../lib/gayaBelajar';
 import { keadaanKebijakan } from '../../lib/kebijakanPrivasi';
 import { PANJANG_PESAN_MAKS, TEKS_NGOBROL } from '../../lib/ngobrol';
@@ -175,7 +177,12 @@ function PanelBantuan() {
  * App tidak menyentuh audio: yang diterima hanya teks, dan teks itu masuk ke kotak
  * pesan (tidak terkirim otomatis). Galat (mis. izin mikrofon ditolak) diam saja:
  * tombol kembali ke keadaan awal.
+ *
+ * LANJUT_080b: seluruhnya di balik konfigurasi MIKROFON_NGOBROL (bawaan mati untuk uji
+ * rilis) — tombol tidak tampil dan pengenal tidak pernah dimulai. Kotak pesan tetap.
  */
+const MIKROFON_NGOBROL = mikrofonNgobrolAktif(Constants.expoConfig?.extra);
+
 function useUcapan(onTeks: (teks: string) => void) {
   const [Pengenal] = useState(() => (Platform.OS === 'web' ? cariPengenalSuara() : null));
   const [mendengar, setMendengar] = useState(false);
@@ -199,7 +206,7 @@ function useUcapan(onTeks: (teks: string) => void) {
   };
 
   const mulai = () => {
-    if (!Pengenal || aktif.current) return;
+    if (!MIKROFON_NGOBROL || !Pengenal || aktif.current) return;
     try {
       const p = new Pengenal();
       p.lang = BAHASA_PENGENALAN;
@@ -243,7 +250,7 @@ function useUcapan(onTeks: (teks: string) => void) {
     }
   };
 
-  return { didukung: !!Pengenal, mendengar, tekan, batal };
+  return { didukung: MIKROFON_NGOBROL && !!Pengenal, mendengar, tekan, batal };
 }
 
 function Obrolan() {

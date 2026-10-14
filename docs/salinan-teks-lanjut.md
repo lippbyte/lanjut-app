@@ -490,7 +490,7 @@ dokumen ini, bukan dikarang ulang di kode.
 - **Fallback judul:** Profil lengkap untuk prodi ini belum kami siapkan.
 - **Fallback isi:** Yang sudah tersedia:
 - **Seksi kosong (per kelompok data, mis. mata kuliah kosong):** Bagian ini masih kami siapkan.
-- **Luring:** Sedang tidak tersambung. Yang sudah pernah dibuka masih bisa dilihat.
+- **Luring:** Sedang tidak tersambung. Yang sudah pernah dibuka masih bisa dilihat. (hanya `eksplorasi-tujuan.html` MVP-PWA; LANJUT_App memakai kalimat §6 LANJUT_080b)
 - **CTA di `pilih-mapel.html`:** Lihat prospek & kampus untuk [nama prodi], dengan baris kecil: Peminat, mata kuliah, dan kampus yang cocok.
 
 **LANJUT_App (LANJUT_031) — tambahan, DRAF belum disetujui Khalifa.** Expo
@@ -758,6 +758,11 @@ tidak ada, tanpa pesan. Mikrofon baru hidup setelah tombol ditekan, dan mati saa
 ditekan lagi, saat siswa selesai bicara, atau saat pesan dikirim. Teks hasil pengenalan masuk
 ke kotak pesan (tidak terkirim otomatis); app tidak mengirim atau menyimpan audio. Galat
 (mis. izin mikrofon ditolak) tidak menampilkan pesan; tombol kembali ke keadaan awal.
+**Sejak LANJUT_080b tombol ini tersembunyi (bawaan untuk uji rilis):** pengenal suara peramban
+di Chrome mengirim audio ke layanan penyedia peramban, dan itu belum tercantum di kebijakan
+privasi. Menyala lagi hanya bila build dibuat dengan `EXPO_PUBLIC_MIKROFON_NGOBROL=1`
+(`app.config.ts` → `lib/fiturApp.ts`); keputusan menunggu tinjauan hukum. Teks di bawah tidak
+tampil selama tombolnya tersembunyi.
 
 - **Ngobrol — tombol mikrofon (label pembaca layar):** Ucapkan pesan
 - **Ngobrol — petunjuk di kotak pesan saat mendengarkan:** Mendengarkan…
@@ -895,9 +900,18 @@ Kaidah: maksimal satu notifikasi per hari, isinya selalu satu tindakan konkret, 
 
 ## 6. Layar Kosong Umum
 
-- **Belum ada koneksi internet:** Sedang tidak tersambung. Yang sudah pernah dibuka masih bisa dilihat.
+- **Belum ada koneksi internet:** Sedang tidak tersambung. Yang sudah pernah dibuka masih bisa dilihat. (hanya MVP-PWA; LANJUT_App tidak lagi memakainya sejak LANJUT_080b, lihat blok di bawah)
 - **Belum ada data:** Bagian ini masih kami siapkan. Kalau kamu punya bahannya, kirim ke kami.
 - **Halaman tidak ditemukan:** Halamannya tidak ketemu. Balik ke Linimasa? `[ Kembali ]`
+
+**LANJUT_App (LANJUT_080b) — pesan galat muat di semua layar. DRAF, belum disetujui
+Khalifa.** Pengganti kalimat "Belum ada koneksi internet" di atas, yang menjanjikan
+"Yang sudah pernah dibuka masih bisa dilihat". Di LANJUT_App janji itu tidak benar: data
+hanya disimpan di memori dan hilang saat app ditutup. Pesan yang sama juga tampil saat
+server bermasalah, bukan hanya saat tidak tersambung. Komponen `KeadaanGalat`
+(`components/ui/index.tsx`), dipakai 13 layar. MVP-PWA tidak diubah.
+
+- **Belum bisa dimuat (semua layar):** Belum bisa dimuat. Periksa sambungan internetmu, lalu coba lagi.
 
 ---
 

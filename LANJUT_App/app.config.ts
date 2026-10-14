@@ -97,6 +97,9 @@ const config: ExpoConfig = {
     apiUrlProd: API_URL_PROD,
     apiUrlDevAndroid: API_URL_DEV_ANDROID,
     apiUrlDevWeb: API_URL_DEV_WEB,
+    // LANJUT_080b: mikrofon Ngobrol MATI kecuali build dibuat dengan
+    // EXPO_PUBLIC_MIKROFON_NGOBROL=1 (dibaca lib/fiturApp.ts). Menunggu tinjauan hukum.
+    mikrofonNgobrol: process.env.EXPO_PUBLIC_MIKROFON_NGOBROL === '1',
   },
 };
 

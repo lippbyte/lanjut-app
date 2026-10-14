@@ -209,6 +209,23 @@ const PETA = [
     ],
   },
   {
+    // LANJUT_080b — komponen KeadaanGalat (components/ui/index.tsx), dipakai 13 layar.
+    kelompok: 'Pesan umum di semua layar',
+    butir: [
+      {
+        task: 'LANJUT_080b',
+        awal: '**Belum bisa dimuat (semua layar):**',
+        nama: 'Galat muat (pengganti "Yang sudah pernah dibuka masih bisa dilihat")',
+        di: 'Semua layar yang memuat data dari server, saat permintaan gagal (tidak tersambung atau server bermasalah).',
+        oleh: 'Semua akun.',
+        faktual: {
+          klaim: 'Tidak menjanjikan apa pun yang tersimpan; hanya meminta memeriksa sambungan dan mencoba lagi.',
+          sumber: 'providers/QueryProvider.tsx (cache hanya di memori, tanpa persistensi); peta 059 A15.',
+        },
+      },
+    ],
+  },
+  {
     // LANJUT_074: tab bar lima tab dan dua nama halaman.
     kelompok: 'Navigasi & nama halaman',
     butir: [
@@ -426,15 +443,15 @@ const PETA = [
         task: 'LANJUT_074',
         awal: '**Ngobrol — tombol mikrofon',
         nama: 'Tombol mikrofon (label pembaca layar)',
-        di: 'Ngobrol, di samping kotak pesan; hanya di peramban yang punya pengenal suara (tidak ada di Android/iOS).',
-        oleh: 'Akun dengan fitur AI aktif; labelnya dibacakan pembaca layar.',
+        di: 'Ngobrol, di samping kotak pesan; hanya di peramban yang punya pengenal suara (tidak ada di Android/iOS). Sejak LANJUT_080b TERSEMBUNYI kecuali build dengan EXPO_PUBLIC_MIKROFON_NGOBROL=1 (menunggu tinjauan hukum).',
+        oleh: 'Tidak ada selama tersembunyi (bawaan uji rilis); bila dinyalakan: akun dengan fitur AI aktif, labelnya dibacakan pembaca layar.',
       },
       {
         task: 'LANJUT_074',
         awal: '**Ngobrol — petunjuk di kotak pesan saat mendengarkan',
         nama: 'Petunjuk saat mendengarkan',
-        di: 'Ngobrol, teks samar di kotak pesan yang masih kosong, selama mikrofon hidup.',
-        oleh: 'Akun dengan fitur AI aktif, di peramban yang punya pengenal suara.',
+        di: 'Ngobrol, teks samar di kotak pesan yang masih kosong, selama mikrofon hidup. Tidak tampil selama mikrofon tersembunyi (LANJUT_080b).',
+        oleh: 'Tidak ada selama tersembunyi (bawaan uji rilis); bila dinyalakan: akun dengan fitur AI aktif, di peramban yang punya pengenal suara.',
       },
       // LANJUT_078: Ngobrol sebagai penghubung fitur — hanya saat saklar ai_aktif menyala.
       {

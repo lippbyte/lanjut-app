@@ -101,7 +101,8 @@ Lulus/gagal per skenario ada di kolom tabel. Aturan putaran ada di §5.
 | U9 | Ngobrol, akun **dengan** persetujuan → kirim pesan biasa | Balasan berlabel "Uji coba, bukan jawaban AI"; tidak ada kartu tautan, petunjuk, atau catatan konteks LANJUT_078 | Muncul jawaban seolah dari AI, kartu tautan, atau galat |
 | U10 (Kritis, **hanya tim**) | Ngobrol, akun dengan persetujuan → kirim satu kalimat uji tanda bahaya dari daftar uji (`server/tests/skenario-ai/skenario.json`), bukan curhat sungguhan | Balasan tetap dari server + kartu bantuan | Kartu bantuan tidak muncul |
 | U11 | Data Akun → Ubah → nama tampilan; lalu Gaya Belajar → pilih satu gaya | Nama tampil di sapaan Beranda; gaya belajar tampil di Data Akun | Tidak tersimpan |
-| U12 | Matikan data/Wi-Fi sebentar, lalu buka layar lain; ulangi sesudah app ditutup dan dibuka lagi | Pesan "Sedang tidak tersambung…" tampil, bukan layar putih. Catat apakah kalimat "Yang sudah pernah dibuka masih bisa dilihat" benar sesudah app dibuka ulang (peta 059, A15) | Layar putih, atau pesan teknis mentah |
+| U12 | Matikan data/Wi-Fi sebentar, lalu buka layar lain; ulangi sesudah app ditutup dan dibuka lagi | Pesan "Belum bisa dimuat. Periksa sambungan internetmu, lalu coba lagi." tampil (LANJUT_080b), bukan layar putih | Layar putih, pesan teknis mentah, atau kalimat lama "Yang sudah pernah dibuka masih bisa dilihat" |
+| U14 | Ngobrol, akun dengan persetujuan | Tidak ada tombol mikrofon (disembunyikan secara bawaan, LANJUT_080b); kotak tulis dan tombol Kirim tetap ada | Tombol mikrofon tampil, atau kotak tulis hilang |
 | U13 | Semua layar di HP 360 px | Tidak ada teks terpotong atau gulir ke samping | Ada teks atau tombol keluar layar |
 
 ### 4.2 SMP (kelas 7–9)
@@ -204,5 +205,5 @@ Catatan diketahui (bukan kegagalan): daftar Mapel Saya berisi mapel SMA (inventa
 | 10 | Tempat lembar temuan | **Spreadsheet tim** (mudah diisi dari HP), disalin ke `docs/uji-rilis/` di akhir putaran | Berkas Markdown di repo saja |
 | 11 | Push 105+ commit lokal ke `origin` | **Push sebelum uji**, sebagai cadangan | Tunda |
 | 12 | Kebijakan privasi untuk uji | **Tampilkan versi DRAF apa adanya** (berlabel "DRAF — belum berlaku") untuk penguji dewasa. Tinjauan hukum wajib sebelum siswa | Tunda uji sampai ditinjau |
-| 13 | Mikrofon Ngobrol di peramban | **Sembunyikan atau minta penguji tidak memakainya** sampai dicek apakah peramban mengirim suara ke layanannya sendiri | Biarkan |
+| 13 | Mikrofon Ngobrol di peramban | **Sudah dikerjakan di LANJUT_080b:** disembunyikan secara bawaan. Menyalakannya kembali (`EXPO_PUBLIC_MIKROFON_NGOBROL=1`) menunggu tinjauan hukum | Nyalakan untuk akun tim saja |
 | 14 | Pembersihan akun uji | **Hapus `ujirilis_%` dari basis data sesudah putaran terakhir** | Simpan untuk putaran berikut |
