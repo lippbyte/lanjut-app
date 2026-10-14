@@ -179,8 +179,13 @@ export function isiJenjangSaya(kelas: Kelas | null | undefined): IsiJenjangSaya 
 /**
  * Pengganti pesan "Bagian ini untuk kelas 12" di Daftar Periksa
  * (Tambahan-069, keputusan PM no. 2, DRAF): kelas 10–11 melihat kalimat netral
- * ini dan butir pribadinya. Kelas lain → null (tetap memakai BukanKelas12).
+ * ini dan butir pribadinya. LANJUT_076b (keputusan PM no. 2): SMP juga — halaman
+ * Daftar Periksa SMP tidak lagi memuat kalimat tentang kelas 12; kalimat yang
+ * sama dipakai untuk SMP (pilihan percakapan, belum disetujui PM). Kelas 12 dan
+ * akun tanpa kelas → null (kelas 12 punya Daftar Periksa sendiri; tanpa kelas
+ * tetap memakai BukanKelas12 "Isi kelasmu dulu").
  */
 export function teksDaftarPeriksaBukanKelas12(kelas: Kelas | null | undefined): string | null {
-  return kelompokJenjang(kelas) === 'kelas10_11' ? 'Catat langkah-langkahmu supaya tidak ada yang terlewat.' : null;
+  const kelompok = kelompokJenjang(kelas);
+  return kelompok === 'smp' || kelompok === 'kelas10_11' ? 'Catat langkah-langkahmu supaya tidak ada yang terlewat.' : null;
 }

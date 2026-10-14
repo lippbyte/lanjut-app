@@ -204,7 +204,7 @@ const PETA = [
         awal: '**Beranda — kartu Persiapan Terdekat:**',
         nama: 'Kartu Persiapan Terdekat',
         di: 'Beranda, tepat sesudah baris progres dan sebelum grid ikon; satu event terdekat dalam 7 hari sebelum s.d. hari H (WIB). Tekan → Daftar Periksa.',
-        oleh: 'Kelas 7–11, hanya bila saklar event_sekolah_aktif menyala (bawaan mati: saat ini tidak ada).',
+        oleh: 'Kelas 7–9 (sejak LANJUT_076b; sebelumnya 7–11), hanya bila saklar event_sekolah_aktif menyala (bawaan mati: saat ini tidak ada).',
       },
     ],
   },
@@ -462,8 +462,8 @@ const PETA = [
         task: 'LANJUT_069',
         awal: '**Daftar Periksa kelas 10–11',
         nama: 'Kalimat netral Daftar Periksa kelas 10–11',
-        di: 'Daftar Periksa, di bawah judul, menggantikan pesan "Bagian ini untuk kelas 12"; butir pribadi tampil di bawahnya.',
-        oleh: 'Kelas 10–11.',
+        di: 'Daftar Periksa, di bawah judul, menggantikan pesan "Bagian ini untuk kelas 12"; butir pribadi tampil di bawahnya. Sejak LANJUT_076b dipakai juga untuk kelas 7–9 (butir terpisah di kelompok Persiapan Event).',
+        oleh: 'Kelas 10–11 (kelas 7–9 juga, sejak LANJUT_076b).',
       },
     ],
   },
@@ -472,14 +472,17 @@ const PETA = [
     // (components/screens/KhususKelas12.tsx) hanya dirender di CekPosisiScreen
     // dan DaftarPeriksaScreen. Beranda tidak memakainya: sejak LANJUT_064 bagian
     // tenggat hanya dirender untuk kelas 12, untuk kelas lain tidak ada apa pun.
+    // LANJUT_076b (H.19): ketiga butir "Kelas 7–11" TIDAK dihapus dari lembar —
+    // kalimatnya sudah tidak tampil di Daftar Periksa SMP, tetapi masih tampil
+    // untuk kelas 7–11 di Jalur Saya /cek-posisi, jadi masih dipakai di SMP.
     kelompok: 'Bagian khusus kelas 12 (Jalur Saya /cek-posisi, Daftar Periksa) — pengganti untuk kelas lain',
     butir: [
       {
         task: 'LANJUT_035',
         awal: '**Kelas 7–11 — judul:**',
         nama: 'Pengganti kelas 7–11 — judul',
-        di: 'Jalur Saya /cek-posisi (kelas 7–11) dan Daftar Periksa (kelas 7–9 saja; kelas 10–11 sejak LANJUT_069 melihat kalimat netral), menggantikan isinya. Tidak tampil di Beranda.',
-        oleh: 'Kelas 7–11 (di Daftar Periksa hanya kelas 7–9).',
+        di: 'Jalur Saya /cek-posisi (kelas 7–11), menggantikan isinya. Tidak lagi di Daftar Periksa: kelas 10–11 sejak LANJUT_069 dan kelas 7–9 sejak LANJUT_076b melihat kalimat netral. Tidak tampil di Beranda.',
+        oleh: 'Kelas 7–11, hanya di layar /cek-posisi (Jalur Saya).',
         faktual: {
           klaim: 'Bersama isi di bawahnya: jadwal dan persiapan SNBP, SNBT, dan TKA hanya untuk kelas 12.',
           sumber: 'Kemendikdasmen (TKA: jenjang yang diikutkan), SNPMB (SNBP/SNBT). Perlu dipastikan apakah ada TKA untuk jenjang lain yang relevan bagi siswa kelas 7–9.',
@@ -489,14 +492,14 @@ const PETA = [
         task: 'LANJUT_035',
         awal: '**Kelas 7–11 — isi:**',
         nama: 'Pengganti kelas 7–11 — isi',
-        di: 'Sama dengan butir judul di atasnya: Jalur Saya /cek-posisi (kelas 7–11) dan Daftar Periksa (kelas 7–9).',
-        oleh: 'Kelas 7–11 (di Daftar Periksa hanya kelas 7–9).',
+        di: 'Sama dengan butir judul di atasnya: hanya Jalur Saya /cek-posisi (kelas 7–11); sejak LANJUT_076b tidak lagi di Daftar Periksa.',
+        oleh: 'Kelas 7–11, hanya di layar /cek-posisi (Jalur Saya).',
         faktual: {
           klaim: 'Isi bagian ini adalah jadwal dan persiapan SNBP, SNBT, dan TKA (lihat butir judul di atasnya).',
           sumber: 'Sama dengan butir judul di atasnya.',
         },
       },
-      { task: 'LANJUT_035', awal: '**Kelas 7–11 — tombol:**', nama: 'Pengganti kelas 7–11 — tombol', di: 'Sama dengan butir judul di atasnya: Jalur Saya /cek-posisi (kelas 7–11) dan Daftar Periksa (kelas 7–9).', oleh: 'Kelas 7–11 (di Daftar Periksa hanya kelas 7–9).' },
+      { task: 'LANJUT_035', awal: '**Kelas 7–11 — tombol:**', nama: 'Pengganti kelas 7–11 — tombol', di: 'Sama dengan butir judul di atasnya: hanya Jalur Saya /cek-posisi (kelas 7–11); sejak LANJUT_076b tidak lagi di Daftar Periksa.', oleh: 'Kelas 7–11, hanya di layar /cek-posisi (Jalur Saya).' },
       { task: 'LANJUT_035', awal: '**Kelas kosong — judul:**', nama: 'Pengganti tanpa kelas — judul', di: 'Jalur Saya /cek-posisi dan Daftar Periksa (jaring pengaman; biasanya tertahan di gerbang isi kelas dulu). Tidak tampil di Beranda.', oleh: 'Akun tanpa kelas.' },
       { task: 'LANJUT_035', awal: '**Kelas kosong — isi:**', nama: 'Pengganti tanpa kelas — isi', di: 'Sama dengan butir di atasnya.', oleh: 'Akun tanpa kelas.' },
       { task: 'LANJUT_035', awal: '**Kelas kosong — tombol:**', nama: 'Pengganti tanpa kelas — tombol', di: 'Sama dengan butir di atasnya.', oleh: 'Akun tanpa kelas.' },
@@ -530,34 +533,54 @@ const PETA = [
   {
     // LANJUT_076 — components/screens/PersiapanEvent.tsx, teks di lib/eventSekolah.ts.
     // Saklar event_sekolah_aktif bawaan 0: selama mati tidak ada yang melihat butir ini.
-    kelompok: 'Daftar Periksa — Persiapan Event (kelas 7–11, saklar bawaan mati)',
+    // LANJUT_076b: hanya SMP (kelas 7–9); beberapa butir 076 diubah di tempat.
+    kelompok: 'Daftar Periksa — Persiapan Event (SMP kelas 7–9, saklar bawaan mati)',
     butir: [
       ...[
-        ['**Judul seksi:**', 'Judul seksi', 'Daftar Periksa, di bawah kalimat netral/pengganti kelas 12, di atas butir milik akun.'],
-        ['**Pengantar:**', 'Pengantar', 'Di bawah judul seksi Persiapan Event.'],
+        ['**Judul seksi:**', 'Judul seksi', 'Daftar Periksa, di bawah kalimat netral, di atas butir milik akun.'],
+        ['**Pengantar:**', 'Pengantar (diubah LANJUT_076b)', 'Di bawah judul seksi Persiapan Event.'],
         ['**Tombol tambah:**', 'Tombol Tambah event', 'Di bawah pengantar; membuka isian event di tempat.'],
         ['**Daftar kosong:**', 'Daftar kosong', 'Pengganti daftar event bila tidak ada event hari ini atau sesudahnya.'],
-        ['**Label isian:**', 'Label isian', 'Isian tambah/ubah event.'],
-        ['**Pilihan jenis:**', 'Pilihan jenis', 'Isian event, medan Jenis.'],
+        ['**Label isian:**', 'Label isian (diubah LANJUT_076b)', 'Isian tambah/ubah event.'],
+        ['**Pilihan jenis:**', 'Pilihan jenis (diubah LANJUT_076b)', 'Isian event, medan Jenis; labelnya juga di kartu event dan kartu Beranda. TKA hanya kelas 9.'],
         ['**Petunjuk tanggal:**', 'Petunjuk tanggal', 'Isian event, di bawah medan Tanggal (diganti galat tanggal bila ada).'],
         ['**Petunjuk materi', 'Petunjuk materi', 'Isian event, di atas medan Materi; selalu tampil, juga saat ada galat.'],
-        ['**Kartu Arsip kosong:**', 'Kartu Arsip kosong', 'Isian event, medan Kartu Arsip, bila akun tidak punya kartu (untuk mapel yang dipilih).'],
+        ['**Kartu materi kosong:**', 'Kartu materi kosong (diubah LANJUT_076b)', 'Isian event, medan Kartu materi, bila tidak ada kartu milik sendiri atau kartu kurasi sah (untuk mapel yang dipilih).'],
         ['**Tombol isian:**', 'Tombol isian', 'Isian event, paling bawah.'],
-        ['**Tombol di tiap event:**', 'Tombol di tiap event', 'Kartu event; "Buka materi" membuka kartu Arsip yang terhubung.'],
+        ['**Tombol di tiap event:**', 'Tombol di tiap event', 'Kartu event; "Buka materi" membuka kartu Arsip milik sendiri, atau panel materi untuk kartu kurasi.'],
         ['**Konfirmasi hapus:**', 'Konfirmasi hapus', 'Kartu event, sesudah menekan Hapus; hapus permanen.'],
         ['**Event yang sudah lewat:**', 'Event yang sudah lewat', 'Di bawah daftar event, hanya bila ada event yang tanggalnya sudah lewat (WIB).'],
         ['**Hitung mundur:**', 'Hitung mundur', 'Kartu event dan kartu Persiapan Terdekat di Beranda (hariIniWib).'],
         ['**Galat jenis:**', 'Galat jenis', 'Isian event, saat Simpan tanpa jenis.'],
         ['**Galat tanggal:**', 'Galat tanggal', 'Isian event, medan Tanggal (format, kalender, lebih dari 2 tahun).'],
         ['**Galat materi:**', 'Galat materi', 'Isian event, materi lebih dari 200 karakter.'],
-        ['**Galat kartu Arsip', 'Galat kartu Arsip', 'Isian event, medan Kartu Arsip, bila server menolak (400 KARTU_TIDAK_SAH).'],
+        ['**Galat kartu materi', 'Galat kartu materi (diubah LANJUT_076b)', 'Isian event, medan Kartu materi, bila server menolak (400 KARTU_TIDAK_SAH).'],
         ['**Gagal menyimpan atau menghapus:**', 'Gagal menyimpan/menghapus', 'Isian event atau konfirmasi hapus, bila server gagal.'],
       ].map(([awal, nama, di]) => ({
         task: 'LANJUT_076',
         awal,
         nama,
         di,
-        oleh: 'Kelas 7–11, hanya bila saklar event_sekolah_aktif menyala (bawaan mati: saat ini tidak ada).',
+        oleh: 'Kelas 7–9, hanya bila saklar event_sekolah_aktif menyala (bawaan mati: saat ini tidak ada).',
+      })),
+      {
+        task: 'LANJUT_076b',
+        awal: '**Daftar Periksa SMP — pengganti',
+        nama: 'Kalimat netral Daftar Periksa SMP',
+        di: 'Daftar Periksa, di bawah judul, menggantikan "Bagian ini untuk kelas 12. … Versi untuk kelas [kelas] sedang kami siapkan." dan tombol "Buka Jenjang Saya". Kalimat yang sama dengan kelas 10–11 (LANJUT_069). Tampil juga saat saklar mati.',
+        oleh: 'Kelas 7–9 (semua, tidak bergantung saklar).',
+      },
+      ...[
+        ['**Kartu event — sumber', 'Sumber kartu kurasi', 'Kartu event, di bawah materi, bila kartu yang terhubung adalah kartu kurasi terverifikasi.'],
+        ['**Kartu event — kartu sudah dihapus', 'Materi sudah tidak tersedia', 'Kartu event, menggantikan tombol "Buka materi", bila kartu yang terhubung sudah dihapus atau (kurasi) tidak terverifikasi lagi.'],
+        ['**Kartu event — tombol panel', 'Tombol panel materi kurasi', 'Kartu event; membuka/menutup panel berisi judul dan isi kartu kurasi (tanpa tautan keluar).'],
+        ['**Isian — pilihan kartu kurasi', 'Pilihan kartu kurasi', 'Isian event, medan Kartu materi.'],
+      ].map(([awal, nama, di]) => ({
+        task: 'LANJUT_076b',
+        awal,
+        nama,
+        di,
+        oleh: 'Kelas 7–9, hanya bila saklar event_sekolah_aktif menyala (bawaan mati: saat ini tidak ada).',
       })),
     ],
   },

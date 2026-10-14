@@ -168,11 +168,13 @@ describe('LANJUT_069 §B: teks sama persis dengan salinan-teks-lanjut.md (DRAF)'
 });
 
 describe('LANJUT_069 §B: Daftar Periksa kelas 10–11 tanpa pesan "khusus kelas 12"', () => {
-  test('Kelas 10–11 mendapat kalimat netral; kelas lain tetap memakai placeholder', () => {
-    for (const kelas of ['10', '11']) {
-      assert.equal(teksDaftarPeriksaBukanKelas12(kelas), 'Catat langkah-langkahmu supaya tidak ada yang terlewat.');
+  // LANJUT_076b (keputusan PM no. 2): SMP juga mendapat kalimat netral, bukan
+  // placeholder "Bagian ini untuk kelas 12" (sebelumnya kelas 7–9 → null).
+  test('Kelas 7–11 mendapat kalimat netral; kelas 12 dan akun tanpa kelas tidak', () => {
+    for (const kelas of ['7', '8', '9', '10', '11']) {
+      assert.equal(teksDaftarPeriksaBukanKelas12(kelas), 'Catat langkah-langkahmu supaya tidak ada yang terlewat.', `kelas ${kelas}`);
     }
-    for (const kelas of ['7', '8', '9', '12', null, undefined]) {
+    for (const kelas of ['12', null, undefined]) {
       assert.equal(teksDaftarPeriksaBukanKelas12(kelas), null, `kelas ${kelas}`);
     }
   });
@@ -222,6 +224,7 @@ describe('LANJUT_069 §C: lintas akun', () => {
     const idA = isiASetelah.pintu.map((p) => p.id);
     for (const id of ['cek-posisi', 'daftar-periksa']) assert.ok(!idA.includes(id), `akun kelas 7 tidak boleh melihat pintu ${id}`);
     for (const t of teksTampil(isiB)) assert.ok(!teksTampil(isiASetelah).includes(t), `teks kelas 12 bocor ke kelas 7: ${t}`);
-    assert.equal(teksDaftarPeriksaBukanKelas12(await kelasDariToken(tokenA)), null);
+    // LANJUT_076b: SMP mendapat kalimat netral yang sama dengan 10–11 (bukan teks kelas 12).
+    assert.equal(teksDaftarPeriksaBukanKelas12(await kelasDariToken(tokenA)), teksDaftarPeriksaBukanKelas12('10'));
   });
 });

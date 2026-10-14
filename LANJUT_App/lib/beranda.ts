@@ -274,7 +274,7 @@ export type BagianBeranda =
  * Setiap bagian paling banyak muncul sekali; yang tidak tampil tidak meninggalkan ruang.
  *
  * LANJUT_076: kartu "Persiapan Terdekat" (`tampilPersiapan`, event 7 hari ke depan)
- * tepat sesudah baris progres dan sebelum grid — HANYA kelas 7–11.
+ * tepat sesudah baris progres dan sebelum grid — LANJUT_076b: HANYA SMP (kelas 7–9).
  */
 export function urutanBeranda(data: {
   kelas?: Kelas | null;
@@ -287,7 +287,7 @@ export function urutanBeranda(data: {
   const urutan: BagianBeranda[] = ['sapaan'];
   if (kelas12) urutan.push('hero');
   urutan.push('progres');
-  if (data.tampilPersiapan && (kelompok === 'smp' || kelompok === 'kelas10_11')) urutan.push('persiapan');
+  if (data.tampilPersiapan && kelompok === 'smp') urutan.push('persiapan');
   urutan.push('grid');
   if (kelas12) urutan.push('info_penting');
   if (data.tampilBanner) urutan.push('banner');

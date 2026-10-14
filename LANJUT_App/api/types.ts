@@ -282,7 +282,13 @@ export type HasilCariModul = {
 };
 
 // LANJUT_076 — Persiapan Event (GET/POST /pengguna/event, PATCH/DELETE /pengguna/event/:id).
-export type JenisEvent = 'UTS' | 'UAS' | 'Ulangan' | 'Lainnya';
+// LANJUT_076b: + PAS, TKA; hanya kelas 7–9; materi bisa kartu kurasi terverifikasi.
+export type JenisEvent = 'UTS' | 'UAS' | 'PAS' | 'Ulangan' | 'TKA' | 'Lainnya';
+/** Keterangan kartu yang terhubung, disusun server. `tersedia: false` = kartu dihapus / tidak sah lagi. */
+export type MateriEvent =
+  | { tersedia: false }
+  | { tersedia: true; jenis: 'milik'; judul: string }
+  | { tersedia: true; jenis: 'kurasi'; judul: string; isi: string; sumber_nama: string };
 export type EventSekolah = {
   id: string;
   jenis: JenisEvent;
@@ -290,8 +296,17 @@ export type EventSekolah = {
   mapel_id: string | null;
   materi_teks: string | null;
   kartu_id: string | null;
+  materi: MateriEvent | null; // null = tidak ada kartu_id
   dibuat_pada: string;
   diubah_pada: string;
+};
+/** GET /pengguna/event/pilihan-kartu — kartu yang boleh jadi materi. */
+export type PilihanKartuEvent = {
+  id: string;
+  judul: string;
+  mapel_id: string;
+  jenis: 'milik' | 'kurasi';
+  sumber_nama: string | null;
 };
 export type IsiEvent = {
   jenis?: JenisEvent;

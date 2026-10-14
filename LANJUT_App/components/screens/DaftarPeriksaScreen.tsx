@@ -46,8 +46,9 @@ export function DaftarPeriksaScreen() {
 // rencana siswa sendiri, bukan tenggat — supaya "Simpan" tetap ada gunanya.
 // LANJUT_069 (Tambahan-069 no. 2): kelas 10–11 tidak melihat pesan "khusus
 // kelas 12", tetapi kalimat netral DRAF (lib/jenjangSaya.ts).
-// LANJUT_076: Persiapan Event (kelas 7–11) — tidak merender apa pun selama saklar
-// event_sekolah_aktif mati, jadi layar tetap seperti sebelumnya.
+// LANJUT_076: Persiapan Event — tidak merender apa pun selama saklar
+// event_sekolah_aktif mati. LANJUT_076b: Persiapan Event hanya SMP (kelas 7–9),
+// dan SMP juga mendapat kalimat netral, bukan placeholder "Bagian ini untuk kelas 12".
 function DaftarPeriksaBukanKelas12() {
   const { pengguna } = useSesi();
   const teksNetral = teksDaftarPeriksaBukanKelas12(pengguna?.kelas ?? null);

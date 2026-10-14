@@ -334,6 +334,8 @@ const styles = StyleSheet.create({
   tautan: { fontFamily: font.semibold, color: color.textLink, textDecorationLine: 'underline' },
   opsiDaftar: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.s2 },
   opsi: {
+    // LANJUT_076b: label panjang (mis. judul kartu kurasi + sumber) membungkus, tidak keluar layar.
+    maxWidth: '100%',
     paddingVertical: spacing.s2,
     paddingHorizontal: spacing.s3,
     borderRadius: radius.pill,

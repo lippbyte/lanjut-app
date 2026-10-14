@@ -3,28 +3,66 @@ import { kelompokJenjang, type Kelas } from './jenjang';
 import { hariIniWib, uraiTanggal } from './linimasa';
 
 /**
- * Persiapan Event untuk kelas 7–11 (LANJUT_076). Modul murni tanpa React supaya
- * tes server bisa menjalankannya langsung (server/tests/muat-ts-app.js).
+ * Persiapan Event untuk SMP, kelas 7–9 (LANJUT_076; LANJUT_076b membatasinya ke
+ * SMP). Modul murni tanpa React supaya tes server bisa menjalankannya langsung
+ * (server/tests/muat-ts-app.js).
  *
  * Fitur ini dimatikan secara bawaan di server (saklar event_sekolah_aktif = 0):
  * selama mati, GET /pengguna/event menjawab 403 dan app tidak menampilkan apa pun.
  * Semua hitungan tanggal memakai hariIniWib/uraiTanggal (lib/linimasa.ts) — tidak
  * ada logika tanggal di layar.
  *
- * TEKS DRAF, belum disetujui Khalifa — salinan-teks-lanjut.md §4.4 (LANJUT_076).
+ * TEKS DRAF, belum disetujui Khalifa — salinan-teks-lanjut.md §4.4 (LANJUT_076, LANJUT_076b).
  */
 
-export const JENIS_EVENT: readonly JenisEvent[] = ['UTS', 'UAS', 'Ulangan', 'Lainnya'];
+/** Nilai jenis yang sah di server (sama dengan event-sekolah.skema.js, migrasi 021). */
+export const JENIS_EVENT: readonly JenisEvent[] = ['UTS', 'UAS', 'PAS', 'Ulangan', 'TKA', 'Lainnya'];
 export const MAKS_MATERI = 200;
 /** Kartu "Persiapan Terdekat" tampil dari 7 hari sebelum tanggal event sampai hari H. */
 export const HARI_PENGINGAT = 7;
 
 const SEHARI = 86400000;
 
-/** Hanya kelas 7–11; kelas 12 dan akun tanpa kelas tidak memakai fitur ini. */
+/** LANJUT_076b: hanya SMP (kelas 7–9); kelas 10–12 dan akun tanpa kelas tidak memakai fitur ini. */
 export function untukPersiapanEvent(kelas: Kelas | null | undefined): boolean {
-  const kelompok = kelompokJenjang(kelas);
-  return kelompok === 'smp' || kelompok === 'kelas10_11';
+  return kelompokJenjang(kelas) === 'smp';
+}
+
+/** Label tampil: UAS dan PAS (nilai lama dan baru) = "UAS/PAS"; Ulangan = "Ulangan Harian". */
+export function labelJenis(jenis: JenisEvent): string {
+  if (jenis === 'UAS' || jenis === 'PAS') return 'UAS/PAS';
+  if (jenis === 'Ulangan') return 'Ulangan Harian';
+  return jenis;
+}
+
+/**
+ * Pilihan jenis di isian (LANJUT_076b): UTS, UAS/PAS, Ulangan Harian, TKA, Lainnya.
+ * TKA hanya untuk kelas 9 (pilihan percakapan, belum disetujui PM), kecuali event
+ * yang sedang diubah memang sudah berjenis TKA.
+ */
+export function pilihanJenis(kelas: Kelas | null | undefined, jenisSekarang?: JenisEvent | null): { nilai: JenisEvent; label: string }[] {
+  const nilai: JenisEvent[] = ['UTS', 'UAS', 'Ulangan'];
+  if (kelas === '9' || jenisSekarang === 'TKA') nilai.push('TKA');
+  nilai.push('Lainnya');
+  return nilai.map((n) => ({ nilai: n, label: labelJenis(n) }));
+}
+
+/**
+ * Yang tampil untuk materi satu event (LANJUT_076b §D–E):
+ *   - tanpa kartu → tidak ada apa pun;
+ *   - kartu dihapus / kurasi tidak terverifikasi lagi → "Materi ini sudah tidak tersedia." tanpa tombol;
+ *   - kartu kurasi → "Sumber: [nama]" + tombol yang membuka panel materi;
+ *   - kartu milik sendiri → tombol ke Arsip (seperti 076).
+ */
+export function tampilanMateri(e: Pick<EventSekolah, 'kartu_id' | 'materi'>): {
+  keterangan: string | null;
+  buka: 'arsip' | 'panel' | null;
+} {
+  if (!e.kartu_id) return { keterangan: null, buka: null };
+  const m = e.materi;
+  if (!m || !m.tersedia) return { keterangan: TEKS_EVENT.materiTidakTersedia, buka: null };
+  if (m.jenis === 'kurasi') return { keterangan: `${TEKS_EVENT.awalanSumber} ${m.sumber_nama}`, buka: 'panel' };
+  return { keterangan: null, buka: 'arsip' };
 }
 
 /** Hari dari hari ini (WIB) ke tanggal event: 0 = hari ini, negatif = sudah lewat; null bila tak terbaca. */
@@ -101,7 +139,8 @@ export function periksaIsianEvent(isi: IsianFormEvent, hariIniMs: number = hariI
 
 export const TEKS_EVENT = {
   judul: 'Persiapan Event',
-  pengantar: 'Catat ujian atau ulangan yang akan datang, lengkap dengan mapel dan materinya.',
+  // LANJUT_076b: contoh kalimat PM (sebelumnya "Catat ujian atau ulangan yang akan datang, lengkap dengan mapel dan materinya.").
+  pengantar: 'Catat ujian dan ulangan yang akan datang, supaya kamu bisa menyiapkan diri lebih awal.',
   tombolTambah: 'Tambah event',
   kosong: 'Belum ada event yang akan datang.',
   labelJenis: 'Jenis',
@@ -110,12 +149,16 @@ export const TEKS_EVENT = {
   labelMapel: 'Mapel',
   labelMateri: 'Materi',
   petunjukMateri: 'Tulis materinya singkat saja. Jangan tulis nama atau data pribadi.',
-  labelKartu: 'Kartu Arsip',
-  kartuKosong: 'Belum ada kartu Arsip untuk pilihan ini.',
+  // LANJUT_076b: pilihan kini juga kartu kurasi bersumber resmi (sebelumnya "Kartu Arsip").
+  labelKartu: 'Kartu materi',
+  kartuKosong: 'Belum ada kartu materi untuk pilihan ini.',
   opsional: 'opsional',
   tombolSimpan: 'Simpan event',
   tombolBatal: 'Batal',
   bukaMateri: 'Buka materi',
+  tutupMateri: 'Tutup materi',
+  awalanSumber: 'Sumber:',
+  materiTidakTersedia: 'Materi ini sudah tidak tersedia.',
   ubah: 'Ubah',
   hapus: 'Hapus',
   konfirmasiHapus: 'Hapus event ini? Event yang dihapus tidak bisa dikembalikan.',
@@ -130,7 +173,8 @@ export const TEKS_EVENT = {
   galatTanggalKalender: 'Tanggal ini tidak ada di kalender.',
   galatTanggalJauh: 'Tanggal paling jauh 2 tahun dari hari ini.',
   galatMateri: `Materi paling panjang ${MAKS_MATERI} karakter.`,
-  galatKartu: 'Kartu ini tidak bisa dipakai. Pilih kartu lain dari Arsip-mu.',
+  // LANJUT_076b: kartu kurasi juga bisa dipilih (sebelumnya "… Pilih kartu lain dari Arsip-mu.").
+  galatKartu: 'Kartu ini tidak bisa dipakai. Pilih kartu materi lain.',
   galatSimpan: 'Belum tersimpan. Coba lagi sebentar lagi.',
   kartuBerandaJudul: 'Persiapan Terdekat',
 } as const;

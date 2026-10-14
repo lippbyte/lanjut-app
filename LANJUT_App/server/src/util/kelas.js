@@ -41,4 +41,4 @@ function tentukanJenisSekolah(kelas, diminta, lama) {
   return diminta !== undefined ? diminta : lama ?? null;
 }
 
-module.exports = { KELAS, JENIS_SEKOLAH, tentukanJenisSekolah };
+module.exports = { KELAS, JENIS_SEKOLAH, KELAS_SMP, tentukanJenisSekolah };

@@ -35,7 +35,7 @@ import {
   urutanBeranda,
   type BagianBeranda,
 } from '../../lib/beranda';
-import { TEKS_EVENT, eventTerdekat, selisihHari, teksHitungMundur, untukPersiapanEvent } from '../../lib/eventSekolah';
+import { TEKS_EVENT, eventTerdekat, labelJenis, selisihHari, teksHitungMundur, untukPersiapanEvent } from '../../lib/eventSekolah';
 import type { Kelas } from '../../lib/jenjang';
 import {
   formatRentang,
@@ -113,8 +113,8 @@ export function LinimasaScreen() {
   const bannerQuery = useBannerBeranda();
   const banner = bannerQuery.isError ? [] : bannerBeranda(bannerQuery.data?.banner);
 
-  // LANJUT_076: kartu "Persiapan Terdekat" (kelas 7–11). Saklar mati, kebijakan belum
-  // diterima, memuat, atau gagal → tidak tampil, tanpa teks pengganti (aturan 072).
+  // LANJUT_076: kartu "Persiapan Terdekat" (LANJUT_076b: hanya kelas 7–9). Saklar mati,
+  // kebijakan belum diterima, memuat, atau gagal → tidak tampil, tanpa teks pengganti (aturan 072).
   const persiapanAktif = untukPersiapanEvent(kelas);
   const eventQuery = useEventSekolah(persiapanAktif);
   const persiapan = persiapanAktif && !eventQuery.isError ? eventTerdekat(eventQuery.data) : null;
@@ -207,11 +207,13 @@ export function LinimasaScreen() {
 
 // LANJUT_076: satu kartu event terdekat (7 hari sebelum s.d. hari H, lib/eventSekolah.ts).
 // Hitung mundur dari selisihHari (hariIniWib) — tidak ada logika tanggal di layar.
+// LANJUT_076b: hanya SMP (untukPersiapanEvent); jenis memakai label SMP (UAS/PAS, Ulangan Harian).
 function KartuPersiapan({ event, onPress }: { event: EventSekolah; onPress: () => void }) {
   const { data: mapel } = useMapel();
   const namaMapel = event.mapel_id ? mapel?.find((m) => m.id === event.mapel_id)?.nama : undefined;
   const hitung = teksHitungMundur(selisihHari(event.tanggal) ?? 0);
-  const judul = namaMapel ? `${event.jenis} · ${namaMapel}` : event.jenis;
+  const jenis = labelJenis(event.jenis);
+  const judul = namaMapel ? `${jenis} · ${namaMapel}` : jenis;
   return (
     <Pressable
       onPress={onPress}

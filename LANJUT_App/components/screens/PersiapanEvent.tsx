@@ -3,17 +3,18 @@ import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ApiError } from '../../api/client';
-import type { EventSekolah, JenisEvent } from '../../api/types';
-import { useEventSekolah, useHapusEvent, useSimpanEvent } from '../../hooks/useEventSekolah';
-import { useKartuSaya } from '../../hooks/useKartu';
+import type { EventSekolah, IsiEvent, JenisEvent } from '../../api/types';
+import { useEventSekolah, useHapusEvent, usePilihanKartuEvent, useSimpanEvent } from '../../hooks/useEventSekolah';
 import { useMapel } from '../../hooks/useMapel';
 import {
-  JENIS_EVENT,
   MAKS_MATERI,
   TEKS_EVENT,
+  labelJenis,
   periksaIsianEvent,
+  pilihanJenis,
   pisahEvent,
   selisihHari,
+  tampilanMateri,
   teksHitungMundur,
   untukPersiapanEvent,
 } from '../../lib/eventSekolah';
@@ -24,10 +25,10 @@ import { Kartu, SeksiJudul, Tombol, gaya } from '../ui';
 import { DaftarOpsi, Field, Input, OpsiPil, PesanGalat } from './auth/AuthUI';
 
 /**
- * Persiapan Event di Daftar Periksa kelas 7–11 (LANJUT_076). Tampil HANYA bila
- * GET /pengguna/event berhasil: saklar event_sekolah_aktif mati, kebijakan belum
- * diterima, memuat, atau gagal → komponen ini tidak merender apa pun, jadi layar
- * Daftar Periksa tetap seperti sebelumnya. Kelas 12 tidak pernah memakainya.
+ * Persiapan Event di Daftar Periksa SMP, kelas 7–9 (LANJUT_076; LANJUT_076b
+ * membatasinya ke SMP). Tampil HANYA bila GET /pengguna/event berhasil: saklar
+ * event_sekolah_aktif mati, kebijakan belum diterima, kelas lain, memuat, atau
+ * gagal → komponen ini tidak merender apa pun. Kelas 10–12 tidak pernah memakainya.
  */
 export function PersiapanEvent() {
   const { pengguna } = useSesi();
@@ -86,8 +87,13 @@ function KartuEvent({
   const router = useRouter();
   const hapus = useHapusEvent();
   const [konfirmasi, setKonfirmasi] = useState(false);
-  const judul = namaMapel ? `${event.jenis} · ${namaMapel}` : event.jenis;
+  const [panelTerbuka, setPanelTerbuka] = useState(false);
+  const jenis = labelJenis(event.jenis);
+  const judul = namaMapel ? `${jenis} · ${namaMapel}` : jenis;
   const hitung = lewat ? TEKS_EVENT.sudahLewat : teksHitungMundur(selisihHari(event.tanggal) ?? 0);
+  // LANJUT_076b: keterangan & tombol materi diputuskan lib (tampilanMateri), dari data server.
+  const materi = tampilanMateri(event);
+  const kurasi = event.materi?.tersedia && event.materi.jenis === 'kurasi' ? event.materi : null;
 
   return (
     <Kartu style={s.event}>
@@ -97,6 +103,13 @@ function KartuEvent({
       </View>
       <Text style={s.tanggal}>{formatTanggal(event.tanggal)}</Text>
       {event.materi_teks ? <Text style={s.materi}>{event.materi_teks}</Text> : null}
+      {materi.keterangan ? <Text style={materi.buka ? s.sumber : s.tidakTersedia}>{materi.keterangan}</Text> : null}
+      {kurasi && panelTerbuka ? (
+        <View style={s.panel}>
+          <Text style={s.panelJudul}>{kurasi.judul}</Text>
+          <Text style={s.materi}>{kurasi.isi}</Text>
+        </View>
+      ) : null}
       {konfirmasi ? (
         <View style={s.konfirmasi}>
           <Text style={gaya.teksKecil}>{TEKS_EVENT.konfirmasiHapus}</Text>
@@ -108,12 +121,20 @@ function KartuEvent({
         </View>
       ) : (
         <View style={s.aksi}>
-          {event.kartu_id ? (
+          {materi.buka === 'arsip' ? (
             <Tombol
               label={TEKS_EVENT.bukaMateri}
               varian="sekunder"
               kecil
               onPress={() => router.push({ pathname: '/arsip-kartu', params: { id: event.kartu_id! } })}
+            />
+          ) : null}
+          {materi.buka === 'panel' ? (
+            <Tombol
+              label={panelTerbuka ? TEKS_EVENT.tutupMateri : TEKS_EVENT.bukaMateri}
+              varian="sekunder"
+              kecil
+              onPress={() => setPanelTerbuka((v) => !v)}
             />
           ) : null}
           <Tombol label={TEKS_EVENT.ubah} varian="hantu" kecil onPress={onUbah} />
@@ -126,9 +147,10 @@ function KartuEvent({
 
 /** Tambah (tanpa `awal`) atau ubah event. Pemeriksaan isian di lib/eventSekolah.ts; server memeriksa ulang. */
 function FormEvent({ awal, onSelesai }: { awal?: EventSekolah; onSelesai: () => void }) {
+  const { pengguna } = useSesi();
   const simpan = useSimpanEvent();
   const { data: mapel } = useMapel();
-  const { data: kartu } = useKartuSaya();
+  const { data: pilihanKartu } = usePilihanKartuEvent(true);
   const [jenis, setJenis] = useState<JenisEvent | null>(awal?.jenis ?? null);
   const [tanggal, setTanggal] = useState(awal?.tanggal ?? '');
   const [mapelId, setMapelId] = useState<string | null>(awal?.mapel_id ?? null);
@@ -138,27 +160,25 @@ function FormEvent({ awal, onSelesai }: { awal?: EventSekolah; onSelesai: () => 
   // Galat satu medan hilang begitu medan itu diubah (diperiksa ulang saat Simpan).
   const hapusGalat = (medan: keyof typeof galat) => setGalat((g) => ({ ...g, [medan]: undefined }));
 
-  // Hanya kartu milik akun sendiri (GET /kartu?sumber=pengguna), disaring mapel yang dipilih.
-  const kartuPilihan = (kartu ?? []).filter((k) => !mapelId || k.mapel_id === mapelId);
+  // LANJUT_076b: kartu milik sendiri + kurasi terverifikasi (disusun server), disaring mapel yang dipilih.
+  const kartuPilihan = (pilihanKartu ?? []).filter((k) => !mapelId || k.mapel_id === mapelId);
 
   const pilihMapel = (id: string) => {
     const baru = mapelId === id ? null : id;
     setMapelId(baru);
     // Kartu yang sudah dipilih tetap hanya bila mapelnya cocok dengan mapel baru.
-    if (kartuId && baru && kartu?.find((k) => k.id === kartuId)?.mapel_id !== baru) setKartuId(null);
+    if (kartuId && baru && pilihanKartu?.find((k) => k.id === kartuId)?.mapel_id !== baru) setKartuId(null);
   };
 
   const kirim = () => {
     const periksa = periksaIsianEvent({ jenis, tanggal, materi });
     setGalat(periksa);
     if (Object.keys(periksa).length || !jenis) return;
-    simpan.mutate(
-      {
-        id: awal?.id,
-        isi: { jenis, tanggal: tanggal.trim(), mapel_id: mapelId, materi_teks: materi.trim() || null, kartu_id: kartuId },
-      },
-      { onSuccess: onSelesai }
-    );
+    const isi: IsiEvent = { jenis, tanggal: tanggal.trim(), mapel_id: mapelId, materi_teks: materi.trim() || null };
+    // Saat mengubah, kartu_id hanya dikirim bila diganti: tautan yang sudah tidak tersedia
+    // tidak ikut diperiksa ulang (dan tidak diubah) saat isian lain disimpan.
+    if (!awal || kartuId !== awal.kartu_id) isi.kartu_id = kartuId;
+    simpan.mutate({ id: awal?.id, isi }, { onSuccess: onSelesai });
   };
 
   const kodeGalat = simpan.error instanceof ApiError ? simpan.error.kode : undefined;
@@ -167,13 +187,14 @@ function FormEvent({ awal, onSelesai }: { awal?: EventSekolah; onSelesai: () => 
     <Kartu varian="soft" style={s.form}>
       <Field label={TEKS_EVENT.labelJenis} galat={galat.jenis}>
         <DaftarOpsi>
-          {JENIS_EVENT.map((j) => (
+          {pilihanJenis(pengguna?.kelas, awal?.jenis).map((p) => (
             <OpsiPil
-              key={j}
-              label={j}
-              aktif={jenis === j}
+              key={p.nilai}
+              label={p.label}
+              aktif={jenis !== null && labelJenis(jenis) === p.label}
               onPress={() => {
-                setJenis(j);
+                // UAS lama dan PAS sama-sama "UAS/PAS": nilai tersimpan tidak diganti bila label sama.
+                if (!jenis || labelJenis(jenis) !== p.label) setJenis(p.nilai);
                 hapusGalat('jenis');
               }}
             />
@@ -220,7 +241,12 @@ function FormEvent({ awal, onSelesai }: { awal?: EventSekolah; onSelesai: () => 
         {kartuPilihan.length ? (
           <DaftarOpsi>
             {kartuPilihan.map((k) => (
-              <OpsiPil key={k.id} label={k.judul} aktif={kartuId === k.id} onPress={() => setKartuId(kartuId === k.id ? null : k.id)} />
+              <OpsiPil
+                key={k.id}
+                label={k.sumber_nama ? `${k.judul} · ${TEKS_EVENT.awalanSumber} ${k.sumber_nama}` : k.judul}
+                aktif={kartuId === k.id}
+                onPress={() => setKartuId(kartuId === k.id ? null : k.id)}
+              />
             ))}
           </DaftarOpsi>
         ) : (
@@ -244,6 +270,10 @@ const s = StyleSheet.create({
   hitung: { ...teks.caption, fontFamily: font.semibold, color: color.blue600 },
   tanggal: { ...teks.caption, color: color.textMuted },
   materi: { ...teks.bodySm, color: color.textBody },
+  sumber: { ...teks.caption, color: color.textMuted },
+  tidakTersedia: { ...teks.caption, fontStyle: 'italic', color: color.textMuted },
+  panel: { gap: spacing.s1, marginTop: spacing.s2, padding: spacing.s3, borderRadius: radius.md, backgroundColor: color.surfacePage },
+  panelJudul: { ...teks.bodySm, fontFamily: font.semibold, color: color.textBody },
   aksi: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.s2, marginTop: spacing.s2 },
   konfirmasi: { gap: spacing.s1, marginTop: spacing.s2 },
   form: { gap: spacing.s4 },

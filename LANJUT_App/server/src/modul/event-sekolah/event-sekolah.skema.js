@@ -3,7 +3,9 @@
 
 const { z } = require('zod');
 
-const JENIS_EVENT = ['UTS', 'UAS', 'Ulangan', 'Lainnya'];
+// LANJUT_076b (migrasi 021): + PAS dan TKA. Label di app: UAS & PAS = "UAS/PAS",
+// Ulangan = "Ulangan Harian". Label itu sendiri BUKAN nilai yang sah.
+const JENIS_EVENT = ['UTS', 'UAS', 'PAS', 'Ulangan', 'TKA', 'Lainnya'];
 const MAKS_MATERI = 200;
 
 /** YYYY-MM-DD yang benar-benar ada di kalender (2026-02-30 ditolak). */

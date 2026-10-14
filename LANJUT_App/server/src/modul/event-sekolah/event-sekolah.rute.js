@@ -1,12 +1,14 @@
-// Rute Persiapan Event (LANJUT_076), dipasang di /api/v1/pengguna/event.
-// Hanya milik akun sendiri. Gerbang (login → saklar → kebijakan) dipasang di
-// router.use SEBELUM validasi isi, jadi urutan galatnya: 401, 403
-// FITUR_BELUM_AKTIF, 403 AI_BELUM_DIIZINKAN, baru 400.
+// Rute Persiapan Event (LANJUT_076, LANJUT_076b), dipasang di /api/v1/pengguna/event.
+// Hanya milik akun sendiri. Gerbang (login → saklar → kebijakan → kelas 7–9)
+// dipasang di router.use SEBELUM validasi isi, jadi urutan galatnya: 401, 403
+// FITUR_BELUM_AKTIF, 403 AI_BELUM_DIIZINKAN, 403 KELAS_TIDAK_DIDUKUNG, baru 400.
 //
-//   GET    /      daftar event milik sendiri, tanggal naik
-//   POST   /      buat event
-//   PATCH  /:id   ubah event milik sendiri (lainnya 404)
-//   DELETE /:id   hapus PERMANEN (lainnya 404)
+//   GET    /               daftar event milik sendiri, tanggal naik (+ keterangan materi)
+//   GET    /pilihan-kartu  kartu yang boleh jadi materi (milik sendiri + kurasi terverifikasi);
+//                          hanya membaca basis data, tidak mengambil apa pun dari internet
+//   POST   /               buat event
+//   PATCH  /:id            ubah event milik sendiri (lainnya 404)
+//   DELETE /:id            hapus PERMANEN (lainnya 404)
 
 const express = require('express');
 const wajibLogin = require('../../middleware/wajibLogin');
@@ -29,6 +31,14 @@ router.use(wajibLogin, async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   try {
     sukses(res, await layanan.daftar(req.pengguna.id));
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/pilihan-kartu', async (req, res, next) => {
+  try {
+    sukses(res, await layanan.pilihanKartu(req.pengguna.id));
   } catch (err) {
     next(err);
   }

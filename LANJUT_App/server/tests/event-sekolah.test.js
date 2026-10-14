@@ -206,7 +206,7 @@ describe('LANJUT_076 §C.10: saklar mati (bawaan)', () => {
   });
 
   test('Saklar dimatikan lagi: event yang sudah ada tidak terhapus, hanya tidak bisa dibuka', async () => {
-    const a = await akun('10');
+    const a = await akun('8'); // LANJUT_076b: akun SMP (sebelumnya kelas 10)
     await aturSaklar('1');
     const dibuat = await buatEvent(a.token, {});
     assert.equal(dibuat.status, 201);
@@ -275,7 +275,7 @@ describe('LANJUT_076 §C.9–11: saklar aktif', () => {
   });
 
   test('Paling jauh 2 tahun ke depan (WIB): tepat 2 tahun diterima, sehari sesudahnya ditolak; tanggal lampau boleh', async () => {
-    const a = await akun('10');
+    const a = await akun('9'); // LANJUT_076b: akun SMP (sebelumnya kelas 10)
     const batas = new Date(ev.batasTanggalMaks(hariIniWib())).toISOString().slice(0, 10);
     assert.equal((await buatEvent(a.token, { tanggal: batas })).status, 201);
     const lewatBatas = await buatEvent(a.token, { tanggal: tgl(1, Date.parse(batas)) });
@@ -288,7 +288,7 @@ describe('LANJUT_076 §C.9–11: saklar aktif', () => {
   });
 
   test('materi_teks opsional, maks. 200 karakter (dihitung per huruf, termasuk emoji); kosong → null', async () => {
-    const a = await akun('11');
+    const a = await akun('7'); // LANJUT_076b: akun SMP (sebelumnya kelas 11)
     const pas = '🙂'.repeat(150) + 'a'.repeat(50);
     const r = await buatEvent(a.token, { materi_teks: pas });
     assert.equal(r.status, 201, JSON.stringify(r.json));
@@ -334,7 +334,7 @@ describe('LANJUT_076 §C.9–11: saklar aktif', () => {
   });
 
   test('PATCH sebagian: hanya medan yang dikirim berubah; null mengosongkan; isi kosong {} → 400', async () => {
-    const a = await akun('10');
+    const a = await akun('8'); // LANJUT_076b: akun SMP (sebelumnya kelas 10)
     const kartu = await buatKartu(a.token);
     const e = (await buatEvent(a.token, { jenis: 'UTS', mapel_id: mapelA, materi_teks: 'Awal', kartu_id: kartu })).json.data;
     const r = await ubahEvent(a.token, e.id, { materi_teks: 'Bab 4' });
@@ -356,7 +356,7 @@ describe('LANJUT_076 §C.9–11: saklar aktif', () => {
   });
 
   test('PATCH & DELETE event akun lain → 404 TIDAK_DITEMUKAN (juga dengan isi tidak sah); event itu tidak berubah', async () => {
-    const a = await akun('11');
+    const a = await akun('9'); // LANJUT_076b: akun SMP (sebelumnya kelas 11)
     const b = await akun('7');
     const e = (await buatEvent(a.token, { jenis: 'UTS', materi_teks: 'Milik A' })).json.data;
     for (const isi of [{ materi_teks: 'Diubah B' }, { kartu_id: 'kartu-tidak-ada-076' }, { mapel_id: 'mapel-tidak-ada-076' }]) {
@@ -388,7 +388,7 @@ describe('LANJUT_076 §C.9–11: saklar aktif', () => {
 
   test('GET lintas akun: akun B tidak melihat event akun A', async () => {
     const a = await akun('9');
-    const b = await akun('10');
+    const b = await akun('8'); // LANJUT_076b: akun SMP (sebelumnya kelas 10)
     const e = (await buatEvent(a.token, { materi_teks: 'Rahasia A' })).json.data;
     await buatEvent(b.token, { jenis: 'UAS' });
     const daftarB = (await daftarEvent(b.token)).json.data;
@@ -398,7 +398,7 @@ describe('LANJUT_076 §C.9–11: saklar aktif', () => {
   });
 
   test('Kartu Arsip yang terhubung dihapus permanen dari basis data → kartu_id event menjadi null (tidak menunjuk kartu hilang)', async () => {
-    const a = await akun('11');
+    const a = await akun('7'); // LANJUT_076b: akun SMP (sebelumnya kelas 11)
     const kartu = await buatKartu(a.token);
     const e = (await buatEvent(a.token, { kartu_id: kartu })).json.data;
     await pool.query('DELETE FROM kartu WHERE id = ?', [kartu]);
@@ -473,8 +473,9 @@ describe('LANJUT_076 §A: kelas 12 tidak berubah', () => {
     assert.equal((layar.match(/<PersiapanEvent \/>/g) || []).length, 1);
     const bukan12 = layar.slice(layar.indexOf('function DaftarPeriksaBukanKelas12'), layar.indexOf('function DaftarPeriksaKelas12'));
     assert.ok(bukan12.includes('<PersiapanEvent />'));
-    for (const k of ['12', null, undefined, '']) assert.equal(ev.untukPersiapanEvent(k), false, `kelas ${k}`);
-    for (const k of ['7', '8', '9', '10', '11']) assert.equal(ev.untukPersiapanEvent(k), true, `kelas ${k}`);
+    // LANJUT_076b (keputusan PM no. 1): hanya SMP; kelas 10–11 tidak lagi.
+    for (const k of ['10', '11', '12', null, undefined, '']) assert.equal(ev.untukPersiapanEvent(k), false, `kelas ${k}`);
+    for (const k of ['7', '8', '9']) assert.equal(ev.untukPersiapanEvent(k), true, `kelas ${k}`);
   });
 });
 
@@ -527,8 +528,8 @@ describe('LANJUT_076 §D: pengingat "Persiapan Terdekat" (lib/eventSekolah.ts)',
 });
 
 describe('LANJUT_076 §D–F: Beranda, layar, teks', () => {
-  test('urutanBeranda: kartu persiapan tepat sesudah progres dan sebelum grid, hanya kelas 7–11, hanya bila ada event', () => {
-    for (const kelas of ['7', '9', '10', '11']) {
+  test('urutanBeranda: kartu persiapan tepat sesudah progres dan sebelum grid, hanya kelas 7–9 (LANJUT_076b), hanya bila ada event', () => {
+    for (const kelas of ['7', '8', '9']) {
       for (const tampilBanner of [false, true]) {
         const u = beranda.urutanBeranda({ kelas, tampilMulaiDariSini: true, tampilBanner, tampilPersiapan: true });
         assert.equal(u.filter((b) => b === 'persiapan').length, 1);
@@ -538,14 +539,14 @@ describe('LANJUT_076 §D–F: Beranda, layar, teks', () => {
         assert.deepEqual(tanpa, u.filter((b) => b !== 'persiapan'), 'tanpa event: tidak ada ruang kosong');
       }
     }
-    for (const kelas of ['12', null]) {
+    for (const kelas of ['10', '11', '12', null]) {
       const u = beranda.urutanBeranda({ kelas, tampilMulaiDariSini: true, tampilBanner: true, tampilPersiapan: true });
       assert.ok(!u.includes('persiapan'), `kelas ${kelas} tidak pernah melihat pengingat`);
       assert.deepEqual(u, beranda.urutanBeranda({ kelas, tampilMulaiDariSini: true, tampilBanner: true }));
     }
   });
 
-  test('Beranda: kartu tidak tampil saat gagal dimuat / saklar mati / bukan kelas 7–11; tanpa logika tanggal di layar; tekan → Daftar Periksa', () => {
+  test('Beranda: kartu tidak tampil saat gagal dimuat / saklar mati / bukan kelas 7–9; tanpa logika tanggal di layar; tekan → Daftar Periksa', () => {
     const layar = baca('components', 'screens', 'LinimasaScreen.tsx');
     assert.ok(layar.includes('const persiapanAktif = untukPersiapanEvent(kelas);'));
     assert.ok(layar.includes('const eventQuery = useEventSekolah(persiapanAktif);'));
@@ -556,7 +557,7 @@ describe('LANJUT_076 §D–F: Beranda, layar, teks', () => {
     const isiKartu = kartu.slice(0, kartu.indexOf('\n}\n'));
     assert.ok(isiKartu.includes('teksHitungMundur(selisihHari(event.tanggal)'));
     for (const pola of [/new Date/, /Date\.now/, /Date\.UTC/, /86400000/, /getUTC/]) assert.ok(!pola.test(isiKartu), `logika tanggal di layar: ${pola}`);
-    // Hook: GET hanya saat aktif (kelas 7–11); 403 saklar/kebijakan tidak diulang.
+    // Hook: GET hanya saat aktif (kelas 7–9); 403 saklar/kebijakan/kelas tidak diulang.
     const hook = baca('hooks', 'useEventSekolah.ts');
     assert.ok(hook.includes('enabled: !!token && aktif'));
     assert.ok(hook.includes('!(err instanceof ApiError && err.status === 403)'));
@@ -569,12 +570,16 @@ describe('LANJUT_076 §D–F: Beranda, layar, teks', () => {
     assert.ok(layar.includes('const aktif = untukPersiapanEvent(pengguna?.kelas);'));
     assert.ok(layar.includes('<Text style={s.petunjuk}>{TEKS_EVENT.petunjukMateri}</Text>'), 'petunjuk materi tidak boleh hanya lewat hint (hilang saat galat)');
     assert.equal(ev.TEKS_EVENT.petunjukMateri, 'Tulis materinya singkat saja. Jangan tulis nama atau data pribadi.');
-    assert.ok(layar.includes('{event.kartu_id ? ('));
+    // LANJUT_076b: tombol materi diputuskan tampilanMateri (tanpa kartu → tidak ada tombol).
+    assert.ok(layar.includes('const materi = tampilanMateri(event);'));
+    assert.ok(layar.includes("{materi.buka === 'arsip' ? ("));
     assert.ok(layar.includes("router.push({ pathname: '/arsip-kartu', params: { id: event.kartu_id! } })"));
-    assert.ok(layar.includes('(kartu ?? []).filter((k) => !mapelId || k.mapel_id === mapelId)'), 'kartu disaring mapel');
-    const hookKartu = baca('hooks', 'useKartu.ts');
-    assert.ok(layar.includes('const { data: kartu } = useKartuSaya();'));
-    assert.ok(hookKartu.includes("query: { sumber: 'pengguna' }") && hookKartu.includes("data.filter((k) => k.sumber === 'pengguna')"), 'pilihan kartu hanya kartu milik akun');
+    assert.deepEqual(ev.tampilanMateri({ kartu_id: null, materi: null }), { keterangan: null, buka: null });
+    assert.ok(layar.includes('(pilihanKartu ?? []).filter((k) => !mapelId || k.mapel_id === mapelId)'), 'kartu disaring mapel');
+    // LANJUT_076b §D.10: pilihan kartu dari server (milik sendiri + kurasi terverifikasi), bukan /kartu.
+    assert.ok(layar.includes('const { data: pilihanKartu } = usePilihanKartuEvent(true);'));
+    assert.ok(!layar.includes('useKartuSaya'));
+    assert.ok(baca('hooks', 'useEventSekolah.ts').includes("'/pengguna/event/pilihan-kartu'"));
     for (const pola of [/new Date/, /Date\.now/, /Date\.UTC/, /86400000/]) assert.ok(!pola.test(layar), `logika tanggal di layar: ${pola}`);
   });
 

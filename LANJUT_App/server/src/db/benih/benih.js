@@ -429,6 +429,10 @@ async function benihKonfigurasiLevelin() {
 // saja kolom isi berubah. Dulu benih selalu menulis 'belum_diverifikasi',
 // jadi tanda dari `verifikasi-konten --jenis=kartu` hilang di benih berikutnya.
 // `berkas` bisa diganti fixture di tes.
+// LANJUT_076b: `penyedia` (nama sumber, mis. "Kemendikdasmen") dan `url_sumber`
+// per kartu ikut dari JSON (dulu selalu NULL), supaya kartu kurasi bisa dipakai
+// sebagai materi Persiapan Event. Keduanya bagian dari isi: berubah → tanda
+// verifikasi di-reset. Panduan tim konten: docs/verifikasi/panduan-materi-sumber-resmi.md.
 async function benihArsipKartu(berkas = bacaJson('arsip.json')) {
   for (const item of berkas.data) {
     await pool.execute(
@@ -436,19 +440,20 @@ async function benihArsipKartu(berkas = bacaJson('arsip.json')) {
          (id, pemilik_id, mapel_id, judul, isi, jawaban, sumber, penyedia,
           pemilik, status_verifikasi, asal, url_sumber, diperiksa_pada,
           dibuat_pada, diubah_pada)
-       VALUES (?, NULL, ?, ?, ?, ?, ?, NULL, ?, 'belum_diverifikasi', ?, NULL, NULL, ?, ?)
+       VALUES (?, NULL, ?, ?, ?, ?, ?, ?, ?, 'belum_diverifikasi', ?, ?, NULL, ?, ?)
        ON DUPLICATE KEY UPDATE
          status_verifikasi = IF(mapel_id <=> VALUES(mapel_id) AND judul <=> VALUES(judul) AND isi <=> VALUES(isi) AND
             jawaban <=> VALUES(jawaban) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
-            asal <=> VALUES(asal),
+            asal <=> VALUES(asal) AND penyedia <=> VALUES(penyedia) AND url_sumber <=> VALUES(url_sumber),
             status_verifikasi, 'belum_diverifikasi'),
          diperiksa_pada = IF(mapel_id <=> VALUES(mapel_id) AND judul <=> VALUES(judul) AND isi <=> VALUES(isi) AND
             jawaban <=> VALUES(jawaban) AND sumber <=> VALUES(sumber) AND pemilik <=> VALUES(pemilik) AND
-            asal <=> VALUES(asal),
+            asal <=> VALUES(asal) AND penyedia <=> VALUES(penyedia) AND url_sumber <=> VALUES(url_sumber),
             diperiksa_pada, NULL),
          mapel_id=VALUES(mapel_id), judul=VALUES(judul), isi=VALUES(isi),
          jawaban=VALUES(jawaban), sumber=VALUES(sumber), pemilik=VALUES(pemilik),
-         asal=VALUES(asal), diubah_pada=VALUES(diubah_pada)`,
+         asal=VALUES(asal), penyedia=VALUES(penyedia), url_sumber=VALUES(url_sumber),
+         diubah_pada=VALUES(diubah_pada)`,
       [
         item.id,
         item.mapel_id,
@@ -456,8 +461,10 @@ async function benihArsipKartu(berkas = bacaJson('arsip.json')) {
         item.isi,
         item.jawaban || null,
         item.sumber,
+        item.penyedia || null,
         berkas.pemilik,
         berkas.asal,
+        item.url_sumber || null,
         item.dibuat_pada + ' 00:00:00', // dibuat_pada (DATETIME)
         item.dibuat_pada + ' 00:00:00', // diubah_pada (DATETIME)
       ]

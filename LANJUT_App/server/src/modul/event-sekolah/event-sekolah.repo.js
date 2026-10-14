@@ -40,13 +40,54 @@ async function mapelAda(mapelId) {
   return baris.length > 0;
 }
 
-/** Kartu Arsip milik akun ini sendiri dan belum dihapus. */
-async function kartuMilikSendiri(penggunaId, kartuId) {
+/** Kelas akun saat ini (LANJUT_076b: fitur hanya kelas 7–9); null bila belum diisi. */
+async function kelasPengguna(penggunaId) {
+  const [baris] = await pool.execute('SELECT kelas FROM pengguna WHERE id = ? LIMIT 1', [penggunaId]);
+  return baris[0] ? baris[0].kelas : null;
+}
+
+// Materi event (LANJUT_076b): kolom yang dibutuhkan aturan jenisMateri di
+// event-sekolah.layanan.js. Baris milik akun LAIN tidak pernah terbaca: hanya
+// milik sendiri atau tanpa pemilik (kurasi tim). Keputusan sah/tidaknya di layanan.
+
+/** Satu baris untuk diperiksa sebelum dihubungkan ke event. */
+async function ambilKartuUntukEvent(penggunaId, kartuId) {
   const [baris] = await pool.execute(
-    'SELECT id FROM kartu WHERE id = ? AND pemilik_id = ? AND dihapus_pada IS NULL LIMIT 1',
+    `SELECT id, pemilik_id, mapel_id, judul, isi, sumber, penyedia, status_verifikasi,
+            diperiksa_pada, url_sumber, dihapus_pada
+       FROM kartu
+      WHERE id = ? AND (pemilik_id = ? OR pemilik_id IS NULL)
+      LIMIT 1`,
     [kartuId, penggunaId]
   );
-  return baris.length > 0;
+  return baris[0] || null;
+}
+
+/** Materi yang terhubung ke event-event akun ini (untuk keterangan di daftar). */
+async function kartuUntukEvent(penggunaId, kartuIds) {
+  if (!kartuIds.length) return [];
+  const [baris] = await pool.query(
+    `SELECT id, pemilik_id, mapel_id, judul, isi, sumber, penyedia, status_verifikasi,
+            diperiksa_pada, url_sumber, dihapus_pada
+       FROM kartu
+      WHERE id IN (?) AND (pemilik_id = ? OR pemilik_id IS NULL)`,
+    [kartuIds, penggunaId]
+  );
+  return baris;
+}
+
+/** Calon pilihan materi: milik sendiri + kurasi tim yang belum dihapus (disaring lagi di layanan). */
+async function calonKartuMateri(penggunaId) {
+  const [baris] = await pool.execute(
+    `SELECT id, pemilik_id, mapel_id, judul, isi, sumber, penyedia, status_verifikasi,
+            diperiksa_pada, url_sumber, dihapus_pada
+       FROM kartu
+      WHERE dihapus_pada IS NULL
+        AND (pemilik_id = ? OR (pemilik_id IS NULL AND sumber = 'resmi'))
+      ORDER BY pemilik_id IS NULL, dibuat_pada DESC, id ASC`,
+    [penggunaId]
+  );
+  return baris;
 }
 
 async function buat({ id, penggunaId, jenis, tanggal, mapelId, materiTeks, kartuId, waktu }) {
@@ -97,7 +138,10 @@ module.exports = {
   daftarMilikSendiri,
   ambilMilikSendiri,
   mapelAda,
-  kartuMilikSendiri,
+  kelasPengguna,
+  ambilKartuUntukEvent,
+  kartuUntukEvent,
+  calonKartuMateri,
   buat,
   ubahMilikSendiri,
   hapusMilikSendiri,

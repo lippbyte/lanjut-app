@@ -307,33 +307,49 @@ di rangkuman umum mencentang butir umum `mapel-tka` yang hanya dipakai kelas 12.
 (dan kelas lain) tetap melihatnya. Server ikut menolak centang `mapel-tka` dari akun kelas
 10–11 (404 `TIDAK_DITEMUKAN`, kode yang sudah dipakai rute itu). Bunyi teks opsi tidak berubah.
 
-**LANJUT_App (LANJUT_076) — Persiapan Event untuk kelas 7–11. DRAF, belum disetujui
-Khalifa.** Teks di `lib/eventSekolah.ts` (`TEKS_EVENT`). Hanya tampil bila saklar
-`event_sekolah_aktif` menyala; bawaannya mati, jadi saat ini tidak ada akun yang
-melihatnya, dan Daftar Periksa kelas 7–11 tetap seperti sebelumnya. Kelas 12 tidak
-berubah. Pesan server "Fitur ini belum aktif." (403 `FITUR_BELUM_AKTIF`) tidak pernah
-ditampilkan app: selama saklar mati, layar tidak menampilkan apa pun.
+**LANJUT_App (LANJUT_076) — Persiapan Event, sejak LANJUT_076b hanya untuk SMP (kelas
+7–9). DRAF, belum disetujui Khalifa.** Teks di `lib/eventSekolah.ts` (`TEKS_EVENT`).
+Hanya tampil bila saklar `event_sekolah_aktif` menyala; bawaannya mati, jadi saat ini
+tidak ada akun yang melihatnya. Kelas 10–12 tidak pernah melihatnya. Pesan server
+"Fitur ini belum aktif." (403 `FITUR_BELUM_AKTIF`) dan "Fitur ini hanya untuk kelas
+7–9." (403 `KELAS_TIDAK_DIDUKUNG`) tidak pernah ditampilkan app: layar tidak
+menampilkan apa pun. Butir bertanda LANJUT_076b diubah di task itu.
 
 - **Judul seksi:** Persiapan Event
-- **Pengantar:** Catat ujian atau ulangan yang akan datang, lengkap dengan mapel dan materinya.
+- **Pengantar:** Catat ujian dan ulangan yang akan datang, supaya kamu bisa menyiapkan diri lebih awal. (LANJUT_076b, contoh kalimat PM; sebelumnya "Catat ujian atau ulangan yang akan datang, lengkap dengan mapel dan materinya.")
 - **Tombol tambah:** Tambah event
 - **Daftar kosong:** Belum ada event yang akan datang.
-- **Label isian:** Jenis · Tanggal · Mapel (opsional) · Materi (opsional) · Kartu Arsip (opsional)
-- **Pilihan jenis:** UTS · UAS · Ulangan · Lainnya
+- **Label isian:** Jenis · Tanggal · Mapel (opsional) · Materi (opsional) · Kartu materi (opsional) (LANJUT_076b; sebelumnya "Kartu Arsip")
+- **Pilihan jenis:** UTS · UAS/PAS · Ulangan Harian · TKA · Lainnya — TKA hanya tampil untuk kelas 9 (LANJUT_076b; sebelumnya UTS · UAS · Ulangan · Lainnya). Label yang sama dipakai di kartu event dan kartu Beranda; event lama "UAS" tampil sebagai "UAS/PAS", "Ulangan" sebagai "Ulangan Harian".
 - **Petunjuk tanggal:** Contoh: 2026-11-03 (tahun-bulan-tanggal).
 - **Petunjuk materi (wajib tampil di layar isian):** Tulis materinya singkat saja. Jangan tulis nama atau data pribadi.
-- **Kartu Arsip kosong:** Belum ada kartu Arsip untuk pilihan ini.
+- **Kartu materi kosong:** Belum ada kartu materi untuk pilihan ini. (LANJUT_076b; sebelumnya "Belum ada kartu Arsip untuk pilihan ini.")
 - **Tombol isian:** Simpan event · Batal
-- **Tombol di tiap event:** Buka materi (hanya bila event terhubung ke kartu Arsip) · Ubah · Hapus
+- **Tombol di tiap event:** Buka materi (hanya bila kartu yang terhubung masih tersedia) · Ubah · Hapus
 - **Konfirmasi hapus:** Hapus event ini? Event yang dihapus tidak bisa dikembalikan. · tombol: Ya, hapus · Batal
 - **Event yang sudah lewat:** Lihat event yang sudah lewat ([n]) · Sembunyikan event yang sudah lewat · label di kartu event: Sudah lewat
 - **Hitung mundur:** Hari ini · [n] hari lagi
 - **Galat jenis:** Pilih jenis event.
 - **Galat tanggal:** Isi tanggal dengan format tahun-bulan-tanggal, misalnya 2026-11-03. · Tanggal ini tidak ada di kalender. · Tanggal paling jauh 2 tahun dari hari ini.
 - **Galat materi:** Materi paling panjang 200 karakter.
-- **Galat kartu Arsip (server menolak, `KARTU_TIDAK_SAH`):** Kartu ini tidak bisa dipakai. Pilih kartu lain dari Arsip-mu.
+- **Galat kartu materi (server menolak, `KARTU_TIDAK_SAH`):** Kartu ini tidak bisa dipakai. Pilih kartu materi lain. (LANJUT_076b; sebelumnya "… Pilih kartu lain dari Arsip-mu.")
 - **Gagal menyimpan atau menghapus:** Belum tersimpan. Coba lagi sebentar lagi.
-- **Beranda — kartu Persiapan Terdekat:** label: Persiapan Terdekat · isi: [jenis] · [mapel] (mapel hanya bila diisi) · hitung mundur: [n] hari lagi / Hari ini
+- **Beranda — kartu Persiapan Terdekat:** label: Persiapan Terdekat · isi: [jenis] · [mapel] (mapel hanya bila diisi) · hitung mundur: [n] hari lagi / Hari ini — sejak LANJUT_076b hanya kelas 7–9
+
+**LANJUT_App (LANJUT_076b) — Daftar Periksa SMP tanpa teks kelas 12, dan materi dari
+sumber resmi. DRAF, belum disetujui Khalifa.** Halaman Daftar Periksa kelas 7–9 tidak
+lagi memuat placeholder §4.11 ("Bagian ini untuk kelas 12. … Versi untuk kelas [kelas]
+sedang kami siapkan." dan tombol "Buka Jenjang Saya"); placeholder itu masih dipakai
+di layar `/cek-posisi` (Jalur Saya) dan untuk akun tanpa kelas. Kalimat pengganti SMP memakai
+kalimat netral LANJUT_069 kelas 10–11 (§4.2), berlaku juga saat saklar mati — pilihan
+percakapan, belum disetujui PM. Materi event bisa kartu Arsip milik sendiri atau kartu
+kurasi tim yang terverifikasi dengan sumber resmi (`penyedia` + `url_sumber` https).
+
+- **Daftar Periksa SMP — pengganti "Bagian ini untuk kelas 12":** Catat langkah-langkahmu supaya tidak ada yang terlewat.
+- **Kartu event — sumber kartu kurasi:** Sumber: [nama sumber]
+- **Kartu event — kartu sudah dihapus atau tidak terverifikasi lagi (tanpa tombol Buka materi):** Materi ini sudah tidak tersedia.
+- **Kartu event — tombol panel materi kurasi:** Buka materi · Tutup materi (panel berisi judul dan isi kartu kurasi)
+- **Isian — pilihan kartu kurasi:** [judul kartu] · Sumber: [nama sumber]
 
 ### 4.5 Arsip Belajar
 
@@ -595,7 +611,9 @@ tahapan), Daftar Periksa, dan Jalur Saya `/cek-posisi` berisi SNBP/SNBT/TKA, jad
 tampil untuk kelas 12. Kelas 7–11 dan akun tanpa kelas melihat placeholder
 ini sampai konten per jenjang didesain (`components/screens/KhususKelas12.tsx`).
 Pengecualian sejak LANJUT_069: Daftar Periksa kelas 10–11 memakai kalimat netral
-di §4.2 (blok LANJUT_069), bukan placeholder ini. Letak sebenarnya (diperiksa
+di §4.2 (blok LANJUT_069), bukan placeholder ini; sejak LANJUT_076b kelas 7–9 juga
+(§4.4 blok LANJUT_076b), jadi di Daftar Periksa placeholder ini tinggal untuk akun
+tanpa kelas. Di layar `/cek-posisi` (Jalur Saya) tetap tampil untuk kelas 7–11. Letak sebenarnya (diperiksa
 LANJUT_071): placeholder ini hanya dirender di layar Jalur Saya `/cek-posisi` dan Daftar Periksa;
 Beranda (Linimasa) untuk kelas selain 12 sejak LANJUT_064 tidak menampilkan bagian
 tenggat maupun placeholder ini.
