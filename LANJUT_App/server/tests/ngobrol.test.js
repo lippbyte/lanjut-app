@@ -44,7 +44,9 @@ before(async () => {
   konfigAsli = Object.fromEntries(baris.map((b) => [b.kunci, b.nilai]));
   assert.equal(Object.keys(konfigAsli).length, KUNCI.length, 'jalankan npm run migrasi (014_ngobrol, 015_ai_pengaturan)');
   // LANJUT_060: bawaan instalasi baru ai_aktif = 0; tes yang butuh AI menyalakannya eksplisit.
-  konfigTes = { ...konfigAsli, ai_aktif: '1' };
+  // ai_model dikunci ke bawaan migrasi 015 supaya tes tidak bergantung pada model yang sedang
+  // dipilih di basis data lokal (15 Okt 2026: lanjut_test sempat memakai model lain untuk demo).
+  konfigTes = { ...konfigAsli, ai_aktif: '1', ai_model: 'anthropic/claude-sonnet-5.5' };
   await kembalikanKonfig();
   const [[v]] = await pool.query("SELECT nilai FROM konfigurasi_levelin WHERE kunci = 'persetujuan_versi_kebijakan'");
   versiKebijakan = Number(v.nilai);
