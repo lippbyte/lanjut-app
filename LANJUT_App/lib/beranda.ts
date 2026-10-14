@@ -257,6 +257,7 @@ export type BagianBeranda =
   | 'sapaan'
   | 'hero'
   | 'progres'
+  | 'persiapan'
   | 'grid'
   | 'info_penting'
   | 'banner'
@@ -271,16 +272,23 @@ export type BagianBeranda =
  * "Mulai dari Sini"; keduanya ditaruh di paling bawah dengan urutan lama (pilihan
  * "harfiah" di percakapan LANJUT_074, belum disetujui PM).
  * Setiap bagian paling banyak muncul sekali; yang tidak tampil tidak meninggalkan ruang.
+ *
+ * LANJUT_076: kartu "Persiapan Terdekat" (`tampilPersiapan`, event 7 hari ke depan)
+ * tepat sesudah baris progres dan sebelum grid — HANYA kelas 7–11.
  */
 export function urutanBeranda(data: {
   kelas?: Kelas | null;
   tampilMulaiDariSini: boolean;
   tampilBanner?: boolean;
+  tampilPersiapan?: boolean;
 }): BagianBeranda[] {
-  const kelas12 = kelompokJenjang(data.kelas) === 'kelas12';
+  const kelompok = kelompokJenjang(data.kelas);
+  const kelas12 = kelompok === 'kelas12';
   const urutan: BagianBeranda[] = ['sapaan'];
   if (kelas12) urutan.push('hero');
-  urutan.push('progres', 'grid');
+  urutan.push('progres');
+  if (data.tampilPersiapan && (kelompok === 'smp' || kelompok === 'kelas10_11')) urutan.push('persiapan');
+  urutan.push('grid');
   if (kelas12) urutan.push('info_penting');
   if (data.tampilBanner) urutan.push('banner');
   urutan.push('judul');

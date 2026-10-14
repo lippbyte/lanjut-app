@@ -26,6 +26,8 @@ const STATUS_PER_KODE = {
   PDF_GAGAL_DIBACA: 422,
   EMAIL_DIPAKAI: 400,
   RUMPUN_TIDAK_SAH: 400, // LANJUT_075: minat_rumpun berisi nilai di luar daftar rumpun prodi
+  KARTU_TIDAK_SAH: 400, // LANJUT_076: kartu_id event bukan kartu Arsip milik akun itu
+  FITUR_BELUM_AKTIF: 403, // LANJUT_076: saklar fitur (mis. event_sekolah_aktif) mati
   TERLALU_SERING: 429,
   // LANJUT_051 — Ngobrol dengan AI
   AI_BELUM_DIIZINKAN: 403, // gerbang bolehPakaiAi: persetujuan ortu/wali atau kebijakan belum ada

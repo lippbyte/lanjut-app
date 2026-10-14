@@ -281,6 +281,26 @@ export type HasilCariModul = {
   hasil: { modul_id: string; judul: string; mapel_id: string; urutan: number; potongan: string; skor: number }[];
 };
 
+// LANJUT_076 — Persiapan Event (GET/POST /pengguna/event, PATCH/DELETE /pengguna/event/:id).
+export type JenisEvent = 'UTS' | 'UAS' | 'Ulangan' | 'Lainnya';
+export type EventSekolah = {
+  id: string;
+  jenis: JenisEvent;
+  tanggal: string; // YYYY-MM-DD (tanggal WIB)
+  mapel_id: string | null;
+  materi_teks: string | null;
+  kartu_id: string | null;
+  dibuat_pada: string;
+  diubah_pada: string;
+};
+export type IsiEvent = {
+  jenis?: JenisEvent;
+  tanggal?: string;
+  mapel_id?: string | null;
+  materi_teks?: string | null;
+  kartu_id?: string | null;
+};
+
 // LANJUT_051 — Ngobrol dengan AI (POST /ngobrol)
 export type PesanNgobrol = { peran: 'pengguna' | 'bot'; teks: string };
 // LANJUT_053 — kartu bantuan dibuat server dari berkas konfigurasi (hanya layanan terverifikasi).

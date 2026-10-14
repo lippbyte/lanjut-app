@@ -14,6 +14,7 @@ const { sukses } = require('./util/respons');
 
 const authRute = require('./modul/auth/auth.rute');
 const penggunaRute = require('./modul/pengguna/pengguna.rute');
+const eventSekolahRute = require('./modul/event-sekolah/event-sekolah.rute');
 const kontenRute = require('./modul/konten/konten.rute');
 const kemajuanRute = require('./modul/kemajuan/kemajuan.rute');
 const butirPribadiRute = require('./modul/butir-pribadi/butir-pribadi.rute');
@@ -98,6 +99,7 @@ app.get('/api/v1/health', async (req, res) => {
 });
 
 app.use('/api/v1/auth', authRute);
+app.use('/api/v1/pengguna/event', eventSekolahRute); // LANJUT_076 — di balik saklar event_sekolah_aktif
 app.use('/api/v1/pengguna', penggunaRute);
 app.use('/api/v1/konten', kontenRute);
 app.use('/api/v1/kemajuan', kemajuanRute);

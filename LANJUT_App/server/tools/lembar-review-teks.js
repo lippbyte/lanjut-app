@@ -199,6 +199,13 @@ const PETA = [
             'Isi banner WAJIB dicek manusia ke sumber resmi (url_sumber) sebelum status_verifikasi diubah menjadi terverifikasi; diperiksa_pada diisi tanggal pengecekan itu, bukan tanggal sumber.',
         },
       },
+      {
+        task: 'LANJUT_076',
+        awal: '**Beranda — kartu Persiapan Terdekat:**',
+        nama: 'Kartu Persiapan Terdekat',
+        di: 'Beranda, tepat sesudah baris progres dan sebelum grid ikon; satu event terdekat dalam 7 hari sebelum s.d. hari H (WIB). Tekan → Daftar Periksa.',
+        oleh: 'Kelas 7–11, hanya bila saklar event_sekolah_aktif menyala (bawaan mati: saat ini tidak ada).',
+      },
     ],
   },
   {
@@ -518,6 +525,40 @@ const PETA = [
       },
       { task: 'LANJUT_034', awal: '**Tombol di butir milik akun:**', nama: 'Tombol Hapus', di: 'Daftar Periksa, pada butir milik akun.', oleh: 'Kelas 12.' },
       { task: 'LANJUT_034', awal: '**Galat centang/hapus:**', nama: 'Galat centang/hapus', di: 'Daftar Periksa, saat centang atau hapus gagal tersimpan.', oleh: 'Kelas 12.' },
+    ],
+  },
+  {
+    // LANJUT_076 — components/screens/PersiapanEvent.tsx, teks di lib/eventSekolah.ts.
+    // Saklar event_sekolah_aktif bawaan 0: selama mati tidak ada yang melihat butir ini.
+    kelompok: 'Daftar Periksa — Persiapan Event (kelas 7–11, saklar bawaan mati)',
+    butir: [
+      ...[
+        ['**Judul seksi:**', 'Judul seksi', 'Daftar Periksa, di bawah kalimat netral/pengganti kelas 12, di atas butir milik akun.'],
+        ['**Pengantar:**', 'Pengantar', 'Di bawah judul seksi Persiapan Event.'],
+        ['**Tombol tambah:**', 'Tombol Tambah event', 'Di bawah pengantar; membuka isian event di tempat.'],
+        ['**Daftar kosong:**', 'Daftar kosong', 'Pengganti daftar event bila tidak ada event hari ini atau sesudahnya.'],
+        ['**Label isian:**', 'Label isian', 'Isian tambah/ubah event.'],
+        ['**Pilihan jenis:**', 'Pilihan jenis', 'Isian event, medan Jenis.'],
+        ['**Petunjuk tanggal:**', 'Petunjuk tanggal', 'Isian event, di bawah medan Tanggal (diganti galat tanggal bila ada).'],
+        ['**Petunjuk materi', 'Petunjuk materi', 'Isian event, di atas medan Materi; selalu tampil, juga saat ada galat.'],
+        ['**Kartu Arsip kosong:**', 'Kartu Arsip kosong', 'Isian event, medan Kartu Arsip, bila akun tidak punya kartu (untuk mapel yang dipilih).'],
+        ['**Tombol isian:**', 'Tombol isian', 'Isian event, paling bawah.'],
+        ['**Tombol di tiap event:**', 'Tombol di tiap event', 'Kartu event; "Buka materi" membuka kartu Arsip yang terhubung.'],
+        ['**Konfirmasi hapus:**', 'Konfirmasi hapus', 'Kartu event, sesudah menekan Hapus; hapus permanen.'],
+        ['**Event yang sudah lewat:**', 'Event yang sudah lewat', 'Di bawah daftar event, hanya bila ada event yang tanggalnya sudah lewat (WIB).'],
+        ['**Hitung mundur:**', 'Hitung mundur', 'Kartu event dan kartu Persiapan Terdekat di Beranda (hariIniWib).'],
+        ['**Galat jenis:**', 'Galat jenis', 'Isian event, saat Simpan tanpa jenis.'],
+        ['**Galat tanggal:**', 'Galat tanggal', 'Isian event, medan Tanggal (format, kalender, lebih dari 2 tahun).'],
+        ['**Galat materi:**', 'Galat materi', 'Isian event, materi lebih dari 200 karakter.'],
+        ['**Galat kartu Arsip', 'Galat kartu Arsip', 'Isian event, medan Kartu Arsip, bila server menolak (400 KARTU_TIDAK_SAH).'],
+        ['**Gagal menyimpan atau menghapus:**', 'Gagal menyimpan/menghapus', 'Isian event atau konfirmasi hapus, bila server gagal.'],
+      ].map(([awal, nama, di]) => ({
+        task: 'LANJUT_076',
+        awal,
+        nama,
+        di,
+        oleh: 'Kelas 7–11, hanya bila saklar event_sekolah_aktif menyala (bawaan mati: saat ini tidak ada).',
+      })),
     ],
   },
   {

@@ -307,6 +307,34 @@ di rangkuman umum mencentang butir umum `mapel-tka` yang hanya dipakai kelas 12.
 (dan kelas lain) tetap melihatnya. Server ikut menolak centang `mapel-tka` dari akun kelas
 10–11 (404 `TIDAK_DITEMUKAN`, kode yang sudah dipakai rute itu). Bunyi teks opsi tidak berubah.
 
+**LANJUT_App (LANJUT_076) — Persiapan Event untuk kelas 7–11. DRAF, belum disetujui
+Khalifa.** Teks di `lib/eventSekolah.ts` (`TEKS_EVENT`). Hanya tampil bila saklar
+`event_sekolah_aktif` menyala; bawaannya mati, jadi saat ini tidak ada akun yang
+melihatnya, dan Daftar Periksa kelas 7–11 tetap seperti sebelumnya. Kelas 12 tidak
+berubah. Pesan server "Fitur ini belum aktif." (403 `FITUR_BELUM_AKTIF`) tidak pernah
+ditampilkan app: selama saklar mati, layar tidak menampilkan apa pun.
+
+- **Judul seksi:** Persiapan Event
+- **Pengantar:** Catat ujian atau ulangan yang akan datang, lengkap dengan mapel dan materinya.
+- **Tombol tambah:** Tambah event
+- **Daftar kosong:** Belum ada event yang akan datang.
+- **Label isian:** Jenis · Tanggal · Mapel (opsional) · Materi (opsional) · Kartu Arsip (opsional)
+- **Pilihan jenis:** UTS · UAS · Ulangan · Lainnya
+- **Petunjuk tanggal:** Contoh: 2026-11-03 (tahun-bulan-tanggal).
+- **Petunjuk materi (wajib tampil di layar isian):** Tulis materinya singkat saja. Jangan tulis nama atau data pribadi.
+- **Kartu Arsip kosong:** Belum ada kartu Arsip untuk pilihan ini.
+- **Tombol isian:** Simpan event · Batal
+- **Tombol di tiap event:** Buka materi (hanya bila event terhubung ke kartu Arsip) · Ubah · Hapus
+- **Konfirmasi hapus:** Hapus event ini? Event yang dihapus tidak bisa dikembalikan. · tombol: Ya, hapus · Batal
+- **Event yang sudah lewat:** Lihat event yang sudah lewat ([n]) · Sembunyikan event yang sudah lewat · label di kartu event: Sudah lewat
+- **Hitung mundur:** Hari ini · [n] hari lagi
+- **Galat jenis:** Pilih jenis event.
+- **Galat tanggal:** Isi tanggal dengan format tahun-bulan-tanggal, misalnya 2026-11-03. · Tanggal ini tidak ada di kalender. · Tanggal paling jauh 2 tahun dari hari ini.
+- **Galat materi:** Materi paling panjang 200 karakter.
+- **Galat kartu Arsip (server menolak, `KARTU_TIDAK_SAH`):** Kartu ini tidak bisa dipakai. Pilih kartu lain dari Arsip-mu.
+- **Gagal menyimpan atau menghapus:** Belum tersimpan. Coba lagi sebentar lagi.
+- **Beranda — kartu Persiapan Terdekat:** label: Persiapan Terdekat · isi: [jenis] · [mapel] (mapel hanya bila diisi) · hitung mundur: [n] hari lagi / Hari ini
+
 ### 4.5 Arsip Belajar
 
 **Judul:** Arsip Belajar

@@ -15,6 +15,7 @@ import { useSesi } from '../../providers/AuthProvider';
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Ikon, Kartu, KeadaanGalat, Kepala, Kosong, Memuat, SeksiJudul, Sumber, gaya } from '../ui';
 import { BukanKelas12, useUntukKelas12 } from './KhususKelas12';
+import { PersiapanEvent } from './PersiapanEvent';
 
 const KELAS_OPSI = ['10', '11', '12'] as const;
 const JALUR_OPSI = ['TKA', 'SNBP', 'SNBT'] as const;
@@ -45,6 +46,8 @@ export function DaftarPeriksaScreen() {
 // rencana siswa sendiri, bukan tenggat — supaya "Simpan" tetap ada gunanya.
 // LANJUT_069 (Tambahan-069 no. 2): kelas 10–11 tidak melihat pesan "khusus
 // kelas 12", tetapi kalimat netral DRAF (lib/jenjangSaya.ts).
+// LANJUT_076: Persiapan Event (kelas 7–11) — tidak merender apa pun selama saklar
+// event_sekolah_aktif mati, jadi layar tetap seperti sebelumnya.
 function DaftarPeriksaBukanKelas12() {
   const { pengguna } = useSesi();
   const teksNetral = teksDaftarPeriksaBukanKelas12(pengguna?.kelas ?? null);
@@ -52,6 +55,7 @@ function DaftarPeriksaBukanKelas12() {
     <View style={gaya.layarIsi}>
       <Kepala judul="Daftar Periksa" pengantar="Satu per satu, tidak perlu sekaligus." />
       {teksNetral ? <Text style={gaya.teksBody}>{teksNetral}</Text> : <BukanKelas12 />}
+      <PersiapanEvent />
       <ButirPribadiSaja />
     </View>
   );

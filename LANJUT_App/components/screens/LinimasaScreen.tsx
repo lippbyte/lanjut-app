@@ -14,13 +14,15 @@ import {
   type NativeSyntheticEvent,
 } from 'react-native';
 
-import type { BannerBeranda } from '../../api/types';
+import type { BannerBeranda, EventSekolah } from '../../api/types';
 import { useTahapanLinimasa } from '../../hooks/useTahapanLinimasa';
 import { useBannerBeranda } from '../../hooks/useBannerBeranda';
 import { useButirPribadi } from '../../hooks/useButirPribadi';
+import { useEventSekolah } from '../../hooks/useEventSekolah';
 import { useKemajuan } from '../../hooks/useKemajuan';
 import { useRiwayatLatihan } from '../../hooks/useLatihan';
 import { useKartuSaya } from '../../hooks/useKartu';
+import { useMapel } from '../../hooks/useMapel';
 import {
   apakahPunyaKemajuan,
   bannerBeranda,
@@ -33,6 +35,7 @@ import {
   urutanBeranda,
   type BagianBeranda,
 } from '../../lib/beranda';
+import { TEKS_EVENT, eventTerdekat, selisihHari, teksHitungMundur, untukPersiapanEvent } from '../../lib/eventSekolah';
 import type { Kelas } from '../../lib/jenjang';
 import {
   formatRentang,
@@ -110,11 +113,18 @@ export function LinimasaScreen() {
   const bannerQuery = useBannerBeranda();
   const banner = bannerQuery.isError ? [] : bannerBeranda(bannerQuery.data?.banner);
 
+  // LANJUT_076: kartu "Persiapan Terdekat" (kelas 7–11). Saklar mati, kebijakan belum
+  // diterima, memuat, atau gagal → tidak tampil, tanpa teks pengganti (aturan 072).
+  const persiapanAktif = untukPersiapanEvent(kelas);
+  const eventQuery = useEventSekolah(persiapanAktif);
+  const persiapan = persiapanAktif && !eventQuery.isError ? eventTerdekat(eventQuery.data) : null;
+
   // Urutan tampil sepenuhnya ditentukan urutanBeranda (lib/beranda.ts, LANJUT_074).
   const urutan = urutanBeranda({
     kelas,
     tampilMulaiDariSini: !memuatData && !punyaKemajuan,
     tampilBanner: banner.length > 0,
+    tampilPersiapan: persiapan !== null,
   });
 
   const bagian: Record<BagianBeranda, React.ReactNode> = {
@@ -127,6 +137,7 @@ export function LinimasaScreen() {
     // LANJUT_074: kartu hero tenggat (kelas 12; urutanBeranda hanya memasukkannya untuk kelas 12).
     hero: <KartuHero />,
     banner: banner.length ? <KarouselBanner daftar={banner} /> : null,
+    persiapan: persiapan ? <KartuPersiapan event={persiapan} onPress={() => router.push('/daftar-periksa')} /> : null,
     judul: <H1 style={s.k1}>Tahu harus ngapain hari ini.</H1>,
     // LANJUT_065 §C: satu baris progres, tepat di atas grid.
     progres: (
@@ -191,6 +202,31 @@ export function LinimasaScreen() {
         ))}
       </View>
     </View>
+  );
+}
+
+// LANJUT_076: satu kartu event terdekat (7 hari sebelum s.d. hari H, lib/eventSekolah.ts).
+// Hitung mundur dari selisihHari (hariIniWib) — tidak ada logika tanggal di layar.
+function KartuPersiapan({ event, onPress }: { event: EventSekolah; onPress: () => void }) {
+  const { data: mapel } = useMapel();
+  const namaMapel = event.mapel_id ? mapel?.find((m) => m.id === event.mapel_id)?.nama : undefined;
+  const hitung = teksHitungMundur(selisihHari(event.tanggal) ?? 0);
+  const judul = namaMapel ? `${event.jenis} · ${namaMapel}` : event.jenis;
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="link"
+      accessibilityLabel={`${TEKS_EVENT.kartuBerandaJudul}: ${judul}, ${hitung}`}
+      style={({ pressed }) => (pressed ? s.ditekan : undefined)}
+    >
+      <Kartu varian="soft" style={s.persiapanKartu}>
+        <Text style={s.persiapanLabel}>{TEKS_EVENT.kartuBerandaJudul}</Text>
+        <View style={s.persiapanBaris}>
+          <Text style={s.persiapanJudul}>{judul}</Text>
+          <Text style={s.persiapanHitung}>{hitung}</Text>
+        </View>
+      </Kartu>
+    </Pressable>
   );
 }
 
@@ -443,6 +479,12 @@ const s = StyleSheet.create({
     ...teks.bodySm,
     color: color.textBody,
   },
+  // LANJUT_076: Persiapan Terdekat
+  persiapanKartu: { gap: spacing.s1, padding: spacing.s4 },
+  persiapanLabel: { ...teks.label, color: color.blue600 },
+  persiapanBaris: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: spacing.s3 },
+  persiapanJudul: { ...teks.title, fontFamily: font.semibold, color: color.textBody, flex: 1 },
+  persiapanHitung: { ...teks.bodySm, fontFamily: font.semibold, color: color.textMuted },
   // LANJUT_065: Mulai dari Sini
   mulaiKartu: {
     gap: spacing.s3,
