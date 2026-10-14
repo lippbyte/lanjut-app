@@ -8,7 +8,14 @@ import { usePilihanMapel } from '../../hooks/usePilihanMapel';
 import { useProdi } from '../../hooks/useProdi';
 import { useUbahProfil } from '../../hooks/useUbahProfil';
 import { TEKS_EKSPLORASI, bolehSimpan, daftarRumpun, samaPilihan, ubahPilihan } from '../../lib/eksplorasiKampus';
-import { MAKS_RUMPUN_KELAS12, TEKS_MAPEL_PILIHAN, ubahPilihanMapel } from '../../lib/mapelPilihan';
+import {
+  MAKS_RUMPUN_KELAS12,
+  TEKS_MAPEL_PILIHAN,
+  bolehSimpanRumpun,
+  kelompokDenganCatatan,
+  rumpunPerluDikurangi,
+  ubahPilihanMapel,
+} from '../../lib/mapelPilihan';
 import { useSesi } from '../../providers/AuthProvider';
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { KeadaanGalat, Memuat, SeksiJudul, Tombol, gaya } from '../ui';
@@ -38,6 +45,8 @@ function IsiPilihan({ data, denganJudul }: { data: PilihanMapel; denganJudul: bo
   // Pilihan rumpun dibuka di tempat; tertutup lagi sesudah rumpun tersimpan (komponen dipasang ulang).
   const [ubahRumpun, setUbahRumpun] = useState(false);
   const maks = data.maks_mapel;
+  // LANJUT_079b: akun lama dengan lebih dari 3 rumpun → pilihan rumpun langsung terbuka di atas.
+  const perluKurangi = data.mode === 'rumpun' && rumpunPerluDikurangi(data.minat_rumpun, data.maks_rumpun);
 
   if (data.mode === 'rumpun' && data.kelompok.length === 0) {
     return (
@@ -66,12 +75,14 @@ function IsiPilihan({ data, denganJudul }: { data: PilihanMapel; denganJudul: bo
       {denganJudul || data.mode === 'rumpun' ? (
         <Text style={gaya.teksBody}>{data.mode === 'rumpun' ? T.kelas12.pengantar : T.mapelSaya.pengantar}</Text>
       ) : null}
+      {perluKurangi ? <PilihRumpunFavorit /> : null}
       {data.mode === 'rumpun' ? (
         <>
-          {data.pengelompokan_terverifikasi ? null : <Text style={gaya.teksKecil}>{T.kelas12.catatanKelompok}</Text>}
-          {data.kelompok.map((k) => (
+          {/* LANJUT_079b: catatan di SETIAP kelompok (kelompokDenganCatatan), bukan sekali di atas. */}
+          {kelompokDenganCatatan(data.kelompok, data.pengelompokan_terverifikasi).map((k) => (
             <View key={k.rumpun} style={s.kelompok} role="group" aria-label={k.rumpun}>
               <Text style={s.namaKelompok}>{k.rumpun}</Text>
+              {k.catatan ? <Text style={s.catatan}>{k.catatan}</Text> : null}
               <View style={s.chipBaris}>{k.mapel.map((m) => chip(m, `${k.rumpun}|${m.id}`))}</View>
             </View>
           ))}
@@ -89,7 +100,7 @@ function IsiPilihan({ data, denganJudul }: { data: PilihanMapel; denganJudul: bo
       ) : data.mapel_pilihan.length > 0 && samaPilihan(pilihan, data.mapel_pilihan) ? (
         <Text style={s.tersimpan}>{TEKS_EKSPLORASI.tersimpan}</Text>
       ) : null}
-      {data.mode === 'rumpun' ? (
+      {data.mode === 'rumpun' && !perluKurangi ? (
         ubahRumpun ? (
           <PilihRumpunFavorit />
         ) : (
@@ -115,8 +126,8 @@ export function PilihRumpunFavorit({ denganPetunjuk = true }: { denganPetunjuk?:
   const rumpun = daftarRumpun(prodiQuery.data);
   const maks = MAKS_RUMPUN_KELAS12;
   const perluKebijakan = simpan.error instanceof ApiError && simpan.error.kode === 'AI_BELUM_DIIZINKAN';
-  // Satu sampai tiga: Simpan tidak tampil untuk pilihan kosong.
-  const boleh = pilihan.length > 0 && bolehSimpan(pilihan, tersimpan, maks);
+  // Satu sampai tiga; akun lama dengan 4 rumpun: tombol muncul begitu pilihan dikurangi (LANJUT_079b).
+  const boleh = bolehSimpanRumpun(pilihan, tersimpan, maks);
 
   if (prodiQuery.isPending) return <Memuat />;
   if (prodiQuery.isError) return <KeadaanGalat />;
@@ -128,7 +139,11 @@ export function PilihRumpunFavorit({ denganPetunjuk = true }: { denganPetunjuk?:
           <ChipCentang key={r} label={r} aktif={pilihan.includes(r)} onPress={() => setPilihan((p) => ubahPilihan(p, r, maks))} />
         ))}
       </View>
-      {pilihan.length >= maks ? <Text style={gaya.teksKecil}>{T.penuh(maks)}</Text> : null}
+      {pilihan.length > maks ? (
+        <Text style={gaya.teksKecil}>{T.lebih(pilihan.length, maks)}</Text>
+      ) : pilihan.length === maks ? (
+        <Text style={gaya.teksKecil}>{T.penuh(maks)}</Text>
+      ) : null}
       {perluKebijakan ? (
         <Text style={gaya.teksKecil}>
           {TEKS_EKSPLORASI.perluKebijakan}{' '}
@@ -141,7 +156,7 @@ export function PilihRumpunFavorit({ denganPetunjuk = true }: { denganPetunjuk?:
       ) : null}
       {boleh ? (
         <Tombol label={T.rumpun.tombol} besar penuh proses={simpan.isPending} onPress={() => simpan.mutate({ minat_rumpun: pilihan })} />
-      ) : tersimpan.length > 0 && samaPilihan(pilihan, tersimpan) ? (
+      ) : tersimpan.length > 0 && tersimpan.length <= maks && samaPilihan(pilihan, tersimpan) ? (
         <Text style={s.tersimpan}>{TEKS_EKSPLORASI.tersimpan}</Text>
       ) : null}
     </View>
@@ -177,6 +192,7 @@ const s = StyleSheet.create({
   petunjuk: { ...teks.caption, color: color.textMuted },
   kelompok: { gap: spacing.s2 },
   namaKelompok: { ...teks.bodySm, fontFamily: font.semibold, color: color.textBody },
+  catatan: { ...teks.caption, color: color.textMuted, marginTop: -spacing.s1 },
   chipBaris: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.s2 },
   chip: {
     maxWidth: '100%',

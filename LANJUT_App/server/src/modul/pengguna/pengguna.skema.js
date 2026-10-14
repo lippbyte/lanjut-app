@@ -6,6 +6,11 @@ const { MAKS_MAPEL_PILIHAN } = require('./mapel-pilihan');
 // sini; isinya (harus ada di daftar rumpun prodi) dicek di pengguna.layanan.js.
 const MAKS_MINAT_RUMPUN = 5;
 
+// LANJUT_079b — satu butir mapel_pilihan. Diperiksa di tingkat larik (superRefine),
+// bukan z.array(idMapel), supaya galat tipe per butir tetap di kunci medan
+// `mapel_pilihan` (bukan `mapel_pilihan.0`), sama dengan galat jumlah dan id tak dikenal.
+const idMapel = z.string().trim().min(1).max(64);
+
 const ubahProfilSkema = z.object({
   kelas: z.enum(KELAS).nullable().optional(),
   // LANJUT_038 — diselaraskan dengan kelas di util/kelas.js tentukanJenisSekolah.
@@ -23,8 +28,14 @@ const ubahProfilSkema = z.object({
   // LANJUT_079 — id mapel; [] mengosongkan. Batas 5 untuk SEMUA kelas, hanya di
   // sini. Id harus ada dan (kelas 12) termasuk rumpun favorit: pengguna.layanan.js.
   mapel_pilihan: z
-    .array(z.string().trim().min(1).max(64))
+    .array(z.unknown())
     .max(MAKS_MAPEL_PILIHAN, `Mapel pilihan paling banyak ${MAKS_MAPEL_PILIHAN}.`)
+    .superRefine((daftar, ctx) => {
+      if (!daftar.every((x) => idMapel.safeParse(x).success)) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Mapel pilihan harus berisi id mapel.' });
+      }
+    })
+    .transform((daftar) => daftar.map((x) => idMapel.parse(x)))
     .refine((daftar) => new Set(daftar).size === daftar.length, 'Mapel pilihan tidak boleh ganda.')
     .optional(),
 });

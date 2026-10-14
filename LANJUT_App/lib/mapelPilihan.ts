@@ -1,3 +1,4 @@
+import { samaPilihan } from './eksplorasiKampus';
 import { kelompokJenjang, type Kelas } from './jenjang';
 
 /**
@@ -52,13 +53,42 @@ export function ubahPilihanMapel(pilihan: readonly string[], id: string, maks: n
   return pilihan.length >= maks ? [...pilihan] : [...pilihan, id];
 }
 
+/**
+ * LANJUT_079b — akun kelas 12 lama bisa menyimpan lebih dari 3 rumpun (sebelum batas 3
+ * kelas 12). Pilihan rumpunnya terbuka sendiri di Pilih Mapel supaya bisa dikurangi,
+ * tanpa menekan "Ubah rumpun favorit" dulu. Server tetap menolak lebih dari 3.
+ */
+export function rumpunPerluDikurangi(tersimpan: readonly string[] | null | undefined, maks: number = MAKS_RUMPUN_KELAS12): boolean {
+  return (tersimpan ?? []).length > maks;
+}
+
+/**
+ * Tombol "Simpan rumpun": satu sampai `maks` rumpun dan berbeda dari yang tersimpan.
+ * Untuk akun lama dengan lebih dari `maks`, tombol muncul begitu pilihan dikurangi.
+ */
+export function bolehSimpanRumpun(pilihan: readonly string[], tersimpan: readonly string[], maks: number = MAKS_RUMPUN_KELAS12): boolean {
+  return pilihan.length >= 1 && pilihan.length <= maks && !samaPilihan(pilihan, tersimpan);
+}
+
+/**
+ * LANJUT_079b — setiap kelompok rumpun membawa catatannya sendiri selama pengelompokan
+ * belum terverifikasi (server: pengelompokan_terverifikasi). Tidak ada kelompok tanpa catatan.
+ */
+export function kelompokDenganCatatan<K extends { rumpun: string }>(
+  kelompok: readonly K[],
+  terverifikasi: boolean
+): (K & { catatan: string | null })[] {
+  return kelompok.map((k) => ({ ...k, catatan: terverifikasi ? null : TEKS_MAPEL_PILIHAN.kelas12.catatanKelompok }));
+}
+
 export const TEKS_MAPEL_PILIHAN = {
   kelas12: {
     judul: 'Mapel pilihanmu',
     pengantar: 'Pilih paling banyak 5 mapel dari rumpun favoritmu. Mapel ini tampil lebih dulu di Arsip dan Latihan.',
     ajakanJudul: 'Pilih rumpun favoritmu dulu',
     ajakanTeks: 'Pilih satu sampai tiga rumpun yang paling kamu minati. Setelah itu, mapel di sini dikelompokkan per rumpun.',
-    catatanKelompok: 'Pengelompokan ini sementara, untuk memudahkan memilih. Belum dicek ke sumber resmi.',
+    // LANJUT_079b: di bawah judul SETIAP kelompok (sebelumnya satu kalimat di atas semua kelompok).
+    catatanKelompok: 'Belum dicek ke sumber resmi.',
     // Membuka pilihan rumpun di layar yang sama (pilihan yang sama juga ada di layar Jalur Saya).
     ubahRumpun: 'Ubah rumpun favorit',
   },
@@ -73,5 +103,7 @@ export const TEKS_MAPEL_PILIHAN = {
   },
   hitung: (n: number, maks: number) => `${n} dari ${maks} dipilih`,
   penuh: (maks: number) => `Paling banyak ${maks}. Lepas satu dulu untuk memilih yang lain.`,
+  // LANJUT_079b: akun lama yang menyimpan lebih dari batas (mis. 4 rumpun di kelas 12).
+  lebih: (n: number, maks: number) => `Pilihanmu ada ${n}, padahal paling banyak ${maks}. Kurangi dulu, lalu simpan.`,
   tombol: 'Simpan mapel',
 };

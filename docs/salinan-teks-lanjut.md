@@ -853,22 +853,26 @@ Letaknya tepat sesudah grid ikon, sebelum Info Penting (kelas 12) atau carousel 
 Kelas 12: tab Pilih Mapel memuat seksi ini di atas alur prodi (F3, tidak diubah); belum
 memilih rumpun → ajakan dengan pilihan rumpun, tanpa daftar mapel; sudah → mapel hanya
 dari rumpun favoritnya, dikelompokkan per rumpun (judul kelompok = nama rumpun).
-Pengelompokan rumpun → mapel diturunkan dari data prodi yang **belum terverifikasi**,
-jadi selalu disertai catatan "belum dicek ke sumber resmi". Pilihan rumpun favorit (1–3)
+Pengelompokan rumpun → mapel diturunkan dari data prodi yang **belum terverifikasi**;
+keputusan PM di LANJUT_079b: pengelompokan tetap tampil, dengan catatan "Belum dicek ke
+sumber resmi." di bawah judul **setiap** kelompok. Pilihan rumpun favorit (1–3)
 juga tampil sebagai seksi di layar Jalur Saya `/cek-posisi`, dan "Ubah rumpun favorit"
-membukanya di layar Pilih Mapel itu sendiri. Kelas 10–11: Mapel Saya di atas F3. Kelas 7–9: tab hanya
+membukanya di layar Pilih Mapel itu sendiri. Akun kelas 12 lama yang menyimpan lebih dari
+3 rumpun (LANJUT_079b): pilihan rumpun langsung terbuka di Pilih Mapel, dan tombol Simpan
+muncul begitu pilihan dikurangi menjadi 3 atau kurang. Kelas 10–11: Mapel Saya di atas F3. Kelas 7–9: tab hanya
 berisi Mapel Saya (judul layar "Mapel Saya"). Maks. 5 mapel untuk semua kelas; mapel
 pilihan tampil lebih dulu di Arsip dan Latihan, tanpa label tambahan.
 
 - **Pilih Mapel kelas 12 — judul seksi:** Mapel pilihanmu
 - **Pilih Mapel kelas 12 — pengantar:** Pilih paling banyak 5 mapel dari rumpun favoritmu. Mapel ini tampil lebih dulu di Arsip dan Latihan.
 - **Pilih Mapel kelas 12 — ajakan (belum memilih rumpun):** judul: Pilih rumpun favoritmu dulu · teks: Pilih satu sampai tiga rumpun yang paling kamu minati. Setelah itu, mapel di sini dikelompokkan per rumpun.
-- **Pilih Mapel kelas 12 — catatan pengelompokan:** Pengelompokan ini sementara, untuk memudahkan memilih. Belum dicek ke sumber resmi.
+- **Pilih Mapel kelas 12 — catatan pengelompokan:** Belum dicek ke sumber resmi. (di bawah judul setiap kelompok rumpun; LANJUT_079b, sebelumnya satu kalimat di atas semua kelompok: "Pengelompokan ini sementara, untuk memudahkan memilih. Belum dicek ke sumber resmi.")
 - **Pilih Mapel kelas 12 — judul kelompok:** [nama rumpun] (Ekonomi & Bisnis · Kesehatan · Sosial & Humaniora · Teknologi & Rekayasa)
 - **Pilih Mapel kelas 12 — tombol ubah rumpun:** Ubah rumpun favorit (membuka pilihan rumpun di layar yang sama)
 - **Rumpun favorit (Jalur Saya kelas 12 dan ajakan Pilih Mapel):** judul seksi (Jalur Saya): Rumpun favorit · petunjuk: Pilih satu sampai tiga rumpun yang paling kamu minati. · tombol: Simpan rumpun
 - **Mapel Saya — judul & pengantar:** Mapel Saya · Pilih paling banyak 5 mapel yang kamu sukai atau ingin kamu perdalam. Mapel ini tampil lebih dulu di Arsip dan Latihan.
 - **Pilihan mapel — hitungan & batas:** [n] dari 5 dipilih · batas tercapai: Paling banyak [maks]. Lepas satu dulu untuk memilih yang lain. (dipakai juga untuk rumpun, maks. 3)
+- **Rumpun favorit — lebih dari batas (akun lama):** Pilihanmu ada [n], padahal paling banyak [maks]. Kurangi dulu, lalu simpan. (baru LANJUT_079b)
 - **Pilihan mapel — tombol:** Simpan mapel
 
 ---

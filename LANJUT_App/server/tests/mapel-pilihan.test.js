@@ -96,17 +96,18 @@ const ubah = (a, body) => panggil('PATCH', '/pengguna/saya', a.token, body);
 const profil = async (a) => (await panggil('GET', '/pengguna/saya', a.token)).json.data;
 const layar = async (a) => (await panggil('GET', '/pengguna/saya/pilihan-mapel', a.token)).json.data;
 /**
- * 400 VALIDASI_GAGAL dengan galat { kode, pesan, medan }. medan memakai bentuk yang sudah
- * berlaku di semua rute (objek per medan, middleware/validasi.js): kunci persis
- * `mapel_pilihan`; galat tipe per butir dari zod memakai jalur butir (`mapel_pilihan.0`).
+ * 400 VALIDASI_GAGAL dengan galat { kode, pesan, medan }. LANJUT_079b: medan selalu
+ * berbentuk sama — tepat satu kunci `mapel_pilihan` berisi teks — untuk id tak dikenal,
+ * tipe per butir yang salah, lebih dari 5, ganda, dan di luar rumpun (tidak ada
+ * `mapel_pilihan.0`).
  */
-const tolakMapel = (r, pesan, { perButir = false } = {}) => {
+const tolakMapel = (r, pesan) => {
   assert.equal(r.status, 400, `${pesan}: ${JSON.stringify(r.json)}`);
+  assert.deepEqual(Object.keys(r.json.galat).sort(), ['kode', 'medan', 'pesan'], pesan);
   assert.equal(r.json.galat.kode, 'VALIDASI_GAGAL', pesan);
   assert.equal(typeof r.json.galat.pesan, 'string', pesan);
-  const kunci = Object.keys(r.json.galat.medan || {});
-  const cocok = perButir ? kunci.some((k) => k === 'mapel_pilihan' || k.startsWith('mapel_pilihan.')) : kunci.includes('mapel_pilihan');
-  assert.ok(cocok, `${pesan}: medan ${JSON.stringify(r.json.galat.medan)}`);
+  assert.deepEqual(Object.keys(r.json.galat.medan), ['mapel_pilihan'], `${pesan}: medan ${JSON.stringify(r.json.galat.medan)}`);
+  assert.equal(typeof r.json.galat.medan.mapel_pilihan, 'string', pesan);
 };
 
 describe('LANJUT_079 §C: migrasi 022_mapel_pilihan', () => {
@@ -190,13 +191,29 @@ describe('LANJUT_079 §C: GET/PATCH /pengguna/saya mapel_pilihan', () => {
   test('Isi tidak sah → 400 VALIDASI_GAGAL medan mapel_pilihan: id tidak dikenal, ganda, bukan larik, bukan teks', async () => {
     const a = await akun('8');
     await ubah(a, { mapel_pilihan: ['matematika'] });
-    for (const isi of [['matematika', 'MAPEL-TIDAK-ADA'], ['matematika', 'matematika'], 'matematika', null]) {
+    for (const isi of [['matematika', 'MAPEL-TIDAK-ADA'], ['matematika', 'matematika'], 'matematika', null, [1], [''], ['matematika', 7]]) {
       tolakMapel(await ubah(a, { mapel_pilihan: isi }), JSON.stringify(isi));
     }
-    for (const isi of [[1], ['']]) {
-      tolakMapel(await ubah(a, { mapel_pilihan: isi }), JSON.stringify(isi), { perButir: true });
-    }
     assert.deepEqual((await profil(a)).mapel_pilihan, ['matematika']);
+  });
+
+  test('LANJUT_079b §D: id tidak valid, tipe salah, dan lebih dari 5 → bentuk medan SAMA ({ mapel_pilihan: teks }), tanpa kunci per butir', async () => {
+    const a = await akun('10');
+    const kasus = {
+      id_tidak_valid: ['MAPEL-TIDAK-ADA'],
+      tipe_salah: [42],
+      tipe_salah_campur: ['fisika', { id: 'kimia' }],
+      lebih_dari_5: ['sosiologi', 'fisika', 'bahasa-inggris', 'geografi', 'informatika', 'kimia'],
+      lebih_dari_5_dan_tipe_salah: [1, 2, 3, 4, 5, 6],
+    };
+    const bentuk = [];
+    for (const [nama, isi] of Object.entries(kasus)) {
+      const r = await ubah(a, { mapel_pilihan: isi });
+      tolakMapel(r, nama);
+      bentuk.push(Object.keys(r.json.galat.medan).join(','));
+    }
+    assert.deepEqual(new Set(bentuk), new Set(['mapel_pilihan']));
+    assert.deepEqual((await profil(a)).mapel_pilihan, []);
   });
 
   test('Kelas 7–11: minat_rumpun tetap seperti sekarang (diterima bila kebijakan diterima, 403 bila belum) dan TIDAK membatasi Mapel Saya', async () => {
@@ -355,7 +372,9 @@ describe('LANJUT_079 app: tab Pilih Mapel, urutan Arsip & Latihan, teks', () => 
     const komp = baca('components', 'screens', 'MapelPilihan.tsx');
     assert.ok(!komp.includes('useMapel'), 'MapelPilihan.tsx tidak boleh memuat daftar mapel lengkap');
     assert.ok(komp.includes("data.mode === 'rumpun' && data.kelompok.length === 0"), 'ajakan bila belum ada rumpun');
-    assert.ok(komp.includes('data.kelompok.map('));
+    // LANJUT_079b: kelompok dirender lewat kelompokDenganCatatan (catatan di setiap kelompok).
+    assert.ok(komp.includes('kelompokDenganCatatan(data.kelompok, data.pengelompokan_terverifikasi).map('));
+    assert.ok(!komp.includes('data.kelompok.map('), 'kelompok tidak boleh dirender tanpa catatan');
   });
 
   test('Urutan Arsip & Latihan: mapel pilihan lebih dulu (urut pilihan), sisanya tetap; daftar tidak bertambah/berkurang', () => {
@@ -389,5 +408,94 @@ describe('LANJUT_079 app: tab Pilih Mapel, urutan Arsip & Latihan, teks', () => 
     }
     assert.ok(/LANJUT_079 — usulan kalimat kebijakan privasi untuk mapel pilihan\. DRAF, menunggu\s+tinjauan hukum/.test(salinan));
     assert.ok(!baca('lib', 'kebijakan-privasi.json').includes('mapel_pilihan'));
+  });
+});
+
+describe('LANJUT_079b §A: akun kelas 12 lama dengan lebih dari 3 rumpun', () => {
+  const EMPAT = ['Ekonomi & Bisnis', 'Kesehatan', 'Sosial & Humaniora', 'Teknologi & Rekayasa'];
+
+  /** Akun kelas 12 yang menyimpan 4 rumpun sebelum batas 3 (ditulis langsung ke DB, seperti data lama). */
+  async function akunEmpatRumpun() {
+    const a = await akun('12');
+    await pool.query('UPDATE pengguna SET minat_rumpun = ? WHERE id = ?', [JSON.stringify(EMPAT), a.pengguna.id]);
+    return a;
+  }
+
+  test('GET tanpa galat: /pengguna/saya, /auth/saya, dan pilihan-mapel tetap menampilkan keempat rumpun', async () => {
+    const a = await akunEmpatRumpun();
+    const p = await panggil('GET', '/pengguna/saya', a.token);
+    assert.equal(p.status, 200, JSON.stringify(p.json));
+    assert.deepEqual(p.json.data.minat_rumpun, EMPAT);
+    assert.equal((await panggil('GET', '/auth/saya', a.token)).status, 200);
+    const l = await panggil('GET', '/pengguna/saya/pilihan-mapel', a.token);
+    assert.equal(l.status, 200, JSON.stringify(l.json));
+    assert.deepEqual(l.json.data.minat_rumpun, EMPAT);
+    assert.deepEqual(l.json.data.kelompok.map((k) => k.rumpun), EMPAT);
+    assert.equal(l.json.data.maks_rumpun, 3);
+  });
+
+  test('PATCH 3 rumpun berhasil (mapel di luar rumpun baru dilepas); PATCH 4 tetap ditolak 400 — aturan tidak dilonggarkan', async () => {
+    const a = await akunEmpatRumpun();
+    // Selama masih 4 rumpun, mapel dari keempatnya boleh disimpan (tidak ada jalan buntu).
+    assert.equal((await ubah(a, { mapel_pilihan: ['sosiologi', 'biologi'] })).status, 200);
+    const tolak = await ubah(a, { minat_rumpun: EMPAT });
+    assert.equal(tolak.status, 400);
+    assert.equal(tolak.json.galat.kode, 'VALIDASI_GAGAL');
+    assert.deepEqual(Object.keys(tolak.json.galat.medan), ['minat_rumpun']);
+    const tiga = ['Ekonomi & Bisnis', 'Kesehatan', 'Teknologi & Rekayasa'];
+    const r = await ubah(a, { minat_rumpun: tiga });
+    assert.equal(r.status, 200, JSON.stringify(r.json));
+    assert.deepEqual(r.json.data.minat_rumpun, tiga);
+    assert.deepEqual(r.json.data.mapel_pilihan, ['biologi'], 'sosiologi hanya di Sosial & Humaniora → dilepas');
+  });
+
+  test('App: pilihan rumpun terbuka sendiri untuk akun > 3 rumpun; Simpan tampil begitu pilihan dikurangi menjadi 3', () => {
+    assert.equal(app.rumpunPerluDikurangi(EMPAT), true);
+    assert.equal(app.rumpunPerluDikurangi(EMPAT.slice(0, 3)), false);
+    assert.equal(app.rumpunPerluDikurangi(undefined), false);
+    // Mulai dari yang tersimpan (4): belum bisa disimpan.
+    let pilihan = [...EMPAT];
+    assert.equal(app.bolehSimpanRumpun(pilihan, EMPAT), false);
+    // Satu dilepas → 3 → Simpan tampil, tanpa menekan "Ubah rumpun favorit" dulu.
+    pilihan = pilihan.filter((r) => r !== 'Sosial & Humaniora');
+    assert.equal(pilihan.length, 3);
+    assert.equal(app.bolehSimpanRumpun(pilihan, EMPAT), true);
+    // Akun biasa: kosong atau sama dengan yang tersimpan → tidak ada Simpan.
+    assert.equal(app.bolehSimpanRumpun([], EMPAT.slice(0, 2)), false);
+    assert.equal(app.bolehSimpanRumpun(EMPAT.slice(0, 2), EMPAT.slice(0, 2)), false);
+    const komp = baca('components', 'screens', 'MapelPilihan.tsx');
+    assert.ok(komp.includes('{perluKurangi ? <PilihRumpunFavorit /> : null}'), 'pilihan rumpun terbuka sendiri di Pilih Mapel');
+    assert.ok(komp.includes('const boleh = bolehSimpanRumpun(pilihan, tersimpan, maks);'));
+    assert.ok(baca('components', 'screens', 'CekPosisiScreen.tsx').includes('<PilihRumpunFavorit />'), 'Jalur Saya memakai komponen yang sama');
+  });
+});
+
+describe('LANJUT_079b §B/§C: catatan per kelompok dan mapel SMP apa adanya', () => {
+  test('Setiap kelompok rumpun memuat catatan "Belum dicek ke sumber resmi." (dari data server, keempat rumpun)', async () => {
+    const a = await akun('12');
+    await pool.query('UPDATE pengguna SET minat_rumpun = ? WHERE id = ?', [
+      JSON.stringify(['Ekonomi & Bisnis', 'Kesehatan', 'Sosial & Humaniora', 'Teknologi & Rekayasa']),
+      a.pengguna.id,
+    ]);
+    const d = await layar(a);
+    assert.equal(d.pengelompokan_terverifikasi, false);
+    const tampil = app.kelompokDenganCatatan(d.kelompok, d.pengelompokan_terverifikasi);
+    assert.equal(tampil.length, 4);
+    for (const k of tampil) assert.equal(k.catatan, 'Belum dicek ke sumber resmi.', k.rumpun);
+    assert.equal(app.TEKS_MAPEL_PILIHAN.kelas12.catatanKelompok, 'Belum dicek ke sumber resmi.');
+    const salinan = fs.readFileSync(path.join(AKAR_REPO, 'docs', 'salinan-teks-lanjut.md'), 'utf8');
+    assert.ok(salinan.includes('- **Pilih Mapel kelas 12 — catatan pengelompokan:** Belum dicek ke sumber resmi.'));
+    const lembar = fs.readFileSync(path.join(AKAR_REPO, 'docs', 'lembar-review-draf-teks.md'), 'utf8');
+    assert.ok(lembar.includes('> **Pilih Mapel kelas 12 — catatan pengelompokan:** Belum dicek ke sumber resmi.'));
+  });
+
+  test('Tidak ada mapel baru: tabel mapel = 10 mapel benih; Mapel Saya kelas 7–9 menampilkan persis itu', async () => {
+    const [baris] = await pool.query('SELECT id FROM mapel ORDER BY id');
+    assert.deepEqual(baris.map((b) => b.id), SEMUA_MAPEL);
+    assert.equal(SEMUA_MAPEL.length, 10);
+    for (const kelas of ['7', '8', '9']) {
+      const d = await layar(await akun(kelas));
+      assert.deepEqual(d.mapel.map((m) => m.id).sort(), SEMUA_MAPEL, kelas);
+    }
   });
 });

@@ -764,8 +764,8 @@ const PETA = [
       {
         task: 'LANJUT_079',
         awal: '**Pilih Mapel kelas 12 — catatan pengelompokan:**',
-        nama: 'Catatan: pengelompokan belum dicek ke sumber resmi',
-        di: 'Tab Pilih Mapel, di atas kelompok mapel per rumpun.',
+        nama: 'Catatan: pengelompokan belum dicek ke sumber resmi (diubah LANJUT_079b)',
+        di: 'Tab Pilih Mapel, di bawah judul SETIAP kelompok rumpun (LANJUT_079b; sebelumnya satu kalimat di atas semua kelompok).',
         oleh: 'Kelas 12 yang sudah memilih rumpun.',
         faktual: {
           klaim: 'Pengelompokan rumpun → mapel bersifat sementara dan belum dicek ke sumber resmi.',
@@ -774,9 +774,16 @@ const PETA = [
       },
       { task: 'LANJUT_079', awal: '**Pilih Mapel kelas 12 — judul kelompok:**', nama: 'Judul kelompok = nama rumpun', di: 'Tab Pilih Mapel, di atas pil mapel tiap rumpun favorit.', oleh: 'Kelas 12 yang sudah memilih rumpun.' },
       { task: 'LANJUT_079', awal: '**Pilih Mapel kelas 12 — tombol ubah rumpun:**', nama: 'Tombol "Ubah rumpun favorit"', di: 'Tab Pilih Mapel, bawah seksi; membuka pilihan rumpun di layar yang sama.', oleh: 'Kelas 12 yang sudah memilih rumpun.' },
-      { task: 'LANJUT_079', awal: '**Rumpun favorit', nama: 'Pilihan rumpun favorit (1–3)', di: 'Jalur Saya /cek-posisi (sesudah Langkah Berikutnya) dan ajakan di tab Pilih Mapel.', oleh: 'Kelas 12.' },
+      { task: 'LANJUT_079', awal: '**Rumpun favorit (Jalur Saya', nama: 'Pilihan rumpun favorit (1–3)', di: 'Jalur Saya /cek-posisi (sesudah Langkah Berikutnya) dan ajakan di tab Pilih Mapel.', oleh: 'Kelas 12.' },
       { task: 'LANJUT_079', awal: '**Mapel Saya — judul & pengantar:**', nama: 'Mapel Saya — judul & pengantar', di: 'Tab Pilih Mapel: judul layar untuk kelas 7–9; judul seksi di atas alur prodi untuk kelas 10–11.', oleh: 'Kelas 7–11.' },
       { task: 'LANJUT_079', awal: '**Pilihan mapel — hitungan & batas:**', nama: 'Hitungan dan batas pilihan', di: 'Tab Pilih Mapel (mapel) dan pilihan rumpun (batas saja).', oleh: 'Kelas 7–12.' },
+      {
+        task: 'LANJUT_079',
+        awal: '**Rumpun favorit — lebih dari batas',
+        nama: 'Rumpun lebih dari batas (akun lama, LANJUT_079b)',
+        di: 'Pilihan rumpun favorit (Pilih Mapel, terbuka sendiri; dan Jalur Saya) selama pilihan masih lebih dari 3.',
+        oleh: 'Akun kelas 12 yang menyimpan lebih dari 3 rumpun sebelum batas 3 berlaku.',
+      },
       { task: 'LANJUT_079', awal: '**Pilihan mapel — tombol:**', nama: 'Tombol "Simpan mapel"', di: 'Tab Pilih Mapel, tampil bila pilihan berubah.', oleh: 'Kelas 7–12.' },
     ],
   },
