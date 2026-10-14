@@ -240,7 +240,14 @@ const PETA = [
         di: 'Data Akun: baris "Sekolah" di kartu akun (berisi "Belum diisi" bila kosong); medan Jenis sekolah di form Ubah.',
         oleh: 'Baris: semua akun (kelas 7–9 tampil SMP). Medan di form Ubah: kelas 10–12.',
       },
-      { task: 'LANJUT_035', awal: '**Data Akun, kartu Kemajuan:**', nama: 'Kartu Kemajuan bukan kelas 12', di: 'Data Akun, kartu Kemajuan (kelas 12 melihat ringkasan kemajuan).', oleh: 'Kelas 7–11 dan akun tanpa kelas.' },
+      { task: 'LANJUT_035', awal: '**Data Akun, kartu Kemajuan:**', nama: 'Kartu Kemajuan bukan kelas 12', di: 'Data Akun, kartu Kemajuan (kelas 12 melihat ringkasan kemajuan).', oleh: 'Kelas 10–11 dan akun tanpa kelas (kelas 7–9 sejak LANJUT_077 memakai kalimat di bawah).' },
+      {
+        task: 'LANJUT_077',
+        awal: '**Data Akun, kartu Kemajuan — SMP',
+        nama: 'Kartu Kemajuan SMP (tanpa kalimat kelas 12)',
+        di: 'Data Akun, kartu Kemajuan, di atas tombol "Buka Daftar Periksa".',
+        oleh: 'Kelas 7–9.',
+      },
       { task: 'LANJUT_047', awal: '**Data Akun — baris:**', nama: 'Baris persetujuan orang tua/wali', di: 'Data Akun, kartu Akun (hanya baca).', oleh: 'Semua akun.' },
       {
         task: 'LANJUT_047',
@@ -798,6 +805,13 @@ const PETA = [
     kelompok: 'Level-In',
     butir: [
       { task: 'LANJUT_058', awal: '**Beranda — pintu Level-In:**', nama: 'Pintu di Beranda', di: 'Beranda, di bawah Arsip Belajar.', oleh: 'Semua akun (kelas 7–12).' },
+      {
+        task: 'LANJUT_077',
+        awal: '**Beranda — kartu Latihan berikutnya:**',
+        nama: 'Kartu "Latihan berikutnya" di Beranda',
+        di: 'Beranda, tepat sesudah grid ikon dan sebelum Info Penting (kelas 12) atau carousel banner; hanya bila saran harian memilih satu mapel dari data yang cukup. Tombol membuka Latihan mapel itu.',
+        oleh: 'Semua akun (kelas 7–12) yang sudah menjawab cukup kartu dengan keyakinan di satu mapel.',
+      },
       { task: 'LANJUT_058', awal: '**Level-In — judul & pengantar:**', nama: 'Judul & pengantar', di: 'Level-In (/level-in).', oleh: 'Semua akun.' },
       { task: 'LANJUT_058', awal: '**Level-In — belum pernah latihan:**', nama: 'Belum pernah latihan', di: 'Level-In, akun tanpa jawaban latihan.', oleh: 'Akun yang belum pernah berlatih.' },
       { task: 'LANJUT_058', awal: '**Level-In — galat:**', nama: 'Galat', di: 'Level-In, bila server tidak bisa dihubungi.', oleh: 'Semua akun.' },

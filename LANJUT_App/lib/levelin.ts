@@ -31,6 +31,9 @@ export const TEKS_LEVELIN = {
   pas: (mapel: string) => `Keyakinanmu sudah pas dengan hasilmu di ${mapel}.`,
   seksiSaran: 'Saran hari ini',
   lihatLevelIn: 'Lihat Level-In',
+  // LANJUT_077 — kartu Beranda (salinan §4.18, DRAF).
+  berandaJudul: 'Latihan berikutnya',
+  berandaTombol: 'Mulai latihan',
 };
 
 /** Satu kalimat arti tiap level. Batas persen dari konfigurasi (level_batas_bawah/atas). */
@@ -106,6 +109,21 @@ export type KartuSaran = {
   tombol: string;
   tujuan: { pathname: '/latihan'; params: { mapel: string; asal: 'saran' } } | { pathname: '/latihan' } | { pathname: '/arsip-tulis' };
 };
+
+/**
+ * LANJUT_077 — kartu "Latihan berikutnya" di Beranda (semua jenjang). Tampil
+ * HANYA bila saran harian (GET /saran-harian, dihitung server dari jawaban yang
+ * diberi keyakinan, ambang dari konfigurasi_levelin) memilih SATU mapel dari data
+ * yang sudah cukup (jenis 'saran'). Jenis lain — belum cukup data, pengguna baru,
+ * arsip kosong, atau kalibrasi selaras tanpa mapel — dan data yang belum ada →
+ * null: kartu tidak tampil. Tidak ada angka ambang di sini.
+ */
+export function latihanBerikutnya(
+  saran: SaranHarian | null | undefined
+): { mapelId: string; tujuan: { pathname: '/latihan'; params: { mapel: string; asal: 'saran' } } } | null {
+  if (!saran || saran.jenis !== 'saran' || !saran.mapel_id) return null;
+  return { mapelId: saran.mapel_id, tujuan: { pathname: '/latihan', params: { mapel: saran.mapel_id, asal: 'saran' } } };
+}
 
 /** Kartu saran harian dari /saran-harian. `nama` = nama mapel untuk tampilan. */
 export function kartuSaran(saran: SaranHarian, nama: (mapelId: string) => string): KartuSaran {

@@ -22,7 +22,9 @@ import { useEventSekolah } from '../../hooks/useEventSekolah';
 import { useKemajuan } from '../../hooks/useKemajuan';
 import { useRiwayatLatihan } from '../../hooks/useLatihan';
 import { useKartuSaya } from '../../hooks/useKartu';
+import { useSaranHarian } from '../../hooks/useLevelIn';
 import { useMapel } from '../../hooks/useMapel';
+import { namaMapel } from '../../lib/arsip';
 import {
   apakahPunyaKemajuan,
   bannerBeranda,
@@ -37,6 +39,7 @@ import {
 } from '../../lib/beranda';
 import { TEKS_EVENT, eventTerdekat, labelJenis, selisihHari, teksHitungMundur, untukPersiapanEvent } from '../../lib/eventSekolah';
 import type { Kelas } from '../../lib/jenjang';
+import { TEKS_LEVELIN, latihanBerikutnya } from '../../lib/levelin';
 import {
   formatRentang,
   formatTanggal,
@@ -119,12 +122,19 @@ export function LinimasaScreen() {
   const eventQuery = useEventSekolah(persiapanAktif);
   const persiapan = persiapanAktif && !eventQuery.isError ? eventTerdekat(eventQuery.data) : null;
 
+  // LANJUT_077: kartu "Latihan berikutnya" (semua jenjang) dari saran harian 042
+  // (GET /saran-harian, dihitung server). Data belum cukup, memuat, atau gagal →
+  // tidak tampil, tanpa teks pengganti (aturan 072).
+  const saranQuery = useSaranHarian();
+  const latihan = saranQuery.isError ? null : latihanBerikutnya(saranQuery.data);
+
   // Urutan tampil sepenuhnya ditentukan urutanBeranda (lib/beranda.ts, LANJUT_074).
   const urutan = urutanBeranda({
     kelas,
     tampilMulaiDariSini: !memuatData && !punyaKemajuan,
     tampilBanner: banner.length > 0,
     tampilPersiapan: persiapan !== null,
+    tampilLatihan: latihan !== null,
   });
 
   const bagian: Record<BagianBeranda, React.ReactNode> = {
@@ -138,6 +148,7 @@ export function LinimasaScreen() {
     hero: <KartuHero />,
     banner: banner.length ? <KarouselBanner daftar={banner} /> : null,
     persiapan: persiapan ? <KartuPersiapan event={persiapan} onPress={() => router.push('/daftar-periksa')} /> : null,
+    latihan: latihan ? <KartuLatihanBerikutnya mapelId={latihan.mapelId} onMulai={() => router.push(latihan.tujuan)} /> : null,
     judul: <H1 style={s.k1}>Tahu harus ngapain hari ini.</H1>,
     // LANJUT_065 §C: satu baris progres, tepat di atas grid.
     progres: (
@@ -202,6 +213,21 @@ export function LinimasaScreen() {
         ))}
       </View>
     </View>
+  );
+}
+
+// LANJUT_077: satu mapel dari saran harian Level-In (lib/levelin.ts latihanBerikutnya).
+// "Mulai latihan" membuka Latihan dengan mapel yang sama (?mapel=&asal=saran).
+function KartuLatihanBerikutnya({ mapelId, onMulai }: { mapelId: string; onMulai: () => void }) {
+  const { data: mapel } = useMapel();
+  return (
+    <Kartu varian="soft" style={s.latihanKartu}>
+      <Text style={s.latihanLabel}>{TEKS_LEVELIN.berandaJudul}</Text>
+      <View style={s.latihanBaris}>
+        <Text style={s.latihanMapel}>{namaMapel(mapelId, mapel)}</Text>
+        <Tombol label={TEKS_LEVELIN.berandaTombol} kecil onPress={onMulai} />
+      </View>
+    </Kartu>
   );
 }
 
@@ -481,6 +507,11 @@ const s = StyleSheet.create({
     ...teks.bodySm,
     color: color.textBody,
   },
+  // LANJUT_077: Latihan berikutnya
+  latihanKartu: { gap: spacing.s2, padding: spacing.s4 },
+  latihanLabel: { ...teks.label, color: color.blue600 },
+  latihanBaris: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.s3 },
+  latihanMapel: { ...teks.title, fontFamily: font.semibold, color: color.textBody, flex: 1 },
   // LANJUT_076: Persiapan Terdekat
   persiapanKartu: { gap: spacing.s1, padding: spacing.s4 },
   persiapanLabel: { ...teks.label, color: color.blue600 },

@@ -20,6 +20,7 @@ import {
   type JenisSekolahMenengah,
   type Kelas,
 } from '../../lib/jenjang';
+import { teksKemajuanDataAkun } from '../../lib/jenjangSaya';
 import { color, font, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Kartu, KartuPintu, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
 import { BELUM, DaftarOpsi, Field, Input, OpsiPil, PesanGalat, PilihProdi } from './auth/AuthUI';
@@ -214,14 +215,16 @@ function FormJalur({ pengguna, onSelesai }: { pengguna: Pengguna; onSelesai: () 
 
 // LANJUT_035: X/Y Daftar Periksa = persiapan SNBP/SNBT/TKA, hanya kelas 12.
 // Tombolnya tetap ada: butir pribadi siswa non-12 juga ada di Daftar Periksa.
+// LANJUT_077 §B: kalimatnya dari lib/jenjangSaya.ts — SMP tanpa kalimat kelas 12.
 function RingkasanKemajuan() {
   const router = useRouter();
+  const { pengguna } = useSesi();
   const kelas12 = useUntukKelas12();
   if (kelas12) return <RingkasanKemajuanKelas12 />;
   return (
     <Kartu style={s.kemajuan}>
       {/* TEKS DRAF (salinan §4.11). */}
-      <Text style={gaya.teksKecil}>Kemajuan persiapan SNBP, SNBT, dan TKA tampil di sini saat kamu kelas 12.</Text>
+      <Text style={gaya.teksKecil}>{teksKemajuanDataAkun(pengguna?.kelas)}</Text>
       <Tombol label="Buka Daftar Periksa" varian="sekunder" kecil onPress={() => router.push('/daftar-periksa')} />
     </Kartu>
   );

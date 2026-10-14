@@ -189,3 +189,15 @@ export function teksDaftarPeriksaBukanKelas12(kelas: Kelas | null | undefined): 
   const kelompok = kelompokJenjang(kelas);
   return kelompok === 'smp' || kelompok === 'kelas10_11' ? 'Catat langkah-langkahmu supaya tidak ada yang terlewat.' : null;
 }
+
+/**
+ * Kalimat di kartu kemajuan Data Akun untuk akun bukan kelas 12 (kelas 12
+ * melihat angka X dari Y). LANJUT_077 §B: SMP tidak lagi membaca kalimat tentang
+ * kelas 12 — TEKS DRAF (salinan §4.11). Kelas 10–11 dan akun tanpa kelas tetap
+ * memakai kalimat lama (tidak berubah).
+ */
+export function teksKemajuanDataAkun(kelas: Kelas | null | undefined): string {
+  return kelompokJenjang(kelas) === 'smp'
+    ? 'Langkah yang kamu catat ada di Daftar Periksa.'
+    : 'Kemajuan persiapan SNBP, SNBT, dan TKA tampil di sini saat kamu kelas 12.';
+}

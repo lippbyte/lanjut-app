@@ -624,10 +624,19 @@ tenggat maupun placeholder ini.
 - **Kelas kosong — judul:** Isi kelasmu dulu.
 - **Kelas kosong — isi:** Isi bagian ini menyesuaikan kelasmu. Isi kelas di Data Akun, ya.
 - **Kelas kosong — tombol:** Isi kelas di Data Akun · Buka Jenjang Saya
-- **Data Akun, kartu Kemajuan:** Kemajuan persiapan SNBP, SNBT, dan TKA tampil di sini saat kamu kelas 12.
+- **Data Akun, kartu Kemajuan:** Kemajuan persiapan SNBP, SNBT, dan TKA tampil di sini saat kamu kelas 12. (sejak LANJUT_077 hanya kelas 10–11 dan akun tanpa kelas; SMP lihat di bawah)
 
 Sejak LANJUT_036, akun tanpa kelas tertahan di gerbang §4.12 dulu, jadi
 keadaan "Kelas kosong" di atas hanya jaring pengaman.
+
+**LANJUT_App (LANJUT_077) — kartu Kemajuan di Data Akun untuk SMP. DRAF, belum disetujui
+Khalifa.** Akun kelas 7–9 tidak lagi membaca kalimat tentang kelas 12 di Data Akun
+(`lib/jenjangSaya.ts` `teksKemajuanDataAkun`). Kalimatnya menyebut Daftar Periksa karena
+kartu ini bertombol "Buka Daftar Periksa"; contoh dari PM ("Riwayat dan data akunmu ada
+di sini.") tidak dipakai karena tidak nyambung dengan tombol itu — pilihan eksekutor,
+belum disetujui PM. Kelas 10–12 tidak berubah.
+
+- **Data Akun, kartu Kemajuan — SMP (kelas 7–9):** Langkah yang kamu catat ada di Daftar Periksa.
 
 ### 4.12 Gerbang wajib isi kelas
 
@@ -783,6 +792,15 @@ tanpa angka. Level-In terbuka untuk semua kelas (7–12).
 - **Level-In — belum cukup data:** Belum cukup data · Jawab [n] kartu lagi di mapel ini supaya levelnya muncul. · tanpa angka: Jawab beberapa kartu lagi di mapel ini supaya levelnya muncul.
 - **Level-In — keyakinan:** judul seksi: Keyakinanmu · belum ada data: Saat latihan, pilih "Seberapa yakin kamu?" sebelum membuka jawaban. Dari situ Level-In bisa melihat apakah keyakinanmu sudah pas dengan hasilmu. · kurang: Isi keyakinan di [n] kartu lagi dalam satu mapel supaya polanya kelihatan. · terlalu yakin: Kamu cenderung terlalu yakin di [mapel]: sering yakin, tapi jawabannya salah. · pas: Keyakinanmu sudah pas dengan hasilmu di [mapel].
 - **Level-In — saran hari ini:** judul seksi: Saran hari ini · saran: Latih [mapel] hari ini. Dari [n] kartu terakhir yang kamu isi keyakinannya, [p]% kamu yakin tapi jawabannya salah. (tombol: Latihan [mapel]) · selaras: Keyakinanmu sudah pas dengan hasilmu. Lanjutkan latihan rutin di mapel mana saja. (tombol: Mulai latihan) · belum cukup data: Lanjut latihan [mapel] dan isi keyakinanmu, supaya saran berikutnya lebih tepat. (tombol: Latihan [mapel]) · pengguna baru: Mulai dari [mapel]. Isi juga seberapa yakin kamu di tiap kartu. (tombol: Latihan [mapel]) · arsip kosong: Belum ada kartu untuk dilatih. Tulis kartu dulu di Arsip Belajar. (tombol: Tulis kartu)
+
+**LANJUT_App (LANJUT_077) — kartu "Latihan berikutnya" di Beranda. DRAF, belum disetujui
+Khalifa.** Teks di `lib/levelin.ts` (`TEKS_LEVELIN`). Semua jenjang. Isinya dari saran
+harian di atas (dihitung server, ambang dari konfigurasi Level-In): kartu hanya tampil
+bila saran memilih satu mapel dari data yang sudah cukup ("saran"); data belum cukup,
+belum ada, atau gagal dimuat → kartu tidak tampil dan tidak ada teks pengganti.
+Letaknya tepat sesudah grid ikon, sebelum Info Penting (kelas 12) atau carousel banner.
+
+- **Beranda — kartu Latihan berikutnya:** label: Latihan berikutnya · isi: [nama mapel] · tombol: Mulai latihan (membuka Latihan dengan mapel itu)
 
 ---
 

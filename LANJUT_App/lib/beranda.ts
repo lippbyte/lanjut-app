@@ -259,6 +259,7 @@ export type BagianBeranda =
   | 'progres'
   | 'persiapan'
   | 'grid'
+  | 'latihan'
   | 'info_penting'
   | 'banner'
   | 'judul'
@@ -275,12 +276,17 @@ export type BagianBeranda =
  *
  * LANJUT_076: kartu "Persiapan Terdekat" (`tampilPersiapan`, event 7 hari ke depan)
  * tepat sesudah baris progres dan sebelum grid — LANJUT_076b: HANYA SMP (kelas 7–9).
+ *
+ * LANJUT_077: kartu "Latihan berikutnya" (`tampilLatihan`, saran harian Level-In)
+ * tepat sesudah grid ikon dan sebelum Info Penting (kelas 12) / carousel banner —
+ * semua jenjang, hanya bila datanya cukup.
  */
 export function urutanBeranda(data: {
   kelas?: Kelas | null;
   tampilMulaiDariSini: boolean;
   tampilBanner?: boolean;
   tampilPersiapan?: boolean;
+  tampilLatihan?: boolean;
 }): BagianBeranda[] {
   const kelompok = kelompokJenjang(data.kelas);
   const kelas12 = kelompok === 'kelas12';
@@ -289,6 +295,7 @@ export function urutanBeranda(data: {
   urutan.push('progres');
   if (data.tampilPersiapan && kelompok === 'smp') urutan.push('persiapan');
   urutan.push('grid');
+  if (data.tampilLatihan) urutan.push('latihan');
   if (kelas12) urutan.push('info_penting');
   if (data.tampilBanner) urutan.push('banner');
   urutan.push('judul');
