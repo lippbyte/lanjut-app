@@ -25,10 +25,16 @@ export const TEKS_NGOBROL = {
   // Salinan teks LANJUT_074 (tombol mikrofon) — DRAF belum disetujui Khalifa.
   ucapkanPesan: 'Ucapkan pesan',
   mendengarkan: 'Mendengarkan…',
+  // Salinan teks LANJUT_078 (penghubung fitur) — DRAF belum disetujui Khalifa. Hanya tampil
+  // bila GET /ngobrol/status menyatakan AI aktif; saat saklar mati layar tetap seperti 077b.
+  petunjukAi: 'Tanya apa saja tentang materi di modulmu, latihanmu, atau persiapan ujianmu.',
+  catatanKonteks:
+    'Kalau pertanyaanmu tentang latihan atau ujian, ringkasan singkatnya (nama mapel, jenis ujian, dan tanggalnya) ikut dikirim ke penyedia AI. Catatan materi ujianmu tidak ikut dikirim.',
 };
 
-// Batas di app = batas server (ngobrol.skema.js).
-export const PANJANG_PESAN_MAKS = 1000;
+// Batas di app = batas server (ngobrol.skema.js). LANJUT_078: 500 (sebelumnya 1000);
+// teks hasil suara dipotong di batas yang sama (gabungDraf).
+export const PANJANG_PESAN_MAKS = 500;
 export const RIWAYAT_MAKS = 20;
 
 /** Pesan ramah per kode galat server. Pesan mentah server tidak pernah ditampilkan. */
@@ -40,6 +46,7 @@ export function pesanGalatNgobrol(err: unknown): string {
       case 'AI_TIDAK_TERSEDIA':
         return 'Fitur AI sedang belum bisa dipakai. Coba lagi nanti.';
       case 'AI_GAGAL':
+      case 'AI_SEMENTARA_GAGAL': // LANJUT_078: 503, penyedia gagal atau lewat 20 detik
         return 'Maaf, aku belum bisa menjawab sekarang. Coba kirim lagi sebentar lagi.';
       case 'TERLALU_SERING':
         return 'Pesanmu sudah banyak. Istirahat sebentar, lalu coba lagi.';

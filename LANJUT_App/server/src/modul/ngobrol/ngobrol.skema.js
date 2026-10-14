@@ -4,7 +4,8 @@
 const { z } = require('zod');
 
 const PESAN_MAKS = 30;
-const PANJANG_PESAN_SISWA = 1000;
+// LANJUT_078: 500 karakter (sebelumnya 1000). Teks hasil suara diperlakukan sama.
+const PANJANG_PESAN_SISWA = 500;
 const PANJANG_BALASAN = 6000;
 
 const pesanSkema = z.object({

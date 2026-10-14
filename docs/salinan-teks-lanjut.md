@@ -694,6 +694,19 @@ tinjauan ahli hukum.
 
 - **Usulan — bidang minat yang disimpan:** Kami menyimpan bidang minat yang kamu pilih, misalnya Kesehatan atau Teknologi & Rekayasa, untuk menampilkan Eksplorasi Kampus yang sesuai jenjangmu. Bidang minat tidak ikut dikirim ke penyedia AI di Ngobrol Bareng LANJUT, dan bisa kamu ubah atau kosongkan kapan saja.
 
+**LANJUT_078 — usulan kalimat kebijakan privasi untuk ringkasan fitur di Ngobrol. DRAF,
+menunggu tinjauan hukum; belum disetujui Khalifa; BELUM dipakai di layar.** Sejak
+LANJUT_078 (selama saklar `ai_aktif` menyala), pertanyaan tentang latihan atau ujian
+ikut membawa ringkasan dari data akun ke penyedia AI. Kebijakan draf v2 (versi berkas
+masih 1) belum memuatnya: Ringkasan 3 tidak menyebutnya, dan bagian "Fitur AI: apa
+yang tidak dikirim" justru menyebut hasil latihan dan centang Daftar Periksa tidak
+dikirim. Bagian "Pertanyaan pelajaran" masih menyebut paling banyak 3 potongan modul.
+`LANJUT_App/lib/kebijakan-privasi.json` dan versinya tidak diubah; kalimat ini usulan
+untuk versi kebijakan berikutnya, sesudah tinjauan ahli hukum.
+
+- **Usulan — ringkasan fitur yang dikirim ke penyedia AI:** Kalau pertanyaanmu di Ngobrol Bareng LANJUT menyangkut latihan atau ujian, server LANJUT ikut mengirim ringkasan singkat dari akunmu ke OpenRouter dan penyedia model AI: nama mapel dan jenis saran latihanmu (dihitung dari hasil latihanmu), atau jenis, tanggal, dan mapel satu ujian terdekat yang kamu catat di Persiapan Event. Untuk pertanyaan pelajaran, yang ikut dikirim adalah judul dan ringkasan satu modul milikmu yang paling berkaitan, paling panjang 600 karakter, setelah disamarkan. Catatan materi ujianmu, jawaban latihan per kartu, dan modul lainmu tidak ikut dikirim. Jawaban AI tidak disimpan di server LANJUT.
+- **Usulan — pengganti butir "data lain di akunmu" (bagian Fitur AI: apa yang tidak dikirim):** Data lain di akunmu, seperti isi kartu, jawaban latihan per kartu, centang Daftar Periksa, dan catatan materi ujian. Ringkasan singkat di atas adalah satu-satunya bagian dari data latihan dan Persiapan Event yang bisa ikut dikirim.
+
 ### 4.14 Terima kebijakan privasi (akun lama & terima ulang)
 
 **LANJUT_048 — DRAF belum disetujui Khalifa.** Untuk akun yang belum
@@ -740,6 +753,24 @@ ke kotak pesan (tidak terkirim otomatis); app tidak mengirim atau menyimpan audi
 
 - **Ngobrol — tombol mikrofon (label pembaca layar):** Ucapkan pesan
 - **Ngobrol — petunjuk di kotak pesan saat mendengarkan:** Mendengarkan…
+
+**LANJUT_App (LANJUT_078) — Ngobrol sebagai penghubung fitur: petunjuk, catatan
+konteks, dan kartu tautan. DRAF, belum disetujui Khalifa.** Teks di `lib/ngobrol.ts`
+(`TEKS_NGOBROL`) dan `lib/tautanNgobrol.ts` (`TEKS_TAUTAN`). Petunjuk dan catatan konteks
+hanya tampil bila saklar AI menyala (`GET /ngobrol/status`); saat saklar mati layar
+Ngobrol sama seperti sebelum task ini. Kartu tautan disusun server dari data akun
+sendiri (bukan ditulis AI): paling banyak tiga per jawaban, satu per jenis, urut modul,
+latihan, event; tombolnya membuka layar yang sudah ada. Batas pesan turun dari 1000 ke
+500 huruf (kotak pesan dan hasil suara). Galat 503 `AI_SEMENTARA_GAGAL` (penyedia gagal
+atau lewat 20 detik) memakai kalimat galat kirim yang sudah ada ("Maaf, aku belum bisa
+menjawab sekarang. …"); pesan dari server tidak ditampilkan app. Usulan kalimat
+kebijakan privasi untuk data yang ikut dikirim ada di §4.13 (blok LANJUT_078).
+
+- **Ngobrol — petunjuk saat AI aktif:** Tanya apa saja tentang materi di modulmu, latihanmu, atau persiapan ujianmu.
+- **Ngobrol — catatan konteks:** Kalau pertanyaanmu tentang latihan atau ujian, ringkasan singkatnya (nama mapel, jenis ujian, dan tanggalnya) ikut dikirim ke penyedia AI. Catatan materi ujianmu tidak ikut dikirim.
+- **Ngobrol — kartu tautan modul:** label: Modul di Arsip · isi: [judul modul] · tombol: Buka modul (membuka modul itu di Arsip Belajar)
+- **Ngobrol — kartu tautan latihan:** label: Latihan · isi: [nama mapel] · tombol: Mulai latihan (membuka Latihan dengan mapel itu)
+- **Ngobrol — kartu tautan event:** label: Persiapan Event · isi: [jenis] · [mapel] (mapel hanya bila diisi) · tombol: Buka Daftar Periksa
 
 ### 4.16 Pengaman Ngobrol: kartu bantuan, saklar, data pribadi
 

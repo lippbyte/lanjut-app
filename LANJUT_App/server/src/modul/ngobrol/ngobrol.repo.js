@@ -34,4 +34,11 @@ async function namaProdi(prodiId) {
   return baris[0] ? baris[0].nama : null;
 }
 
-module.exports = { ambilKonfigurasi, namaProdi, KUNCI_KONFIG };
+/** Nama mapel (konten publik) untuk ringkasan & tautan konteks (LANJUT_078); null bila tidak ada. */
+async function namaMapel(mapelId) {
+  if (!mapelId) return null;
+  const [baris] = await pool.execute('SELECT nama FROM mapel WHERE id = ? LIMIT 1', [mapelId]);
+  return baris[0] ? baris[0].nama : null;
+}
+
+module.exports = { ambilKonfigurasi, namaProdi, namaMapel, KUNCI_KONFIG };

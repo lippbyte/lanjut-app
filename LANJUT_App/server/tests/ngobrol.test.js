@@ -178,6 +178,8 @@ test('diizinkan → 200; ke penyedia hanya [system, user]: aturan + profil, lalu
     data_pribadi_disamarkan: false,
     sumber: { modul: [], web: [] },
     web_habis: false,
+    konteks: null, // LANJUT_078: obrolan biasa → konteks kosong, tanpa kartu tautan
+    tautan: [],
   });
   assert.equal(mock.mock.callCount(), 1);
   const { pesan, pengaturan, sistem, data } = dikirim(mock);
@@ -241,14 +243,15 @@ test('kunci OpenRouter kosong → 503 AI_TIDAK_TERSEDIA; penyedia TIDAK dipanggi
   assert.equal(mock.mock.callCount(), 0);
 });
 
-test('penyedia gagal → 502 AI_GAGAL tanpa rincian penyedia', async (t) => {
+// LANJUT_078: penyedia gagal → 503 AI_SEMENTARA_GAGAL (sebelumnya 502 AI_GAGAL).
+test('penyedia gagal → 503 AI_SEMENTARA_GAGAL tanpa rincian penyedia', async (t) => {
   t.mock.method(penyedia, 'mintaBalasan', async () => {
     throw new penyedia.GalatPenyedia('menolak permintaan', 402);
   });
   const a = await akun();
   const { hasil } = await rekamLog(() => panggil('POST', '/ngobrol', a.token, obrolan()));
-  assert.equal(hasil.status, 502);
-  assert.equal(hasil.json.galat.kode, 'AI_GAGAL');
+  assert.equal(hasil.status, 503);
+  assert.equal(hasil.json.galat.kode, 'AI_SEMENTARA_GAGAL');
   assert.doesNotMatch(JSON.stringify(hasil.json), /402|openrouter|penyedia/i);
 });
 
@@ -421,6 +424,8 @@ test('saklar ai_aktif=0 → balasan uji coba, penyedia TIDAK dipanggil; kembali 
       data_pribadi_disamarkan: false,
       sumber: { modul: [], web: [] },
       web_habis: false,
+      konteks: null, // LANJUT_078: saklar mati → tanpa konteks dan tanpa kartu tautan
+      tautan: [],
     });
     await aturKonfig('ai_aktif', 'ya'); // nilai tidak sah → tetap mati (gagal-tertutup)
     assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan())).json.data.uji_coba, true);
@@ -724,7 +729,7 @@ test('LANJUT_060 pemakaian: hitungan harian bertambah benar (panggilan, token, s
     assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan('Aku bingung milih jurusan.'))).status, 200);
     assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan('aku stres banget mikirin ujian'))).status, 200);
     assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan('rasanya semuanya berat'))).status, 200);
-    assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan('halo lagi'))).status, 502);
+    assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan('halo lagi'))).status, 503); // LANJUT_078 (sebelumnya 502)
     assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan('aku pengen bunuh diri'))).status, 200);
     await aturKonfig('ai_aktif', '0');
     assert.equal((await panggil('POST', '/ngobrol', a.token, obrolan('halo saat AI mati'))).json.data.uji_coba, true);

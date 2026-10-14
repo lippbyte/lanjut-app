@@ -213,7 +213,9 @@ test('LANJUT_057: pertanyaan satu kata bermakna — dengan kata tanya/tanda tany
   assert.equal(kandidat.mock.callCount(), harapan.filter(([, j]) => j !== null).length, 'kata tanpa kata tanya/tanda tanya tidak mengambil modul');
 });
 
-test('LANJUT_057: kata umum ("energi?") boleh meloloskan potongan dari dua mapel; menyebut mapel mempersempit', async (t) => {
+// LANJUT_078 (pilihan percakapan, belum disetujui PM): konteks modul = SATU modul, satu
+// potongan. Kompromi 057 "dua mapel" tidak berlaku lagi; yang dikirim = modul skor tertinggi.
+test('LANJUT_057/078: kata umum ("energi?") → satu modul saja (skor tertinggi); menyebut mapel mempersempit', async (t) => {
   const a = await akun({
     modul: [
       { judul: 'Fisika: Energi', mapel_id: 'fisika', teks: 'Energi kinetik adalah energi gerak benda, sedangkan energi potensial adalah energi karena kedudukan benda.' },
@@ -224,7 +226,8 @@ test('LANJUT_057: kata umum ("energi?") boleh meloloskan potongan dari dua mapel
   await tanya(a, 'energi?');
   await tanya(a, 'energi di fisika?');
   const [umum, fisika] = panggilanJawaban(mock);
-  assert.deepEqual(potonganDari(umum).map((p) => p.judul).sort(), ['Biologi: Energi Tumbuhan', 'Fisika: Energi'], 'kompromi: tahap 2 (model) yang menyaring');
+  assert.equal(potonganDari(umum).length, 1, 'LANJUT_078: satu modul, satu potongan');
+  assert.ok(['Biologi: Energi Tumbuhan', 'Fisika: Energi'].includes(potonganDari(umum)[0].judul));
   assert.deepEqual(potonganDari(fisika).map((p) => p.judul), ['Fisika: Energi']);
 });
 

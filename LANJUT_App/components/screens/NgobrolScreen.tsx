@@ -14,12 +14,14 @@ import {
   type TextInputKeyPressEventData,
 } from 'react-native';
 
-import type { KartuBantuan } from '../../api/types';
+import type { KartuBantuan, TautanNgobrol } from '../../api/types';
 import { useKartuBantuan } from '../../hooks/useKartuBantuan';
 import { usePersetujuan } from '../../hooks/usePersetujuan';
+import { useStatusNgobrol } from '../../hooks/useStatusNgobrol';
 import { labelGayaBelajar } from '../../lib/gayaBelajar';
 import { keadaanKebijakan } from '../../lib/kebijakanPrivasi';
 import { PANJANG_PESAN_MAKS, TEKS_NGOBROL } from '../../lib/ngobrol';
+import { kartuTautan } from '../../lib/tautanNgobrol';
 import { BAHASA_PENGENALAN, cariPengenalSuara, gabungDraf, teksDariHasil, type PengenalSuara } from '../../lib/suara';
 import { useSesi } from '../../providers/AuthProvider';
 import { useObrolan, type Pesan } from '../../providers/ObrolanProvider';
@@ -126,6 +128,29 @@ function SumberJawaban({ sumber }: { sumber: NonNullable<Pesan['sumber']> }) {
   );
 }
 
+/**
+ * LANJUT_078 — kartu tautan di bawah jawaban AI (≤3, disusun server, lib/tautanNgobrol.ts).
+ * Tombol membuka layar yang sudah ada; chatbot tidak pernah membuka layar sendiri.
+ */
+function KartuTautanDaftar({ tautan }: { tautan: TautanNgobrol[] }) {
+  const router = useRouter();
+  const kartu = kartuTautan(tautan);
+  if (!kartu.length) return null;
+  return (
+    <View style={s.tautanDaftar}>
+      {kartu.map((k) => (
+        <View key={k.jenis} style={s.tautanKartu}>
+          <Text style={s.tautanLabel}>{k.label}</Text>
+          <Text style={s.tautanJudul}>{k.judul}</Text>
+          <View style={s.tautan}>
+            <Tombol label={k.tombol} varian="sekunder" kecil onPress={() => router.push(k.tujuan)} />
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+}
+
 /** Tautan "Butuh bicara dengan orang?" yang selalu ada; kartu dimuat dari server saat dibuka. */
 function PanelBantuan() {
   const [buka, setBuka] = useState(false);
@@ -225,6 +250,8 @@ function Obrolan() {
   const { pengguna } = useSesi();
   const { pesan, mengetik, kirim: kirimPesan, cobaLagi } = useObrolan();
   const router = useRouter();
+  // LANJUT_078: teks khusus AI aktif hanya bila server menyatakan ai_aktif (memuat/gagal → tidak tampil).
+  const status = useStatusNgobrol(true);
   const gulir = useRef<ScrollView>(null);
   const [draf, setDraf] = useState('');
   const [fokus, setFokus] = useState(false);
@@ -265,6 +292,12 @@ function Obrolan() {
         <Text style={s.catatan}>{TEKS_NGOBROL.catatanAi}</Text>
         <Text style={s.catatan}>{TEKS_NGOBROL.peringatanDataPribadi}</Text>
         <Text style={s.catatan}>{TEKS_NGOBROL.catatanMateri}</Text>
+        {status.data?.ai_aktif ? (
+          <>
+            <Text style={s.catatan}>{TEKS_NGOBROL.catatanKonteks}</Text>
+            <Text style={s.petunjuk}>{TEKS_NGOBROL.petunjukAi}</Text>
+          </>
+        ) : null}
 
         <PanelBantuan />
 
@@ -298,6 +331,7 @@ function Obrolan() {
               {m.disamarkan ? <Text style={s.disamarkan}>{TEKS_NGOBROL.dataDisamarkan}</Text> : null}
               {m.sumber ? <SumberJawaban sumber={m.sumber} /> : null}
               {m.webHabis ? <Text style={s.catatanKecil}>{TEKS_NGOBROL.webHabis}</Text> : null}
+              {m.tautan ? <KartuTautanDaftar tautan={m.tautan} /> : null}
               {m.kartu ? <KartuBantuanView kartu={m.kartu} /> : null}
             </View>
           )
@@ -416,6 +450,19 @@ const s = StyleSheet.create({
   sumberIsi: { ...teks.caption, color: color.textBody },
   sumberTautan: { color: color.textLink, textDecorationLine: 'underline' },
   catatanKecil: { ...teks.caption, color: color.textMuted, maxWidth: '85%' },
+  // LANJUT_078 — petunjuk AI aktif dan kartu tautan fitur.
+  petunjuk: { ...teks.bodySm, color: color.textBody, textAlign: 'center' },
+  tautanDaftar: { width: '85%', gap: spacing.s2 },
+  tautanKartu: {
+    gap: spacing.s1,
+    padding: spacing.s3,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: color.borderSoft,
+    backgroundColor: color.white,
+  },
+  tautanLabel: { ...teks.caption, fontFamily: font.semibold, color: color.blue600 },
+  tautanJudul: { ...teks.bodySm, fontFamily: font.semibold, color: color.textBody },
   disamarkan: { ...teks.caption, color: color.textMuted, maxWidth: '85%', textAlign: 'right' },
   teksBot: { ...teks.bodySm, color: color.textBody },
   teksPengguna: { ...teks.bodySm, color: color.white },

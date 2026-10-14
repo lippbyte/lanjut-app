@@ -12,7 +12,8 @@
 
 const env = require('../../config/env');
 
-const BATAS_WAKTU_MS = 45000;
+// LANJUT_078: 20 detik (sebelumnya 45). Lewat batas → GalatPenyedia → 503 AI_SEMENTARA_GAGAL di layanan.
+const BATAS_WAKTU_MS = 20000;
 const TOKEN_BALASAN_MAKS = 800;
 
 class GalatPenyedia extends Error {

@@ -1,14 +1,16 @@
 // Rute `ngobrol` — Ngobrol Bareng LANJUT dengan AI (LANJUT_051, LANJUT_053).
 //
 //   POST /                { pesan: [{ peran: 'pengguna' | 'bot', teks }] }
-//                         → { balasan, kartu_bantuan, uji_coba, data_pribadi_disamarkan }
+//                         → { balasan, kartu_bantuan, uji_coba, data_pribadi_disamarkan,
+//                             sumber, web_habis, konteks, tautan }   (konteks/tautan: LANJUT_078)
+//   GET  /status          { ai_aktif } (LANJUT_078) — untuk teks app yang khusus AI aktif
 //   GET  /kartu-bantuan   kartu layanan bantuan (hanya yang terverifikasi)
 //
-// Wajib login. Tanda bahaya AKUT dijawab server di sini, SEBELUM batas laju,
-// gerbang, dan saklar: siswa dalam bahaya selalu mendapat kartu bantuan,
-// tanpa AI. Gerbang persetujuan (bolehPakaiAi) diperiksa di layanan sebelum
-// apa pun dikirim ke penyedia. Batas pemakaian per akun dibaca dari
-// konfigurasi tiap permintaan.
+// Wajib login. Urutan: login → tanda bahaya AKUT (dijawab server di sini, SEBELUM
+// batas laju, gerbang, dan saklar: siswa dalam bahaya selalu mendapat kartu
+// bantuan, tanpa AI) → gerbang persetujuan (bolehPakaiAi) → saklar ai_aktif →
+// isi. LANJUT_078 mempertahankan urutan ini (pilihan percakapan, belum disetujui
+// PM). Batas pemakaian per akun dibaca dari konfigurasi tiap permintaan.
 
 const express = require('express');
 const rateLimit = require('express-rate-limit');
@@ -45,6 +47,14 @@ function tanganiTandaBahaya(req, res, next) {
 }
 
 router.get('/kartu-bantuan', (req, res) => sukses(res, keselamatan.kartuBantuan()));
+
+router.get('/status', async (req, res, next) => {
+  try {
+    sukses(res, await layanan.status());
+  } catch (e) {
+    next(e);
+  }
+});
 
 router.post(
   '/',

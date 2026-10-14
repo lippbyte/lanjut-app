@@ -488,10 +488,10 @@ dijawab dengan kartu bantuan walau AI mati.
 ### Alur `POST /api/v1/ngobrol` (wajib login)
 
 `{ pesan: [{ peran: "pengguna" | "bot", teks }] }` →
-`{ balasan, kartu_bantuan, uji_coba, data_pribadi_disamarkan }`. App mengirim
-riwayat sesi (maks. 20 pesan; server menerima maks. 30, pesan siswa maks.
-1.000 karakter, pesan terakhir harus dari siswa). Peran lain → 400, tanpa
-menggemakan isinya.
+`{ balasan, kartu_bantuan, uji_coba, data_pribadi_disamarkan, konteks, tautan }`.
+App mengirim riwayat sesi (maks. 20 pesan; server menerima maks. 30, pesan
+siswa maks. 500 karakter sejak LANJUT_078, pesan terakhir harus dari siswa).
+Peran lain → 400, tanpa menggemakan isinya.
 
 1. **Tanda bahaya akut** di pesan terbaru → server membalas sendiri dengan
    teks tetap + kartu bantuan. AI tidak dipanggil, dan ini berlaku **sebelum**
@@ -510,7 +510,10 @@ menggemakan isinya.
    sudah pasti tidak akut.
 4. **Data pribadi disamarkan** di pesan terbaru dan di seluruh riwayat
    (`src/modul/ngobrol/samarkan.js`): nomor telepon Indonesia, email, dan 16
-   angka mirip NIK menjadi `[disamarkan]`. Bila pesan terbaru disamarkan,
+   angka mirip NIK menjadi `[disamarkan]`. Sejak LANJUT_078 juga tanggal
+   lahir/TTL, `alamat:`, `Jl./Jalan … No …`, RT/RW, dan nama sekolah bernomor
+   (mis. "SMP Negeri 5 Contoh"); semuanya butuh kata penanda, angka biasa
+   tidak disentuh. Bila pesan terbaru disamarkan,
    `data_pribadi_disamarkan: true` dan app memberi tahu siswa.
 5. Ke penyedia hanya **dua pesan**: `system` (aturan + profil belajar: kelas,
    jenis sekolah, nama prodi impian, gaya belajar) dan **satu** `user` berisi
@@ -524,8 +527,18 @@ menggemakan isinya.
    Model juga diminta mengawali balasan dengan `[[BANTUAN]]` bila menilai
    siswa dalam bahaya: server membuang penanda itu dan menempelkan kartu
    bantuan.
-8. `max_tokens` 800, batas waktu 45 detik. Galat penyedia → `502 AI_GAGAL`,
-   tanpa rincian ke app.
+8. `max_tokens` 800, batas waktu 20 detik (LANJUT_078; sebelumnya 45).
+   Galat penyedia atau lewat waktu → `503 AI_SEMENTARA_GAGAL` (sebelumnya
+   `502 AI_GAGAL`), tanpa rincian ke app.
+8a. **Konteks fitur** (LANJUT_078, `src/modul/ngobrol/konteks.js`): server
+   memilih paling banyak **satu** konteks dari daftar tetap untuk dikirim ke
+   AI — `modul` (judul + ringkasan ≤600 karakter dari satu modul milik
+   sendiri, disamarkan), `saran` (nama mapel + jenis saran harian Level-In),
+   atau `event` (jenis, tanggal, sisa hari, mapel dari satu event terdekat;
+   tanpa materi bebas, dan hanya bila Persiapan Event boleh untuk akun itu)
+   — atau kosong. Kata kunci di `config/konteks-ngobrol.json` (DRAF). Kartu
+   `tautan` (maks. 3, satu per jenis) disusun server dari data akun sendiri
+   dan tidak dikirim ke AI. Isian klien selain `pesan` diabaikan.
 9. Hitungan harian (`pemakaian_ai_harian`) ditambah sesudah jawaban siap,
    tanpa ditunggu (lihat "Pemakaian AI harian" di bawah).
 
@@ -536,7 +549,12 @@ menggemakan isinya.
   kata yang cocok maupun isi pesan;
 - JSON rusak → `400 VALIDASI_GAGAL`, dan pesan galat parser (yang bisa memuat
   cuplikan isi) tidak dicetak, di semua rute;
-- hitungan harian `pemakaian_ai_harian` hanya berisi tanggal dan angka.
+- hitungan harian `pemakaian_ai_harian` hanya berisi tanggal dan angka;
+- sejak LANJUT_078 satu baris per permintaan yang sampai ke penyedia AI
+  (sesudah gerbang, saklar, dan kunci):
+  `[ngobrol] pengguna=<id> konteks=<modul|saran|event|kosong> tautan=<n>
+  status=<200|503> lama=<ms>ms`, tanpa isi pesan, ringkasan, atau kunci.
+  Jawaban AI juga tidak disimpan.
 
 Riwayat hanya hidup di memori app. Yang tetap terjadi: OpenRouter dan
 penyedia model menerima isi obrolan yang sudah disamarkan untuk membuat
@@ -547,11 +565,15 @@ balasan, sesuai kebijakan mereka.
 | `VALIDASI_GAGAL` | 400 | isi tidak sah, termasuk JSON rusak |
 | `AI_BELUM_DIIZINKAN` | 403 | gerbang persetujuan belum lolos |
 | `TERLALU_SERING` | 429 | lewat batas pemakaian akun |
-| `AI_GAGAL` | 502 | penyedia AI gagal, menolak, saldo habis, atau lewat waktu |
+| `AI_SEMENTARA_GAGAL` | 503 | penyedia AI gagal, menolak, saldo habis, atau lewat 20 detik (sebelum LANJUT_078: `AI_GAGAL` 502) |
 | `AI_TIDAK_TERSEDIA` | 503 | `OPENROUTER_API_KEY` kosong, atau pengaturan `ai_*` tidak sah |
 
 `GET /api/v1/ngobrol/kartu-bantuan` (wajib login, tanpa gerbang) mengembalikan
 kartu yang sama, untuk tautan "Butuh bicara dengan orang?" di app.
+
+`GET /api/v1/ngobrol/status` (wajib login, LANJUT_078) → `{ ai_aktif }`. App
+memakainya untuk menampilkan petunjuk dan catatan konteks hanya saat saklar
+menyala; saat mati, layar Ngobrol tidak berubah.
 
 ### Kartu bantuan & tanda bahaya (berkas di `server/config/`)
 
@@ -603,7 +625,7 @@ Nama parameter `provider` sesuai dokumentasi OpenRouter "Provider Routing".
 model tidak punya endpoint ZDR, jadi menyalakannya bisa membuat semua
 permintaan gagal. Uji dulu dengan akun uji. Setiap pembatasan (`deny`,
 `zdr`, `only`) bisa mempersempit penyedia yang tersedia untuk model; bila
-tidak ada yang cocok, permintaan gagal dan siswa melihat `AI_GAGAL`.
+tidak ada yang cocok, permintaan gagal dan siswa melihat `AI_SEMENTARA_GAGAL`.
 Pengaturan yang tidak sah membuat AI tidak dipakai (`503`), bukan diabaikan.
 Hitungan batas laju disimpan di memori proses, jadi hilang saat restart.
 

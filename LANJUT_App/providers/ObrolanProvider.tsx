@@ -2,7 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useRef, useSt
 import { useQueryClient } from '@tanstack/react-query';
 
 import { ApiError, apiFetch } from '../api/client';
-import type { BalasanNgobrol, KartuBantuan, PesanNgobrol, SumberModul, SumberWeb } from '../api/types';
+import type { BalasanNgobrol, KartuBantuan, PesanNgobrol, SumberModul, SumberWeb, TautanNgobrol } from '../api/types';
 import { KUNCI_PERSETUJUAN } from '../hooks/usePersetujuan';
 import { RIWAYAT_MAKS, pesanGalatNgobrol } from '../lib/ngobrol';
 import { useSesi } from './AuthProvider';
@@ -22,6 +22,8 @@ export type Pesan = {
   /** LANJUT_055: sumber jawaban materi (disusun server) dan kuota web habis. */
   sumber?: { modul: SumberModul[]; web: SumberWeb[] };
   webHabis?: boolean;
+  /** LANJUT_078: kartu tautan (≤3) dari server; hanya untuk balasan AI, bukan uji coba. */
+  tautan?: TautanNgobrol[];
 };
 
 type NilaiObrolan = {
@@ -87,6 +89,7 @@ export function ObrolanProvider({ namaTampilan, children }: { namaTampilan?: str
             ...(hasil.uji_coba ? { ujiCoba: true } : {}),
             ...(hasil.sumber && (hasil.sumber.modul.length || hasil.sumber.web.length) ? { sumber: hasil.sumber } : {}),
             ...(hasil.web_habis ? { webHabis: true } : {}),
+            ...(!hasil.uji_coba && hasil.tautan && hasil.tautan.length ? { tautan: hasil.tautan } : {}),
           },
         ]);
       } catch (err) {

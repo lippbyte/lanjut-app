@@ -336,4 +336,15 @@ export type BalasanNgobrol = {
   sumber: { modul: SumberModul[]; web: SumberWeb[] };
   /** Kuota pencarian web harian akun habis; jawaban tanpa web. */
   web_habis: boolean;
+  /** LANJUT_078: konteks fitur yang ringkasannya ikut ke AI (null = kosong / AI mati). */
+  konteks: 'modul' | 'saran' | 'event' | null;
+  /** LANJUT_078: kartu tautan (≤3, satu per jenis) disusun server; kosong saat AI mati. */
+  tautan: TautanNgobrol[];
 };
+// LANJUT_078 — kartu tautan di bawah jawaban Ngobrol; tombolnya membuka layar yang sudah ada.
+export type TautanNgobrol =
+  | { jenis: 'modul'; modul_id: string; judul: string }
+  | { jenis: 'saran'; mapel_id: string; judul: string }
+  | { jenis: 'event'; jenis_event: JenisEvent; tanggal: string; judul: string | null };
+/** GET /ngobrol/status (LANJUT_078). */
+export type StatusNgobrol = { ai_aktif: boolean };
