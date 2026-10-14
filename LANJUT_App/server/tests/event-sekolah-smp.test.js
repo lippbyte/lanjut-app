@@ -94,9 +94,13 @@ before(async () => {
 });
 
 after(async () => {
-  if (saklarSemula !== null) await aturSaklar(saklarSemula);
-  await pool.query('DELETE FROM kartu WHERE id IN (?)', [[...Object.values(K), BENIH.id]]);
-  await new Promise((resolve) => server.close(resolve));
+  try {
+    await pool.query('DELETE FROM kartu WHERE id IN (?)', [[...Object.values(K), BENIH.id]]);
+    await new Promise((resolve) => server.close(resolve));
+  } finally {
+    // LANJUT_077b: nilai awal saklar SELALU dipulihkan, walau pembersihan gagal.
+    if (saklarSemula !== null && saklarSemula !== undefined) await aturSaklar(saklarSemula);
+  }
   await lepasKunci();
   await pool.end();
 });
@@ -156,9 +160,12 @@ describe('LANJUT_076b §A: Persiapan Event hanya untuk kelas 7–9 (server)', ()
     const k12TanpaKebijakan = await akun('12', { setuju: false });
     const k8 = await akun('8');
     assert.equal((await panggil('POST', '/pengguna/event', null, { jenis: 'Kuis' })).status, 401);
-    await aturSaklar('0');
-    assert.equal((await daftarEvent(k10.token)).json.galat.kode, 'FITUR_BELUM_AKTIF', 'saklar sebelum kelas');
-    await aturSaklar('1');
+    try {
+      await aturSaklar('0');
+      assert.equal((await daftarEvent(k10.token)).json.galat.kode, 'FITUR_BELUM_AKTIF', 'saklar sebelum kelas');
+    } finally {
+      await aturSaklar('1'); // LANJUT_077b: nilai awal di berkas ini ('1', dari before) dipulihkan di finally
+    }
     assert.equal((await daftarEvent(k12TanpaKebijakan.token)).json.galat.kode, 'AI_BELUM_DIIZINKAN', 'kebijakan sebelum kelas');
     assert.equal((await buatEvent(k10.token, { jenis: 'Kuis' })).json.galat.kode, 'KELAS_TIDAK_DIDUKUNG', 'kelas sebelum isi');
     assert.equal((await buatEvent(k8.token, { jenis: 'Kuis' })).json.galat.kode, 'VALIDASI_GAGAL', 'SMP sampai ke pemeriksaan isi');

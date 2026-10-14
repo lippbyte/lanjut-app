@@ -20,7 +20,7 @@ import {
   type JenisSekolahMenengah,
   type Kelas,
 } from '../../lib/jenjang';
-import { teksKemajuanDataAkun } from '../../lib/jenjangSaya';
+import { tampilPintuJalurSaya, teksKemajuanDataAkun } from '../../lib/jenjangSaya';
 import { color, font, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Kartu, KartuPintu, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
 import { BELUM, DaftarOpsi, Field, Input, OpsiPil, PesanGalat, PilihProdi } from './auth/AuthUI';
@@ -47,12 +47,15 @@ export function AkunScreen() {
     <View style={gaya.layarIsiRapat}>
       {/* key: formulir yang setengah diisi tidak terbawa ke akun lain. */}
       <KartuJalur key={pengguna.id} pengguna={pengguna} />
-      <KartuPintu
-        ikon="posisi"
-        judul="Jalur Saya"
-        keterangan="Tahap kamu sekarang, dihitung dari jalur dan kemajuanmu."
-        onPress={() => router.push('/cek-posisi')}
-      />
+      {/* LANJUT_077b: SMP tidak melihat pintu ini (layarnya hanya placeholder kelas 12). */}
+      {tampilPintuJalurSaya(pengguna.kelas) ? (
+        <KartuPintu
+          ikon="posisi"
+          judul="Jalur Saya"
+          keterangan="Tahap kamu sekarang, dihitung dari jalur dan kemajuanmu."
+          onPress={() => router.push('/cek-posisi')}
+        />
+      ) : null}
 
       <SeksiJudul>Kemajuan</SeksiJudul>
       <RingkasanKemajuan />

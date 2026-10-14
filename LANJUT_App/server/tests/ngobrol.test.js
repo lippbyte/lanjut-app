@@ -53,12 +53,16 @@ before(async () => {
 });
 
 after(async () => {
-  await kembalikanKonfig(konfigAsli);
-  env.OPENROUTER_API_KEY = ENV_ASLI.kunci;
-  env.OPENROUTER_BASE_URL = ENV_ASLI.url;
-  await new Promise((resolve) => server.close(resolve));
-  await lepasKunci();
-  await pool.end();
+  try {
+    env.OPENROUTER_API_KEY = ENV_ASLI.kunci;
+    env.OPENROUTER_BASE_URL = ENV_ASLI.url;
+    await new Promise((resolve) => server.close(resolve));
+  } finally {
+    // LANJUT_077b: nilai awal saklar (ai_aktif dkk.) SELALU dipulihkan, walau penutupan gagal.
+    if (konfigAsli) await kembalikanKonfig(konfigAsli);
+    await lepasKunci?.();
+    await pool.end();
+  }
 });
 
 const aturKonfig = (kunci, nilai) => pool.query('UPDATE konfigurasi_levelin SET nilai = ? WHERE kunci = ?', [nilai, kunci]);

@@ -57,8 +57,12 @@ before(async () => {
 });
 
 after(async () => {
-  if (saklarSemula !== null) await aturSaklar(saklarSemula);
-  await new Promise((resolve) => server.close(resolve));
+  try {
+    await new Promise((resolve) => server.close(resolve));
+  } finally {
+    // LANJUT_077b: nilai awal saklar SELALU dipulihkan, walau penutupan gagal.
+    if (saklarSemula !== null && saklarSemula !== undefined) await aturSaklar(saklarSemula);
+  }
   await lepasKunci();
   await pool.end();
 });
@@ -152,22 +156,25 @@ describe('LANJUT_076 §C.7–8: migrasi 020_event_sekolah', () => {
     const pernyataan = pernyataanMigrasi(fs.readFileSync(path.join(DIR_MIGRASI, BERKAS_MIGRASI), 'utf8'));
     assert.ok(pernyataan.length >= 2);
     await aturSaklar('1'); // seandainya PM sudah menyalakannya, migrasi ulang tidak boleh mematikannya
-    const koneksi = await pool.getConnection();
     try {
-      for (let ulang = 0; ulang < 2; ulang++) {
-        for (const sql of pernyataan) await koneksi.query(sql);
+      const koneksi = await pool.getConnection();
+      try {
+        for (let ulang = 0; ulang < 2; ulang++) {
+          for (const sql of pernyataan) await koneksi.query(sql);
+        }
+      } finally {
+        koneksi.release();
       }
+      const [[{ tabel }]] = await pool.query(
+        "SELECT COUNT(*) AS tabel FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'event_sekolah'"
+      );
+      assert.equal(Number(tabel), 1);
+      const [saklar] = await pool.query("SELECT nilai FROM konfigurasi_levelin WHERE kunci = 'event_sekolah_aktif'");
+      assert.equal(saklar.length, 1);
+      assert.equal(saklar[0].nilai, '1');
     } finally {
-      koneksi.release();
+      await aturSaklar(saklarSemula ?? '0'); // LANJUT_077b: nilai awal dipulihkan di finally
     }
-    const [[{ tabel }]] = await pool.query(
-      "SELECT COUNT(*) AS tabel FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'event_sekolah'"
-    );
-    assert.equal(Number(tabel), 1);
-    const [saklar] = await pool.query("SELECT nilai FROM konfigurasi_levelin WHERE kunci = 'event_sekolah_aktif'");
-    assert.equal(saklar.length, 1);
-    assert.equal(saklar[0].nilai, '1');
-    await aturSaklar('0');
   });
 });
 
@@ -194,25 +201,32 @@ describe('LANJUT_076 §C.10: saklar mati (bawaan)', () => {
 
   test("Nilai saklar selain '1' dianggap mati (gagal-tertutup); tanpa login tetap 401", async () => {
     const a = await akun('8');
-    for (const nilai of ['ya', 'true', '2', '']) {
-      await aturSaklar(nilai);
-      assert.equal((await daftarEvent(a.token)).json.galat.kode, 'FITUR_BELUM_AKTIF', `nilai "${nilai}"`);
+    try {
+      for (const nilai of ['ya', 'true', '2', '']) {
+        await aturSaklar(nilai);
+        assert.equal((await daftarEvent(a.token)).json.galat.kode, 'FITUR_BELUM_AKTIF', `nilai "${nilai}"`);
+      }
+      await aturSaklar('0');
+      assert.equal((await daftarEvent(null)).status, 401);
+      await aturSaklar('1');
+      assert.equal((await daftarEvent(null)).status, 401);
+    } finally {
+      await aturSaklar('0'); // LANJUT_077b: nilai awal di blok ini ('0') dipulihkan di finally
     }
-    await aturSaklar('0');
-    assert.equal((await daftarEvent(null)).status, 401);
-    await aturSaklar('1');
-    assert.equal((await daftarEvent(null)).status, 401);
-    await aturSaklar('0');
   });
 
   test('Saklar dimatikan lagi: event yang sudah ada tidak terhapus, hanya tidak bisa dibuka', async () => {
     const a = await akun('8'); // LANJUT_076b: akun SMP (sebelumnya kelas 10)
-    await aturSaklar('1');
-    const dibuat = await buatEvent(a.token, {});
-    assert.equal(dibuat.status, 201);
-    await aturSaklar('0');
-    assert.equal((await daftarEvent(a.token)).status, 403);
-    assert.equal((await barisEvent(dibuat.json.data.id)).length, 1);
+    try {
+      await aturSaklar('1');
+      const dibuat = await buatEvent(a.token, {});
+      assert.equal(dibuat.status, 201);
+      await aturSaklar('0');
+      assert.equal((await daftarEvent(a.token)).status, 403);
+      assert.equal((await barisEvent(dibuat.json.data.id)).length, 1);
+    } finally {
+      await aturSaklar('0'); // LANJUT_077b: nilai awal di blok ini ('0') dipulihkan di finally
+    }
   });
 });
 
@@ -452,11 +466,15 @@ describe('LANJUT_076 §A: kelas 12 tidak berubah', () => {
       }
       return hasil;
     };
-    await aturSaklar('0');
-    const mati = await ambil();
-    await aturSaklar('1');
-    const aktif = await ambil();
-    assert.deepEqual(aktif, mati);
+    try {
+      await aturSaklar('0');
+      const mati = await ambil();
+      await aturSaklar('1');
+      const aktif = await ambil();
+      assert.deepEqual(aktif, mati);
+    } finally {
+      await aturSaklar(saklarSemula ?? '0'); // LANJUT_077b: nilai awal dipulihkan di finally
+    }
   });
 
   test('Bagian layar kelas 12 di DaftarPeriksaScreen.tsx identik dengan sebelum LANJUT_076; Persiapan Event hanya di layar bukan kelas 12', () => {

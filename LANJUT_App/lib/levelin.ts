@@ -13,7 +13,8 @@ export const TEKS_LEVELIN = {
   judul: 'Level-In',
   pengantar: 'Seberapa kuat kamu di tiap mapel, dihitung dari latihanmu sendiri.',
   kosongJudul: 'Belum ada latihan.',
-  kosongIsi: 'Level-In muncul setelah kamu menjawab kartu di Latihan. Mulai dari 5 kartu saja.',
+  // LANJUT_077b: tanpa angka ambang tetap (sebelumnya "… Mulai dari 5 kartu saja."); ambang ada di konfigurasi_levelin.
+  kosongIsi: 'Level-In muncul setelah kamu menjawab kartu di Latihan. Mulai dari sedikit kartu dulu saja.',
   kosongAksi: 'Mulai latihan',
   galat: 'Level-In belum bisa dimuat. Periksa sambungan internetmu, lalu coba lagi.',
   cobaLagi: 'Coba lagi',

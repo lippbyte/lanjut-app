@@ -191,6 +191,17 @@ export function teksDaftarPeriksaBukanKelas12(kelas: Kelas | null | undefined): 
 }
 
 /**
+ * Pintu "Jalur Saya" (/cek-posisi) di Data Akun. LANJUT_077b §B: TIDAK untuk SMP
+ * (kelas 7–9) — layar itu berisi tahap SNBP/SNBT/TKA, dan untuk kelas selain 12
+ * hanya placeholder "Bagian ini untuk kelas 12". Sama dengan grid Beranda SMP
+ * yang sudah menyembunyikan Jalur Saya sejak LANJUT_064. Kelas 10–12 dan akun
+ * tanpa kelas tidak berubah.
+ */
+export function tampilPintuJalurSaya(kelas: Kelas | null | undefined): boolean {
+  return kelompokJenjang(kelas) !== 'smp';
+}
+
+/**
  * Kalimat di kartu kemajuan Data Akun untuk akun bukan kelas 12 (kelas 12
  * melihat angka X dari Y). LANJUT_077 §B: SMP tidak lagi membaca kalimat tentang
  * kelas 12 — TEKS DRAF (salinan §4.11). Kelas 10–11 dan akun tanpa kelas tetap

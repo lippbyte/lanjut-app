@@ -211,7 +211,7 @@ yang menunjuk ke halaman akun ikut diganti di butir masing-masing (§4.2, §4.10
 kecuali isi kebijakan privasi (`lib/kebijakan-privasi.json`) yang menunggu review hukum.
 
 - **Tab tengah — label:** Ngobrol (tab ketiga dari lima, di antara Jenjang Saya dan Pilih Mapel; lingkaran lebih besar berisi huruf "L" sampai aset ikon kelinci dari Khalifa tersedia; membuka Ngobrol Bareng LANJUT)
-- **Nama fitur `/cek-posisi`:** Jalur Saya (judul bilah halaman dan kartu pintu di Data Akun, serta — khusus kelas 12 — label grid Beranda, tombol kartu "Mulai dari Sini", dan pintu Jenjang Saya; menggantikan nama lama)
+- **Nama fitur `/cek-posisi`:** Jalur Saya (judul bilah halaman dan kartu pintu di Data Akun, serta — khusus kelas 12 — label grid Beranda, tombol kartu "Mulai dari Sini", dan pintu Jenjang Saya; menggantikan nama lama). Sejak LANJUT_077b kartu pintu Data Akun tidak tampil untuk kelas 7–9.
 - **Nama halaman akun `/akun`:** Data Akun (judul bilah halaman dan judul bagian di kartu akun; isi bagiannya tidak berubah)
 - **Data Akun — judul form ubah:** Ubah Data Akun
 
@@ -613,7 +613,10 @@ ini sampai konten per jenjang didesain (`components/screens/KhususKelas12.tsx`).
 Pengecualian sejak LANJUT_069: Daftar Periksa kelas 10–11 memakai kalimat netral
 di §4.2 (blok LANJUT_069), bukan placeholder ini; sejak LANJUT_076b kelas 7–9 juga
 (§4.4 blok LANJUT_076b), jadi di Daftar Periksa placeholder ini tinggal untuk akun
-tanpa kelas. Di layar `/cek-posisi` (Jalur Saya) tetap tampil untuk kelas 7–11. Letak sebenarnya (diperiksa
+tanpa kelas. Di layar `/cek-posisi` (Jalur Saya) tetap tampil untuk kelas 7–11; sejak
+LANJUT_077b kelas 7–9 tidak lagi bisa membuka layar itu dari app (kartu pintunya di Data
+Akun disembunyikan untuk SMP), jadi dalam praktik placeholder ini dilihat kelas 10–11
+dan akun tanpa kelas. Letak sebenarnya (diperiksa
 LANJUT_071): placeholder ini hanya dirender di layar Jalur Saya `/cek-posisi` dan Daftar Periksa;
 Beranda (Linimasa) untuk kelas selain 12 sejak LANJUT_064 tidak menampilkan bagian
 tenggat maupun placeholder ini.
@@ -785,7 +788,7 @@ tanpa angka. Level-In terbuka untuk semua kelas (7–12).
 - **Latihan — tombol ke Level-In:** Lihat Level-In (di layar sebelum mulai dan di ringkasan akhir sesi)
 - **Beranda — pintu Level-In:** Level-In · Seberapa kuat kamu di tiap mapel, dari latihanmu.
 - **Level-In — judul & pengantar:** Level-In · Seberapa kuat kamu di tiap mapel, dihitung dari latihanmu sendiri.
-- **Level-In — belum pernah latihan:** Belum ada latihan. · Level-In muncul setelah kamu menjawab kartu di Latihan. Mulai dari 5 kartu saja. · tombol: Mulai latihan
+- **Level-In — belum pernah latihan:** Belum ada latihan. · Level-In muncul setelah kamu menjawab kartu di Latihan. Mulai dari sedikit kartu dulu saja. · tombol: Mulai latihan (LANJUT_077b: kalimat kedua tanpa angka ambang tetap, contoh kalimat PM; sebelumnya "Mulai dari 5 kartu saja.")
 - **Level-In — galat:** Level-In belum bisa dimuat. Periksa sambungan internetmu, lalu coba lagi. · tombol: Coba lagi
 - **Level-In — per mapel:** judul seksi: Per mapel · [n] kartu dijawab
 - **Level-In — level dan artinya:** Perlu penguatan dasar: Jawaban benarmu masih di bawah [batas bawah]. Ulangi dasar-dasarnya dulu, pelan-pelan saja. · Cukup, lanjut latihan: Jawaban benarmu [batas bawah]–[batas atas]. Terus latihan supaya makin mantap. · Sudah kuat: Jawaban benarmu di atas [batas atas]. Pertahankan, sesekali ulangi. · tanpa angka: Jawaban benarmu masih sedikit. … / Jawaban benarmu sudah lumayan. … / Hampir semua jawabanmu benar. …
