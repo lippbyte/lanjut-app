@@ -233,7 +233,7 @@ const PETA = [
         task: 'LANJUT_074',
         awal: '**Tab tengah — label:**',
         nama: 'Tab tengah Ngobrol',
-        di: 'Tab bar bawah, tab ketiga dari lima (lingkaran lebih besar berisi huruf "L" sampai aset ikon kelinci tersedia); membuka Ngobrol Bareng LANJUT.',
+        di: 'Tab bar bawah, tab ketiga dari lima (lingkaran biru berisi ikon kelinci LANJUT sejak 15 Okt 2026, menggantikan huruf "L"); membuka Ngobrol Bareng LANJUT.',
         oleh: 'Semua akun (akun tanpa persetujuan orang tua/wali atau tanpa kebijakan diterima melihat layar terkunci).',
       },
       {

@@ -13,7 +13,7 @@ export type TabBawah = {
   href: HrefTab;
   /** TEKS DRAF — salinan-teks-lanjut.md (label tab). */
   label: string;
-  /** Tab biasa memakai ikon garis; tab tengah memakai lingkaran placeholder. */
+  /** Tab biasa memakai ikon garis; tab tengah memakai ikon kelinci LANJUT di lingkaran. */
   ikon?: NamaIkon;
   /** Tab tengah: lingkaran lebih besar, sedikit menonjol ke atas garis tab bar. */
   tengah?: boolean;
@@ -22,14 +22,22 @@ export type TabBawah = {
 export const TAB_BAWAH: readonly TabBawah[] = [
   { href: '/linimasa', label: 'Beranda', ikon: 'beranda' },
   { href: '/jenjang-saya', label: 'Jenjang Saya', ikon: 'smk' },
-  // Ikon kelinci LANJUT menunggu aset dari Khalifa; sementara lingkaran berisi huruf "L".
+  // Tab tengah = AI LANJUT: lingkaran biru berisi ikon kelinci LANJUT (IKON_TAB_TENGAH).
   { href: '/ngobrol', label: 'Ngobrol', tengah: true },
   { href: '/pilih-mapel', label: 'Pilih Mapel', ikon: 'mapel' },
   { href: '/daftar-periksa', label: 'Daftar Periksa', ikon: 'checklist' },
 ];
 
-/** Huruf placeholder di lingkaran tab tengah, sampai aset ikon kelinci tersedia. */
-export const PLACEHOLDER_TAB_TENGAH = 'L';
+/**
+ * Ikon AI LANJUT (kelinci bertoga) di lingkaran tab tengah: maskot putih yang dipotong rapat
+ * dari `LANJUT UI mockups/assets/mascot/mascot-white.png` (192 px, latar transparan).
+ * Avatar jawaban AI di Ngobrol memakai versi biru (`assets/maskot-ai-biru.png`).
+ * Hanya nama berkas di sini; `require()` gambar ada di komponen (modul ini harus murni).
+ */
+export const IKON_TAB_TENGAH = 'maskot-ai-putih.png';
+export const IKON_AVATAR_AI = 'maskot-ai-biru.png';
+/** Sisi ikon kelinci di dalam lingkaran tab tengah (px). */
+export const UKURAN_IKON_TAB_TENGAH = 36;
 
 /** Tinggi area ikon tab biasa (px); lebarnya 44. */
 export const TINGGI_IKON_TAB = 28;

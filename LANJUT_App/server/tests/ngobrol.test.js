@@ -548,6 +548,8 @@ test('klien OpenRouter: permintaan benar (kunci di header, model & provider dari
       assert.equal(r.badan.model, PENGATURAN_UJI.model);
       assert.deepEqual(r.badan.provider, PENGATURAN_UJI.provider);
       assert.equal(r.badan.max_tokens, penyedia.TOKEN_BALASAN_MAKS);
+      // Optimasi chatbot (15 Okt 2026): penalaran secukupnya supaya batas token tidak habis sebelum jawaban.
+      assert.deepEqual(r.badan.reasoning, { effort: 'low' });
       assert.deepEqual(r.badan.messages, [{ role: 'system', content: 'aturan' }, { role: 'user', content: 'halo' }]);
       assert.equal(r.badan.stream, undefined);
     }

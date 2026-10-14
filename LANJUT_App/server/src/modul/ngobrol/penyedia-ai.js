@@ -14,7 +14,13 @@ const env = require('../../config/env');
 
 // LANJUT_078: 20 detik (sebelumnya 45). Lewat batas → GalatPenyedia → 503 AI_SEMENTARA_GAGAL di layanan.
 const BATAS_WAKTU_MS = 20000;
-const TOKEN_BALASAN_MAKS = 800;
+// Optimasi chatbot (15 Okt 2026): 800 → 2000. Batas ini ikut terpakai token penalaran model;
+// dengan 800, uji sungguhan menunjukkan balasan sering terpotong (finish_reason "length")
+// walau teks yang tampil pendek. Panjang balasan yang tampil tetap dijaga instruksi sistem.
+const TOKEN_BALASAN_MAKS = 2000;
+// Penalaran secukupnya untuk obrolan singkat (parameter `reasoning` OpenRouter); model yang
+// tidak bernalar mengabaikannya.
+const PENALARAN = Object.freeze({ effort: 'low' });
 
 class GalatPenyedia extends Error {
   constructor(jenis, statusHttp) {
@@ -72,6 +78,7 @@ async function mintaBalasan(pesan, pengaturan) {
           model: pengaturan.model,
           messages: pesan,
           max_tokens: pengaturan.max_tokens || TOKEN_BALASAN_MAKS,
+          reasoning: PENALARAN,
           temperature: 0.7,
           provider: pengaturan.provider,
           ...(pengaturan.plugins ? { plugins: pengaturan.plugins } : {}),
@@ -95,4 +102,4 @@ async function mintaBalasan(pesan, pengaturan) {
   }
 }
 
-module.exports = { mintaBalasan, bacaAnotasi, bacaToken, GalatPenyedia, BATAS_WAKTU_MS, TOKEN_BALASAN_MAKS };
+module.exports = { mintaBalasan, bacaAnotasi, bacaToken, GalatPenyedia, BATAS_WAKTU_MS, TOKEN_BALASAN_MAKS, PENALARAN };

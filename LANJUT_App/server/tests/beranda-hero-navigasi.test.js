@@ -163,7 +163,13 @@ describe('LANJUT_074 §C: carousel banner', () => {
 });
 
 describe('LANJUT_074 §D: tab bar lima tab', () => {
-  const { TAB_BAWAH, PLACEHOLDER_TAB_TENGAH, TINGGI_IKON_TAB, UKURAN_TAB_TENGAH } = navigasi;
+  const { TAB_BAWAH, IKON_TAB_TENGAH, IKON_AVATAR_AI, UKURAN_IKON_TAB_TENGAH, TINGGI_IKON_TAB, UKURAN_TAB_TENGAH } = navigasi;
+  /** PNG sungguhan dengan kanal alfa (tipe warna 6 = RGBA), lebar & tinggi dari header IHDR. */
+  const infoPng = (nama) => {
+    const b = fs.readFileSync(path.join(AKAR_APP, 'assets', nama));
+    assert.equal(b.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', `${nama} bukan PNG`);
+    return { lebar: b.readUInt32BE(16), tinggi: b.readUInt32BE(20), tipeWarna: b[25] };
+  };
 
   test('Lima tab; tab tengah Ngobrol di posisi ketiga', () => {
     assert.equal(TAB_BAWAH.length, 5);
@@ -186,23 +192,33 @@ describe('LANJUT_074 §D: tab bar lima tab', () => {
     );
   });
 
-  test('Tab tengah lebih besar dari ikon tab biasa, batas sentuh minimal 44 px, placeholder "L"', () => {
+  // Pilihan percakapan (15 Okt 2026, belum disetujui PM): placeholder "L" diganti ikon kelinci LANJUT.
+  test('Tab tengah lebih besar dari ikon tab biasa, batas sentuh minimal 44 px, ikon kelinci LANJUT muat di lingkaran', () => {
     assert.ok(UKURAN_TAB_TENGAH >= 44);
     assert.ok(UKURAN_TAB_TENGAH > TINGGI_IKON_TAB);
-    assert.equal(PLACEHOLDER_TAB_TENGAH, 'L');
-    assert.ok(kontras(color.blue600, color.white) >= 4.5, 'huruf putih di lingkaran blue600');
+    assert.ok(UKURAN_IKON_TAB_TENGAH < UKURAN_TAB_TENGAH, 'ikon di dalam lingkaran');
+    assert.ok(kontras(color.blue600, color.white) >= 4.5, 'kelinci putih di lingkaran blue600');
+    for (const nama of [IKON_TAB_TENGAH, IKON_AVATAR_AI]) {
+      const png = infoPng(nama);
+      assert.equal(png.tipeWarna, 6, `${nama} harus RGBA (latar transparan)`);
+      assert.equal(png.lebar, png.tinggi, `${nama} persegi`);
+      assert.ok(png.lebar >= 3 * UKURAN_IKON_TAB_TENGAH, `${nama} cukup tajam untuk layar 3x`);
+    }
   });
 
-  test('AppShell menggambar tab dari TAB_BAWAH, tanpa daftar tab sendiri dan tanpa gambar kelinci', () => {
+  test('AppShell menggambar tab dari TAB_BAWAH; tab tengah memakai ikon kelinci LANJUT, bukan gambar sendiri', () => {
     const shell = baca('components', 'layout', 'AppShell.tsx');
     assert.ok(shell.includes("from '../../lib/navigasi'"));
     assert.ok(shell.includes('TAB_BAWAH.map('));
     assert.ok(shell.includes('{t.tengah ? ('));
-    assert.ok(shell.includes('{PLACEHOLDER_TAB_TENGAH}'));
     assert.ok(!/const TAB\s*[:=]/.test(shell), 'daftar tab hanya di lib/navigasi.ts');
     assert.match(shell, /width: UKURAN_TAB_TENGAH,\s*height: UKURAN_TAB_TENGAH/);
     const tabBar = fungsi(shell, 'TabBar');
-    assert.ok(!/<Svg|<Path|<Image[^>]*kelinci/i.test(tabBar), 'tab tengah tidak menggambar ikon sendiri');
+    assert.ok(tabBar.includes(`<Image source={require('../../assets/${IKON_TAB_TENGAH}')} style={s.tengahIkon}`), 'tab tengah memakai ikon kelinci');
+    assert.ok(!/<Svg|<Path/.test(tabBar), 'tab tengah tidak menggambar ikon sendiri');
+    assert.ok(!/>\s*L\s*</.test(tabBar), 'huruf placeholder "L" sudah tidak ada');
+    // Ikon hiasan: lingkaran disembunyikan dari pembaca layar; nama tab tetap "Ngobrol".
+    assert.ok(tabBar.includes('aria-hidden') && tabBar.includes('accessible={false}'));
     // Lima tab di 360 px: label panjang boleh dua baris supaya nama tab lama tidak terpotong.
     assert.ok(tabBar.includes('numberOfLines={2}'));
     // Di /ngobrol tab tengah yang menyala (aturan tab di lib/navigasi.ts sejak LANJUT_075b);
@@ -217,6 +233,19 @@ describe('LANJUT_074 §D: tab bar lima tab', () => {
     assert.ok(rute.includes('NgobrolScreen'));
     const ngobrol = baca('components', 'screens', 'NgobrolScreen.tsx');
     assert.ok(ngobrol.includes('if (!persetujuan.boleh_pakai_ai) return <Terkunci />;'));
+  });
+
+  test('Balasan bot (dan "sedang mengetik") memakai avatar kelinci AI LANJUT; pesan siswa dan galat tidak', () => {
+    const ngobrol = baca('components', 'screens', 'NgobrolScreen.tsx');
+    const avatar = fungsi(ngobrol, 'AvatarAi');
+    assert.ok(avatar.includes(`require('../../assets/${IKON_AVATAR_AI}')`));
+    assert.ok(avatar.includes('aria-hidden') && avatar.includes('accessible={false}'), 'avatar hanya hiasan');
+    // Dua tempat: gelembung balasan bot dan indikator mengetik.
+    assert.equal(ngobrol.split('<AvatarAi />').length - 1, 2);
+    const cabangPengguna = ngobrol.slice(ngobrol.indexOf("{m.dari === 'pengguna' ? ("), ngobrol.indexOf('<AvatarAi />'));
+    assert.ok(cabangPengguna.includes('s.gelembungPengguna') && !cabangPengguna.includes('AvatarAi'), 'pesan siswa tanpa avatar');
+    const galat = ngobrol.slice(ngobrol.indexOf("m.dari === 'galat' ?"), ngobrol.indexOf("{m.dari === 'pengguna' ? ("));
+    assert.ok(!galat.includes('AvatarAi'), 'gelembung galat tanpa avatar');
   });
 });
 

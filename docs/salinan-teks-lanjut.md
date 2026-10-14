@@ -210,7 +210,7 @@ bawahnya (pilihan di percakapan, belum disetujui PM). Carousel tanpa judul seksi
 yang menunjuk ke halaman akun ikut diganti di butir masing-masing (§4.2, §4.10–§4.14),
 kecuali isi kebijakan privasi (`lib/kebijakan-privasi.json`) yang menunggu review hukum.
 
-- **Tab tengah — label:** Ngobrol (tab ketiga dari lima, di antara Jenjang Saya dan Pilih Mapel; lingkaran lebih besar berisi huruf "L" sampai aset ikon kelinci dari Khalifa tersedia; membuka Ngobrol Bareng LANJUT)
+- **Tab tengah — label:** Ngobrol (tab ketiga dari lima, di antara Jenjang Saya dan Pilih Mapel; lingkaran lebih besar berisi ikon kelinci LANJUT putih — sejak 15 Okt 2026 menggantikan huruf "L", pilihan percakapan, belum disetujui PM; ikon yang sama versi biru menjadi avatar balasan AI di Ngobrol; membuka Ngobrol Bareng LANJUT)
 - **Nama fitur `/cek-posisi`:** Jalur Saya (judul bilah halaman dan kartu pintu di Data Akun, serta — khusus kelas 12 — label grid Beranda, tombol kartu "Mulai dari Sini", dan pintu Jenjang Saya; menggantikan nama lama). Sejak LANJUT_077b kartu pintu Data Akun tidak tampil untuk kelas 7–9.
 - **Nama halaman akun `/akun`:** Data Akun (judul bilah halaman dan judul bagian di kartu akun; isi bagiannya tidak berubah)
 - **Data Akun — judul form ubah:** Ubah Data Akun
@@ -799,7 +799,7 @@ tanda bahaya ada di `server/config/kartu-bantuan.json` dan
 - **Kartu bantuan — penutup (server):** Bicara juga dengan orang dewasa yang kamu percaya: orang tua atau wali, guru BK, atau keluarga.
 - **Tolak di luar topik (server, diucapkan AI persis):** Aku cuma bisa bantu soal belajar, minat, dan rencana sekolah lanjutan, kuliah, atau karier. Mau lanjut bahas itu?
 - **Tolak abaikan aturan (server, diucapkan AI persis):** Aku tetap pakai aturanku sebagai teman ngobrol LANJUT, jadi permintaan itu tidak bisa aku ikuti. Ada yang mau kamu tanyakan soal rencana sekolah atau kuliahmu?
-- **Balasan saat AI dimatikan (server):** Fitur AI sedang dimatikan sementara, jadi aku belum bisa menjawab pesanmu. Sambil menunggu, kamu bisa buka menu Jenjang, Checklist, atau Arsip Belajar.
+- **Balasan saat AI dimatikan (server):** Fitur AI sedang dimatikan sementara, jadi aku belum bisa menjawab pesanmu. Sambil menunggu, kamu bisa buka tab Jenjang Saya atau Arsip Belajar di Beranda. (optimasi chatbot 15 Okt 2026: nama menu lama "menu Jenjang, Checklist" diganti; pilihan percakapan, belum disetujui PM)
 - **Ngobrol — label balasan uji coba:** Uji coba, bukan jawaban AI
 - **Ngobrol — peringatan data pribadi:** Jangan tulis nama lengkap, nomor HP, alamat, atau data pribadi lain di sini.
 - **Ngobrol — tautan kartu bantuan:** Butuh bicara dengan orang? · setelah dibuka: Sembunyikan

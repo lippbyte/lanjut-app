@@ -1,6 +1,6 @@
 # Lembar Review Draf Teks LANJUT
 
-Disusun otomatis dengan `npm run lembar-review-teks` (folder `LANJUT_App/server`) dari `docs/salinan-teks-lanjut.md` (sidik `2df58efa22e7`). Lembar ini **hanya bacaan**: mengisinya tidak mengubah teks apa pun di app. Bunyi teks disalin persis dari berkas sumber.
+Disusun otomatis dengan `npm run lembar-review-teks` (folder `LANJUT_App/server`) dari `docs/salinan-teks-lanjut.md` (sidik `89062fc06952`). Lembar ini **hanya bacaan**: mengisinya tidak mengubah teks apa pun di app. Bunyi teks disalin persis dari berkas sumber.
 
 **223 butir** dari 37 blok DRAF menunggu keputusan. 4 baris lain di blok DRAF tidak dijadikan butir karena sudah disetujui atau bukan teks yang tampil (lihat Lampiran).
 
@@ -718,12 +718,12 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 29. Tab tengah Ngobrol
 
 - **Asal:** §4.1 Linimasa · LANJUT_074 · baris 213
-- **Tampil di:** Tab bar bawah, tab ketiga dari lima (lingkaran lebih besar berisi huruf "L" sampai aset ikon kelinci tersedia); membuka Ngobrol Bareng LANJUT.
+- **Tampil di:** Tab bar bawah, tab ketiga dari lima (lingkaran biru berisi ikon kelinci LANJUT sejak 15 Okt 2026, menggantikan huruf "L"); membuka Ngobrol Bareng LANJUT.
 - **Dilihat oleh:** Semua akun (akun tanpa persetujuan orang tua/wali atau tanpa kebijakan diterima melihat layar terkunci).
 
 **Bunyi teks (persis dari berkas):**
 
-> **Tab tengah — label:** Ngobrol (tab ketiga dari lima, di antara Jenjang Saya dan Pilih Mapel; lingkaran lebih besar berisi huruf "L" sampai aset ikon kelinci dari Khalifa tersedia; membuka Ngobrol Bareng LANJUT)
+> **Tab tengah — label:** Ngobrol (tab ketiga dari lima, di antara Jenjang Saya dan Pilih Mapel; lingkaran lebih besar berisi ikon kelinci LANJUT putih — sejak 15 Okt 2026 menggantikan huruf "L", pilihan percakapan, belum disetujui PM; ikon yang sama versi biru menjadi avatar balasan AI di Ngobrol; membuka Ngobrol Bareng LANJUT)
 
 **Keputusan:**
 
@@ -1532,7 +1532,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 **Bunyi teks (persis dari berkas):**
 
-> **Balasan saat AI dimatikan (server):** Fitur AI sedang dimatikan sementara, jadi aku belum bisa menjawab pesanmu. Sambil menunggu, kamu bisa buka menu Jenjang, Checklist, atau Arsip Belajar.
+> **Balasan saat AI dimatikan (server):** Fitur AI sedang dimatikan sementara, jadi aku belum bisa menjawab pesanmu. Sambil menunggu, kamu bisa buka tab Jenjang Saya atau Arsip Belajar di Beranda. (optimasi chatbot 15 Okt 2026: nama menu lama "menu Jenjang, Checklist" diganti; pilihan percakapan, belum disetujui PM)
 
 **Keputusan:**
 

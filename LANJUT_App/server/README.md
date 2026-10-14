@@ -527,9 +527,21 @@ Peran lain → 400, tanpa menggemakan isinya.
    Model juga diminta mengawali balasan dengan `[[BANTUAN]]` bila menilai
    siswa dalam bahaya: server membuang penanda itu dan menempelkan kartu
    bantuan.
-8. `max_tokens` 800, batas waktu 20 detik (LANJUT_078; sebelumnya 45).
-   Galat penyedia atau lewat waktu → `503 AI_SEMENTARA_GAGAL` (sebelumnya
-   `502 AI_GAGAL`), tanpa rincian ke app.
+8. `max_tokens` 2000 dan `reasoning: { effort: "low" }` (optimasi chatbot
+   15 Okt 2026; sebelumnya 800 tanpa `reasoning`: uji sungguhan menunjukkan
+   token penalaran model menghabiskan batas 800 sehingga balasan terpotong),
+   batas waktu 20 detik (LANJUT_078; sebelumnya 45). Bila penyedia tetap
+   menandai `finish_reason: length`, server memangkas balasan ke kalimat utuh
+   terakhir (`rapikanTerpotong`). Galat penyedia atau lewat waktu →
+   `503 AI_SEMENTARA_GAGAL` (sebelumnya `502 AI_GAGAL`), tanpa rincian ke app.
+7a. **Panduan fitur** (optimasi chatbot 15 Okt 2026,
+   `src/modul/ngobrol/panduan-fitur.js`, isi `config/panduan-fitur.json`,
+   DRAF): instruksi sistem memuat daftar fitur LANJUT yang benar-benar ada
+   untuk **jenjang** siswa (SMP / kelas 10–11 / kelas 12 / tanpa kelas),
+   dengan nama dan letak persis seperti di app, supaya chatbot memandu ke
+   fitur yang benar dan tidak mengarang menu. Hanya kelompok jenjang yang
+   dipakai, bukan data akun lain. Persiapan Event, pencarian web, dan mikrofon
+   sengaja tidak dicantumkan.
 8a. **Konteks fitur** (LANJUT_078, `src/modul/ngobrol/konteks.js`): server
    memilih paling banyak **satu** konteks dari daftar tetap untuk dikirim ke
    AI — `modul` (judul + ringkasan ≤600 karakter dari satu modul milik
@@ -598,8 +610,13 @@ menyala; saat mati, layar Ngobrol tidak berubah.
 - `ngobrol-teks.json`: teks tetap server (balasan akut, judul/penutup kartu,
   kalimat tolak di luar topik dan tolak mengabaikan aturan, balasan uji
   coba). Sama persis dengan salinan teks §4.16.
+- `panduan-fitur.json` (optimasi chatbot 15 Okt 2026, DRAF): panduan fitur
+  per jenjang untuk instruksi sistem chatbot (lihat butir 7a di atas). Setiap
+  fitur punya `nama`, `letak`, `guna`, dan `untuk` (`smp`, `kelas10_11`,
+  `kelas12`, `umum`). Nama dan label bertanda kutip dijaga
+  `tests/ngobrol-optimasi.test.js` supaya tetap sama dengan app.
 
-Ketiga berkas dibaca dan diperiksa **saat server menyala**: berkas rusak
+Berkas-berkas ini dibaca dan diperiksa **saat server menyala**: berkas rusak
 membuat server gagal menyala. Mengubahnya perlu restart.
 
 ### Konfigurasi (tabel `konfigurasi_levelin`, tanpa restart)

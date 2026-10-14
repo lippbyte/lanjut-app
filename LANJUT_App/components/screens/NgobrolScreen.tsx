@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import {
+  Image,
   KeyboardAvoidingView,
   Linking,
   Platform,
@@ -126,6 +127,18 @@ function SumberJawaban({ sumber }: { sumber: NonNullable<Pesan['sumber']> }) {
           ))}
         </View>
       ) : null}
+    </View>
+  );
+}
+
+/**
+ * Avatar AI LANJUT (ikon kelinci, lib/navigasi.ts IKON_AVATAR_AI) di samping balasan bot.
+ * Hiasan saja: disembunyikan dari pembaca layar.
+ */
+function AvatarAi() {
+  return (
+    <View style={s.avatar} aria-hidden importantForAccessibility="no-hide-descendants">
+      <Image source={require('../../assets/maskot-ai-biru.png')} style={s.avatarIkon} resizeMode="contain" accessible={false} />
     </View>
   );
 }
@@ -330,11 +343,22 @@ function Obrolan() {
           ) : (
             <View key={m.id} style={m.dari === 'pengguna' ? s.barisKanan : s.barisKiri}>
               {m.ujiCoba ? <Text style={s.labelUjiCoba}>{TEKS_NGOBROL.labelUjiCoba}</Text> : null}
-              <View style={m.dari === 'pengguna' ? s.gelembungPengguna : s.gelembungBot}>
-                <Text style={m.dari === 'pengguna' ? s.teksPengguna : s.teksBot} selectable>
-                  {m.teks}
-                </Text>
-              </View>
+              {m.dari === 'pengguna' ? (
+                <View style={s.gelembungPengguna}>
+                  <Text style={s.teksPengguna} selectable>
+                    {m.teks}
+                  </Text>
+                </View>
+              ) : (
+                <View style={s.barisAvatar}>
+                  <AvatarAi />
+                  <View style={StyleSheet.flatten([s.gelembungBot, s.gelembungBesertaAvatar])}>
+                    <Text style={s.teksBot} selectable>
+                      {m.teks}
+                    </Text>
+                  </View>
+                </View>
+              )}
               {m.disamarkan ? <Text style={s.disamarkan}>{TEKS_NGOBROL.dataDisamarkan}</Text> : null}
               {m.sumber ? <SumberJawaban sumber={m.sumber} /> : null}
               {m.webHabis ? <Text style={s.catatanKecil}>{TEKS_NGOBROL.webHabis}</Text> : null}
@@ -346,8 +370,11 @@ function Obrolan() {
 
         {mengetik ? (
           <View style={s.barisKiri}>
-            <View style={s.gelembungBot}>
-              <Text style={s.mengetik}>LANJUT sedang mengetik…</Text>
+            <View style={s.barisAvatar}>
+              <AvatarAi />
+              <View style={StyleSheet.flatten([s.gelembungBot, s.gelembungBesertaAvatar])}>
+                <Text style={s.mengetik}>LANJUT sedang mengetik…</Text>
+              </View>
             </View>
           </View>
         ) : null}
@@ -406,6 +433,21 @@ const s = StyleSheet.create({
   gayaTeks: { ...teks.caption, color: color.textMuted, textAlign: 'center' },
   gayaTautan: { color: color.textLink, fontFamily: font.semibold, textDecorationLine: 'underline' },
   barisKiri: { alignItems: 'flex-start', gap: spacing.s2 },
+  // Avatar kelinci AI LANJUT di kiri gelembung bot; gelembung menyusut, avatar tidak.
+  barisAvatar: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.s2, maxWidth: '100%' },
+  avatar: {
+    width: 32,
+    height: 32,
+    flexShrink: 0,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: color.borderSoft,
+    backgroundColor: color.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarIkon: { width: 26, height: 26 },
+  gelembungBesertaAvatar: { flexShrink: 1, maxWidth: '85%' },
   barisKanan: { alignItems: 'flex-end' },
   gelembungBot: {
     maxWidth: '85%',

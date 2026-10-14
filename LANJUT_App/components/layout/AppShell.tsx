@@ -5,7 +5,7 @@ import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { judulEksplorasi } from '../../lib/eksplorasiKampus';
-import { PLACEHOLDER_TAB_TENGAH, TAB_BAWAH, TINGGI_IKON_TAB, UKURAN_TAB_TENGAH, tabAktif, type HrefTab } from '../../lib/navigasi';
+import { TAB_BAWAH, TINGGI_IKON_TAB, UKURAN_IKON_TAB_TENGAH, UKURAN_TAB_TENGAH, tabAktif, type HrefTab } from '../../lib/navigasi';
 import { useSesi } from '../../providers/AuthProvider';
 import { color, font, gradient, layout, radius, shadow, spacing, teks } from '../../theme/tokens';
 import { Ikon } from '../ui/Ikon';
@@ -140,13 +140,13 @@ function TabBar({ aktif }: { aktif: HrefTab | null }) {
           <Link key={t.href} href={t.href} asChild>
             <Pressable accessibilityRole="link" aria-current={sedang ? 'page' : undefined} style={s.tab}>
               {t.tengah ? (
-                // Huruf placeholder disembunyikan dari pembaca layar: nama tab tetap "Ngobrol".
+                // Ikon kelinci AI LANJUT disembunyikan dari pembaca layar: nama tab tetap "Ngobrol".
                 <View
                   style={StyleSheet.flatten([s.tengah, sedang && s.tengahAktif])}
                   aria-hidden
                   importantForAccessibility="no-hide-descendants"
                 >
-                  <Text style={s.tengahHuruf}>{PLACEHOLDER_TAB_TENGAH}</Text>
+                  <Image source={require('../../assets/maskot-ai-putih.png')} style={s.tengahIkon} resizeMode="contain" accessible={false} />
                 </View>
               ) : (
                 <View style={StyleSheet.flatten([s.tabIkon, sedang && s.tabIkonAktif])}>
@@ -238,7 +238,7 @@ const s = StyleSheet.create({
     boxShadow: shadow.s2,
   },
   tengahAktif: { borderColor: color.blue100 },
-  tengahHuruf: { fontFamily: font.semibold, fontSize: 24, lineHeight: 30, color: color.white },
+  tengahIkon: { width: UKURAN_IKON_TAB_TENGAH, height: UKURAN_IKON_TAB_TENGAH },
   tabLabel: { ...teks.caption, fontSize: 11, lineHeight: 15, color: color.ink500, textAlign: 'center' },
   tabLabelAktif: { color: color.blue600, fontFamily: font.semibold },
   ditekan: { opacity: 0.85, transform: [{ scale: 0.97 }] },
