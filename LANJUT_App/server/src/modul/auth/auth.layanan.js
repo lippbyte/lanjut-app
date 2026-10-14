@@ -37,6 +37,19 @@ async function pastikanProdiValid(prodiTujuan) {
   }
 }
 
+/** Kolom minat_rumpun → larik string; NULL atau isi tak terbaca → []. */
+function larikMinat(nilai) {
+  let isi = nilai;
+  if (typeof isi === 'string') {
+    try {
+      isi = JSON.parse(isi);
+    } catch {
+      return [];
+    }
+  }
+  return Array.isArray(isi) ? isi.filter((r) => typeof r === 'string') : [];
+}
+
 function bentukProfil(baris) {
   return {
     id: baris.id,
@@ -52,6 +65,9 @@ function bentukProfil(baris) {
     // kolom DB — hanya nama medan di respons ini.
     prodi_impian: baris.prodi_tujuan,
     gaya_belajar: baris.gaya_belajar ?? null, // LANJUT_032
+    // LANJUT_075: larik nama rumpun; NULL (belum memilih) → []. JSON bisa datang
+    // sebagai larik (MySQL) atau teks (MariaDB menyimpan JSON sebagai LONGTEXT).
+    minat_rumpun: larikMinat(baris.minat_rumpun),
     dibuat_pada: keIso(baris.dibuat_pada),
     terakhir_masuk_pada: keIso(baris.terakhir_masuk_pada),
   };

@@ -75,10 +75,13 @@ export const KARTU_PILIH_MAPEL: KartuBeranda = {
   href: '/pilih-mapel',
 };
 
+// LANJUT_075: kartu grid ke /eksplorasi-tujuan bernama "Eksplorasi Kampus" (DRAF) untuk
+// semua jenjang — kartu yang sama diganti nama di SMP & 10–11, ditambah di kelas 12
+// (pilihan di percakapan, belum disetujui PM). Pintu Jenjang Saya tetap "Eksplorasi Tujuan".
 export const KARTU_EKSPLORASI_TUJUAN: KartuBeranda = {
   id: 'eksplorasi-tujuan',
-  judul: 'Eksplorasi Tujuan',
-  labelPendek: 'Eksplorasi Tujuan',
+  judul: 'Eksplorasi Kampus',
+  labelPendek: 'Eksplorasi Kampus',
   keterangan: 'Intip prodi kuliah: belajar apa dan lulusannya kerja di mana.',
   ikon: 'posisi',
   href: '/eksplorasi-tujuan',
@@ -106,13 +109,13 @@ export const KARTU_DAFTAR_PERIKSA: KartuBeranda = {
  * Menentukan daftar kartu pintu Beranda berdasarkan kelas akun (LANJUT_064).
  *
  * - SMP (kelas 7–9): TIDAK menampilkan "Jalur Saya" (/cek-posisi). Digantikan dengan kartu
- *   dari "Jenjang Saya" untuk SMP (Eksplorasi Tujuan, Gaya Belajar) plus kartu
+ *   dari "Jenjang Saya" untuk SMP (Eksplorasi Kampus, Gaya Belajar) plus kartu
  *   umum (Arsip Belajar, Level-In, Ngobrol Bareng LANJUT, Cerita Alumni).
- * - Kelas 10–11: kartu dari "Jenjang Saya" untuk 10–11 (Pilih Mapel, Eksplorasi Tujuan,
+ * - Kelas 10–11: kartu dari "Jenjang Saya" untuk 10–11 (Pilih Mapel, Eksplorasi Kampus,
  *   Gaya Belajar) plus kartu umum (Arsip Belajar, Level-In, Ngobrol Bareng LANJUT,
  *   Daftar Periksa, Cerita Alumni).
- * - Kelas 12: kartu tetap seperti sebelumnya (Jalur Saya, Arsip Belajar,
- *   Level-In, Ngobrol Bareng LANJUT, Cerita Alumni). Catatan: kartu hero tenggat
+ * - Kelas 12: Jalur Saya, Eksplorasi Kampus (LANJUT_075), Arsip Belajar,
+ *   Level-In, Ngobrol Bareng LANJUT, Cerita Alumni. Catatan: kartu hero tenggat
  *   dirender terpisah di atas kartu-kartu ini hanya untuk kelas 12 (LANJUT_074).
  * - Tanpa kelas / tidak dikenal: fallback ke kartu umum tanpa galat.
  *
@@ -148,6 +151,7 @@ export function daftarKartuBeranda(kelas: Kelas | null | undefined): KartuBerand
   if (kelompok === 'kelas12') {
     return [
       KARTU_CEK_POSISI,
+      KARTU_EKSPLORASI_TUJUAN,
       KARTU_ARSIP,
       KARTU_LEVEL_IN,
       KARTU_NGOBROL,

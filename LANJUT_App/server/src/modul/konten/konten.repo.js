@@ -83,6 +83,16 @@ async function prodiAda(prodiId) {
   return baris.length > 0;
 }
 
+/**
+ * Daftar rumpun yang sah (LANJUT_075) = nilai berbeda di prodi.rumpun — sumber
+ * yang sama dengan validasi berlaku_untuk_rumpun di benih checklist. Tidak ada
+ * tabel atau daftar rumpun terpisah.
+ */
+async function ambilDaftarRumpun() {
+  const [baris] = await pool.query('SELECT DISTINCT rumpun FROM prodi ORDER BY rumpun ASC');
+  return baris.map((b) => b.rumpun);
+}
+
 /** F4 — WAJIB menyaring izin_tayang=1 AND tayang=1 (§4.4). Disaring di sini,
  * bukan di rute, supaya tidak bisa terlewat. */
 async function ambilCeritaAlumniTayang() {
@@ -155,6 +165,7 @@ module.exports = {
   ambilMapelUntukProdi,
   ambilAgregasiMapelLintasProdi,
   prodiAda,
+  ambilDaftarRumpun,
   ambilCeritaAlumniTayang,
   ambilChecklist,
 };

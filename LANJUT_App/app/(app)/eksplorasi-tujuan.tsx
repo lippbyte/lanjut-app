@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { EksplorasiTujuanScreen } from '../../components/screens/EksplorasiTujuanScreen';
+import { EksplorasiKampusScreen } from '../../components/screens/EksplorasiKampusScreen';
 
+// LANJUT_075: isi per jenjang; kelas 12 tetap layar F10 (EksplorasiTujuanScreen).
 export default function EksplorasiTujuanRoute() {
-  return <EksplorasiTujuanScreen />;
+  return <EksplorasiKampusScreen />;
 }

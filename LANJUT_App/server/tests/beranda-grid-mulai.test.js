@@ -83,11 +83,12 @@ describe('LANJUT_065 §A: Grid Menu Beranda per Jenjang', () => {
       }
     }
 
-    // Kelas 12: 5 item
+    // Kelas 12: 6 item (LANJUT_075 menambah Eksplorasi Kampus; grid belum penuh, 5 dari 8)
     const kartu12 = daftarKartuBeranda('12');
-    assert.equal(kartu12.length, 5, 'kelas 12 harus memiliki 5 item grid');
+    assert.equal(kartu12.length, 6, 'kelas 12 harus memiliki 6 item grid');
     assert.deepEqual(kartu12.map((x) => x.href), [
       '/cek-posisi',
+      '/eksplorasi-tujuan',
       '/arsip',
       '/level-in',
       '/ngobrol',

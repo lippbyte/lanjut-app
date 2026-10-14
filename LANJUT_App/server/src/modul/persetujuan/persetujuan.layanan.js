@@ -55,6 +55,17 @@ async function bolehPakaiAi(penggunaId) {
   return nilaiGerbang(terakhirPerJenis(catatan), cfg);
 }
 
+/**
+ * Kebijakan privasi versi yang berlaku sudah diterima akun ini (LANJUT_075):
+ * syarat menyimpan data minat (minat_rumpun) untuk siswa di bawah 18 tahun.
+ * Gagal-tertutup seperti gerbang AI: konfigurasi tidak sah → false.
+ */
+async function kebijakanDiterima(penggunaId) {
+  if (!penggunaId) return false;
+  const [cfg, catatan] = await Promise.all([ambilKonfigurasi(), repo.catatanAkun(penggunaId)]);
+  return kebijakanTerkini(terakhirPerJenis(catatan), cfg);
+}
+
 const bentukCatatan = (c) => c && { status: c.status, versi: c.versi, sumber: c.sumber, dicatat_pada: keIso(c.dicatat_pada) };
 
 /** GET /persetujuan/saya — hanya akun sendiri. */
@@ -117,6 +128,7 @@ async function catatOlehSiswa(penggunaId, { jenis, versi }) {
 
 module.exports = {
   bolehPakaiAi,
+  kebijakanDiterima,
   statusSaya,
   catatOlehSiswa,
   terimaKebijakan,

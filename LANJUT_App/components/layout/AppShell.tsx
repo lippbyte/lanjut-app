@@ -4,7 +4,9 @@ import { Link, usePathname, useRouter } from 'expo-router';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { judulEksplorasi } from '../../lib/eksplorasiKampus';
 import { PLACEHOLDER_TAB_TENGAH, TAB_BAWAH, TINGGI_IKON_TAB, UKURAN_TAB_TENGAH, type HrefTab } from '../../lib/navigasi';
+import { useSesi } from '../../providers/AuthProvider';
 import { color, font, gradient, layout, radius, shadow, spacing, teks } from '../../theme/tokens';
 import { Ikon } from '../ui/Ikon';
 
@@ -59,7 +61,9 @@ function tabAktif(pathname: string): HrefTab {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const judulAnak = HALAMAN_ANAK[pathname];
+  const { pengguna } = useSesi();
+  // LANJUT_075: judul /eksplorasi-tujuan mengikuti jenjang (pilihan di percakapan, belum disetujui PM).
+  const judulAnak = pathname === '/eksplorasi-tujuan' ? judulEksplorasi(pengguna?.kelas) : HALAMAN_ANAK[pathname];
 
   return (
     <View style={s.akar}>

@@ -63,10 +63,11 @@ const KARTU_PILIH_MAPEL = {
   href: '/pilih-mapel',
 };
 
+// LANJUT_075: grid memakai nama "Eksplorasi Kampus" untuk /eksplorasi-tujuan.
 const KARTU_EKSPLORASI_TUJUAN = {
   id: 'eksplorasi-tujuan',
-  judul: 'Eksplorasi Tujuan',
-  labelPendek: 'Eksplorasi Tujuan',
+  judul: 'Eksplorasi Kampus',
+  labelPendek: 'Eksplorasi Kampus',
   keterangan: 'Intip prodi kuliah: belajar apa dan lulusannya kerja di mana.',
   ikon: 'posisi',
   href: '/eksplorasi-tujuan',
@@ -120,6 +121,7 @@ function daftarKartuBeranda(kelas) {
   if (kelompok === 'kelas12') {
     return [
       KARTU_CEK_POSISI,
+      KARTU_EKSPLORASI_TUJUAN,
       KARTU_ARSIP,
       KARTU_LEVEL_IN,
       KARTU_NGOBROL,

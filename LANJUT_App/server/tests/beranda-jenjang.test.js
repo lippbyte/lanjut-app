@@ -36,13 +36,14 @@ async function panggil(metode, path, token, body) {
 }
 
 describe('LANJUT_064: Logika Kartu Beranda per Jenjang', () => {
-  test('SMP (kelas 7–9): Jalur Saya disembunyikan, diganti kartu Jenjang Saya (Eksplorasi Tujuan, Gaya Belajar) + kartu umum', () => {
+  // LANJUT_075: kartu /eksplorasi-tujuan di grid bernama "Eksplorasi Kampus".
+  test('SMP (kelas 7–9): Jalur Saya disembunyikan, diganti kartu Jenjang Saya (Eksplorasi Kampus, Gaya Belajar) + kartu umum', () => {
     for (const k of ['7', '8', '9']) {
       const kartu = daftarKartuBeranda(k);
       const judul = kartu.map((x) => x.judul);
 
       assert.deepEqual(judul, [
-        'Eksplorasi Tujuan',
+        'Eksplorasi Kampus',
         'Gaya Belajar',
         'Arsip Belajar',
         'Level-In',
@@ -63,14 +64,14 @@ describe('LANJUT_064: Logika Kartu Beranda per Jenjang', () => {
     }
   });
 
-  test('Kelas 10–11: kartu Jenjang Saya (Pilih Mapel, Eksplorasi Tujuan, Gaya Belajar) + kartu umum (Arsip, Level-In, Ngobrol, Daftar Periksa, Cerita Alumni)', () => {
+  test('Kelas 10–11: kartu Jenjang Saya (Pilih Mapel, Eksplorasi Kampus, Gaya Belajar) + kartu umum (Arsip, Level-In, Ngobrol, Daftar Periksa, Cerita Alumni)', () => {
     for (const k of ['10', '11']) {
       const kartu = daftarKartuBeranda(k);
       const judul = kartu.map((x) => x.judul);
 
       assert.deepEqual(judul, [
         'Pilih Mapel',
-        'Eksplorasi Tujuan',
+        'Eksplorasi Kampus',
         'Gaya Belajar',
         'Arsip Belajar',
         'Level-In',
@@ -90,13 +91,15 @@ describe('LANJUT_064: Logika Kartu Beranda per Jenjang', () => {
     }
   });
 
-  // LANJUT_074: kartu /cek-posisi kini berlabel "Jalur Saya"; urutan & isi lain tetap.
-  test('Kelas 12: kartu pintu tetap (Jalur Saya, Arsip, Level-In, Ngobrol, Cerita Alumni netral)', () => {
+  // LANJUT_074: kartu /cek-posisi kini berlabel "Jalur Saya". LANJUT_075: Eksplorasi
+  // Kampus ditambah sesudahnya; urutan & isi lain tetap.
+  test('Kelas 12: Jalur Saya, Eksplorasi Kampus, Arsip, Level-In, Ngobrol, Cerita Alumni netral', () => {
     const kartu = daftarKartuBeranda('12');
     const judul = kartu.map((x) => x.judul);
 
     assert.deepEqual(judul, [
       'Jalur Saya',
+      'Eksplorasi Kampus',
       'Arsip Belajar',
       'Level-In',
       'Ngobrol Bareng LANJUT',

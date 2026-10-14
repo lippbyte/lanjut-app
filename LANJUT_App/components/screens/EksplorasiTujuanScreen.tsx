@@ -14,8 +14,9 @@ import { Ikon, Kartu, KeadaanGalat, Kosong, Lencana, Memuat, Penafian, SeksiJudu
 // Salinan teks §4.9 (docs/salinan-teks-lanjut.md) — jangan ditulis ulang di sini.
 const DISCLAIMER = 'Data ini rangkuman dari SNPMB/BAN-PT, bisa berubah. Cek laman resmi untuk info terkini.';
 const SEKSI_KOSONG = 'Bagian ini masih kami siapkan.';
-// Salinan teks §4.9, LANJUT_044 — DRAF belum disetujui Khalifa.
-const PENJELAS_PERKIRAAN =
+// Salinan teks §4.9, LANJUT_044 — DRAF belum disetujui Khalifa. Juga dipakai
+// layar minat SMP/10–11 (EksplorasiKampusScreen, LANJUT_075).
+export const PENJELAS_PERKIRAAN =
   'Perkiraan artinya bagian ini disusun dari sumber umum, belum dari sumber resmi, jadi cek lagi ke kampus tujuanmu.';
 
 /**

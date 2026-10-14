@@ -20,6 +20,9 @@ export type Pengguna = {
   prodi_impian: string | null;
   // Opsional di tipe: sesi yang tersimpan sebelum LANJUT_032 belum punya medan ini.
   gaya_belajar?: GayaBelajar | null;
+  // LANJUT_075: nama rumpun (bidang minat), [] = belum memilih. Opsional di tipe:
+  // sesi yang tersimpan sebelum LANJUT_075 belum punya medan ini.
+  minat_rumpun?: string[];
   dibuat_pada: string | null;
   terakhir_masuk_pada: string | null;
 };
@@ -80,6 +83,9 @@ export type DataUbahProfil = {
   jenis_sekolah?: JenisSekolah | null;
   prodi_impian?: string | null;
   gaya_belajar?: GayaBelajar | null;
+  // LANJUT_075: [] mengosongkan. Server menolak nilai di luar daftar rumpun
+  // (RUMPUN_TIDAK_SAH) dan akun yang belum menerima kebijakan (AI_BELUM_DIIZINKAN).
+  minat_rumpun?: string[];
 };
 
 /** PATCH /pengguna/saya — mengembalikan profil terbaru (bentuk sama dengan /auth/saya). */

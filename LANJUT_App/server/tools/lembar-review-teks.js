@@ -588,6 +588,57 @@ const PETA = [
     ],
   },
   {
+    // LANJUT_075 — layar minat di /eksplorasi-tujuan (components/screens/EksplorasiKampusScreen.tsx,
+    // teks di lib/eksplorasiKampus.ts). Kelas 12 tetap melihat F10 di atas.
+    kelompok: 'Eksplorasi Kampus (SMP & kelas 10–11)',
+    butir: [
+      { task: 'LANJUT_075', awal: '**Kartu grid Beranda:**', nama: 'Kartu grid "Eksplorasi Kampus"', di: 'Beranda, grid ikon (label pendek di bawah ikon).', oleh: 'Kelas 7–12 (akun tanpa kelas tidak).' },
+      { task: 'LANJUT_075', awal: '**Judul bilah halaman SMP:**', nama: 'Judul layar SMP', di: 'Bilah halaman /eksplorasi-tujuan.', oleh: 'Kelas 7–9.' },
+      { task: 'LANJUT_075', awal: '**Judul bilah halaman kelas 10–11:**', nama: 'Judul layar kelas 10–11', di: 'Bilah halaman /eksplorasi-tujuan.', oleh: 'Kelas 10–11.' },
+      { task: 'LANJUT_075', awal: '**SMP — pengantar:**', nama: 'Pengantar SMP', di: 'Kenali Minatmu, paling atas.', oleh: 'Kelas 7–9.' },
+      { task: 'LANJUT_075', awal: '**Kelas 10–11 — pengantar:**', nama: 'Pengantar kelas 10–11', di: 'Jalur dan Bidangmu, paling atas.', oleh: 'Kelas 10–11.' },
+      { task: 'LANJUT_075', awal: '**Kelas 10–11 — judul seksi jalur:**', nama: 'Judul seksi jalur masuk', di: 'Jalur dan Bidangmu, di atas tiga kartu jalur, dengan lencana dan penjelas Perkiraan.', oleh: 'Kelas 10–11.' },
+      ...[
+        ['**Jalur SNBP:**', 'SNBP', 'Dinilai dari nilai rapor dan prestasi, tanpa tes tertulis; sekolah menentukan siapa yang bisa ikut.'],
+        ['**Jalur SNBT:**', 'SNBT', 'Dinilai dari hasil tes tertulis berbasis komputer.'],
+        ['**Jalur seleksi mandiri:**', 'seleksi mandiri', 'Diadakan sendiri oleh tiap perguruan tinggi negeri; caranya berbeda di tiap kampus.'],
+      ].map(([awal, jalur, klaim]) => ({
+        task: 'LANJUT_075',
+        awal,
+        nama: `Penjelasan jalur ${jalur}`,
+        di: 'Jalur dan Bidangmu, kartu jalur masuk (tanpa tanggal).',
+        oleh: 'Kelas 10–11.',
+        faktual: { klaim, sumber: 'Laman resmi SNPMB (SNBP, SNBT) dan laman seleksi mandiri PTN. Bagian ini berlabel "Perkiraan" sampai dicek.' },
+      })),
+      { task: 'LANJUT_075', awal: '**Judul seksi bidang:**', nama: 'Judul seksi bidang minat', di: 'Kenali Minatmu dan Jalur dan Bidangmu, di atas kartu bidang, dengan lencana dan penjelas Perkiraan.', oleh: 'Kelas 7–11.' },
+      { task: 'LANJUT_075', awal: '**Petunjuk jumlah:**', nama: 'Petunjuk jumlah pilihan', di: 'Di bawah judul seksi bidang.', oleh: 'Kelas 7–11.' },
+      ...['Ekonomi & Bisnis', 'Kesehatan', 'Sosial & Humaniora', 'Teknologi & Rekayasa'].map((rumpun) => ({
+        task: 'LANJUT_075',
+        awal: `**Bidang ${rumpun}:**`,
+        nama: `Penjelasan bidang ${rumpun}`,
+        di: 'Kartu bidang yang bisa dicentang (nama rumpun dari data prodi).',
+        oleh: 'Kelas 7–11.',
+        faktual: {
+          klaim: 'Gambaran umum yang dipelajari dan contoh pekerjaan (tanpa nama prodi, angka, atau gaji).',
+          sumber: 'Tinjauan Khalifa/guru BK; bila perlu dicocokkan dengan deskripsi rumpun ilmu resmi. Berlabel "Perkiraan".',
+        },
+      })),
+      { task: 'LANJUT_075', awal: '**Tombol simpan:**', nama: 'Tombol simpan', di: 'Di bawah kartu bidang, hanya saat pilihan berubah.', oleh: 'Kelas 7–11.' },
+      { task: 'LANJUT_075', awal: '**Sesudah tersimpan:**', nama: 'Konfirmasi tersimpan', di: 'Menggantikan tombol simpan bila pilihan sama dengan yang tersimpan.', oleh: 'Kelas 7–11 yang sudah menyimpan.' },
+      {
+        task: 'LANJUT_075',
+        awal: '**Belum menerima kebijakan privasi',
+        nama: 'Belum menerima kebijakan',
+        di: 'Di atas tombol simpan, sesudah server menolak (403 AI_BELUM_DIIZINKAN); tautan ke /terima-kebijakan.',
+        oleh: 'Akun kelas 7–11 yang belum menerima kebijakan privasi versi berlaku.',
+      },
+      { task: 'LANJUT_075', awal: '**Gagal menyimpan:**', nama: 'Gagal menyimpan', di: 'Di atas tombol simpan, bila simpan gagal karena sebab lain.', oleh: 'Kelas 7–11.' },
+      { task: 'LANJUT_075', awal: '**Daftar bidang gagal dimuat:**', nama: 'Daftar bidang gagal dimuat', di: 'Seksi bidang, bila data prodi tidak bisa dimuat.', oleh: 'Kelas 7–11, saat tidak tersambung.' },
+      { task: 'LANJUT_075', awal: '**SMP — kalimat penutup:**', nama: 'Kalimat penutup SMP', di: 'Kenali Minatmu, paling bawah.', oleh: 'Kelas 7–9.' },
+      { task: 'LANJUT_075', awal: '**Kelas 10–11 — pengganti daftar prodi:**', nama: 'Pengganti daftar prodi', di: 'Jalur dan Bidangmu, paling bawah.', oleh: 'Kelas 10–11.' },
+    ],
+  },
+  {
     kelompok: 'Arsip Belajar',
     butir: [
       { task: 'LANJUT_039', awal: '**Pintu di Beranda:**', nama: 'Pintu di Beranda', di: 'Beranda (Linimasa), kartu pintu.', oleh: 'Semua kelas.' },

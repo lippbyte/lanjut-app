@@ -487,6 +487,41 @@ baris "Sumber: SNPMB …" pada kartu peminat dan di penafian.
 - **Ada bagian "Perkiraan":** Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal]. Bagian bertanda Perkiraan belum dicek ke sumber resmi.
 - **Ada bagian tanpa status di data** (tidak terjadi di data sekarang; aman-gagal): Bagian bertanda Terverifikasi dicek ke sumber resmi pada [tanggal].
 
+**LANJUT_App (LANJUT_075) — Eksplorasi Kampus untuk SMP dan kelas 10–11. DRAF, belum
+disetujui Khalifa.** Rute `/eksplorasi-tujuan` kini berisi layar per jenjang
+(`lib/eksplorasiKampus.ts`): SMP "Kenali Minatmu" (bidang minat saja), kelas 10–11
+"Jalur dan Bidangmu" (jalur masuk umum + bidang minat); kelas 12 dan akun tanpa
+kelas tetap layar F10 di atas, tidak berubah. Bidang = rumpun yang sudah ada di data
+prodi (Ekonomi & Bisnis, Kesehatan, Sosial & Humaniora, Teknologi & Rekayasa); yang
+disimpan ke akun hanya nama rumpun (`minat_rumpun`), dan hanya bila kebijakan privasi
+versi berlaku sudah diterima. Tidak ada daftar prodi, tanggal, biaya, daya tampung,
+atau peluang. Seksi bidang dan jalur berlabel "Perkiraan" dengan penjelas LANJUT_044
+di atas. Nama kartu grid, judul bilah halaman per jenjang, dan kartu baru di grid
+kelas 12 adalah pilihan di percakapan, belum disetujui PM.
+
+- **Kartu grid Beranda:** Eksplorasi Kampus (ke `/eksplorasi-tujuan`; label kartu yang sama di grid SMP dan 10–11, sebelumnya "Eksplorasi Tujuan"; kartu baru di grid kelas 12)
+- **Judul bilah halaman SMP:** Kenali Minatmu
+- **Judul bilah halaman kelas 10–11:** Jalur dan Bidangmu
+- **SMP — pengantar:** Pilih bidang yang menarik buatmu. Tidak ada pilihan yang salah, dan pilihanmu bisa diubah kapan saja.
+- **Kelas 10–11 — pengantar:** Kenali cara masuk perguruan tinggi dan bidang yang ingin kamu dalami.
+- **Kelas 10–11 — judul seksi jalur:** Jalur masuk perguruan tinggi · lencana: Perkiraan
+- **Jalur SNBP:** Seleksi Nasional Berdasarkan Prestasi. Dinilai dari nilai rapor dan prestasi, tanpa tes tertulis. Sekolah menentukan siapa yang bisa ikut.
+- **Jalur SNBT:** Seleksi Nasional Berdasarkan Tes. Dinilai dari hasil tes tertulis berbasis komputer.
+- **Jalur seleksi mandiri:** Seleksi yang diadakan sendiri oleh tiap perguruan tinggi negeri. Caranya bisa berbeda di tiap kampus.
+- **Judul seksi bidang:** Bidang minat · lencana: Perkiraan
+- **Petunjuk jumlah:** Pilih sampai [n] bidang. ([n] = 5 untuk SMP, 3 untuk kelas 10–11)
+- **Bidang Ekonomi & Bisnis:** Belajar tentang uang, usaha, dan cara sebuah organisasi berjalan. · Contoh pekerjaan: mengurus keuangan, menjalankan usaha, atau membantu perusahaan merencanakan kegiatannya.
+- **Bidang Kesehatan:** Belajar tentang tubuh manusia, penyakit, dan cara menjaga kesehatan. · Contoh pekerjaan: merawat orang sakit, membantu pemulihan, atau menjaga kesehatan masyarakat.
+- **Bidang Sosial & Humaniora:** Belajar tentang manusia, masyarakat, bahasa, dan aturan dalam kehidupan bersama. · Contoh pekerjaan: menyampaikan informasi, mendampingi masyarakat, atau membantu menyelesaikan urusan aturan.
+- **Bidang Teknologi & Rekayasa:** Belajar tentang cara kerja alat, listrik, dan komputer, serta cara merancang sesuatu yang berguna. · Contoh pekerjaan: merancang, membangun, atau merawat alat, bangunan, dan sistem komputer.
+- **Tombol simpan:** Simpan minatku (SMP) · Simpan bidangku (kelas 10–11)
+- **Sesudah tersimpan:** Pilihanmu sudah tersimpan.
+- **Belum menerima kebijakan privasi (server menolak menyimpan):** Terima kebijakan privasi dulu supaya pilihanmu bisa disimpan. · tautan: Baca dan terima
+- **Gagal menyimpan:** Belum tersimpan. Coba lagi sebentar lagi.
+- **Daftar bidang gagal dimuat:** Daftar bidang belum bisa dimuat. Coba lagi sebentar lagi.
+- **SMP — kalimat penutup:** Ini baru gambaran awal. Kamu masih punya waktu untuk menentukan.
+- **Kelas 10–11 — pengganti daftar prodi:** Daftar prodi dan syaratnya akan muncul setelah dicek ke sumber resmi.
+
 ### 4.10 Daftar (buat akun)
 
 Berlaku untuk **LANJUT_App** (layar Daftar Expo, `RegisterScreen`). Belum

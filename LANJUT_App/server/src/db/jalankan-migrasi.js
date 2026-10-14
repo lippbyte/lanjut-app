@@ -33,14 +33,18 @@ function daftarBerkasMigrasi() {
     .sort(); // "001_..." < "002_..." secara leksikografis
 }
 
-async function jalankanSatu(koneksi, nama) {
-  const isi = fs.readFileSync(path.join(DIR_MIGRASI, nama), 'utf8');
-  // Pisah per pernyataan pada ";" akhir baris — cukup untuk migrasi DDL kita
-  // yang tidak memuat ";" di dalam string/komentar.
-  const pernyataan = isi
+// Pisah per pernyataan pada ";" akhir baris — cukup untuk migrasi DDL kita
+// yang tidak memuat ";" di dalam string/komentar. Diekspor supaya tes bisa
+// menjalankan ulang satu berkas persis seperti pelari ini (LANJUT_075).
+function pernyataanMigrasi(isi) {
+  return isi
     .split(/;\s*(?:\n|$)/)
     .map((p) => p.trim())
     .filter(Boolean);
+}
+
+async function jalankanSatu(koneksi, nama) {
+  const pernyataan = pernyataanMigrasi(fs.readFileSync(path.join(DIR_MIGRASI, nama), 'utf8'));
 
   await koneksi.query('START TRANSACTION');
   try {
@@ -90,4 +94,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { jalankanMigrasi };
+module.exports = { jalankanMigrasi, pernyataanMigrasi, DIR_MIGRASI };
