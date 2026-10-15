@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import type { JenisSekolah, Kelas } from '../lib/jenjang';
+import type { KesiapanUjian } from '../lib/kesiapanUjian';
 import { ApiError, apiFetch } from './client';
 
 export const KUNCI_TOKEN = 'auth_token';
@@ -26,13 +27,15 @@ export type Pengguna = {
   // LANJUT_079: id mapel pilihan (kelas 12: Pilih Mapel per rumpun; 7–11: Mapel Saya),
   // [] = belum memilih. Opsional di tipe: sesi sebelum LANJUT_079 belum punya medan ini.
   mapel_pilihan?: string[];
+  // Kesiapan ujian (percakapan 15 Okt 2026), null = belum diisi. Opsional di tipe:
+  // sesi yang tersimpan sebelumnya belum punya medan ini.
+  kesiapan_ujian?: KesiapanUjian | null;
   dibuat_pada: string | null;
   terakhir_masuk_pada: string | null;
 };
 
 // Nilai sama persis dengan ENUM di server/src/db/migrasi/007_gaya_belajar.sql.
 export type GayaBelajar = 'visual' | 'auditori' | 'kinestetik' | 'baca_tulis';
-
 export type Sesi = { token: string; kedaluwarsa_pada: string; pengguna: Pengguna };
 
 // Medan opsional mengikuti `daftarSkema` di server/src/modul/auth/auth.skema.js.
@@ -92,6 +95,8 @@ export type DataUbahProfil = {
   // LANJUT_079: [] mengosongkan. Maks. 5; kelas 12 hanya mapel dari rumpun favoritnya
   // (400 VALIDASI_GAGAL, medan mapel_pilihan).
   mapel_pilihan?: string[];
+  // null mengosongkan. Server menolak akun yang belum menerima kebijakan (AI_BELUM_DIIZINKAN).
+  kesiapan_ujian?: KesiapanUjian | null;
 };
 
 /** PATCH /pengguna/saya — mengembalikan profil terbaru (bentuk sama dengan /auth/saya). */

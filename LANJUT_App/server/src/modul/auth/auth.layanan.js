@@ -70,6 +70,8 @@ function bentukProfil(baris) {
     minat_rumpun: larikMinat(baris.minat_rumpun),
     // LANJUT_079: larik id mapel (Pilih Mapel kelas 12 / Mapel Saya kelas 7–11); NULL → [].
     mapel_pilihan: larikMinat(baris.mapel_pilihan),
+    // Kesiapan ujian (percakapan 15 Okt 2026): 'belum' | 'sebagian' | 'hampir' | 'siap'; NULL → null.
+    kesiapan_ujian: baris.kesiapan_ujian ?? null,
     dibuat_pada: keIso(baris.dibuat_pada),
     terakhir_masuk_pada: keIso(baris.terakhir_masuk_pada),
   };

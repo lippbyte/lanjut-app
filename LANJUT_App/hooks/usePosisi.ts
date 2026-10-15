@@ -1,4 +1,5 @@
 import { hitungPosisi, type Kebingungan, type Tenggat } from '../lib/cekPosisi';
+import { ringkasPersiapanUjian } from '../lib/kesiapanUjian';
 import { tanggalMomen, turunkanLinimasa } from '../lib/linimasa';
 import { BUTIR_MAPEL_TKA } from '../lib/pilihMapel';
 import { useSesi } from '../providers/AuthProvider';
@@ -12,6 +13,7 @@ import { useTahapanLinimasa } from './useTahapanLinimasa';
  * sama dengan Data Akun), dan tenggat Linimasa terdekat (tenggat yang sama
  * dengan Beranda). Galat pemuatan tidak menghentikan hasil: sinyal yang
  * gagal dianggap belum ada, jadi user baru tetap dapat tahap awal.
+ * `ujian`: ringkasan kategori Persiapan Ujian dari butir yang sama (lib/kesiapanUjian.ts).
  */
 export function usePosisi(kebingungan: Kebingungan | null) {
   const { pengguna } = useSesi();
@@ -28,7 +30,8 @@ export function usePosisi(kebingungan: Kebingungan | null) {
     { adaProdi: !!pengguna?.prodi_impian, mapelTkaSelesai, progres, tenggat: tenggatDari(linimasaQuery.data) },
     kebingungan
   );
-  return { isPending, posisi };
+  const ujian = ringkasPersiapanUjian(hasil.data?.kategori ?? [], hasil.data?.selesai ?? new Set());
+  return { isPending, posisi, ujian };
 }
 
 // turunkanLinimasa membuang tahapan yang belum terverifikasi (diperiksa_pada

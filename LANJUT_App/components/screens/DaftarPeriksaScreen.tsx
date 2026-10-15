@@ -9,7 +9,7 @@ import {
   useProgresDaftarPeriksa,
   useSaringDaftarPeriksa,
 } from '../../hooks/useProgresDaftarPeriksa';
-import { gabungButirPribadi, type Progres } from '../../lib/daftarPeriksa';
+import { CATATAN_KATEGORI, gabungButirPribadi, perluCatatanSnpmb, type Progres } from '../../lib/daftarPeriksa';
 import { teksDaftarPeriksaBukanKelas12 } from '../../lib/jenjangSaya';
 import { useSesi } from '../../providers/AuthProvider';
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
@@ -172,8 +172,9 @@ function Checklist({ saring }: { saring: SaringanDaftarPeriksa }) {
   if (!kategori.length) {
     return <Kosong judul="Bagian ini masih kami siapkan." teks="Kalau kamu punya bahannya, kirim ke kami." />;
   }
-  // Butir pribadi bukan konten resmi, jadi tidak memicu catatan "belum diverifikasi".
-  const adaBelumTerverifikasi = kategori.some((k) => k.butir.some((b) => !pribadiIds.has(b.id) && !b.diperiksa_pada));
+  // Butir pribadi dan kategori saran (Persiapan Ujian) bukan isi laman SNPMB, jadi tidak
+  // memicu catatan "belum diverifikasi" (lib/daftarPeriksa.ts).
+  const adaBelumTerverifikasi = perluCatatanSnpmb(kategori, pribadiIds);
 
   return (
     <>
@@ -214,9 +215,11 @@ function SeksiKategori({
   pribadiIds: ReadonlySet<string>;
   aksi: { onAlih: (b: ButirDaftarPeriksa) => void; onHapus: (b: ButirDaftarPeriksa) => void };
 }) {
+  const catatan = CATATAN_KATEGORI[kategori.id];
   return (
     <View style={s.seksi}>
       <SeksiJudul>{kategori.nama}</SeksiJudul>
+      {catatan ? <Text style={s.catatan}>{catatan}</Text> : null}
       <Kartu style={s.kartuButir}>
         {kategori.butir.map((b) => (
           <Centang
@@ -282,6 +285,7 @@ const s = StyleSheet.create({
   kepingTeksAktif: { color: color.white },
   kemajuan: { gap: spacing.s3 },
   seksi: { gap: spacing.s3 },
+  catatan: { ...teks.caption, color: color.textMuted },
   kartuButir: { gap: 2, paddingVertical: spacing.s2 },
   barisCentang: { flexDirection: 'row', alignItems: 'center', gap: spacing.s2 },
   centang: { flexDirection: 'row', alignItems: 'center', gap: spacing.s3, minHeight: 44, flex: 1 },

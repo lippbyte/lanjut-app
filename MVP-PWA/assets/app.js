@@ -1310,7 +1310,7 @@
   }
 
   /* -----------------------------------------------------------------------
-     DAFTAR PERIKSA — 11 butir bawaan (data/checklist.json) dalam tiga
+     DAFTAR PERIKSA — 15 butir bawaan (data/checklist.json) dalam empat
      kategori, PLUS butir yang ditambahkan pengguna sendiri (ChecklistTambahan)
      -----------------------------------------------------------------------
      Dua wadah bersarang: kategori diklon dari seksi pertama, butir diklon

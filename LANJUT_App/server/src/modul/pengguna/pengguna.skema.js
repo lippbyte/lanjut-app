@@ -13,6 +13,10 @@ const idMapel = z.string().trim().min(1).max(64);
 // LANJUT_080b — satu butir minat_rumpun, diperiksa dengan cara yang sama.
 const namaRumpun = z.string().trim().min(1).max(60);
 
+// Kesiapan ujian (pilihan percakapan 15 Okt 2026, belum disetujui PM). Sama persis
+// dengan ENUM di migrasi 023 dan KESIAPAN_UJIAN di app lib/kesiapanUjian.ts.
+const KESIAPAN_UJIAN = ['belum', 'sebagian', 'hampir', 'siap'];
+
 const ubahProfilSkema = z.object({
   kelas: z.enum(KELAS).nullable().optional(),
   // LANJUT_038 — diselaraskan dengan kelas di util/kelas.js tentukanJenisSekolah.
@@ -48,6 +52,8 @@ const ubahProfilSkema = z.object({
     .transform((daftar) => daftar.map((x) => idMapel.parse(x)))
     .refine((daftar) => new Set(daftar).size === daftar.length, 'Mapel pilihan tidak boleh ganda.')
     .optional(),
+  // null mengosongkan. Gerbang kebijakan privasi di pengguna.layanan.js.
+  kesiapan_ujian: z.enum(KESIAPAN_UJIAN).nullable().optional(),
 });
 
-module.exports = { ubahProfilSkema, MAKS_MINAT_RUMPUN };
+module.exports = { ubahProfilSkema, MAKS_MINAT_RUMPUN, KESIAPAN_UJIAN };

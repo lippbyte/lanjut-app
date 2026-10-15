@@ -1,12 +1,12 @@
 {
-  "_catatan": "Entitas `butir_daftar_periksa` (PRD/SDD §13): id, judul, urutan, berlaku_untuk_kelas, berlaku_untuk_jalur. Kolom `kategori` ditambahkan di luar §13 karena F5 mengharuskan butir dikelompokkan di layar; kalau nanti masuk basis data, kategori sebaiknya jadi tabel sendiri, bukan teks bebas. Jumlahnya 11 butir — angka ini dikunci oleh salinan teks §4.4 ('3 dari 11 beres').",
+  "_catatan": "Entitas `butir_daftar_periksa` (PRD/SDD §13): id, judul, urutan, berlaku_untuk_kelas, berlaku_untuk_jalur. Kolom `kategori` ditambahkan di luar §13 karena F5 mengharuskan butir dikelompokkan di layar; kalau nanti masuk basis data, kategori sebaiknya jadi tabel sendiri, bukan teks bebas. Jumlahnya 15 butir dalam 4 kategori (11 butir sampai 15 Okt 2026, lalu ditambah kategori 'Persiapan Ujian' — pilihan percakapan, belum disetujui PM). Contoh '3 dari 11 beres' di salinan teks §4.4 hanya contoh bunyi; angkanya dihitung dari butir yang tampil.",
   "_kemajuan": "Status centang TIDAK disimpan di sini. Itu entitas `kemajuan` (pengguna_id, butir_id, selesai_pada), milik pengguna, disimpan terpisah.",
-  "_kategori_runtime": "Kategori BUKAN cuma tiga yang tertulis di berkas ini. pasangChecklist() (app.js) bisa menampilkan satu seksi TAMBAHAN di akhir daftar untuk butir dari LANJUT.checklistTambahan (lanjut.checklist.tambahan.v1) yang kategorinya tidak cocok dengan kategori mana pun di sini — mis. 'Riset Kampus' dari tombol Simpan di F10 Eksplorasi Tujuan. Seksi itu dibangun saat runtime dari data pengguna, TIDAK ditambahkan sebagai entri kosong di sini (kalau ditambahkan di sini, judul seksinya akan tampil kosong untuk semua pengguna yang belum pernah menyentuh F10, dan mengubah makna total_butir:11 yang sudah dikunci salinan teks §4.4).",
+  "_kategori_runtime": "Kategori BUKAN cuma empat yang tertulis di berkas ini. pasangChecklist() (app.js) bisa menampilkan satu seksi TAMBAHAN di akhir daftar untuk butir dari LANJUT.checklistTambahan (lanjut.checklist.tambahan.v1) yang kategorinya tidak cocok dengan kategori mana pun di sini — mis. 'Riset Kampus' dari tombol Simpan di F10 Eksplorasi Tujuan. Seksi itu dibangun saat runtime dari data pengguna, TIDAK ditambahkan sebagai entri kosong di sini (kalau ditambahkan di sini, judul seksinya akan tampil kosong untuk semua pengguna yang belum pernah menyentuh F10, dan mengubah makna total_butir).",
   "sumber": "resmi",
   "pemilik": "tim",
   "diperiksa_pada": null,
   "url_sumber": "https://snpmb.bppp.kemdikbud.go.id/",
-  "total_butir": 11,
+  "total_butir": 15,
   "kategori": [
     {
       "id": "berkas",
@@ -153,6 +153,60 @@
           ],
           "berlaku_untuk_jalur": [
             "SNBP",
+            "SNBT"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "persiapan-ujian",
+      "nama": "Persiapan Ujian",
+      "_catatan": "Pilihan percakapan 15 Okt 2026, belum disetujui PM; teks DRAF (salinan §4.20). Saran tim LANJUT untuk persiapan belajar, BUKAN syarat resmi pendaftaran, jadi `asal` dan `url_sumber` di kategori ini menimpa nilai tingkat berkas (benih.js): asal 'tim', url_sumber null. Tanpa tanggal, tanpa nama penyelenggara tryout, dan simulasi/gladi hanya 'kalau sekolahmu mengadakannya'.",
+      "asal": "tim",
+      "url_sumber": null,
+      "butir": [
+        {
+          "id": "tryout-tka",
+          "judul": "Ikut minimal satu tryout TKA",
+          "urutan": 12,
+          "berlaku_untuk_kelas": [
+            "12"
+          ],
+          "berlaku_untuk_jalur": [
+            "TKA"
+          ]
+        },
+        {
+          "id": "simulasi-tka",
+          "judul": "Ikut simulasi atau gladi TKA kalau sekolahmu mengadakannya",
+          "urutan": 13,
+          "berlaku_untuk_kelas": [
+            "12"
+          ],
+          "berlaku_untuk_jalur": [
+            "TKA"
+          ]
+        },
+        {
+          "id": "levelin-mapel-tka",
+          "judul": "Cek Level-In untuk mapel pilihan TKA-mu",
+          "urutan": 14,
+          "berlaku_untuk_kelas": [
+            "11",
+            "12"
+          ],
+          "berlaku_untuk_jalur": [
+            "TKA"
+          ]
+        },
+        {
+          "id": "tryout-snbt",
+          "judul": "Ikut minimal satu tryout UTBK-SNBT",
+          "urutan": 15,
+          "berlaku_untuk_kelas": [
+            "12"
+          ],
+          "berlaku_untuk_jalur": [
             "SNBT"
           ]
         }

@@ -30,7 +30,7 @@ onboarding.html       4 layar cerita + 2 pertanyaan → tulis profil
 beranda.html          tenggat terdekat, linimasa, pintu ke arsip & alumni
 khusus-smk.html       6 butir "apa yang beda" + "apa yang bisa dilakukan"
 pilih-mapel.html      prodi → mapel pendukung → saran 2 mapel TKA
-checklist.html        11 butir, 3 kategori
+checklist.html        15 butir, 4 kategori (Persiapan Ujian sejak 15 Okt 2026)
 alumni.html           2 cerita contoh  ← TIDAK ada di navigasi bawah
 arsip.html            daftar mapel + kartu
 arsip-detail.html     kartu satu mapel, tab Semua/Catatan/Soal

@@ -482,10 +482,14 @@ describe('LANJUT_076 §A: kelas 12 tidak berubah', () => {
     const bagian12 =
       layar.slice(layar.indexOf('export function DaftarPeriksaScreen'), layar.indexOf('// LANJUT_069 (Tambahan-069 no. 2)')) +
       layar.slice(layar.indexOf('function DaftarPeriksaKelas12'));
-    // Sidik dihitung dari commit 563002d (sebelum LANJUT_076).
+    // Sidik dihitung dari commit 563002d (sebelum LANJUT_076): 10ef15e8e3ec…632814b, tetap
+    // sampai 15 Okt 2026. Dihitung ulang 15 Okt 2026 untuk satu perubahan yang disengaja
+    // (pilihan percakapan, belum disetujui PM): catatan di bawah kategori "Persiapan Ujian"
+    // dan catatan SNPMB yang tidak menghitung kategori saran (lib/daftarPeriksa.ts). Persiapan
+    // Event tetap tidak menyentuh bagian ini (dua asersi di bawah).
     assert.equal(
       crypto.createHash('sha256').update(bagian12).digest('hex'),
-      '10ef15e8e3ec1319d83e6837312e5308bbe6c55a961a22090cd0c6758632814b',
+      'df6096cd4dd66f0cad392aa2067cc62732f7af27eb739445041b1743ef5b88db',
       'tampilan Daftar Periksa kelas 12 berubah'
     );
     assert.equal((layar.match(/<PersiapanEvent \/>/g) || []).length, 1);

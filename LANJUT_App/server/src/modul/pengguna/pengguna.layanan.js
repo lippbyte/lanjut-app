@@ -47,7 +47,22 @@ async function pastikanMapelPilihanBoleh(kelas, minatRumpun, daftar) {
   }
 }
 
-async function ubahProfil(penggunaId, { kelas, jenis_sekolah, prodi_impian, nama_tampilan, gaya_belajar, minat_rumpun, mapel_pilihan }) {
+/**
+ * Kesiapan ujian (pilihan percakapan 15 Okt 2026, belum disetujui PM): penilaian
+ * siswa tentang dirinya sendiri, jadi — seperti bidang minat (LANJUT_075) — hanya
+ * disimpan bila kebijakan privasi versi berlaku sudah diterima. Mengosongkan (null)
+ * tidak perlu gerbang.
+ */
+async function pastikanKesiapanBoleh(penggunaId, kesiapan) {
+  if (kesiapan !== null && !(await persetujuanLayanan.kebijakanDiterima(penggunaId))) {
+    throw new GalatApi('AI_BELUM_DIIZINKAN', 'Terima kebijakan privasi dulu supaya kesiapanmu bisa disimpan.');
+  }
+}
+
+async function ubahProfil(
+  penggunaId,
+  { kelas, jenis_sekolah, prodi_impian, nama_tampilan, gaya_belajar, minat_rumpun, mapel_pilihan, kesiapan_ujian }
+) {
   const perubahan = {};
   const perluLama = kelas !== undefined || jenis_sekolah !== undefined || minat_rumpun !== undefined || mapel_pilihan !== undefined;
   const lama = perluLama ? await penggunaRepo.cariProfil(penggunaId) : null;
@@ -91,6 +106,10 @@ async function ubahProfil(penggunaId, { kelas, jenis_sekolah, prodi_impian, nama
     const boleh = await mapelPilihan.mapelBoleh(kelasBaru, minatBaru);
     const sisa = tersimpan.filter((id) => boleh.has(id));
     if (sisa.length !== tersimpan.length) perubahan.mapelPilihan = sisa;
+  }
+  if (kesiapan_ujian !== undefined) {
+    await pastikanKesiapanBoleh(penggunaId, kesiapan_ujian);
+    perubahan.kesiapanUjian = kesiapan_ujian;
   }
 
   await penggunaRepo.updateProfil(penggunaId, perubahan);

@@ -1,4 +1,5 @@
 import type { ButirDaftarPeriksa, ButirPribadi, KategoriDaftarPeriksa } from '../api/types';
+import { KATEGORI_PERSIAPAN_UJIAN, TEKS_KESIAPAN } from './kesiapanUjian';
 
 /**
  * F5 — Daftar Periksa (docs/prd-sdd-lanjut.md Bagian 6 & 13). Logika murni
@@ -32,6 +33,22 @@ export function hitungProgres(kategori: KategoriDaftarPeriksa[], selesaiIds: Rea
   const status: StatusProgres = total === 0 || selesai === 0 ? 'kosong' : selesai === total ? 'selesai' : 'berjalan';
 
   return { selesai, total, status };
+}
+
+/**
+ * Kategori berisi saran tim LANJUT, bukan isi laman resmi (15 Okt 2026, belum
+ * disetujui PM): punya catatan sendiri di bawah judulnya dan tidak memicu catatan
+ * "Perlu dicek ke laman resmi SNPMB".
+ */
+export const CATATAN_KATEGORI: Readonly<Record<string, string>> = {
+  [KATEGORI_PERSIAPAN_UJIAN]: TEKS_KESIAPAN.catatanKategori,
+};
+
+/** Catatan "Perlu dicek ke laman resmi SNPMB · belum diverifikasi" tampil? Butir pribadi dan kategori saran tidak dihitung. */
+export function perluCatatanSnpmb(kategori: readonly KategoriDaftarPeriksa[], pribadiIds: ReadonlySet<string>): boolean {
+  return kategori.some(
+    (k) => !(k.id in CATATAN_KATEGORI) && k.butir.some((b) => !pribadiIds.has(b.id) && !b.diperiksa_pada)
+  );
 }
 
 // Butir pribadi diletakkan sesudah butir umum di kategorinya, dan kategori

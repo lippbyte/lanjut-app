@@ -805,6 +805,45 @@ const PETA = [
     ],
   },
   {
+    // §4.20 — percakapan 15 Okt 2026, tanpa nomor task (kepala blok tidak menyebut LANJUT_xxx).
+    // Data: MVP-PWA/data/checklist.json (kategori persiapan-ujian); teks lain di lib/kesiapanUjian.ts.
+    kelompok: 'Persiapan Ujian (Daftar Periksa) & Kesiapan Ujian (Jalur Saya)',
+    butir: [
+      ...[
+        ['**Kategori Daftar Periksa:**', 'Judul kategori "Persiapan Ujian"', 'Daftar Periksa, kategori keempat sesudah Jalur Pembiayaan.', 'Kelas 12 dengan jalur TKA atau SNBT.'],
+        ['**Catatan di bawah judul kategori:**', 'Catatan: saran, bukan syarat resmi', 'Daftar Periksa, di bawah judul kategori Persiapan Ujian.', 'Kelas 12 dengan jalur TKA atau SNBT.'],
+        ['**Butir tryout TKA', 'Butir "Ikut minimal satu tryout TKA"', 'Daftar Periksa, kategori Persiapan Ujian.', 'Kelas 12, jalur TKA.'],
+        ['**Butir Level-In', 'Butir "Cek Level-In untuk mapel pilihan TKA-mu"', 'Daftar Periksa, kategori Persiapan Ujian.', 'Kelas 12 jalur TKA (dan saringan kelas 11 jalur TKA).'],
+        ['**Butir tryout SNBT', 'Butir "Ikut minimal satu tryout UTBK-SNBT"', 'Daftar Periksa, kategori Persiapan Ujian.', 'Kelas 12, jalur SNBT.'],
+      ].map(([awal, nama, di, oleh]) => ({ task: '(tidak disebut)', awal, nama, di, oleh })),
+      {
+        task: '(tidak disebut)',
+        awal: '**Butir simulasi TKA',
+        nama: 'Butir "Ikut simulasi atau gladi TKA kalau sekolahmu mengadakannya"',
+        di: 'Daftar Periksa, kategori Persiapan Ujian.',
+        oleh: 'Kelas 12, jalur TKA.',
+        faktual: {
+          klaim: 'Ada sekolah yang mengadakan simulasi atau gladi TKA sebelum hari pelaksanaan (bunyinya bersyarat, tanpa tanggal).',
+          sumber: 'Laman resmi TKA Kemendikdasmen dan pengumuman sekolah. Belum dicek.',
+        },
+      },
+      ...[
+        ['**Kesiapan Ujian — judul seksi & pertanyaan:**', 'Judul & pertanyaan Kesiapan Ujian', 'Jalur Saya /cek-posisi, sesudah Langkah Berikutnya.'],
+        ['**Kesiapan Ujian — petunjuk:**', 'Petunjuk Kesiapan Ujian', 'Jalur Saya, di bawah pertanyaan.'],
+        ['**Kesiapan Ujian — pilihan:**', 'Empat pilihan kesiapan', 'Jalur Saya, pilihan berbentuk pil; ketukan langsung menyimpan.'],
+        ['**Kesiapan Ujian — saat menyimpan:**', 'Status "Menyimpan…"', 'Jalur Saya, di bawah pilihan selama menyimpan.'],
+        ['**Kesiapan Ujian — ringkasan:**', 'Ringkasan langkah Persiapan Ujian', 'Jalur Saya, kartu saran; hanya bila jalurnya punya butir Persiapan Ujian.'],
+        ['**Saran — belum siap:**', 'Saran: belum siap', 'Jalur Saya, kartu saran.'],
+        ['**Saran — mulai siap:**', 'Saran: mulai siap', 'Jalur Saya, kartu saran.'],
+        ['**Saran — hampir/sudah siap, belum tryout:**', 'Saran: belum tryout', 'Jalur Saya, kartu saran.'],
+        ['**Saran — hampir/sudah siap, sudah tryout', 'Saran: belum simulasi/gladi', 'Jalur Saya, kartu saran (jalur TKA).'],
+        ['**Saran — hampir siap, langkah ujian beres:**', 'Saran: hampir siap, langkah beres', 'Jalur Saya, kartu saran.'],
+        ['**Saran — sudah siap, langkah ujian beres:**', 'Saran: sudah siap, langkah beres', 'Jalur Saya, kartu saran (tanpa tombol).'],
+        ['**Penafian Jalur Saya (diubah):**', 'Penafian Jalur Saya (diubah)', 'Jalur Saya, paling bawah.'],
+      ].map(([awal, nama, di]) => ({ task: '(tidak disebut)', awal, nama, di, oleh: 'Kelas 12.' })),
+    ],
+  },
+  {
     // LANJUT_075 — layar minat di /eksplorasi-tujuan (components/screens/EksplorasiKampusScreen.tsx,
     // teks di lib/eksplorasiKampus.ts). Kelas 12 tetap melihat F10 di atas.
     kelompok: 'Eksplorasi Kampus (SMP & kelas 10–11)',

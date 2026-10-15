@@ -880,6 +880,39 @@ pilihan tampil lebih dulu di Arsip dan Latihan, tanpa label tambahan.
 - **Rumpun favorit — lebih dari batas (akun lama):** Pilihanmu ada [n], padahal paling banyak [maks]. Kurangi dulu, lalu simpan. (baru LANJUT_079b)
 - **Pilihan mapel — tombol:** Simpan mapel
 
+### 4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya)
+
+**LANJUT_App (15 Okt 2026) — pilihan percakapan, belum disetujui PM. DRAF, belum disetujui
+Khalifa.** Kategori keempat Daftar Periksa, sesudah Jalur Pembiayaan (data
+`MVP-PWA/data/checklist.json`, tersaring kelas & jalur seperti butir lain): kelas 12 jalur TKA
+melihat tiga butir, jalur SNBT satu, jalur SNBP tidak ada; kelas 11 jalur TKA hanya butir
+Level-In. Isinya saran tim, bukan syarat resmi: tanpa tanggal, tanpa nama penyelenggara tryout,
+`url_sumber` kosong, dan tidak memicu catatan "Perlu dicek ke laman resmi SNPMB". Centangnya ikut
+persen Daftar Periksa, jadi ikut menentukan tahap Jalur Saya. Seksi Kesiapan Ujian ada di layar
+Jalur Saya (kelas 12, sesudah Langkah Berikutnya): jawaban tersimpan di akun (`kesiapan_ujian`),
+hanya mengubah saran, tidak pernah mengubah tahap, dan tidak dikirim ke penyedia AI. Teks
+tersimpan, gagal, dan perlu kebijakan memakai kalimat §4.9 yang sudah ada. Teks di
+`lib/kesiapanUjian.ts` (`KESIAPAN_UJIAN`, `TEKS_KESIAPAN`, `saranKesiapan`).
+
+- **Kategori Daftar Periksa:** Persiapan Ujian
+- **Catatan di bawah judul kategori:** Saran dari LANJUT untuk persiapan belajar, bukan syarat resmi pendaftaran.
+- **Butir tryout TKA (kelas 12, jalur TKA):** Ikut minimal satu tryout TKA
+- **Butir simulasi TKA (kelas 12, jalur TKA):** Ikut simulasi atau gladi TKA kalau sekolahmu mengadakannya
+- **Butir Level-In (kelas 11–12, jalur TKA):** Cek Level-In untuk mapel pilihan TKA-mu
+- **Butir tryout SNBT (kelas 12, jalur SNBT):** Ikut minimal satu tryout UTBK-SNBT
+- **Kesiapan Ujian — judul seksi & pertanyaan:** Kesiapan Ujian · Seberapa siap kamu menghadapi ujianmu (TKA atau UTBK-SNBT)?
+- **Kesiapan Ujian — petunjuk:** Jawab jujur saja. Jawabanmu cuma dipakai untuk menyesuaikan saran di sini dan bisa diubah kapan saja.
+- **Kesiapan Ujian — pilihan:** Belum siap, belum mulai latihan soal · Mulai siap, masih banyak materi yang belum kukuasai · Hampir siap, sebagian besar materi sudah kukuasai · Sudah siap, tinggal menjaga ritme
+- **Kesiapan Ujian — saat menyimpan:** Menyimpan…
+- **Kesiapan Ujian — ringkasan:** Persiapan Ujian di Daftar Periksa: [n] dari [total] beres. (hanya bila jalurnya punya butir Persiapan Ujian)
+- **Saran — belum siap:** Membuat beberapa kartu soal di Arsip Belajar lalu mencobanya di Latihan bisa jadi awal yang ringan. · tombol: Buka Arsip Belajar
+- **Saran — mulai siap:** Level-In bisa menunjukkan mapel mana yang paling perlu dilatih dulu. · tombol: Lihat Level-In
+- **Saran — hampir/sudah siap, belum tryout:** Ikut satu tryout bisa jadi cara menguji rasa siapmu dengan soal yang mirip ujian. · tombol: Lihat Persiapan Ujian
+- **Saran — hampir/sudah siap, sudah tryout, belum simulasi (jalur TKA):** Kalau sekolahmu mengadakan simulasi atau gladi TKA, ikut bisa bikin hari ujian terasa lebih akrab. · tombol: Lihat Persiapan Ujian
+- **Saran — hampir siap, langkah ujian beres:** Tinggal merapikan mapel yang masih lemah. Level-In bisa bantu memilihnya. · tombol: Lihat Level-In
+- **Saran — sudah siap, langkah ujian beres:** Persiapanmu sudah jalan. Menjaga ritme latihan dan istirahat yang cukup bisa jadi pegangan menjelang ujian. (tanpa tombol)
+- **Penafian Jalur Saya (diubah):** Posisi ini dihitung dari target prodi di Data Akun dan kemajuan Daftar Periksa, termasuk Persiapan Ujian. Jawaban kesiapanmu hanya mengubah saran, bukan tahapmu. Ini cuma gambaran, keputusannya tetap di tanganmu. (sebelumnya tanpa kalimat "termasuk Persiapan Ujian" dan kalimat kedua)
+
 ---
 
 ## 5. Notifikasi

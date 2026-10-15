@@ -7,6 +7,7 @@ import { KEBINGUNGAN, NAMA_TAHAP, type Kebingungan, type Tahap } from '../../lib
 import { color, font, radius, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Ikon, Kartu, Kepala, Lencana, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
 import { DaftarOpsi, OpsiPil } from './auth/AuthUI';
+import { SeksiKesiapanUjian } from './KesiapanUjian';
 import { BukanKelas12, useUntukKelas12 } from './KhususKelas12';
 import { PilihRumpunFavorit } from './MapelPilihan';
 import { TEKS_MAPEL_PILIHAN } from '../../lib/mapelPilihan';
@@ -69,7 +70,7 @@ function Pertanyaan({ onJawab }: { onJawab: (k: Kebingungan | null) => void }) {
 
 function Hasil({ kebingungan, onUlang }: { kebingungan: Kebingungan | null; onUlang: () => void }) {
   const router = useRouter();
-  const { isPending, posisi } = usePosisi(kebingungan);
+  const { isPending, posisi, ujian } = usePosisi(kebingungan);
 
   if (isPending) return <Memuat />;
 
@@ -125,13 +126,16 @@ function Hasil({ kebingungan, onUlang }: { kebingungan: Kebingungan | null; onUl
       <Tombol label={posisi.langkah.label} besar penuh onPress={() => router.push(posisi.langkah.tujuan)} />
       <Tombol label="Ganti jawaban kebingungan" varian="hantu" kecil onPress={onUlang} />
 
+      {/* Percakapan 15 Okt 2026: seberapa siap (disimpan ke akun) + saran; tidak mengubah tahap. */}
+      <SeksiKesiapanUjian ujian={ujian} />
+
       {/* LANJUT_079: rumpun favorit (1–3) untuk Pilih Mapel per rumpun; disimpan ke minat_rumpun. */}
       <SeksiJudul>{TEKS_MAPEL_PILIHAN.rumpun.judul}</SeksiJudul>
       <PilihRumpunFavorit />
 
       <Penafian>
-        Posisi ini dihitung dari target prodi di Data Akun dan kemajuan Daftar Periksa. Ini cuma gambaran, keputusannya
-        tetap di tanganmu.
+        Posisi ini dihitung dari target prodi di Data Akun dan kemajuan Daftar Periksa, termasuk Persiapan Ujian.
+        Jawaban kesiapanmu hanya mengubah saran, bukan tahapmu. Ini cuma gambaran, keputusannya tetap di tanganmu.
       </Penafian>
     </View>
   );

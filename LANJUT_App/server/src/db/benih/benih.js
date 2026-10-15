@@ -350,6 +350,10 @@ async function benihChecklist(berkas = bacaJson('checklist.json')) {
 
   let totalButir = 0;
   for (const kategori of berkas.kategori) {
+    // Kategori boleh menimpa `asal` dan `url_sumber` tingkat berkas (mis. 'Persiapan Ujian':
+    // saran tim, bukan isi laman SNPMB → asal 'tim', url_sumber null).
+    const asal = kategori.asal !== undefined ? kategori.asal : berkas.asal;
+    const urlSumber = kategori.url_sumber !== undefined ? kategori.url_sumber : berkas.url_sumber;
     await pool.execute(
       `INSERT INTO kategori_checklist (id, nama, urutan)
        VALUES (?, ?, ?)
@@ -391,8 +395,8 @@ async function benihChecklist(berkas = bacaJson('checklist.json')) {
           berkas.sumber,
           berkas.pemilik,
           berkas.status || 'belum_diverifikasi',
-          berkas.asal,
-          berkas.url_sumber || null,
+          asal,
+          urlSumber || null,
           berkas.diperiksa_pada || null,
         ]
       );
