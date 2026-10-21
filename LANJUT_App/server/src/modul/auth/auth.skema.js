@@ -82,6 +82,9 @@ const daftarKirimKodeSkema = daftarSkema.extend({ email: emailSkema });
 // LANJUT_083c — verifikasi email akun yang sedang masuk (email diambil dari akunnya).
 const verifikasiEmailSkema = z.object({ kode: kodeSkema });
 
+// LANJUT_083d — kata sandi baru setelah kata sandi lama dicabut; aturan sama dengan daftar.
+const buatSandiSkema = z.object({ kata_sandi_baru: kataSandiSkema });
+
 const googleSkema = z.object({
   id_token: z.string().min(20).max(4096),
   nonce: z.string().min(16).max(128),
@@ -95,6 +98,7 @@ module.exports = {
   otpVerifikasiSkema,
   daftarKirimKodeSkema,
   verifikasiEmailSkema,
+  buatSandiSkema,
   googleSkema,
   NAMA_PENGGUNA_REGEX,
 };

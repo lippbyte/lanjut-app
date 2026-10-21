@@ -42,6 +42,7 @@ const STATUS_PER_KODE = {
   GOOGLE_TIDAK_SAH: 401,
   GOOGLE_TIDAK_TERSEDIA: 503, // GOOGLE_CLIENT_ID belum diisi, atau kunci publik Google tidak bisa diambil
   EMAIL_BELUM_TERVERIFIKASI: 401,
+  SANDI_PERLU_DIBUAT: 403, // LANJUT_083d: sandi lama dicabut; masuk dengan kode email lalu buat sandi baru
   GALAT_SERVER: 500,
 };
 

@@ -9,7 +9,7 @@ const pool = require('../../db/koneksi');
 /** HANYA dipakai layanan auth untuk memverifikasi kata sandi saat login. */
 async function cariUntukMasuk(namaPengguna) {
   const [baris] = await pool.execute(
-    `SELECT id, nama_pengguna, kata_sandi_hash, peran, status
+    `SELECT id, nama_pengguna, kata_sandi_hash, wajib_buat_sandi, peran, status
        FROM pengguna
       WHERE nama_pengguna = ?
       LIMIT 1`,
@@ -30,7 +30,7 @@ async function cariUntukMasukDenganEmail(email) {
 /** Profil publik pengguna berjalan — TIDAK PERNAH memuat kata_sandi_hash. */
 async function cariProfil(penggunaId) {
   const [baris] = await pool.execute(
-    `SELECT id, nama_pengguna, nama_tampilan, email, email_terverifikasi, peran, status,
+    `SELECT id, nama_pengguna, nama_tampilan, email, email_terverifikasi, wajib_buat_sandi, peran, status,
             kelas, jenis_sekolah, prodi_tujuan, gaya_belajar, minat_rumpun, mapel_pilihan,
             kesiapan_ujian, dibuat_pada, terakhir_masuk_pada
        FROM pengguna
@@ -84,6 +84,30 @@ async function buatPengguna({
 /** LANJUT_083c: email akun terbukti milik pemilik akun (kode verifikasi ke email itu). */
 async function tandaiEmailTerverifikasi(penggunaId) {
   await pool.execute('UPDATE pengguna SET email_terverifikasi = 1 WHERE id = ? AND email IS NOT NULL', [penggunaId]);
+}
+
+/**
+ * LANJUT_083d: pemilik email membuktikan email lewat kode email atau Google pada akun yang
+ * emailnya belum terverifikasi → email terverifikasi, kata sandi lama dicabut (tanda
+ * wajib_buat_sandi). Atomik: true hanya bila akun ini memang baru saja diambil alih.
+ */
+async function ambilAlihOlehPemilikEmail(penggunaId) {
+  const [hasil] = await pool.execute(
+    `UPDATE pengguna
+        SET email_terverifikasi = 1, wajib_buat_sandi = 1
+      WHERE id = ? AND email IS NOT NULL AND email_terverifikasi = 0`,
+    [penggunaId]
+  );
+  return hasil.affectedRows > 0;
+}
+
+/** LANJUT_083d: kata sandi baru menggantikan yang dicabut. Hanya bila tandanya aktif (atomik). */
+async function buatSandiBaru(penggunaId, kataSandiHash) {
+  const [hasil] = await pool.execute(
+    'UPDATE pengguna SET kata_sandi_hash = ?, wajib_buat_sandi = 0 WHERE id = ? AND wajib_buat_sandi = 1',
+    [kataSandiHash, penggunaId]
+  );
+  return hasil.affectedRows > 0;
 }
 
 async function tandaiTerakhirMasuk(penggunaId, waktu) {
@@ -155,6 +179,8 @@ module.exports = {
   cekNamaPenggunaDipakai,
   buatPengguna,
   tandaiEmailTerverifikasi,
+  ambilAlihOlehPemilikEmail,
+  buatSandiBaru,
   tandaiTerakhirMasuk,
   updateKataSandiHash,
   updateProfil,

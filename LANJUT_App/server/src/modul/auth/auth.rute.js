@@ -10,6 +10,7 @@ const {
   otpVerifikasiSkema,
   daftarKirimKodeSkema,
   verifikasiEmailSkema,
+  buatSandiSkema,
   googleSkema,
 } = require('./auth.skema');
 const { validasiBody } = require('../../middleware/validasi');
@@ -66,6 +67,15 @@ router.post('/email/kirim-kode', wajibLogin, batasAuth, async (req, res, next) =
 router.post('/email/verifikasi', wajibLogin, batasAuth, validasiBody(verifikasiEmailSkema), async (req, res, next) => {
   try {
     sukses(res, await daftarEmailLayanan.verifikasiEmailAkun(req.pengguna.id, req.body));
+  } catch (err) {
+    next(err);
+  }
+});
+
+// LANJUT_083d — kata sandi baru untuk sesi yang sedang aktif, hanya bila sandi lama dicabut.
+router.post('/sandi/buat', wajibLogin, batasAuth, validasiBody(buatSandiSkema), async (req, res, next) => {
+  try {
+    sukses(res, await layanan.buatSandi(req.pengguna.id, req.body));
   } catch (err) {
     next(err);
   }

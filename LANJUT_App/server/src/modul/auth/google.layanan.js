@@ -11,7 +11,7 @@ const { GalatApi } = require('../../util/respons');
 const { NAMA_PENGGUNA_REGEX } = require('./auth.skema');
 const penggunaRepo = require('../pengguna/pengguna.repo');
 const tokenGoogle = require('./tokenGoogle');
-const { buatSesiDanBentukRespons } = require('./auth.layanan');
+const { buatSesiDanBentukRespons, masukLewatBuktiEmail } = require('./auth.layanan');
 
 /** Nonce acak untuk satu permintaan masuk Google; app menyimpannya dan mengirimnya kembali. */
 function buatNonce() {
@@ -36,8 +36,9 @@ async function namaPenggunaBaru(email) {
 
 async function masukKeAkun(pengguna) {
   if (pengguna.status !== 'aktif') throw new GalatApi('KREDENSIAL_SALAH', 'Akun ini tidak aktif.');
-  await penggunaRepo.tandaiTerakhirMasuk(pengguna.id, sekarangUntukDb());
-  return { ...(await buatSesiDanBentukRespons(pengguna.id)), akun_baru: false };
+  // LANJUT_083d: email_verified Google membuktikan email; akun yang emailnya belum
+  // terverifikasi diambil alih (sama dengan masuk lewat kode email).
+  return { ...(await masukLewatBuktiEmail(pengguna.id)), akun_baru: false };
 }
 
 async function masukGoogle({ id_token, nonce }) {
@@ -71,7 +72,7 @@ async function masukGoogle({ id_token, nonce }) {
     throw err;
   }
   await penggunaRepo.tandaiTerakhirMasuk(id, sekarangUntukDb());
-  return { ...(await buatSesiDanBentukRespons(id)), akun_baru: true };
+  return { ...(await buatSesiDanBentukRespons(id)), akun_baru: true, perlu_sandi_baru: false };
 }
 
 module.exports = { masukGoogle, buatNonce, namaPenggunaBaru };

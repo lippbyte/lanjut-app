@@ -24,7 +24,7 @@ const { GalatApi } = require('../../util/respons');
 const penggunaRepo = require('../pengguna/pengguna.repo');
 const otpRepo = require('./otp.repo');
 const pengirimOtp = require('./pengirimOtp');
-const { buatSesiDanBentukRespons } = require('./auth.layanan');
+const { masukLewatBuktiEmail } = require('./auth.layanan');
 
 const KODE_BERLAKU_MENIT = 5;
 const MAKS_PERCOBAAN = 5;
@@ -148,8 +148,8 @@ async function verifikasiOtp({ email, kode }) {
   if (!pengguna || pengguna.status !== 'aktif') throw galatKodeSalah();
 
   await pakaiKode(idKode);
-  await penggunaRepo.tandaiTerakhirMasuk(pengguna.id, sekarangUntukDb());
-  return buatSesiDanBentukRespons(pengguna.id);
+  // LANJUT_083d: kode ini membuktikan email; akun yang emailnya belum terverifikasi diambil alih.
+  return masukLewatBuktiEmail(pengguna.id);
 }
 
 module.exports = {

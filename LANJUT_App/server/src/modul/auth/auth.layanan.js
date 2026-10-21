@@ -58,6 +58,9 @@ function bentukProfil(baris) {
     email: baris.email,
     // LANJUT_083c: email terbukti milik pemilik akun (kode email atau Google). Akun lama: false.
     email_terverifikasi: Boolean(baris.email_terverifikasi),
+    // LANJUT_083d: kata sandi lama dicabut saat pemilik email mengambil alih akun; app wajib
+    // menampilkan layar "Buat kata sandi baru" sampai sandi baru dibuat.
+    perlu_sandi_baru: Boolean(baris.wajib_buat_sandi),
     peran: baris.peran,
     status: baris.status,
     kelas: baris.kelas,
@@ -160,6 +163,11 @@ async function masuk({ nama_pengguna, kata_sandi }) {
     await percobaanRepo.catatGagal(nama_pengguna);
     throw new GalatApi('KREDENSIAL_SALAH', 'Nama pengguna atau kata sandi tidak cocok.');
   }
+  // LANJUT_083d: kata sandi lama sudah dicabut (pemilik email mengambil alih akun). Hanya yang
+  // tahu kata sandi lama yang melihat galat ini; tebakan salah tetap KREDENSIAL_SALAH di atas.
+  if (baris.wajib_buat_sandi) {
+    throw new GalatApi('SANDI_PERLU_DIBUAT', 'Masuk dengan kode email dulu, lalu buat kata sandi baru.');
+  }
 
   await percobaanRepo.resetSetelahBerhasil(nama_pengguna);
   await penggunaRepo.tandaiTerakhirMasuk(baris.id, sekarangUntukDb());
@@ -182,6 +190,34 @@ async function buatSesiDanBentukRespons(penggunaId, perangkat) {
     kedaluwarsa_pada: keIso(kedaluwarsaPada),
     pengguna: bentukProfil(profilBaris),
   };
+}
+
+/**
+ * LANJUT_083d (keputusan PM, pilihan a): masuk lewat bukti kepemilikan email (kode email atau
+ * Google). Akun yang emailnya belum terverifikasi diambil alih oleh pemilik email: email
+ * terverifikasi, kata sandi lama dicabut, dan semua sesi lain dicabut, lalu sesi baru dibuat.
+ * Akun yang sudah terverifikasi tidak berubah.
+ */
+async function masukLewatBuktiEmail(penggunaId) {
+  if (await penggunaRepo.ambilAlihOlehPemilikEmail(penggunaId)) {
+    await sesiRepo.cabutSemuaSesiPengguna(penggunaId);
+  }
+  await penggunaRepo.tandaiTerakhirMasuk(penggunaId, sekarangUntukDb());
+  const sesi = await buatSesiDanBentukRespons(penggunaId);
+  return { ...sesi, perlu_sandi_baru: sesi.pengguna.perlu_sandi_baru };
+}
+
+/** LANJUT_083d: kata sandi baru untuk akun yang sandinya dicabut; hanya selama tandanya aktif. */
+async function buatSandi(penggunaId, { kata_sandi_baru }) {
+  const profil = await penggunaRepo.cariProfil(penggunaId);
+  if (!profil) throw new GalatApi('TIDAK_DITEMUKAN', 'Pengguna tidak ditemukan.');
+  const dibuat = await penggunaRepo.buatSandiBaru(penggunaId, await hashKataSandi(kata_sandi_baru));
+  if (!dibuat) {
+    throw new GalatApi('TIDAK_BERHAK', 'Kata sandi baru hanya dibuat setelah kata sandi lama dicabut. Pakai ubah kata sandi.');
+  }
+  // Kunci percobaan gagal dari tebakan kata sandi lama tidak ikut menahan kata sandi baru.
+  await percobaanRepo.resetSetelahBerhasil(profil.nama_pengguna);
+  return saya(penggunaId);
 }
 
 async function keluar(req) {
@@ -227,6 +263,8 @@ module.exports = {
   saya,
   ubahSandi,
   buatSesiDanBentukRespons, // dipakai otp.layanan & google.layanan (LANJUT_083)
+  masukLewatBuktiEmail, // dipakai otp.layanan & google.layanan (LANJUT_083d)
+  buatSandi,
   siapkanDaftar, // dipakai daftarEmail.layanan (LANJUT_083c)
   buatAkun,
   galatNamaDipakai,
