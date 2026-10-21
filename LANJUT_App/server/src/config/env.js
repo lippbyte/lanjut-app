@@ -115,6 +115,19 @@ const env = {
   OPENROUTER_API_KEY: opsional('OPENROUTER_API_KEY', null),
   // Hanya diganti untuk uji (server tiruan di localhost).
   OPENROUTER_BASE_URL: opsional('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1').replace(/\/$/, ''),
+  // Masuk dengan kode email (LANJUT_083). SMTP_HOST atau SMTP_FROM kosong = fitur
+  // mati (503 OTP_TIDAK_TERSEDIA), server tetap menyala. Sandi SMTP tidak pernah
+  // dicatat di log. SMTP_SECURE=true untuk TLS langsung (port 465); selain itu
+  // STARTTLS wajib, kecuali ke server tiruan di localhost.
+  SMTP_HOST: opsional('SMTP_HOST', null),
+  SMTP_PORT: angka('SMTP_PORT', 587),
+  SMTP_SECURE: ['1', 'true'].includes(String(opsional('SMTP_SECURE', '')).toLowerCase()),
+  SMTP_USER: opsional('SMTP_USER', null),
+  SMTP_PASSWORD: opsional('SMTP_PASSWORD', null),
+  SMTP_FROM: opsional('SMTP_FROM', null),
+  // Masuk dengan Google (LANJUT_083). Client ID OAuth (publik), boleh beberapa
+  // dipisah koma (mis. klien web dan Android). Kosong = 503 GOOGLE_TIDAK_TERSEDIA.
+  GOOGLE_CLIENT_ID: opsional('GOOGLE_CLIENT_ID', null),
 };
 
 // Kunci API tidak boleh terkirim lewat HTTP polos, kecuali ke server tiruan lokal.

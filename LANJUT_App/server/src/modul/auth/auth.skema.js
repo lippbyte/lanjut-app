@@ -67,4 +67,27 @@ const ubahSandiSkema = z.object({
   kata_sandi_baru: kataSandiSkema,
 });
 
-module.exports = { daftarSkema, masukSkema, ubahSandiSkema, NAMA_PENGGUNA_REGEX };
+// LANJUT_083 — masuk dengan kode email dan Google.
+const emailSkema = z.string().trim().toLowerCase().email('Email tidak valid.').max(190);
+
+const otpKirimSkema = z.object({ email: emailSkema });
+
+const otpVerifikasiSkema = z.object({
+  email: emailSkema,
+  kode: z.string().trim().regex(/^\d{6}$/, 'Kode terdiri dari 6 angka.'),
+});
+
+const googleSkema = z.object({
+  id_token: z.string().min(20).max(4096),
+  nonce: z.string().min(16).max(128),
+});
+
+module.exports = {
+  daftarSkema,
+  masukSkema,
+  ubahSandiSkema,
+  otpKirimSkema,
+  otpVerifikasiSkema,
+  googleSkema,
+  NAMA_PENGGUNA_REGEX,
+};

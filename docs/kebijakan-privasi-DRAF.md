@@ -423,3 +423,25 @@ di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md) bagian
     Ketiganya bukan klaim yang salah tentang data, tetapi belum lengkap;
     sebaiknya diperbarui bersama rilis teks v2 (di luar LANJUT_056, yang hanya
     mengubah teks kebijakan).
+15. **Masuk dengan kode email dan masuk dengan Google (LANJUT_083).** Isi
+    kebijakan **belum** menyebut keduanya; versinya sengaja tidak dinaikkan.
+    Yang perlu ditinjau:
+    - **(a) Email jadi alat masuk.** Kode 6 angka dikirim lewat penyedia SMTP
+      yang dipilih PM `[ISI: penyedia dan negara pemrosesan]`. Tabel
+      `kode_otp_email` (migrasi 025) menyimpan SHA-256 dari email (termasuk
+      email yang tidak terdaftar, untuk batas 3 kode/15 menit) dan hash bcrypt
+      kode, tanpa email dalam teks biasa. Baris dihapus setelah 24 jam.
+    - **(b) Google.** Saat masuk, Google tahu akun Google itu dipakai untuk
+      LANJUT. Server hanya memakai email dan status verifikasinya dari ID
+      token; nama dan foto tidak disimpan. Email yang belum ada dibuatkan akun
+      siswa baru. Kelas, jenis sekolah, dan kebijakan ditanyakan lewat gerbang
+      app yang sama dengan akun lama.
+    - **(c) Anak di bawah 13 tahun.** Akun Google anak di bawah 13 tahun
+      dikelola orang tua (Family Link). Perlu dicek syarat Google dan UU PDP
+      sebelum tombol Google dibuka untuk siswa SMP.
+    - **(d) Email saat Daftar tidak diverifikasi.** Siapa pun bisa mendaftar
+      memakai email orang lain. Pemilik email yang sebenarnya, saat masuk
+      dengan kode email atau Google, akan masuk ke akun yang dibuat orang itu,
+      dan pembuatnya tetap bisa masuk dengan kata sandinya. Usul: verifikasi
+      email saat Daftar, atau cabut kata sandi lama saat email pertama kali
+      dipakai untuk masuk. Belum diperbaiki di LANJUT_083.

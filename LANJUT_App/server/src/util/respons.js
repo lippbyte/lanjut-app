@@ -35,6 +35,13 @@ const STATUS_PER_KODE = {
   AI_GAGAL: 502, // (sebelum LANJUT_078) penyedia AI gagal/menolak; kini AI_SEMENTARA_GAGAL
   AI_SEMENTARA_GAGAL: 503, // LANJUT_078: penyedia AI gagal, menolak, atau lewat 20 detik; rinciannya tidak dikirim ke app
   AI_TIDAK_TERSEDIA: 503, // kunci OpenRouter belum diisi di server
+  // LANJUT_083 — masuk dengan kode email dan Google
+  KODE_SALAH: 401,
+  KODE_KEDALUWARSA: 401, // kode lewat 5 menit, sudah dipakai, digantikan, atau hangus setelah 5 percobaan
+  OTP_TIDAK_TERSEDIA: 503, // SMTP belum diisi di server
+  GOOGLE_TIDAK_SAH: 401,
+  GOOGLE_TIDAK_TERSEDIA: 503, // GOOGLE_CLIENT_ID belum diisi, atau kunci publik Google tidak bisa diambil
+  EMAIL_BELUM_TERVERIFIKASI: 401,
   GALAT_SERVER: 500,
 };
 

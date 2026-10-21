@@ -18,6 +18,15 @@ async function cariUntukMasuk(namaPengguna) {
   return baris[0] || null;
 }
 
+/** Masuk tanpa kata sandi (kode email, Google — LANJUT_083): hanya id & status, tanpa hash. */
+async function cariUntukMasukDenganEmail(email) {
+  const [baris] = await pool.execute(
+    'SELECT id, status FROM pengguna WHERE email = ? LIMIT 1',
+    [email]
+  );
+  return baris[0] || null;
+}
+
 /** Profil publik pengguna berjalan — TIDAK PERNAH memuat kata_sandi_hash. */
 async function cariProfil(penggunaId) {
   const [baris] = await pool.execute(
@@ -141,6 +150,7 @@ async function updateProfil(
 
 module.exports = {
   cariUntukMasuk,
+  cariUntukMasukDenganEmail,
   cariProfil,
   cekNamaPenggunaDipakai,
   emailSudahAda,

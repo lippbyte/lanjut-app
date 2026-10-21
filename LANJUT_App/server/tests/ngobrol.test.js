@@ -596,7 +596,7 @@ test('klien OpenRouter: 401/402/429/500 dan balasan kosong/rusak → GalatPenyed
   }
 });
 
-test('hanya penyedia-ai.js yang mengirim data ke luar; hanya ngobrol.layanan.js yang memakainya, sesudah gerbang', () => {
+test('jalur keluar hanya penyedia-ai.js (AI), surel.js & tokenGoogle.js (LANJUT_083); penyedia-ai hanya dipakai ngobrol.layanan.js, sesudah gerbang', () => {
   const src = path.join(__dirname, '..', 'src');
   const berkas = [];
   const jelajah = (d) => {
@@ -613,9 +613,27 @@ test('hanya penyedia-ai.js yang mengirim data ke luar; hanya ngobrol.layanan.js 
   const memanggilKeluar = berkas
     .filter((p) => /\bfetch\(|\bhttps?\.(request|get)\(|\baxios\b|\b(net|tls)\.connect\(|require\(['"](openai|@anthropic-ai)/.test(tanpaKomentar(p)))
     .map(relatif);
-  assert.deepEqual(memanggilKeluar, ['modul/ngobrol/penyedia-ai.js']);
+  // Daftar PERSIS. LANJUT_083 menambah dua jalur keluar yang bukan AI: email kode masuk
+  // (SMTP) dan kunci publik Google. Jalur keluar lain apa pun membuat tes ini gagal.
+  assert.deepEqual([...memanggilKeluar].sort(), ['modul/auth/tokenGoogle.js', 'modul/ngobrol/penyedia-ai.js', 'util/surel.js']);
   const pemakai = berkas.filter((p) => /require\(['"]\.\/penyedia-ai['"]\)|penyedia-ai'\)/.test(tanpaKomentar(p))).map(relatif);
   assert.deepEqual(pemakai, ['modul/ngobrol/ngobrol.layanan.js']);
+  // LANJUT_083: SMTP hanya lewat pengirimOtp.js (dipakai otp.layanan.js saja), dan di bawah
+  // node --test host selain localhost ditolak sebelum koneksi dibuka.
+  const pemakaiDari = (re) => berkas.filter((p) => re.test(tanpaKomentar(p))).map(relatif);
+  assert.deepEqual(pemakaiDari(/require\(['"][./]+util\/surel['"]\)/), ['modul/auth/pengirimOtp.js']);
+  assert.deepEqual(pemakaiDari(/require\(['"]\.\/pengirimOtp['"]\)/), ['modul/auth/otp.layanan.js']);
+  assert.match(tanpaKomentar(path.join(src, 'util/surel.js')), /if \(process\.env\.NODE_TEST_CONTEXT && !hostLokal\(konfig\.host\)\)/);
+  // Google: hanya google.layanan.js; satu-satunya fetch adalah GET ke URL kunci publik yang tetap,
+  // tanpa badan — tidak ada data siswa yang dikirim.
+  assert.deepEqual(pemakaiDari(/require\(['"]\.\/tokenGoogle['"]\)/), ['modul/auth/google.layanan.js']);
+  const google = tanpaKomentar(path.join(src, 'modul/auth/tokenGoogle.js'));
+  assert.equal((google.match(/\bfetch\(/g) || []).length, 1);
+  // Teks mentah: pembuang komentar di atas ikut memotong "//" di dalam URL.
+  const googleMentah = fs.readFileSync(path.join(src, 'modul/auth/tokenGoogle.js'), 'utf8');
+  assert.match(googleMentah, /^const URL_KUNCI = 'https:\/\/www\.googleapis\.com\/oauth2\/v3\/certs';$/m);
+  assert.match(google, /fetch\(URL_KUNCI, \{ signal: AbortSignal\.timeout\(\d+\) \}\)/);
+  assert.match(google, /if \(process\.env\.NODE_TEST_CONTEXT\) throw/);
   // Di dalam balas(): gerbang dan saklar sebelum pengambilan modul, web, atau penyedia.
   const layanan = tanpaKomentar(path.join(src, 'modul/ngobrol/ngobrol.layanan.js'));
   const isiBalas = layanan.slice(layanan.indexOf('async function balas('));

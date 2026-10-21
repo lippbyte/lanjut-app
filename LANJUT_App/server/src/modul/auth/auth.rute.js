@@ -2,12 +2,21 @@
 // ada SQL dan tidak ada aturan bisnis di sini (§9.2 batas lapis).
 
 const express = require('express');
-const { daftarSkema, masukSkema, ubahSandiSkema } = require('./auth.skema');
+const {
+  daftarSkema,
+  masukSkema,
+  ubahSandiSkema,
+  otpKirimSkema,
+  otpVerifikasiSkema,
+  googleSkema,
+} = require('./auth.skema');
 const { validasiBody } = require('../../middleware/validasi');
 const wajibLogin = require('../../middleware/wajibLogin');
 const { batasAuth, batasDaftar } = require('../../middleware/batasLaju');
 const { sukses } = require('../../util/respons');
 const layanan = require('./auth.layanan');
+const otpLayanan = require('./otp.layanan');
+const googleLayanan = require('./google.layanan');
 
 const router = express.Router();
 
@@ -29,6 +38,36 @@ router.post('/masuk', batasAuth, validasiBody(masukSkema), async (req, res, next
   try {
     const hasil = await layanan.masuk(req.body);
     sukses(res, hasil);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// LANJUT_083 — masuk dengan kode email (tambahan, bukan pengganti /masuk).
+router.post('/otp/kirim', batasAuth, validasiBody(otpKirimSkema), async (req, res, next) => {
+  try {
+    sukses(res, await otpLayanan.kirimOtp(req.body));
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/otp/verifikasi', batasAuth, validasiBody(otpVerifikasiSkema), async (req, res, next) => {
+  try {
+    sukses(res, await otpLayanan.verifikasiOtp(req.body));
+  } catch (err) {
+    next(err);
+  }
+});
+
+// LANJUT_083 — masuk dengan Google. App meminta nonce dulu, lalu mengirim ID token.
+router.get('/google/nonce', batasAuth, (req, res) => {
+  sukses(res, { nonce: googleLayanan.buatNonce() });
+});
+
+router.post('/google', batasAuth, validasiBody(googleSkema), async (req, res, next) => {
+  try {
+    sukses(res, await googleLayanan.masukGoogle(req.body));
   } catch (err) {
     next(err);
   }

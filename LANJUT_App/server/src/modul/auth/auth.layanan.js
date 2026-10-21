@@ -214,6 +214,7 @@ module.exports = {
   keluarSemua,
   saya,
   ubahSandi,
+  buatSesiDanBentukRespons, // dipakai otp.layanan & google.layanan (LANJUT_083)
   petakanProdiTujuan,
   pastikanProdiValid,
   bentukProfil,
