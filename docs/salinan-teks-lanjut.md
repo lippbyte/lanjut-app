@@ -935,6 +935,14 @@ Google hanya tampil bila Client ID Google diisi saat build. Teks di
 - **Landing page (`landing/index.html`, `landing/panduan-uji.html`):** teks lengkap ada di berkasnya. Kalimat utama: Tahu langkah berikutnya, dari SMP sampai kelas 12. · pendukung: Informasi soal minat, mapel pilihan, dan jalur kuliah tersebar di banyak tempat. LANJUT merangkumnya jadi langkah kecil yang bisa kamu kerjakan, sesuai kelasmu. · label di atas setiap halaman: DRAF — teks halaman ini belum disetujui. Kalimat masuk M1/M2 (§1.1) tidak dipakai karena khusus SMK, sedangkan landing menyasar SMP sampai kelas 12.
 - **Halaman kebijakan di landing (`landing/kebijakan-privasi.html`):** ditulis otomatis dari `lib/kebijakan-privasi.json` (`npm run landing-kebijakan`), ditambah satu kalimat: Masuk dengan kode email dan masuk dengan Google belum dibahas di kebijakan ini. Keduanya sedang ditinjau.
 
+**LANJUT_083b (21 Okt 2026) — DRAF, belum disetujui PM.** Landing dibangun ulang dengan Vite + React.
+Kata dan urutan keempat halaman sama dengan 083; teksnya kini di `landing/src/halaman/*.tsx`, dan
+data kebijakan di `landing/src/data/kebijakan-privasi.json` (tetap dari `npm run landing-kebijakan`).
+Teks baru:
+
+- **Landing — APK belum ada:** tombol Unduh APK tetap tampil tetapi nonaktif, dengan keterangan di bawahnya: APK sedang disiapkan. Coba lagi nanti. (dicek saat halaman dibuka: ada tidaknya `lanjut-demo.apk` di sebelah halaman)
+- **Landing — tanpa JavaScript:** Halaman ini butuh JavaScript. Nyalakan JavaScript di peramban untuk melihatnya. (keempat halaman, hanya tampil bila JavaScript peramban mati)
+
 ---
 
 ## 5. Notifikasi

@@ -1050,6 +1050,25 @@ const PETA = [
       { task: 'LANJUT_083', awal: '**Halaman kebijakan di landing', nama: 'Kebijakan privasi di landing', di: 'landing/kebijakan-privasi.html (ditulis dari lib/kebijakan-privasi.json).', oleh: 'Siapa pun yang membuka domain landing.' },
     ],
   },
+  {
+    kelompok: 'Landing page Vite + React (LANJUT_083b)',
+    butir: [
+      {
+        task: 'LANJUT_083b',
+        awal: '**Landing — APK belum ada:**',
+        nama: 'Landing — APK sedang disiapkan',
+        di: 'Halaman utama landing, di bawah tombol Unduh APK yang nonaktif, bila lanjut-demo.apk belum ada di sebelah halaman (landing/src/komponen/TombolApk.tsx).',
+        oleh: 'Pengunjung domain landing selama APK belum diunggah PM.',
+      },
+      {
+        task: 'LANJUT_083b',
+        awal: '**Landing — tanpa JavaScript:**',
+        nama: 'Landing — tanpa JavaScript',
+        di: 'Keempat halaman landing (tag noscript), hanya bila JavaScript peramban mati.',
+        oleh: 'Pengunjung domain landing yang mematikan JavaScript.',
+      },
+    ],
+  },
 ];
 
 const cocok = (b, aturan) => b.task === aturan.task && b.teks.startsWith(aturan.awal);
