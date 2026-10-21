@@ -13,6 +13,9 @@ export type Pengguna = {
   nama_pengguna: string;
   nama_tampilan: string;
   email: string | null;
+  // LANJUT_083c: email terbukti milik pemilik akun. Opsional di tipe: sesi yang tersimpan
+  // sebelum 083c belum punya medan ini (jangan dianggap false).
+  email_terverifikasi?: boolean;
   peran: string;
   status: string;
   kelas: Kelas | null;
@@ -85,6 +88,30 @@ export async function masukDenganGoogle(id_token: string, nonce: string): Promis
   return sesi;
 }
 
+// LANJUT_083c — daftar dengan email: kode dulu, akun dibuat setelah kode benar. Jawaban
+// kirim-kode sama untuk email terdaftar atau tidak.
+export async function kirimKodeDaftar(data: DataDaftar & { email: string }): Promise<{ diproses: boolean; berlaku_detik: number }> {
+  return apiFetch('/auth/daftar/kirim-kode', { method: 'POST', body: data });
+}
+
+export async function verifikasiDaftar(email: string, kode: string): Promise<Sesi> {
+  const sesi = await apiFetch<Sesi>('/auth/daftar/verifikasi', { method: 'POST', body: { email, kode } });
+  await simpanSesi(sesi);
+  return sesi;
+}
+
+// LANJUT_083c — verifikasi email akun yang sedang masuk (akun lama).
+export async function kirimKodeVerifikasiEmail(
+  token: string
+): Promise<{ diproses?: boolean; berlaku_detik?: number; sudah_terverifikasi?: boolean }> {
+  return apiFetch('/auth/email/kirim-kode', { method: 'POST', body: {}, token });
+}
+
+export async function verifikasiEmail(token: string, kode: string): Promise<Pengguna> {
+  return apiFetch<Pengguna>('/auth/email/verifikasi', { method: 'POST', body: { kode }, token });
+}
+
+/** Daftar tanpa email (langsung). Dengan email memakai kirimKodeDaftar + verifikasiDaftar. */
 export async function daftar(data: DataDaftar): Promise<Sesi> {
   const sesi = await apiFetch<Sesi>('/auth/daftar', { method: 'POST', body: data });
   await simpanSesi(sesi);

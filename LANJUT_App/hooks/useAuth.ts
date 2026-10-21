@@ -52,5 +52,11 @@ export function useAuth() {
     [jalankan]
   );
 
-  return { login, loginKode, loginGoogle, register, logout: keluar, loading, error, medan, pengguna, status };
+  // LANJUT_083c: langkah kedua daftar dengan email.
+  const registerKode = useCallback(
+    (email: string, kode: string) => jalankan(() => authApi.verifikasiDaftar(email, kode)),
+    [jalankan]
+  );
+
+  return { login, loginKode, loginGoogle, register, registerKode, logout: keluar, loading, error, medan, pengguna, status };
 }

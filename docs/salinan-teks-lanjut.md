@@ -943,6 +943,22 @@ Teks baru:
 - **Landing — APK belum ada:** tombol Unduh APK tetap tampil tetapi nonaktif, dengan keterangan di bawahnya: APK sedang disiapkan. Coba lagi nanti. (dicek saat halaman dibuka: ada tidaknya `lanjut-demo.apk` di sebelah halaman)
 - **Landing — tanpa JavaScript:** Halaman ini butuh JavaScript. Nyalakan JavaScript di peramban untuk melihatnya. (keempat halaman, hanya tampil bila JavaScript peramban mati)
 
+**LANJUT_083c (21 Okt 2026) — DRAF, belum disetujui PM.** Daftar dengan email kini dua langkah:
+akun baru dibuat setelah kode dari email itu benar. Daftar tanpa email tetap langsung (label
+"Email (boleh dikosongkan)" dan kalimat data pribadi §4.10 tidak berubah). Akun lama yang emailnya
+belum terverifikasi tetap bisa dipakai dan melihat ajakan verifikasi di Data Akun. Teks di
+`components/screens/auth/RegisterScreen.tsx`, `components/screens/VerifikasiEmail.tsx`, dan
+`server/src/modul/auth/pengirimOtp.js`; galat kode memakai kalimat §4.21.
+
+- **Daftar — petunjuk email:** Kalau diisi, kami kirim kode ke email itu untuk memastikan email itu milikmu.
+- **Daftar — tombol saat mengirim kode:** Mengirim kode…
+- **Daftar — langkah kode:** pengantar: Satu langkah lagi: masukkan kode dari email. · Kami kirim kode ke [email]. Masukkan kodenya untuk membuat akun. Kode berlaku 5 menit. · label: Kode dari email · placeholder: 6 angka · tombol: Buat akun (proses: Membuat akun…) · Kirim ulang kode (proses: Mengirim…) · sesudah kirim ulang: Kode baru sudah dikirim. Kode sebelumnya tidak berlaku lagi. · tautan: Salah email atau data? Ubah data · galat: Kode terdiri dari 6 angka. · Periksa lagi kodenya.
+- **Daftar — email belum bisa dipakai:** Daftar dengan email belum bisa dipakai sekarang. Kosongkan email untuk daftar tanpa email.
+- **Daftar langsung dengan email (app lama, dari server):** Daftar dengan email perlu kode verifikasi. Kosongkan email, atau perbarui aplikasi.
+- **Data Akun — ajakan verifikasi email:** judul: Email belum terverifikasi · Kami kirim kode ke [email] untuk memastikan email itu milikmu. Akunmu tetap bisa dipakai seperti biasa. · tombol: Kirim kode (proses: Mengirim…) · Verifikasi (proses: Memeriksa…) · Kirim ulang kode · galat: Verifikasi email belum bisa dipakai sekarang. Coba lagi nanti.
+- **Email kode pendaftaran:** subjek: Kode pendaftaran LANJUT · Ini kode untuk membuat akun LANJUT kamu: / [6 angka] / Kode berlaku 5 menit dan hanya bisa dipakai sekali. Jangan berikan kode ini kepada siapa pun, termasuk yang mengaku dari LANJUT. / Kalau kamu tidak sedang mendaftar di LANJUT, abaikan email ini. Tanpa kode ini, tidak ada akun yang dibuat. / LANJUT (versi uji)
+- **Email kode verifikasi akun:** subjek: Kode verifikasi email LANJUT · Ini kode untuk memastikan email ini milik akun LANJUT kamu: / [6 angka] / (dua kalimat kode sama dengan di atas) / Kalau kamu tidak memintanya, abaikan email ini. / LANJUT (versi uji)
+
 ---
 
 ## 5. Notifikasi

@@ -25,6 +25,7 @@ import { color, font, spacing, teks } from '../../theme/tokens';
 import { BilahProgres, Kartu, KartuPintu, Memuat, Penafian, SeksiJudul, Tombol, gaya } from '../ui';
 import { BELUM, DaftarOpsi, Field, Input, OpsiPil, PesanGalat, PilihProdi } from './auth/AuthUI';
 import { useUntukKelas12 } from './KhususKelas12';
+import { AjakanVerifikasiEmail } from './VerifikasiEmail';
 
 // "Data Akun" (v1.1 LANJUT_004 menamainya Jalur Saya; nama itu dipindah ke
 // /cek-posisi sejak LANJUT_074) di atas padanan MVP-PWA/akun.html
@@ -45,6 +46,8 @@ export function AkunScreen() {
 
   return (
     <View style={gaya.layarIsiRapat}>
+      {/* LANJUT_083c: hanya untuk akun lama yang emailnya belum terverifikasi. */}
+      <AjakanVerifikasiEmail key={`verifikasi-${pengguna.id}`} />
       {/* key: formulir yang setengah diisi tidak terbawa ke akun lain. */}
       <KartuJalur key={pengguna.id} pengguna={pengguna} />
       {/* LANJUT_077b: SMP tidak melihat pintu ini (layarnya hanya placeholder kelas 12). */}

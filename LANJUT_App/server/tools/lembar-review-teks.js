@@ -1069,6 +1069,39 @@ const PETA = [
       },
     ],
   },
+  {
+    kelompok: 'Daftar dengan email & verifikasi email (LANJUT_083c)',
+    butir: [
+      { task: 'LANJUT_083c', awal: '**Daftar — petunjuk email:**', nama: 'Daftar — petunjuk email', di: 'Layar Daftar, di bawah isian Email.', oleh: 'Semua pendaftar baru.' },
+      { task: 'LANJUT_083c', awal: '**Daftar — tombol saat mengirim kode:**', nama: 'Daftar — tombol saat mengirim kode', di: 'Layar Daftar, tombol Daftar setelah ditekan dengan email terisi.', oleh: 'Pendaftar yang mengisi email.' },
+      {
+        task: 'LANJUT_083c',
+        awal: '**Daftar — langkah kode:**',
+        nama: 'Daftar — langkah kode',
+        di: 'Layar Daftar langkah 2 (setelah kode dikirim); akun belum dibuat sampai kode benar.',
+        oleh: 'Pendaftar yang mengisi email.',
+        faktual: {
+          klaim: 'Kode berlaku 5 menit; akun dibuat setelah kode benar.',
+          sumber: 'server/src/modul/auth/otp.layanan.js (KODE_BERLAKU_MENIT) dan daftarEmail.layanan.js; tes daftar-email.',
+        },
+      },
+      { task: 'LANJUT_083c', awal: '**Daftar — email belum bisa dipakai:**', nama: 'Daftar — email belum bisa dipakai', di: 'Layar Daftar, bila SMTP server belum diisi (503 OTP_TIDAK_TERSEDIA).', oleh: 'Pendaftar yang mengisi email.' },
+      { task: 'LANJUT_083c', awal: '**Daftar langsung dengan email', nama: 'Daftar dengan email dari app lama', di: 'Layar Daftar app versi lama, di bawah isian Email (medan galat dari server).', oleh: 'Pendaftar yang memakai app sebelum 083c dan mengisi email.' },
+      { task: 'LANJUT_083c', awal: '**Data Akun — ajakan verifikasi email:**', nama: 'Data Akun — ajakan verifikasi email', di: 'Data Akun (/akun), kartu paling atas.', oleh: 'Akun lama yang emailnya belum terverifikasi.' },
+      {
+        task: 'LANJUT_083c',
+        awal: '**Email kode pendaftaran:**',
+        nama: 'Isi email kode pendaftaran',
+        di: 'Email yang dikirim server saat daftar dengan email (bukan layar app).',
+        oleh: 'Pemilik email yang didaftarkan; email yang sudah punya akun tidak menerimanya.',
+        faktual: {
+          klaim: 'Tanpa kode ini, tidak ada akun yang dibuat; kode berlaku 5 menit dan sekali pakai.',
+          sumber: 'server/src/modul/auth/daftarEmail.layanan.js (akun dibuat di verifikasiDaftar); tes daftar-email.',
+        },
+      },
+      { task: 'LANJUT_083c', awal: '**Email kode verifikasi akun:**', nama: 'Isi email kode verifikasi akun', di: 'Email yang dikirim server saat akun lama meminta verifikasi email.', oleh: 'Akun lama yang emailnya belum terverifikasi.' },
+    ],
+  },
 ];
 
 const cocok = (b, aturan) => b.task === aturan.task && b.teks.startsWith(aturan.awal);
