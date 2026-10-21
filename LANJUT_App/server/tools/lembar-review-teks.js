@@ -1102,6 +1102,23 @@ const PETA = [
       { task: 'LANJUT_083c', awal: '**Email kode verifikasi akun:**', nama: 'Isi email kode verifikasi akun', di: 'Email yang dikirim server saat akun lama meminta verifikasi email.', oleh: 'Akun lama yang emailnya belum terverifikasi.' },
     ],
   },
+  {
+    kelompok: 'Akun lama diambil alih pemilik email (LANJUT_083d)',
+    butir: [
+      {
+        task: 'LANJUT_083d',
+        awal: '**Layar Buat kata sandi baru:**',
+        nama: 'Layar Buat kata sandi baru',
+        di: 'Gerbang wajib di app/(app)/_layout.tsx, menutup semua layar sampai kata sandi baru tersimpan.',
+        oleh: 'Pemilik email yang baru mengambil alih akun lama lewat kode email atau Google.',
+        faktual: {
+          klaim: 'Kata sandi lama akun ini sudah tidak berlaku.',
+          sumber: 'server/src/modul/auth/auth.layanan.js (masukLewatBuktiEmail, masuk → SANDI_PERLU_DIBUAT); tes ambil-alih-email.',
+        },
+      },
+      { task: 'LANJUT_083d', awal: '**Masuk — kata sandi lama dicabut:**', nama: 'Masuk — kata sandi lama dicabut', di: 'Layar Masuk, setelah kata sandi lama yang benar dipakai pada akun yang sudah diambil alih (403 SANDI_PERLU_DIBUAT).', oleh: 'Siapa pun yang masih memakai kata sandi lama akun itu.' },
+    ],
+  },
 ];
 
 const cocok = (b, aturan) => b.task === aturan.task && b.teks.startsWith(aturan.awal);

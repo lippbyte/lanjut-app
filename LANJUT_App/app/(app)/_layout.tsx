@@ -4,9 +4,11 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppShell } from '../../components/layout/AppShell';
 import { LayarMemuat } from '../../components/layout/LayarMemuat';
+import { BuatSandiBaruScreen } from '../../components/screens/BuatSandiBaruScreen';
 import { IsiJenisSekolahScreen, IsiKelasScreen } from '../../components/screens/IsiKelasScreen';
 import { PromptKebijakan } from '../../components/screens/TerimaKebijakan';
 import { belumIsiJenisSekolah } from '../../lib/jenjang';
+import { perluBuatSandiBaru } from '../../lib/sandiBaru';
 import { useSesi } from '../../providers/AuthProvider';
 import { ObrolanProvider } from '../../providers/ObrolanProvider';
 
@@ -16,6 +18,9 @@ const TERBUKA_TANPA_KELAS = '/akun';
 
 // Pelindung rute, berurutan:
 //   1. auth        — hanya untuk pengguna yang sudah masuk;
+//   1b. sandi baru — LANJUT_083d: kata sandi lama dicabut (pemilik email mengambil alih akun);
+//      layar "Buat kata sandi baru" menutup SEMUA rute (termasuk Data Akun), tanpa tombol
+//      lewati, sampai sandi baru tersimpan. Gerbang lain menunggu sesudahnya;
 //   2. isi kelas   — akun tanpa kelas wajib mengisinya dulu (LANJUT_036);
 //      lalu kelas 10–12 tanpa jenis sekolah memilih SMA/SMK/MA (LANJUT_038)
 //      — dua langkah berurutan, tidak pernah satu layar;
@@ -33,10 +38,11 @@ export default function AppLayout() {
   if (status === 'memuat') return <LayarMemuat />;
   if (status === 'keluar') return <Redirect href="/masuk" />;
 
+  const perluSandi = perluBuatSandiBaru(pengguna);
   const tanpaKelas = !!pengguna && !pengguna.kelas;
   const tanpaJenis = !!pengguna && belumIsiJenisSekolah(pengguna.kelas, pengguna.jenis_sekolah);
-  const tertahan = (tanpaKelas || tanpaJenis) && pathname !== TERBUKA_TANPA_KELAS;
-  const bolehPromptKebijakan = !!pengguna && !tanpaKelas && !tanpaJenis && pathname !== '/terima-kebijakan';
+  const tertahan = perluSandi || ((tanpaKelas || tanpaJenis) && pathname !== TERBUKA_TANPA_KELAS);
+  const bolehPromptKebijakan = !!pengguna && !perluSandi && !tanpaKelas && !tanpaJenis && pathname !== '/terima-kebijakan';
   return (
     // key: riwayat obrolan (hanya di memori) tidak terbawa ke akun lain dan
     // hilang saat keluar — layout ini tidak dirender lagi saat status 'keluar'.
@@ -50,7 +56,7 @@ export default function AppLayout() {
           <Slot />
         </AppShell>
       </View>
-      {tertahan ? tanpaKelas ? <IsiKelasScreen /> : <IsiJenisSekolahScreen /> : null}
+      {perluSandi ? <BuatSandiBaruScreen /> : tertahan ? tanpaKelas ? <IsiKelasScreen /> : <IsiJenisSekolahScreen /> : null}
       {bolehPromptKebijakan ? <PromptKebijakan /> : null}
     </ObrolanProvider>
   );

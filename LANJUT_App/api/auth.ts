@@ -16,6 +16,9 @@ export type Pengguna = {
   // LANJUT_083c: email terbukti milik pemilik akun. Opsional di tipe: sesi yang tersimpan
   // sebelum 083c belum punya medan ini (jangan dianggap false).
   email_terverifikasi?: boolean;
+  // LANJUT_083d: kata sandi lama dicabut (pemilik email mengambil alih akun); layar "Buat kata
+  // sandi baru" wajib sampai sandi baru dibuat. Opsional di tipe: sesi sebelum 083d.
+  perlu_sandi_baru?: boolean;
   peran: string;
   status: string;
   kelas: Kelas | null;
@@ -111,6 +114,11 @@ export async function verifikasiEmail(token: string, kode: string): Promise<Peng
   return apiFetch<Pengguna>('/auth/email/verifikasi', { method: 'POST', body: { kode }, token });
 }
 
+// LANJUT_083d — kata sandi baru setelah kata sandi lama dicabut. Mengembalikan profil terbaru.
+export async function buatSandiBaru(token: string, kata_sandi_baru: string): Promise<Pengguna> {
+  return apiFetch<Pengguna>('/auth/sandi/buat', { method: 'POST', body: { kata_sandi_baru }, token });
+}
+
 /** Daftar tanpa email (langsung). Dengan email memakai kirimKodeDaftar + verifikasiDaftar. */
 export async function daftar(data: DataDaftar): Promise<Sesi> {
   const sesi = await apiFetch<Sesi>('/auth/daftar', { method: 'POST', body: data });
@@ -198,6 +206,8 @@ const PESAN_GALAT: Record<string, string> = {
   GOOGLE_TIDAK_SAH: 'Masuk dengan Google belum berhasil. Coba lagi.',
   GOOGLE_TIDAK_TERSEDIA: 'Masuk dengan Google belum bisa dipakai sekarang. Coba cara masuk lain.',
   EMAIL_BELUM_TERVERIFIKASI: 'Email akun Google ini belum terverifikasi. Coba akun Google lain atau cara masuk lain.',
+  // LANJUT_083d — DRAF dari task, belum disetujui PM.
+  SANDI_PERLU_DIBUAT: 'Masuk dengan kode email dulu, lalu buat kata sandi baru.',
 };
 
 /** Ditampilkan di layar Masuk setelah sesi ditolak server (401) kapan pun. */

@@ -959,6 +959,15 @@ belum terverifikasi tetap bisa dipakai dan melihat ajakan verifikasi di Data Aku
 - **Email kode pendaftaran:** subjek: Kode pendaftaran LANJUT · Ini kode untuk membuat akun LANJUT kamu: / [6 angka] / Kode berlaku 5 menit dan hanya bisa dipakai sekali. Jangan berikan kode ini kepada siapa pun, termasuk yang mengaku dari LANJUT. / Kalau kamu tidak sedang mendaftar di LANJUT, abaikan email ini. Tanpa kode ini, tidak ada akun yang dibuat. / LANJUT (versi uji)
 - **Email kode verifikasi akun:** subjek: Kode verifikasi email LANJUT · Ini kode untuk memastikan email ini milik akun LANJUT kamu: / [6 angka] / (dua kalimat kode sama dengan di atas) / Kalau kamu tidak memintanya, abaikan email ini. / LANJUT (versi uji)
 
+**LANJUT_083d (21 Okt 2026) — DRAF, belum disetujui PM.** Keputusan PM pilihan (a): pemilik
+email yang masuk lewat kode email atau Google ke akun lama yang emailnya belum terverifikasi
+mengambil alih akun itu. Kata sandi lama dicabut, sesi lain dicabut, dan layar "Buat kata sandi
+baru" wajib dilewati sebelum Beranda (tanpa tombol lewati; hanya bisa keluar). Teks di
+`components/screens/BuatSandiBaruScreen.tsx`, `lib/sandiBaru.ts`, dan `api/auth.ts`.
+
+- **Layar Buat kata sandi baru:** judul: Buat kata sandi baru · pengantar: Emailmu sudah terverifikasi. Kata sandi lama akun ini sudah tidak berlaku, jadi buat kata sandi baru dulu sebelum lanjut. · label: Kata sandi baru · petunjuk & placeholder: Minimal 8 karakter. · tombol: Simpan kata sandi (proses: Menyimpan…) · tautan: Mau berhenti dulu? Keluar · galat: Kata sandi minimal 8 karakter. · Kata sandi terlalu panjang.
+- **Masuk — kata sandi lama dicabut:** Masuk dengan kode email dulu, lalu buat kata sandi baru. (teks dari task; tampil saat kata sandi lama yang benar dipakai pada akun yang sudah diambil alih)
+
 ---
 
 ## 5. Notifikasi
