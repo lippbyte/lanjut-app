@@ -4,9 +4,18 @@ const env = require('./config/env');
 const app = require('./app');
 const pool = require('./db/koneksi');
 
+const { bersihkanPendaftaranKedaluwarsa } = require('./modul/auth/daftarEmail.layanan');
+
 const server = app.listen(env.PORT, () => {
   console.log(`[server] LANJUT API berjalan di port ${env.PORT} (${env.NODE_ENV})`);
 });
+
+// LANJUT_083c: data daftar sementara dihapus setelah 30 menit, juga bila tidak ada pendaftaran
+// baru yang memicu pembersihan. Tiap 5 menit; tidak menahan proses saat ditutup.
+const penyapuPendaftaran = setInterval(() => {
+  bersihkanPendaftaranKedaluwarsa().catch(() => console.error('[daftar] gagal membersihkan data daftar sementara'));
+}, 5 * 60 * 1000);
+penyapuPendaftaran.unref();
 
 let sedangMenutup = false;
 

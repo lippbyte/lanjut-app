@@ -56,6 +56,8 @@ function bentukProfil(baris) {
     nama_pengguna: baris.nama_pengguna,
     nama_tampilan: baris.nama_tampilan || baris.nama_pengguna,
     email: baris.email,
+    // LANJUT_083c: email terbukti milik pemilik akun (kode email atau Google). Akun lama: false.
+    email_terverifikasi: Boolean(baris.email_terverifikasi),
     peran: baris.peran,
     status: baris.status,
     kelas: baris.kelas,
@@ -77,55 +79,65 @@ function bentukProfil(baris) {
   };
 }
 
-async function daftar({ nama_pengguna, kata_sandi, nama_tampilan, email, kelas, jenis_sekolah, prodi_impian, versi_kebijakan }) {
+function galatNamaDipakai() {
+  return new GalatApi('NAMA_PENGGUNA_DIPAKAI', 'Nama pengguna sudah dipakai.', { nama_pengguna: 'sudah dipakai' });
+}
+
+/**
+ * Validasi data daftar, dipakai daftar langsung (tanpa email) dan daftar dengan kode email
+ * (LANJUT_083c). Tidak pernah memeriksa email: jawabannya sama untuk email apa pun.
+ */
+async function siapkanDaftar({ nama_pengguna, nama_tampilan, kelas, jenis_sekolah, prodi_impian, versi_kebijakan }) {
   // LANJUT_038: kelas 7–9 → SMP; kelas 10–12 + SMP (atau 7–9 + SMA) → 400.
   const jenisSekolah = tentukanJenisSekolah(kelas ?? null, jenis_sekolah, null);
   // LANJUT_047: versi kebijakan yang usang ditolak SEBELUM akun dibuat.
   if (versi_kebijakan !== undefined) await persetujuanLayanan.pastikanVersiBerlaku(versi_kebijakan);
 
-  const dipakai = await penggunaRepo.cekNamaPenggunaDipakai(nama_pengguna);
-  if (dipakai) {
-    throw new GalatApi(
-      'NAMA_PENGGUNA_DIPAKAI',
-      'Nama pengguna sudah dipakai.',
-      { nama_pengguna: 'sudah dipakai' }
-    );
-  }
+  if (await penggunaRepo.cekNamaPenggunaDipakai(nama_pengguna)) throw galatNamaDipakai();
 
   const prodiTujuan = petakanProdiTujuan(prodi_impian);
   // C-2: validasi keberadaan prodi SEBELUM insert (helper bersama di atas).
   await pastikanProdiValid(prodiTujuan);
 
-  // C-3: validasi email duplikat SEBELUM insert. Tanpa ini, email yang sudah
-  // dipakai jatuh ke pelanggaran uq_pengguna_email saat INSERT dan bocor
-  // sebagai HTTP 500, bukan 400 EMAIL_DIPAKAI yang seharusnya.
-  if (email) {
-    const emailDipakai = await penggunaRepo.emailSudahAda(email);
-    if (emailDipakai) {
-      throw new GalatApi('EMAIL_DIPAKAI', 'Email sudah terdaftar.', {
-        email: 'sudah dipakai',
-      });
-    }
-  }
-
-  const id = buatUuid();
-  const kataSandiHash = await hashKataSandi(kata_sandi);
-  const dibuatPada = sekarangUntukDb();
-
-  await penggunaRepo.buatPengguna({
-    id,
+  return {
     namaPengguna: nama_pengguna,
     namaTampilan: nama_tampilan,
-    email,
-    kataSandiHash,
     kelas,
     jenisSekolah,
     prodiTujuan,
-    dibuatPada,
-  });
-  if (versi_kebijakan !== undefined) await persetujuanLayanan.terimaKebijakan(id, versi_kebijakan);
+    versiKebijakan: versi_kebijakan ?? null,
+  };
+}
 
+/** Buat akun dari data yang sudah divalidasi siapkanDaftar, lalu sesi seperti login biasa. */
+async function buatAkun(d, { kataSandiHash, email = null, emailTerverifikasi = false }) {
+  const id = buatUuid();
+  await penggunaRepo.buatPengguna({
+    id,
+    namaPengguna: d.namaPengguna,
+    namaTampilan: d.namaTampilan,
+    email,
+    emailTerverifikasi,
+    kataSandiHash,
+    kelas: d.kelas,
+    jenisSekolah: d.jenisSekolah,
+    prodiTujuan: d.prodiTujuan,
+    dibuatPada: sekarangUntukDb(),
+  });
+  if (d.versiKebijakan !== null) await persetujuanLayanan.terimaKebijakan(id, d.versiKebijakan);
   return buatSesiDanBentukRespons(id);
+}
+
+async function daftar(input) {
+  // LANJUT_083c: akun dengan email hanya dibuat setelah email terbukti lewat kode
+  // (POST /auth/daftar/kirim-kode lalu /auth/daftar/verifikasi). Di sini hanya akun tanpa email.
+  if (input.email) {
+    throw new GalatApi('VALIDASI_GAGAL', 'Daftar dengan email memakai kode verifikasi.', {
+      email: 'Daftar dengan email perlu kode verifikasi. Kosongkan email, atau perbarui aplikasi.',
+    });
+  }
+  const d = await siapkanDaftar(input);
+  return buatAkun(d, { kataSandiHash: await hashKataSandi(input.kata_sandi) });
 }
 
 async function masuk({ nama_pengguna, kata_sandi }) {
@@ -215,6 +227,9 @@ module.exports = {
   saya,
   ubahSandi,
   buatSesiDanBentukRespons, // dipakai otp.layanan & google.layanan (LANJUT_083)
+  siapkanDaftar, // dipakai daftarEmail.layanan (LANJUT_083c)
+  buatAkun,
+  galatNamaDipakai,
   petakanProdiTujuan,
   pastikanProdiValid,
   bentukProfil,

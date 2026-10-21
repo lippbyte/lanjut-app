@@ -57,6 +57,8 @@ async function masukGoogle({ id_token, nonce }) {
       id,
       namaPengguna: await namaPenggunaBaru(email),
       email,
+      // Google sudah memverifikasi email ini (email_verified dicek di tokenGoogle.js).
+      emailTerverifikasi: true,
       kataSandiHash,
       dibuatPada: sekarangUntukDb(),
     });

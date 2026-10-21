@@ -1,6 +1,7 @@
 // LANJUT_083 — masuk dengan kode email (OTP). Uji integrasi dengan MySQL nyata.
-// Pengirim email SELALU tiruan: `pengirimOtp.kirim` diganti sebelum server menyala,
-// dan net/tls.connect diawasi — tidak boleh ada satu pun koneksi keluar selama berkas ini.
+// Pengirim email SELALU tiruan (dipasang tests/bantuan.js sebelum server menyala; sejak
+// LANJUT_083c dipakai bersama semua tes), dan net/tls.connect diawasi — tidak boleh ada satu
+// pun koneksi keluar selama berkas ini. Akun uji dibuat lewat daftar dengan kode email (083c).
 
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
@@ -10,11 +11,12 @@ const bcrypt = require('bcryptjs');
 
 const pengirimOtp = require('../src/modul/auth/pengirimOtp');
 const { hashEmail } = require('../src/modul/auth/otp.layanan');
-const { nyalakanServer, urlDari, pool, acak } = require('./bantuan');
+const { nyalakanServer, urlDari, pool, acak, daftarPenggunaBaru, suratTiruan } = require('./bantuan');
 
 let server;
 let baseUrl;
-const terkirim = [];
+/** Email kode MASUK yang "terkirim" (kode daftar dari pembuatan akun uji tidak dihitung). */
+const terkirimMasuk = () => suratTiruan.filter((s) => s.tujuan === 'masuk');
 const koneksiKeluar = [];
 const asliConnect = { net: net.connect, tls: tls.connect };
 
@@ -26,10 +28,7 @@ function hostDari(arg) {
 const HOST_LOKAL = ['localhost', '127.0.0.1', '::1'];
 
 before(async () => {
-  pengirimOtp.siap = () => true;
-  pengirimOtp.kirim = async (email, kode) => {
-    terkirim.push({ email, kode });
-  };
+  assert.equal(pengirimOtp.siap(), true, 'pengirim tiruan dari bantuan.js terpasang');
   // MySQL & fetch tes ke 127.0.0.1 boleh; selain itu dicatat sebagai koneksi keluar.
   net.connect = (...a) => {
     if (!HOST_LOKAL.includes(hostDari(a))) koneksiKeluar.push(`net:${hostDari(a)}`);
@@ -59,11 +58,11 @@ async function kirim(jalur, body) {
   return { status: res.status, json: await res.json() };
 }
 
-/** Akun uji083_ dengan email; mengembalikan nama, sandi, email, id. */
+/** Akun uji083_ dengan email (dibuat lewat kode email, LANJUT_083c); mengembalikan nama, sandi, email, id. */
 async function akunBaru() {
   const nama = `uji083_${acak()}`;
   const email = `${nama}@contoh.test`;
-  const { status, json } = await kirim('daftar', { nama_pengguna: nama, kata_sandi: 'sandiujiaman1', email });
+  const { status, json } = await daftarPenggunaBaru(baseUrl, { nama_pengguna: nama, kata_sandi: 'sandiujiaman1', email });
   assert.equal(status, 201);
   return { nama, email, kataSandi: 'sandiujiaman1', id: json.data.pengguna.id };
 }
@@ -75,7 +74,7 @@ function emailAsing() {
 /** Kode terakhir yang "terkirim" ke email ini lewat pengirim tiruan. */
 async function kodeUntuk(email) {
   for (let i = 0; i < 50; i += 1) {
-    const ada = terkirim.filter((t) => t.email === email);
+    const ada = terkirimMasuk().filter((t) => t.email === email);
     if (ada.length > 0) return ada[ada.length - 1].kode;
     await new Promise((r) => setTimeout(r, 20));
   }
@@ -93,7 +92,7 @@ test('kirim: email terdaftar → 200, satu email berisi kode 6 angka dikirim ke 
   assert.deepEqual(json.data, { diproses: true, berlaku_detik: 300 });
   const kode = await kodeUntuk(akun.email);
   assert.match(kode, /^\d{6}$/);
-  assert.equal(terkirim.filter((t) => t.email === akun.email).length, 1);
+  assert.equal(terkirimMasuk().filter((t) => t.email === akun.email).length, 1);
 });
 
 test('kirim: email tidak terdaftar → respons identik, tetapi tidak ada email yang dikirim', async () => {
@@ -104,7 +103,7 @@ test('kirim: email tidak terdaftar → respons identik, tetapi tidak ada email y
   assert.equal(tidak.status, terdaftar.status);
   assert.deepEqual(tidak.json, terdaftar.json);
   await new Promise((r) => setTimeout(r, 100));
-  assert.equal(terkirim.some((t) => t.email === asing), false);
+  assert.equal(suratTiruan.some((t) => t.email === asing), false);
 });
 
 test('kode disimpan sebagai hash bcrypt (bukan teks), email sebagai SHA-256, berlaku 5 menit', async () => {
@@ -113,7 +112,7 @@ test('kode disimpan sebagai hash bcrypt (bukan teks), email sebagai SHA-256, ber
   const kode = await kodeUntuk(akun.email);
   const [baris] = await pool.execute(
     `SELECT kode_hash, email_hash, TIMESTAMPDIFF(SECOND, dibuat_pada, kedaluwarsa_pada) AS umur
-       FROM kode_otp_email WHERE email_hash = ?`,
+       FROM kode_otp_email WHERE email_hash = ? AND tujuan = 'masuk'`,
     [hashEmail(akun.email)]
   );
   assert.equal(baris.length, 1);
@@ -213,8 +212,8 @@ test('batas kirim: 3 kode per email per 15 menit; ke-4 → 429, sama untuk email
     assert.equal(keempat.json.galat.kode, 'TERLALU_SERING');
     assert.ok(keempat.json.galat.medan.email);
   }
-  assert.equal(terkirim.filter((t) => t.email === akun.email).length, 3);
-  assert.equal(terkirim.filter((t) => t.email === asing).length, 0);
+  assert.equal(terkirimMasuk().filter((t) => t.email === akun.email).length, 3);
+  assert.equal(suratTiruan.filter((t) => t.email === asing).length, 0);
 });
 
 test('kode baru menggantikan kode lama: kode lama tidak berlaku lagi', async () => {
@@ -222,7 +221,7 @@ test('kode baru menggantikan kode lama: kode lama tidak berlaku lagi', async () 
   await kirim('otp/kirim', { email: akun.email });
   const lama = await kodeUntuk(akun.email);
   await kirim('otp/kirim', { email: akun.email });
-  const baru = terkirim.filter((t) => t.email === akun.email)[1].kode;
+  const baru = terkirimMasuk().filter((t) => t.email === akun.email)[1].kode;
   if (lama !== baru) {
     const pakaiLama = await kirim('otp/verifikasi', { email: akun.email, kode: lama });
     assert.equal(pakaiLama.status, 401);
@@ -351,11 +350,11 @@ test('SMTP belum diisi → 503 OTP_TIDAK_TERSEDIA untuk email apa pun, tanpa men
   } finally {
     pengirimOtp.siap = siapAsli;
   }
-  const [baris] = await pool.execute('SELECT id FROM kode_otp_email WHERE email_hash = ?', [hashEmail(akun.email)]);
+  const [baris] = await pool.execute("SELECT id FROM kode_otp_email WHERE email_hash = ? AND tujuan = 'masuk'", [hashEmail(akun.email)]);
   assert.equal(baris.length, 0);
 });
 
 test('bukti: tidak ada email sungguhan — pengirim tiruan dipakai dan tidak ada koneksi SMTP keluar', async () => {
-  assert.ok(terkirim.length > 0);
+  assert.ok(terkirimMasuk().length > 0);
   assert.deepEqual(koneksiKeluar, []);
 });

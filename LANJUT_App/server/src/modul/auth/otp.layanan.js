@@ -1,5 +1,8 @@
-// Masuk dengan kode email sekali pakai (LANJUT_083). Tambahan, bukan pengganti
-// masuk dengan kata sandi. Tidak ada SQL di sini — hanya memanggil repositori.
+// Kode email sekali pakai (LANJUT_083): masuk dengan kode email, tambahan di samping masuk
+// dengan kata sandi. Sejak LANJUT_083c mesin kodenya (terbitkanKode, periksaKode, pakaiKode)
+// juga dipakai daftar dengan email dan verifikasi email akun (daftarEmail.layanan.js), dengan
+// `tujuan` berbeda supaya kode satu keperluan tidak bisa dipakai untuk keperluan lain.
+// Tidak ada SQL di sini — hanya memanggil repositori.
 //
 // Prinsip:
 // - Kode 6 angka dari crypto.randomInt, berlaku 5 menit, disimpan sebagai hash bcrypt.
@@ -8,7 +11,9 @@
 //   batas kirim (baris dibuat untuk semua email, lihat migrasi 025) dan lama respons
 //   (email dikirim tanpa ditunggu).
 // - Maks. 5 percobaan per kode (dicatat sebelum dibandingkan), lalu kode hangus.
-// - Maks. 3 kode per email per 15 menit, dihitung dari tabel kode_otp_email.
+// - Maks. 3 kode per email per tujuan per 15 menit, dihitung dari tabel kode_otp_email. Per
+//   tujuan, supaya kode daftar tidak menghabiskan jatah kode masuk; email terdaftar hanya pernah
+//   menerima kode masuk/verifikasi dan email baru hanya kode daftar, jadi tetap maks. 3 email.
 
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
@@ -53,14 +58,22 @@ function galatKodeTidakBerlaku() {
   return new GalatApi('KODE_KEDALUWARSA', 'Kode sudah tidak berlaku. Minta kode baru.', { kode: 'tidak berlaku' });
 }
 
-async function kirimOtp({ email }) {
+function pastikanPengirimSiap() {
   if (!pengirimOtp.siap()) {
-    throw new GalatApi('OTP_TIDAK_TERSEDIA', 'Masuk dengan kode email belum tersedia.');
+    throw new GalatApi('OTP_TIDAK_TERSEDIA', 'Pengiriman kode email belum tersedia.');
   }
+}
+
+/**
+ * Cek batas kirim tujuan ini, lalu simpan kode baru untuk tujuan ini; kode aktif lama
+ * dengan tujuan yang sama ditutup. Mengembalikan kode mentah — TIDAK dikirim di sini, supaya
+ * pemanggil yang memutuskan (email tak terdaftar tidak pernah menerima kode).
+ */
+async function terbitkanKode(email, tujuan) {
   const emailHash = hashEmail(email);
   const sekarang = new Date();
 
-  const jumlah = await otpRepo.hitungKirimSejak(emailHash, keDb(menitDariSekarang(-JENDELA_KIRIM_MENIT)));
+  const jumlah = await otpRepo.hitungKirimSejak(emailHash, tujuan, keDb(menitDariSekarang(-JENDELA_KIRIM_MENIT)));
   if (jumlah >= MAKS_KIRIM) {
     throw new GalatApi('TERLALU_SERING', 'Terlalu banyak permintaan kode. Coba lagi nanti.', {
       email: 'terlalu sering',
@@ -70,29 +83,32 @@ async function kirimOtp({ email }) {
   const kode = buatKode();
   const kodeHash = await bcrypt.hash(kode, COST_KODE);
   await otpRepo.hapusSebelum(keDb(menitDariSekarang(-24 * 60)));
-  await otpRepo.tutupKodeAktif(emailHash, keDb(sekarang));
+  await otpRepo.tutupKodeAktif(emailHash, tujuan, keDb(sekarang));
   await otpRepo.simpanKode({
     id: buatUuid(),
     emailHash,
+    tujuan,
     kodeHash,
     dibuatPada: keDb(sekarang),
     kedaluwarsaPada: keDb(new Date(sekarang.getTime() + KODE_BERLAKU_MENIT * 60 * 1000)),
   });
-
-  // Dicari untuk SEMUA email (lama respons sama); kode hanya dikirim ke akun aktif.
-  const pengguna = await penggunaRepo.cariUntukMasukDenganEmail(email);
-  if (pengguna && pengguna.status === 'aktif') {
-    // Tidak ditunggu: lama respons tidak boleh membedakan email terdaftar.
-    Promise.resolve()
-      .then(() => pengirimOtp.kirim(email, kode))
-      .catch(() => console.error('[otp] email kode masuk gagal terkirim'));
-  }
-
-  return { diproses: true, berlaku_detik: KODE_BERLAKU_MENIT * 60 };
+  return kode;
 }
 
-async function verifikasiOtp({ email, kode }) {
-  const baris = await otpRepo.ambilKodeAktif(hashEmail(email));
+/** Kirim tanpa ditunggu: lama respons tidak boleh membedakan email terdaftar. */
+function kirimDiLatar(email, kode, tujuan) {
+  Promise.resolve()
+    .then(() => pengirimOtp.kirim(email, kode, tujuan))
+    .catch(() => console.error('[otp] email kode gagal terkirim'));
+}
+
+/**
+ * Periksa kode untuk tujuan ini. Percobaan dicatat SEBELUM dibandingkan; setelah 5, tidak ada
+ * giliran lagi dan kode hangus. Mengembalikan id baris kode; pemanggil menandainya dipakai
+ * (pakaiKode) setelah semua syarat lain lolos.
+ */
+async function periksaKode(email, kode, tujuan) {
+  const baris = await otpRepo.ambilKodeAktif(hashEmail(email), tujuan);
   if (!baris || new Date(baris.kedaluwarsa_pada).getTime() <= Date.now()) throw galatKodeTidakBerlaku();
 
   // Percobaan dicatat SEBELUM kode dibandingkan; setelah 5, tidak ada giliran lagi.
@@ -104,14 +120,34 @@ async function verifikasiOtp({ email, kode }) {
     await otpRepo.hanguskanBilaHabis(baris.id, MAKS_PERCOBAAN, sekarangUntukDb());
     throw galatKodeSalah();
   }
+  return baris.id;
+}
+
+/** Tandai kode terpakai; gagal bila permintaan lain memakainya lebih dulu. */
+async function pakaiKode(idKode) {
+  const dipakai = await otpRepo.tandaiDipakai(idKode, sekarangUntukDb());
+  if (!dipakai) throw galatKodeTidakBerlaku();
+}
+
+async function kirimOtp({ email }) {
+  pastikanPengirimSiap();
+  const kode = await terbitkanKode(email, 'masuk');
+
+  // Dicari untuk SEMUA email (lama respons sama); kode hanya dikirim ke akun aktif.
+  const pengguna = await penggunaRepo.cariUntukMasukDenganEmail(email);
+  if (pengguna && pengguna.status === 'aktif') kirimDiLatar(email, kode, 'masuk');
+
+  return { diproses: true, berlaku_detik: KODE_BERLAKU_MENIT * 60 };
+}
+
+async function verifikasiOtp({ email, kode }) {
+  const idKode = await periksaKode(email, kode, 'masuk');
 
   // Email tak terdaftar tidak pernah menerima kodenya; jawabannya tetap "kode salah".
   const pengguna = await penggunaRepo.cariUntukMasukDenganEmail(email);
   if (!pengguna || pengguna.status !== 'aktif') throw galatKodeSalah();
 
-  const dipakai = await otpRepo.tandaiDipakai(baris.id, sekarangUntukDb());
-  if (!dipakai) throw galatKodeTidakBerlaku();
-
+  await pakaiKode(idKode);
   await penggunaRepo.tandaiTerakhirMasuk(pengguna.id, sekarangUntukDb());
   return buatSesiDanBentukRespons(pengguna.id);
 }
@@ -119,7 +155,15 @@ async function verifikasiOtp({ email, kode }) {
 module.exports = {
   kirimOtp,
   verifikasiOtp,
+  terbitkanKode,
+  kirimDiLatar,
+  periksaKode,
+  pakaiKode,
+  pastikanPengirimSiap,
+  galatKodeSalah,
+  galatKodeTidakBerlaku,
   hashEmail,
+  keDb,
   KODE_BERLAKU_MENIT,
   MAKS_PERCOBAAN,
   MAKS_KIRIM,

@@ -9,7 +9,7 @@ const crypto = require('crypto');
 
 const env = require('../src/config/env');
 const tokenGoogle = require('../src/modul/auth/tokenGoogle');
-const { nyalakanServer, urlDari, pool, acak } = require('./bantuan');
+const { nyalakanServer, urlDari, pool, acak, daftarPenggunaBaru } = require('./bantuan');
 
 const CLIENT_ID = 'uji083-klien.apps.googleusercontent.com';
 const KID = 'kunci-uji-083';
@@ -136,6 +136,8 @@ test('email baru → akun siswa baru dibuat dan langsung masuk', async () => {
   assert.equal(json.data.akun_baru, true);
   assert.ok(json.data.token);
   assert.equal(json.data.pengguna.email, email);
+  // LANJUT_083c: Google sudah memverifikasi email ini.
+  assert.equal(json.data.pengguna.email_terverifikasi, true);
   assert.equal(json.data.pengguna.peran, 'siswa');
   assert.equal(json.data.pengguna.kelas, null);
   assert.match(json.data.pengguna.nama_pengguna, /^[a-z0-9._]{3,32}$/);
@@ -149,12 +151,10 @@ test('email baru → akun siswa baru dibuat dan langsung masuk', async () => {
 test('email yang sudah ada → akun lama dipakai (tidak membuat akun kedua)', async () => {
   const nama = `uji083_${acak()}`;
   const email = `${nama}@contoh.test`;
-  const daftar = await fetch(`${baseUrl}/api/v1/auth/daftar`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nama_pengguna: nama, kata_sandi: 'sandiujiaman1', email, kelas: '11', jenis_sekolah: 'SMA' }),
-  });
-  const idLama = (await daftar.json()).data.pengguna.id;
+  // LANJUT_083c: akun dengan email dibuat lewat kode email (pengirim tiruan di bantuan.js).
+  const daftar = await daftarPenggunaBaru(baseUrl, { nama_pengguna: nama, kata_sandi: 'sandiujiaman1', email, kelas: '11', jenis_sekolah: 'SMA' });
+  assert.equal(daftar.status, 201);
+  const idLama = daftar.json.data.pengguna.id;
 
   // Huruf besar di email Google tetap cocok.
   const { status, json } = await masukGoogle({ email: email.toUpperCase() });

@@ -4,39 +4,42 @@
 
 const pool = require('../../db/koneksi');
 
-/** Jumlah kode yang dibuat untuk email ini sejak `sejak` (batas kirim). */
-async function hitungKirimSejak(emailHash, sejak) {
+// LANJUT_083c: kolom `tujuan` ('masuk' | 'daftar' | 'verifikasi') memisahkan kode masuk, kode
+// daftar, dan kode verifikasi email akun, termasuk batas kirimnya.
+
+/** Jumlah kode untuk email & tujuan ini sejak `sejak` (batas kirim). */
+async function hitungKirimSejak(emailHash, tujuan, sejak) {
   const [baris] = await pool.execute(
-    'SELECT COUNT(*) AS jumlah FROM kode_otp_email WHERE email_hash = ? AND dibuat_pada > ?',
-    [emailHash, sejak]
+    'SELECT COUNT(*) AS jumlah FROM kode_otp_email WHERE email_hash = ? AND tujuan = ? AND dibuat_pada > ?',
+    [emailHash, tujuan, sejak]
   );
   return Number(baris[0].jumlah);
 }
 
-/** Kode yang masih aktif untuk email ini ditutup — hanya kode terbaru yang berlaku. */
-async function tutupKodeAktif(emailHash, waktu) {
+/** Kode aktif dengan tujuan yang sama ditutup — hanya kode terbaru yang berlaku. */
+async function tutupKodeAktif(emailHash, tujuan, waktu) {
   await pool.execute(
-    'UPDATE kode_otp_email SET selesai_pada = ? WHERE email_hash = ? AND selesai_pada IS NULL',
-    [waktu, emailHash]
+    'UPDATE kode_otp_email SET selesai_pada = ? WHERE email_hash = ? AND tujuan = ? AND selesai_pada IS NULL',
+    [waktu, emailHash, tujuan]
   );
 }
 
-async function simpanKode({ id, emailHash, kodeHash, dibuatPada, kedaluwarsaPada }) {
+async function simpanKode({ id, emailHash, tujuan, kodeHash, dibuatPada, kedaluwarsaPada }) {
   await pool.execute(
-    `INSERT INTO kode_otp_email (id, email_hash, kode_hash, dibuat_pada, kedaluwarsa_pada)
-     VALUES (?, ?, ?, ?, ?)`,
-    [id, emailHash, kodeHash, dibuatPada, kedaluwarsaPada]
+    `INSERT INTO kode_otp_email (id, email_hash, tujuan, kode_hash, dibuat_pada, kedaluwarsa_pada)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [id, emailHash, tujuan, kodeHash, dibuatPada, kedaluwarsaPada]
   );
 }
 
-async function ambilKodeAktif(emailHash) {
+async function ambilKodeAktif(emailHash, tujuan) {
   const [baris] = await pool.execute(
     `SELECT id, kode_hash, kedaluwarsa_pada, jumlah_percobaan
        FROM kode_otp_email
-      WHERE email_hash = ? AND selesai_pada IS NULL
+      WHERE email_hash = ? AND tujuan = ? AND selesai_pada IS NULL
       ORDER BY dibuat_pada DESC
       LIMIT 1`,
-    [emailHash]
+    [emailHash, tujuan]
   );
   return baris[0] || null;
 }

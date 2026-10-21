@@ -44,31 +44,22 @@ test('daftar: nama_pengguna yang sudah dipakai ditolak 409', async () => {
   assert.equal(json.galat.kode, 'NAMA_PENGGUNA_DIPAKAI');
 });
 
-test('daftar: email yang sudah dipakai ditolak 400 EMAIL_DIPAKAI, bukan 500 (C-3)', async () => {
-  const email = `uji_${acak()}@contoh.test`;
-  const pertama = await fetch(`${baseUrl}/api/v1/auth/daftar`, {
+// LANJUT_083c: dulu "email dipakai → 400 EMAIL_DIPAKAI" (C-3). Jawaban itu membocorkan email
+// yang terdaftar dan akunnya dibuat tanpa bukti email. Kini daftar dengan email hanya lewat kode
+// (tests/daftar-email.test.js, termasuk: email terdaftar tidak dibuatkan akun kedua).
+test('daftar langsung dengan email ditolak 400 tanpa membuat akun (LANJUT_083c)', async () => {
+  const nama = `uji_${acak()}`;
+  const res = await fetch(`${baseUrl}/api/v1/auth/daftar`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      nama_pengguna: `uji_${acak()}`,
-      kata_sandi: 'sandiujiaman1',
-      email,
-    }),
+    body: JSON.stringify({ nama_pengguna: nama, kata_sandi: 'sandiujiaman1', email: `${nama}@contoh.test` }),
   });
-  assert.equal(pertama.status, 201);
-
-  const kedua = await fetch(`${baseUrl}/api/v1/auth/daftar`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      nama_pengguna: `uji_${acak()}`,
-      kata_sandi: 'sandiujiaman1',
-      email,
-    }),
-  });
-  const json = await kedua.json();
-  assert.equal(kedua.status, 400);
-  assert.equal(json.galat.kode, 'EMAIL_DIPAKAI');
+  const json = await res.json();
+  assert.equal(res.status, 400);
+  assert.equal(json.galat.kode, 'VALIDASI_GAGAL');
+  assert.ok(json.galat.medan.email);
+  const [baris] = await pool.execute('SELECT id FROM pengguna WHERE nama_pengguna = ?', [nama]);
+  assert.equal(baris.length, 0);
 });
 
 test('daftar: kata sandi terlalu pendek ditolak VALIDASI_GAGAL', async () => {

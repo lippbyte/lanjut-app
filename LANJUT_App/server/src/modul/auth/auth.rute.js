@@ -8,6 +8,8 @@ const {
   ubahSandiSkema,
   otpKirimSkema,
   otpVerifikasiSkema,
+  daftarKirimKodeSkema,
+  verifikasiEmailSkema,
   googleSkema,
 } = require('./auth.skema');
 const { validasiBody } = require('../../middleware/validasi');
@@ -17,6 +19,7 @@ const { sukses } = require('../../util/respons');
 const layanan = require('./auth.layanan');
 const otpLayanan = require('./otp.layanan');
 const googleLayanan = require('./google.layanan');
+const daftarEmailLayanan = require('./daftarEmail.layanan');
 
 const router = express.Router();
 
@@ -33,6 +36,40 @@ router.post(
     }
   }
 );
+
+// LANJUT_083c — daftar dengan email: kode dulu, akun dibuat setelah kode benar.
+router.post('/daftar/kirim-kode', batasDaftar, validasiBody(daftarKirimKodeSkema), async (req, res, next) => {
+  try {
+    sukses(res, await daftarEmailLayanan.kirimKodeDaftar(req.body));
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/daftar/verifikasi', batasAuth, validasiBody(otpVerifikasiSkema), async (req, res, next) => {
+  try {
+    sukses(res, await daftarEmailLayanan.verifikasiDaftar(req.body), undefined, 201);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// LANJUT_083c — verifikasi email akun yang sedang masuk (akun lama).
+router.post('/email/kirim-kode', wajibLogin, batasAuth, async (req, res, next) => {
+  try {
+    sukses(res, await daftarEmailLayanan.kirimKodeVerifikasiEmail(req.pengguna.id));
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/email/verifikasi', wajibLogin, batasAuth, validasiBody(verifikasiEmailSkema), async (req, res, next) => {
+  try {
+    sukses(res, await daftarEmailLayanan.verifikasiEmailAkun(req.pengguna.id, req.body));
+  } catch (err) {
+    next(err);
+  }
+});
 
 router.post('/masuk', batasAuth, validasiBody(masukSkema), async (req, res, next) => {
   try {

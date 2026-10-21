@@ -30,7 +30,7 @@ async function cariUntukMasukDenganEmail(email) {
 /** Profil publik pengguna berjalan — TIDAK PERNAH memuat kata_sandi_hash. */
 async function cariProfil(penggunaId) {
   const [baris] = await pool.execute(
-    `SELECT id, nama_pengguna, nama_tampilan, email, peran, status,
+    `SELECT id, nama_pengguna, nama_tampilan, email, email_terverifikasi, peran, status,
             kelas, jenis_sekolah, prodi_tujuan, gaya_belajar, minat_rumpun, mapel_pilihan,
             kesiapan_ujian, dibuat_pada, terakhir_masuk_pada
        FROM pengguna
@@ -49,18 +49,12 @@ async function cekNamaPenggunaDipakai(namaPengguna) {
   return baris.length > 0;
 }
 
-/** C-3: cek email sebelum INSERT, supaya pelanggaran uq_pengguna_email tidak
- * bocor sebagai 500 — email opsional, jadi hanya dicek bila diisi. */
-async function emailSudahAda(email) {
-  const [baris] = await pool.execute('SELECT id FROM pengguna WHERE email = ? LIMIT 1', [email]);
-  return baris.length > 0;
-}
-
 async function buatPengguna({
   id,
   namaPengguna,
   namaTampilan,
   email,
+  emailTerverifikasi = false,
   kataSandiHash,
   kelas,
   jenisSekolah,
@@ -69,14 +63,15 @@ async function buatPengguna({
 }) {
   await pool.execute(
     `INSERT INTO pengguna
-       (id, nama_pengguna, nama_tampilan, email, kata_sandi_hash, peran, status,
+       (id, nama_pengguna, nama_tampilan, email, email_terverifikasi, kata_sandi_hash, peran, status,
         kelas, jenis_sekolah, prodi_tujuan, dibuat_pada)
-     VALUES (?, ?, ?, ?, ?, 'siswa', 'aktif', ?, ?, ?, ?)`,
+     VALUES (?, ?, ?, ?, ?, ?, 'siswa', 'aktif', ?, ?, ?, ?)`,
     [
       id,
       namaPengguna,
       namaTampilan || null,
       email || null,
+      email && emailTerverifikasi ? 1 : 0,
       kataSandiHash,
       kelas || null,
       jenisSekolah || null,
@@ -84,6 +79,11 @@ async function buatPengguna({
       dibuatPada,
     ]
   );
+}
+
+/** LANJUT_083c: email akun terbukti milik pemilik akun (kode verifikasi ke email itu). */
+async function tandaiEmailTerverifikasi(penggunaId) {
+  await pool.execute('UPDATE pengguna SET email_terverifikasi = 1 WHERE id = ? AND email IS NOT NULL', [penggunaId]);
 }
 
 async function tandaiTerakhirMasuk(penggunaId, waktu) {
@@ -153,8 +153,8 @@ module.exports = {
   cariUntukMasukDenganEmail,
   cariProfil,
   cekNamaPenggunaDipakai,
-  emailSudahAda,
   buatPengguna,
+  tandaiEmailTerverifikasi,
   tandaiTerakhirMasuk,
   updateKataSandiHash,
   updateProfil,

@@ -72,10 +72,15 @@ const emailSkema = z.string().trim().toLowerCase().email('Email tidak valid.').m
 
 const otpKirimSkema = z.object({ email: emailSkema });
 
-const otpVerifikasiSkema = z.object({
-  email: emailSkema,
-  kode: z.string().trim().regex(/^\d{6}$/, 'Kode terdiri dari 6 angka.'),
-});
+const kodeSkema = z.string().trim().regex(/^\d{6}$/, 'Kode terdiri dari 6 angka.');
+
+const otpVerifikasiSkema = z.object({ email: emailSkema, kode: kodeSkema });
+
+// LANJUT_083c — daftar dengan email: data sama dengan daftarSkema, email wajib.
+const daftarKirimKodeSkema = daftarSkema.extend({ email: emailSkema });
+
+// LANJUT_083c — verifikasi email akun yang sedang masuk (email diambil dari akunnya).
+const verifikasiEmailSkema = z.object({ kode: kodeSkema });
 
 const googleSkema = z.object({
   id_token: z.string().min(20).max(4096),
@@ -88,6 +93,8 @@ module.exports = {
   ubahSandiSkema,
   otpKirimSkema,
   otpVerifikasiSkema,
+  daftarKirimKodeSkema,
+  verifikasiEmailSkema,
   googleSkema,
   NAMA_PENGGUNA_REGEX,
 };

@@ -4,6 +4,35 @@
 
 const app = require('../src/app');
 const pool = require('../src/db/koneksi');
+const pengirimOtp = require('../src/modul/auth/pengirimOtp');
+
+// LANJUT_083/083c: SEMUA tes yang memakai bantuan ini memakai pengirim email TIRUAN. Kode yang
+// "terkirim" hanya dicatat di larik ini — tidak ada email sungguhan dari tes, walau SMTP diisi.
+const suratTiruan = [];
+pengirimOtp.siap = () => true;
+pengirimOtp.kirim = async (email, kode, tujuan = 'masuk') => {
+  suratTiruan.push({ email: String(email).toLowerCase(), kode, tujuan });
+};
+
+/** Kode terakhir yang "terkirim" ke email ini untuk tujuan itu; null bila tidak ada (setelah ±1 detik). */
+async function kodeTerakhir(email, tujuan = 'masuk') {
+  const alamat = String(email).trim().toLowerCase();
+  for (let i = 0; i < 50; i += 1) {
+    const ada = suratTiruan.filter((s) => s.email === alamat && s.tujuan === tujuan);
+    if (ada.length > 0) return ada[ada.length - 1].kode;
+    await new Promise((r) => setTimeout(r, 20));
+  }
+  return null;
+}
+
+async function kirimJson(baseUrl, jalur, body, token) {
+  const res = await fetch(`${baseUrl}/api/v1${jalur}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    body: JSON.stringify(body),
+  });
+  return { status: res.status, json: await res.json() };
+}
 
 function acak() {
   return Math.random().toString(36).slice(2, 10);
@@ -26,6 +55,15 @@ async function daftarPenggunaBaru(baseUrl, override) {
     { nama_pengguna: namaPengguna, kata_sandi: 'sandiujiaman1' },
     override || {}
   );
+  // LANJUT_083c: akun dengan email hanya dibuat lewat kode email (kirim-kode → verifikasi),
+  // memakai pengirim tiruan di atas. Bentuk hasilnya sama dengan daftar langsung (201 + sesi).
+  if (body.email) {
+    const kirim = await kirimJson(baseUrl, '/auth/daftar/kirim-kode', body);
+    if (kirim.status !== 200) return { status: kirim.status, json: kirim.json, namaPengguna, kataSandi: body.kata_sandi };
+    const kode = await kodeTerakhir(body.email, 'daftar');
+    const { status, json } = await kirimJson(baseUrl, '/auth/daftar/verifikasi', { email: body.email, kode });
+    return { status, json, namaPengguna, kataSandi: body.kata_sandi };
+  }
   const res = await fetch(`${baseUrl}/api/v1/auth/daftar`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -57,4 +95,14 @@ async function kunciKonfigurasiGlobal() {
   };
 }
 
-module.exports = { acak, nyalakanServer, urlDari, daftarPenggunaBaru, kunciKonfigurasiGlobal, pool };
+module.exports = {
+  acak,
+  nyalakanServer,
+  urlDari,
+  daftarPenggunaBaru,
+  kunciKonfigurasiGlobal,
+  pool,
+  suratTiruan,
+  kodeTerakhir,
+  kirimJson,
+};
