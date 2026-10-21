@@ -1004,6 +1004,52 @@ const PETA = [
       { task: 'LANJUT_058', awal: '**Level-In — saran hari ini:**', nama: 'Saran hari ini', di: 'Level-In, kartu saran.', oleh: 'Akun yang sudah berlatih.' },
     ],
   },
+  {
+    kelompok: 'Masuk dengan kode email & Google, landing page (LANJUT_083)',
+    butir: [
+      { task: 'LANJUT_083', awal: '**Layar Masuk — pilihan lain:**', nama: 'Layar Masuk — pilihan cara masuk', di: 'Layar Masuk, di bawah formulir (tombol Google hanya bila Client ID Google diisi saat build).', oleh: 'Semua yang belum masuk.' },
+      { task: 'LANJUT_083', awal: '**Layar Masuk — pengantar mode kode:**', nama: 'Layar Masuk — pengantar mode kode', di: 'Layar Masuk, sesudah menekan "Masuk dengan kode email".', oleh: 'Yang memilih masuk dengan kode email.' },
+      { task: 'LANJUT_083', awal: '**Kode email — langkah 1:**', nama: 'Kode email — isi email', di: 'Layar Masuk, mode kode email, langkah 1.', oleh: 'Yang memilih masuk dengan kode email.' },
+      {
+        task: 'LANJUT_083',
+        awal: '**Kode email — langkah 2:**',
+        nama: 'Kode email — isi kode',
+        di: 'Layar Masuk, mode kode email, sesudah kode diminta.',
+        oleh: 'Yang memilih masuk dengan kode email.',
+        faktual: {
+          klaim: 'Kode berlaku 5 menit.',
+          sumber: 'server/src/modul/auth/otp.layanan.js (KODE_BERLAKU_MENIT); tes otp-email "berlaku 5 menit".',
+        },
+      },
+      { task: 'LANJUT_083', awal: '**Galat kode email:**', nama: 'Galat kode email', di: 'Layar Masuk, mode kode email (api/auth.ts PESAN_GALAT).', oleh: 'Yang memilih masuk dengan kode email.' },
+      { task: 'LANJUT_083', awal: '**Galat Google:**', nama: 'Galat masuk Google', di: 'Layar Masuk dan layar kembali dari Google (api/auth.ts PESAN_GALAT).', oleh: 'Yang memilih masuk dengan Google.' },
+      {
+        task: 'LANJUT_083',
+        awal: '**Email kode masuk:**',
+        nama: 'Isi email kode masuk',
+        di: 'Email yang dikirim server ke alamat akun (bukan layar app).',
+        oleh: 'Pemilik akun yang meminta kode.',
+        faktual: {
+          klaim: 'Kode berlaku 5 menit dan hanya bisa dipakai sekali.',
+          sumber: 'server/src/modul/auth/otp.layanan.js (KODE_BERLAKU_MENIT, tandaiDipakai); tes otp-email "hanya bisa dipakai sekali".',
+        },
+      },
+      { task: 'LANJUT_083', awal: '**Layar kembali dari Google:**', nama: 'Layar kembali dari Google', di: 'app/masuk-google.tsx, sesudah memilih akun di halaman Google.', oleh: 'Yang memilih masuk dengan Google.' },
+      { task: 'LANJUT_083', awal: '**Halaman penerus Google', nama: 'Halaman penerus Google', di: 'landing/google-kembali.html di domain landing, sebentar sebelum app terbuka (Android/iOS).', oleh: 'Yang masuk dengan Google dari app Android/iOS.' },
+      {
+        task: 'LANJUT_083',
+        awal: '**Landing page (',
+        nama: 'Landing page dan panduan uji',
+        di: 'landing/index.html dan landing/panduan-uji.html di domain PM dan domain guru.',
+        oleh: 'Calon penguji, guru, dan siapa pun yang membuka domain landing.',
+        faktual: {
+          klaim: 'APK hanya untuk Android; fitur AI, Persiapan Event, dan mikrofon belum aktif di versi uji.',
+          sumber: 'Saklar ai_aktif & event_sekolah_aktif di server yang dipakai APK; EXPO_PUBLIC_MIKROFON_NGOBROL saat build (lib/fiturApp.ts).',
+        },
+      },
+      { task: 'LANJUT_083', awal: '**Halaman kebijakan di landing', nama: 'Kebijakan privasi di landing', di: 'landing/kebijakan-privasi.html (ditulis dari lib/kebijakan-privasi.json).', oleh: 'Siapa pun yang membuka domain landing.' },
+    ],
+  },
 ];
 
 const cocok = (b, aturan) => b.task === aturan.task && b.teks.startsWith(aturan.awal);

@@ -61,6 +61,30 @@ export async function masuk(nama_pengguna: string, kata_sandi: string): Promise<
   return sesi;
 }
 
+// LANJUT_083 — masuk dengan kode email. Jawaban kirim sama untuk email terdaftar
+// atau tidak; kodenya hanya terkirim ke email akun.
+export async function kirimKodeEmail(email: string): Promise<{ diproses: boolean; berlaku_detik: number }> {
+  return apiFetch('/auth/otp/kirim', { method: 'POST', body: { email } });
+}
+
+export async function masukDenganKode(email: string, kode: string): Promise<Sesi> {
+  const sesi = await apiFetch<Sesi>('/auth/otp/verifikasi', { method: 'POST', body: { email, kode } });
+  await simpanSesi(sesi);
+  return sesi;
+}
+
+// LANJUT_083 — masuk dengan Google (alur di lib/googleMasuk.ts).
+export async function ambilNonceGoogle(): Promise<string> {
+  const { nonce } = await apiFetch<{ nonce: string }>('/auth/google/nonce');
+  return nonce;
+}
+
+export async function masukDenganGoogle(id_token: string, nonce: string): Promise<Sesi> {
+  const sesi = await apiFetch<Sesi>('/auth/google', { method: 'POST', body: { id_token, nonce } });
+  await simpanSesi(sesi);
+  return sesi;
+}
+
 export async function daftar(data: DataDaftar): Promise<Sesi> {
   const sesi = await apiFetch<Sesi>('/auth/daftar', { method: 'POST', body: data });
   await simpanSesi(sesi);
@@ -140,6 +164,13 @@ const PESAN_GALAT: Record<string, string> = {
   TIDAK_BERHAK: 'Kamu tidak punya akses ke ini.',
   GALAT_SERVER: 'Sedang ada gangguan di server. Coba lagi sebentar lagi.',
   JARINGAN: 'Tidak bisa menghubungi server. Periksa koneksimu.',
+  // LANJUT_083 — DRAF (docs/salinan-teks-lanjut.md §4.21), belum disetujui PM.
+  KODE_SALAH: 'Kodenya belum cocok. Periksa lagi kode di emailmu.',
+  KODE_KEDALUWARSA: 'Kode ini sudah tidak berlaku. Minta kode baru.',
+  OTP_TIDAK_TERSEDIA: 'Masuk dengan kode email belum bisa dipakai sekarang. Masuk dengan kata sandi dulu, ya.',
+  GOOGLE_TIDAK_SAH: 'Masuk dengan Google belum berhasil. Coba lagi.',
+  GOOGLE_TIDAK_TERSEDIA: 'Masuk dengan Google belum bisa dipakai sekarang. Coba cara masuk lain.',
+  EMAIL_BELUM_TERVERIFIKASI: 'Email akun Google ini belum terverifikasi. Coba akun Google lain atau cara masuk lain.',
 };
 
 /** Ditampilkan di layar Masuk setelah sesi ditolak server (401) kapan pun. */

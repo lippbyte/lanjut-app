@@ -913,6 +913,28 @@ tersimpan, gagal, dan perlu kebijakan memakai kalimat §4.9 yang sudah ada. Teks
 - **Saran — sudah siap, langkah ujian beres:** Persiapanmu sudah jalan. Menjaga ritme latihan dan istirahat yang cukup bisa jadi pegangan menjelang ujian. (tanpa tombol)
 - **Penafian Jalur Saya (diubah):** Posisi ini dihitung dari target prodi di Data Akun dan kemajuan Daftar Periksa, termasuk Persiapan Ujian. Jawaban kesiapanmu hanya mengubah saran, bukan tahapmu. Ini cuma gambaran, keputusannya tetap di tanganmu. (sebelumnya tanpa kalimat "termasuk Persiapan Ujian" dan kalimat kedua)
 
+### 4.21 Masuk dengan kode email, masuk dengan Google, dan landing page
+
+**LANJUT_083 (21 Okt 2026) — DRAF, belum disetujui PM.** Kata sandi tetap cara masuk
+bawaan; kode email dan Google adalah tambahan. Jawaban server untuk kode email sama
+untuk email terdaftar atau tidak, jadi kalimatnya juga tidak memastikan apa pun. Tombol
+Google hanya tampil bila Client ID Google diisi saat build. Teks di
+`components/screens/auth/LoginScreen.tsx`, `MasukKodeEmail.tsx`, `TombolGoogle.tsx`,
+`app/masuk-google.tsx`, `api/auth.ts` (`PESAN_GALAT`), dan
+`server/src/modul/auth/pengirimOtp.js` (isi email).
+
+- **Layar Masuk — pilihan lain:** pemisah: atau · tombol: Masuk dengan kode email · di mode kode: Masuk dengan kata sandi · tombol Google: Masuk dengan Google
+- **Layar Masuk — pengantar mode kode:** Kami kirim kode masuk ke email akunmu.
+- **Kode email — langkah 1:** label Email · petunjuk: Email yang tersimpan di akun LANJUT-mu. · placeholder: nama@contoh.com · tombol: Kirim kode (proses: Mengirim…) · galat: Isi email dulu. · Email belum benar.
+- **Kode email — langkah 2:** Kalau [email] terdaftar di LANJUT, kode masuk sudah kami kirim ke sana. Kode berlaku 5 menit. · label: Kode masuk · placeholder: 6 angka · tombol: Masuk (proses: Memeriksa…) · galat: Kode terdiri dari 6 angka. · Periksa lagi kodenya. · tautan: Belum dapat kodenya? Kirim ulang · Salah email? Ganti email
+- **Galat kode email:** kode salah: Kodenya belum cocok. Periksa lagi kode di emailmu. · kedaluwarsa/hangus/sudah dipakai: Kode ini sudah tidak berlaku. Minta kode baru. · SMTP belum diisi: Masuk dengan kode email belum bisa dipakai sekarang. Masuk dengan kata sandi dulu, ya. · lebih dari 3 kode/15 menit: kalimat TERLALU_SERING yang sudah ada.
+- **Galat Google:** token ditolak: Masuk dengan Google belum berhasil. Coba lagi. · belum tersedia: Masuk dengan Google belum bisa dipakai sekarang. Coba cara masuk lain. · email Google belum terverifikasi: Email akun Google ini belum terverifikasi. Coba akun Google lain atau cara masuk lain.
+- **Email kode masuk:** subjek: Kode masuk LANJUT · isi: Halo, / Ini kode masuk LANJUT kamu: / [6 angka] / Kode berlaku 5 menit dan hanya bisa dipakai sekali. Jangan berikan kode ini kepada siapa pun, termasuk yang mengaku dari LANJUT. / Kalau kamu tidak sedang masuk ke LANJUT, abaikan email ini. Akunmu tetap aman. / LANJUT (versi uji)
+- **Layar kembali dari Google:** judul: Masuk dengan Google · pengantar: Sebentar, kami memeriksa akun Google-mu. · gagal: Masuk dengan Google belum berhasil. Coba lagi dari layar Masuk. · Kamu juga bisa masuk dengan kata sandi atau kode email. · tombol: Kembali ke Masuk
+- **Halaman penerus Google (`landing/google-kembali.html`):** Kembali ke aplikasi LANJUT · Membuka aplikasi LANJUT… · tombol: Buka aplikasi LANJUT · Kalau aplikasi tidak terbuka sendiri, ketuk tombol di atas. Halaman ini tidak menyimpan apa pun. · tanpa data: Tidak ada data masuk dari Google. Buka aplikasi dan coba lagi.
+- **Landing page (`landing/index.html`, `landing/panduan-uji.html`):** teks lengkap ada di berkasnya. Kalimat utama: Tahu langkah berikutnya, dari SMP sampai kelas 12. · pendukung: Informasi soal minat, mapel pilihan, dan jalur kuliah tersebar di banyak tempat. LANJUT merangkumnya jadi langkah kecil yang bisa kamu kerjakan, sesuai kelasmu. · label di atas setiap halaman: DRAF — teks halaman ini belum disetujui. Kalimat masuk M1/M2 (§1.1) tidak dipakai karena khusus SMK, sedangkan landing menyasar SMP sampai kelas 12.
+- **Halaman kebijakan di landing (`landing/kebijakan-privasi.html`):** ditulis otomatis dari `lib/kebijakan-privasi.json` (`npm run landing-kebijakan`), ditambah satu kalimat: Masuk dengan kode email dan masuk dengan Google belum dibahas di kebijakan ini. Keduanya sedang ditinjau.
+
 ---
 
 ## 5. Notifikasi

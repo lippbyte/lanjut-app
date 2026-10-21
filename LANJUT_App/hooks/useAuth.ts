@@ -41,5 +41,16 @@ export function useAuth() {
     [jalankan]
   );
 
-  return { login, register, logout: keluar, loading, error, medan, pengguna, status };
+  // LANJUT_083
+  const loginKode = useCallback(
+    (email: string, kode: string) => jalankan(() => authApi.masukDenganKode(email, kode)),
+    [jalankan]
+  );
+
+  const loginGoogle = useCallback(
+    (idToken: string, nonce: string) => jalankan(() => authApi.masukDenganGoogle(idToken, nonce)),
+    [jalankan]
+  );
+
+  return { login, loginKode, loginGoogle, register, logout: keluar, loading, error, medan, pengguna, status };
 }
