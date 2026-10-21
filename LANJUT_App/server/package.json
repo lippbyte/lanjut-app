@@ -16,6 +16,7 @@
     "lembar-review-teks": "node tools/lembar-review-teks.js",
     "persetujuan-ortu": "node src/db/persetujuan/persetujuan-ortu.js",
     "dokumen-kebijakan": "node tools/kebijakan-privasi.js",
+    "landing-kebijakan": "node tools/landing-kebijakan.js",
     "dokumen-skenario-ai": "node tools/dokumen-skenario-ai.js",
     "evaluasi-ai": "node tools/evaluasi-ai.js",
     "pemakaian-ai": "node tools/pemakaian-ai.js",
