@@ -12,7 +12,10 @@ const g = muatModulApp('lib/googleMasuk');
 const AKAR_APP = path.resolve(__dirname, '..', '..');
 
 test('tombol Google tidak tampil bila Client ID kosong (konfigurasi null di semua platform)', () => {
-  for (const extra of [undefined, {}, { googleClientId: '' }, { googleClientId: '   ', googleRedirectUri: 'https://x.test/google-kembali.html' }]) {
+  // `{}` dan null: di manifest dev web, null di app.config.ts terbaca sebagai `{}` (sempat membuat
+  // layar Masuk crash: ".trim is not a function"). Nilai bukan string harus dianggap kosong.
+  const bukanString = [{ googleClientId: {}, googleRedirectUri: {} }, { googleClientId: null }, { googleClientId: 123 }];
+  for (const extra of [undefined, {}, { googleClientId: '' }, { googleClientId: '   ', googleRedirectUri: 'https://x.test/google-kembali.html' }, ...bukanString]) {
     assert.equal(g.konfigurasiGoogle(extra, 'web', 'http://localhost:8081'), null);
     assert.equal(g.konfigurasiGoogle(extra, 'android', null), null);
   }

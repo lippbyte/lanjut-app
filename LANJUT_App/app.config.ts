@@ -104,8 +104,9 @@ const config: ExpoConfig = {
     // publik; Client Secret TIDAK pernah diisi di app. Kosong = tombol Google tidak
     // tampil. Android/iOS juga butuh alamat halaman penerus di domain landing
     // (mis. https://<domain>/google-kembali.html), yang didaftarkan di Google Console.
-    googleClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || null,
-    googleRedirectUri: process.env.EXPO_PUBLIC_GOOGLE_REDIRECT_URI || null,
+    // `undefined`, bukan `null`: di manifest dev web, null di `extra` terbaca sebagai `{}`.
+    googleClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || undefined,
+    googleRedirectUri: process.env.EXPO_PUBLIC_GOOGLE_REDIRECT_URI || undefined,
   },
 };
 

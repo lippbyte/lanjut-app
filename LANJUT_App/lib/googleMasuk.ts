@@ -18,7 +18,13 @@
  * dan tidak pernah boleh masuk app.
  */
 
-export type ExtraGoogle = { googleClientId?: string | null; googleRedirectUri?: string | null } | undefined;
+// `unknown`, bukan `string`: manifest bisa membawa nilai lain (null di app.config.ts pernah
+// terbaca sebagai `{}` di web dev dan membuat layar Masuk crash).
+export type ExtraGoogle = { googleClientId?: unknown; googleRedirectUri?: unknown } | undefined;
+
+function teks(nilai: unknown): string {
+  return typeof nilai === 'string' ? nilai.trim() : '';
+}
 
 export type KonfigurasiGoogle = { clientId: string; redirectUri: string };
 
@@ -36,10 +42,10 @@ export function konfigurasiGoogle(
   platform: string,
   asalWeb?: string | null
 ): KonfigurasiGoogle | null {
-  const clientId = (extra?.googleClientId ?? '').trim();
+  const clientId = teks(extra?.googleClientId);
   if (!clientId) return null;
   const redirectUri =
-    platform === 'web' ? (asalWeb ? `${asalWeb.replace(/\/$/, '')}/masuk-google` : '') : (extra?.googleRedirectUri ?? '').trim();
+    platform === 'web' ? (asalWeb ? `${asalWeb.replace(/\/$/, '')}/masuk-google` : '') : teks(extra?.googleRedirectUri);
   if (!redirectUri) return null;
   return { clientId, redirectUri };
 }
