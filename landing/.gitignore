@@ -1,0 +1,8 @@
+node_modules/
+# Hasil build: diunggah PM ke domain, tidak di-commit.
+dist/
+# Keluaran sementara tes (tests/landing.test.mjs).
+.uji-build/
+.uji-ssr/
+# APK diletakkan PM di public/ sebelum build; berkas biner tidak masuk repo.
+public/*.apk

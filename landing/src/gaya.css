@@ -162,6 +162,20 @@ p {
   background: var(--tinta-700);
 }
 
+/* LANJUT_083b: tombol Unduh APK saat berkasnya belum ada (atau masih diperiksa). */
+button.tombol {
+  border: 0;
+  font-family: inherit;
+  line-height: inherit;
+}
+
+.tombol:disabled,
+.tombol:disabled:hover {
+  background: var(--biru-200);
+  color: var(--tinta-700);
+  cursor: not-allowed;
+}
+
 .tombol--penuh {
   display: block;
   width: 100%;
