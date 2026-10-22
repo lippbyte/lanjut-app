@@ -9,7 +9,8 @@ const pool = require('../../db/koneksi');
 /** HANYA dipakai layanan auth untuk memverifikasi kata sandi saat login. */
 async function cariUntukMasuk(namaPengguna) {
   const [baris] = await pool.execute(
-    `SELECT id, nama_pengguna, kata_sandi_hash, wajib_buat_sandi, peran, status
+    `SELECT id, nama_pengguna, kata_sandi_hash, wajib_buat_sandi, email_terverifikasi,
+            batas_verifikasi, peran, status
        FROM pengguna
       WHERE nama_pengguna = ?
       LIMIT 1`,

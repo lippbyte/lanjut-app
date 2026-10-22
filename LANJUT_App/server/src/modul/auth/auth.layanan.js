@@ -168,6 +168,12 @@ async function masuk({ nama_pengguna, kata_sandi }) {
   if (baris.wajib_buat_sandi) {
     throw new GalatApi('SANDI_PERLU_DIBUAT', 'Masuk dengan kode email dulu, lalu buat kata sandi baru.');
   }
+  // LANJUT_084: tenggat verifikasi akun lama (migrasi 028) sudah lewat dan email masih belum
+  // terverifikasi → kata sandi tidak cukup lagi; pemilik email masuk lewat kode email atau Google
+  // (ambil alih 083d). Akun tanpa tenggat (NULL) atau yang masih dalam tenggat tidak berubah.
+  if (!baris.email_terverifikasi && baris.batas_verifikasi && new Date(baris.batas_verifikasi) <= new Date()) {
+    throw new GalatApi('EMAIL_BELUM_DIVERIFIKASI', 'Akun ini perlu diverifikasi dulu. Masuk dengan kode email untuk melanjutkan.');
+  }
 
   await percobaanRepo.resetSetelahBerhasil(nama_pengguna);
   await penggunaRepo.tandaiTerakhirMasuk(baris.id, sekarangUntukDb());

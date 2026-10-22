@@ -208,6 +208,8 @@ const PESAN_GALAT: Record<string, string> = {
   EMAIL_BELUM_TERVERIFIKASI: 'Email akun Google ini belum terverifikasi. Coba akun Google lain atau cara masuk lain.',
   // LANJUT_083d — DRAF dari task, belum disetujui PM.
   SANDI_PERLU_DIBUAT: 'Masuk dengan kode email dulu, lalu buat kata sandi baru.',
+  // LANJUT_084 — DRAF dari task, belum disetujui PM.
+  EMAIL_BELUM_DIVERIFIKASI: 'Akun ini perlu diverifikasi dulu. Masuk dengan kode email untuk melanjutkan.',
 };
 
 /** Ditampilkan di layar Masuk setelah sesi ditolak server (401) kapan pun. */
