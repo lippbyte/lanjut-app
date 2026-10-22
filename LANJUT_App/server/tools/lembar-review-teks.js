@@ -1119,6 +1119,22 @@ const PETA = [
       { task: 'LANJUT_083d', awal: '**Masuk — kata sandi lama dicabut:**', nama: 'Masuk — kata sandi lama dicabut', di: 'Layar Masuk, setelah kata sandi lama yang benar dipakai pada akun yang sudah diambil alih (403 SANDI_PERLU_DIBUAT).', oleh: 'Siapa pun yang masih memakai kata sandi lama akun itu.' },
     ],
   },
+  {
+    kelompok: 'Tenggat verifikasi akun lama (LANJUT_084)',
+    butir: [
+      {
+        task: 'LANJUT_084',
+        awal: '**Masuk — tenggat verifikasi lewat:**',
+        nama: 'Masuk — tenggat verifikasi lewat',
+        di: 'Layar Masuk, setelah kata sandi yang benar dipakai pada akun lama yang tenggat verifikasinya sudah lewat (403 EMAIL_BELUM_DIVERIFIKASI).',
+        oleh: 'Siapa pun yang masuk dengan kata sandi ke salah satu akun lama bertenggat setelah tenggatnya lewat.',
+        faktual: {
+          klaim: 'Masuk dengan kode email untuk melanjutkan.',
+          sumber: 'server/src/modul/auth/auth.layanan.js (masuk → EMAIL_BELUM_DIVERIFIKASI; masuk kode email dan Google tidak berubah); tes tenggat-verifikasi.',
+        },
+      },
+    ],
+  },
 ];
 
 const cocok = (b, aturan) => b.task === aturan.task && b.teks.startsWith(aturan.awal);

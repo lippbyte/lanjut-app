@@ -968,6 +968,14 @@ baru" wajib dilewati sebelum Beranda (tanpa tombol lewati; hanya bisa keluar). T
 - **Layar Buat kata sandi baru:** judul: Buat kata sandi baru · pengantar: Emailmu sudah terverifikasi. Kata sandi lama akun ini sudah tidak berlaku, jadi buat kata sandi baru dulu sebelum lanjut. · label: Kata sandi baru · petunjuk & placeholder: Minimal 8 karakter. · tombol: Simpan kata sandi (proses: Menyimpan…) · tautan: Mau berhenti dulu? Keluar · galat: Kata sandi minimal 8 karakter. · Kata sandi terlalu panjang.
 - **Masuk — kata sandi lama dicabut:** Masuk dengan kode email dulu, lalu buat kata sandi baru. (teks dari task; tampil saat kata sandi lama yang benar dipakai pada akun yang sudah diambil alih)
 
+**LANJUT_084 (22 Okt 2026) — DRAF, belum disetujui PM.** Keputusan PM: akun lama yang emailnya
+belum terverifikasi diberi tenggat 7 hari (kolom `batas_verifikasi`, migrasi 028). Setelah
+tenggat lewat, masuk dengan kata sandi ditolak. Masuk dengan kode email atau Google tetap bisa
+dan mengambil alih akun seperti LANJUT_083d. Task ini tidak mengirim email ke pemilik akun. Teks
+di `api/auth.ts` (pesan galat app) dan `server/src/modul/auth/auth.layanan.js`.
+
+- **Masuk — tenggat verifikasi lewat:** Akun ini perlu diverifikasi dulu. Masuk dengan kode email untuk melanjutkan. (teks dari task; tampil saat kata sandi yang benar dipakai pada akun lama yang tenggat verifikasinya sudah lewat)
+
 ---
 
 ## 5. Notifikasi
