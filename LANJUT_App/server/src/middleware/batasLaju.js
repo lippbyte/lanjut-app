@@ -1,9 +1,11 @@
 // Konfigurasi express-rate-limit. docs/SDD-Backend-Foundation.md §8.2.
 // Dua lapis: per-IP di sini (express-rate-limit); per-akun ada di
 // modul/auth/auth.layanan.js lewat tabel percobaan_masuk.
+// LANJUT_085: "IP" = IP klien asli dari proxy tepercaya (util/ipKlien.js), bukan IP proxy.
 
 const rateLimit = require('express-rate-limit');
 const { galat } = require('../util/respons');
+const { ipKlien } = require('../util/ipKlien');
 const env = require('../config/env');
 
 function penanganGalatTerlaluSering(req, res) {
@@ -22,6 +24,7 @@ const batasGlobal = rateLimit({
   max: DI_LINGKUNGAN_TEST ? 100000 : 300,
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: ipKlien,
   handler: penanganGalatTerlaluSering,
 });
 
@@ -31,6 +34,7 @@ const batasAuth = rateLimit({
   max: DI_LINGKUNGAN_TEST ? 100000 : 10,
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: ipKlien,
   handler: penanganGalatTerlaluSering,
 });
 
@@ -40,6 +44,7 @@ const batasDaftar = rateLimit({
   max: DI_LINGKUNGAN_TEST ? 100000 : 5,
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: ipKlien,
   handler: penanganGalatTerlaluSering,
 });
 

@@ -88,6 +88,30 @@ if (proxyMentah !== undefined && proxyMentah !== null && String(proxyMentah).tri
   }
 }
 
+// LANJUT_085: di produksi (Railway, atau VPS dengan nginx) server selalu di belakang proxy.
+// TRUST_PROXY wajib ditentukan eksplisit (0 boleh, bila memang tanpa proxy), supaya batas laju
+// per IP tidak diam-diam menjadi satu kuota bersama atas nama IP proxy. `true` memercayai semua
+// lompatan sehingga X-Forwarded-For bisa dipalsukan klien; di produksi harus berupa angka.
+if (NODE_ENV === 'production') {
+  if (proxyMentah === undefined || proxyMentah === null || String(proxyMentah).trim() === '') {
+    throw new Error(
+      'Di lingkungan produksi, TRUST_PROXY (atau JUMLAH_PROXY) wajib diisi: jumlah proxy tepercaya ' +
+        'di depan server (lihat server/.env.railway.contoh), atau 0 bila tanpa proxy.'
+    );
+  }
+  if (trustProxy === true) {
+    throw new Error('Di lingkungan produksi, TRUST_PROXY tidak boleh "true"; isi jumlah proxy tepercaya (angka).');
+  }
+}
+
+// LANJUT_085: header berisi IP klien asli yang DITULIS proxy tepercaya (Railway mendokumentasikan
+// X-Real-IP). Bila diisi, batas laju memakai header ini (src/util/ipKlien.js); kosong = req.ip.
+// Hanya isi bila proxy di depan server memang menulis header itu: tanpanya klien bisa memalsukan.
+const headerIpKlien = opsional('HEADER_IP_KLIEN', null);
+if (headerIpKlien !== null && !/^[A-Za-z0-9-]+$/.test(headerIpKlien)) {
+  throw new Error(`HEADER_IP_KLIEN harus nama header HTTP (huruf, angka, tanda minus), dapat: "${headerIpKlien}".`);
+}
+
 const env = {
   NODE_ENV,
   PORT: angka('PORT', 3000),
@@ -104,6 +128,7 @@ const env = {
   SESI_UMUR_HARI: angka('SESI_UMUR_HARI', 90),
   TRUST_PROXY: trustProxy,
   JUMLAH_PROXY: typeof trustProxy === 'number' ? trustProxy : (trustProxy ? 1 : 0), // alias kompatibilitas
+  HEADER_IP_KLIEN: headerIpKlien ? headerIpKlien.toLowerCase() : null,
   // Folder berisi *.json konten untuk `npm run benih` (LANJUT_023). Kosong =
   // bawaan ../../MVP-PWA/data dari folder server/. Absolut, atau relatif
   // terhadap folder server/. Hanya dipakai benih, bukan oleh API.
