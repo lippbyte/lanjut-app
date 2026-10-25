@@ -111,6 +111,22 @@ async function buatSandiBaru(penggunaId, kataSandiHash) {
   return hasil.affectedRows > 0;
 }
 
+/**
+ * LANJUT_086: id akun yang tenggat verifikasinya (batas_verifikasi, LANJUT_084) sudah lewat
+ * pada `waktu` (teks DATETIME UTC) dan emailnya belum terverifikasi. Akun tanpa tenggat (NULL)
+ * tidak pernah ikut. Dipakai tools/cabut-sesi-tenggat.js.
+ */
+async function cariAkunLewatTenggat(waktu) {
+  const [baris] = await pool.execute(
+    `SELECT id FROM pengguna
+      WHERE email_terverifikasi = 0
+        AND batas_verifikasi IS NOT NULL
+        AND batas_verifikasi <= ?`,
+    [waktu]
+  );
+  return baris.map((b) => b.id);
+}
+
 async function tandaiTerakhirMasuk(penggunaId, waktu) {
   await pool.execute('UPDATE pengguna SET terakhir_masuk_pada = ? WHERE id = ?', [
     waktu,
@@ -182,6 +198,7 @@ module.exports = {
   tandaiEmailTerverifikasi,
   ambilAlihOlehPemilikEmail,
   buatSandiBaru,
+  cariAkunLewatTenggat,
   tandaiTerakhirMasuk,
   updateKataSandiHash,
   updateProfil,

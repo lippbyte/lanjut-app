@@ -23,6 +23,7 @@
     "smoke": "node tools/smoke.js",
     "cadangan-db": "node tools/cadangan-db.js",
     "pulihkan-db": "node tools/pulihkan-db.js",
+    "cabut-sesi-tenggat": "node tools/cabut-sesi-tenggat.js",
     "test": "node --test tests/*.test.js",
     "periksa-sql": "node tools/periksa-sql.js"
   },

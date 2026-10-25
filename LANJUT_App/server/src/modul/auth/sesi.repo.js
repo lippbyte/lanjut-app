@@ -67,14 +67,27 @@ async function cabutSesiByTokenHash(tokenHash, penggunaId) {
   return hasil.affectedRows > 0;
 }
 
-/** Cabut SELURUH sesi milik pengguna (dipakai "keluar-semua" dan setelah ganti sandi). */
+/**
+ * Cabut SELURUH sesi milik pengguna (dipakai "keluar-semua", setelah ganti sandi, dan
+ * LANJUT_086 cabut-sesi-tenggat). Mengembalikan jumlah sesi yang dicabut.
+ */
 async function cabutSemuaSesiPengguna(penggunaId) {
-  await pool.execute(
+  const [hasil] = await pool.execute(
     `UPDATE sesi_pengguna
         SET dicabut_pada = ?
       WHERE pengguna_id = ? AND dicabut_pada IS NULL`,
     [sekarangUntukDb(), penggunaId]
   );
+  return hasil.affectedRows;
+}
+
+/** LANJUT_086: jumlah sesi pengguna yang belum dicabut (yang akan kena cabutSemuaSesiPengguna). */
+async function hitungSesiBelumDicabut(penggunaId) {
+  const [[b]] = await pool.execute(
+    'SELECT COUNT(*) AS n FROM sesi_pengguna WHERE pengguna_id = ? AND dicabut_pada IS NULL',
+    [penggunaId]
+  );
+  return Number(b.n);
 }
 
 module.exports = {
@@ -83,4 +96,5 @@ module.exports = {
   perpanjangSesi,
   cabutSesiByTokenHash,
   cabutSemuaSesiPengguna,
+  hitungSesiBelumDicabut,
 };
