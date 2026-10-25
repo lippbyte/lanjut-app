@@ -55,7 +55,8 @@ const config: ExpoConfig = {
   slug: 'lanjut',
   owner: 'lippbyte',
   scheme: 'lanjut',
-  version: '1.0.0',
+  // LANJUT_086: versionName Android = "1.0" (versionCode di bawah tetap 1).
+  version: '1.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
@@ -65,6 +66,9 @@ const config: ExpoConfig = {
   plugins: [
     'expo-router',
     ['expo-build-properties', { android: { usesCleartextTraffic: IZINKAN_HTTP } }],
+    // LANJUT_086: build rilis ditandatangani keystore rilis di luar repo (LANJUT_KEYSTORE_PROPS);
+    // tanpa keystore, build rilis gagal, tidak jatuh ke debug.keystore.
+    './plugins/withKeystoreRilis',
   ],
   ios: {
     supportsTablet: true,
