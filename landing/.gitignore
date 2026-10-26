@@ -1,8 +1,11 @@
 node_modules/
-# Hasil build: diunggah PM ke domain, tidak di-commit.
+# Hasil build: diunggah ke hosting, tidak di-commit.
 dist/
+# Build SSR sementara milik scripts/bangun.mjs.
+.ssr/
 # Keluaran sementara tes (tests/landing.test.mjs).
 .uji-build/
+.uji-build-situs/
 .uji-ssr/
-# APK diletakkan PM di public/ sebelum build; berkas biner tidak masuk repo.
-public/*.apk
+# APK diletakkan di public/ sebelum build bila di-host bersama situs; berkas biner tidak masuk repo.
+public/**/*.apk

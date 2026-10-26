@@ -1,0 +1,10 @@
+/* Semua gaya situs LANJUT. Vite menggabungkan berkas-berkas ini menjadi satu CSS saat build
+   (tanpa @import yang tersisa), dan CSS itu dimuat di <head> setiap halaman supaya HTML hasil
+   prerender sudah bergaya sebelum JavaScript jalan. */
+@import './token.css';
+@import './dasar.css';
+@import './komponen.css';
+@import './kerangka.css';
+@import './beranda.css';
+@import './docs.css';
+@import './halaman.css';

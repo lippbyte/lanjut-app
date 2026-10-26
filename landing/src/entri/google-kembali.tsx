@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import '../gaya.css';
+import '../gaya/semua.css';
 import { GoogleKembali } from '../halaman/GoogleKembali';
 import { tujuanPenerus } from '../lib/penerus';
 

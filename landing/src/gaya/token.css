@@ -1,0 +1,190 @@
+/* Design tokens situs LANJUT — satu sumber untuk semua halaman.
+   Sumber nilai: design system resmi LANJUT (LandingPage/lanjut-landing-page-mockup/…/tokens/*.css,
+   sama dengan LANJUT_App/theme/tokens.ts) dan acuan visual design/reference-landing.png.
+   Keputusan percakapan 26 Okt 2026 (pilihan percakapan, belum disetujui PM): teks putih di atas
+   latar biru yang diperdalam (blue-700 → blue-800), supaya kontrasnya lolos WCAG AA. */
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('../aset/font/poppins-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+    U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url('../aset/font/poppins-latin-500-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+    U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url('../aset/font/poppins-latin-600-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+    U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url('../aset/font/poppins-latin-700-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+    U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  /* ---- Palet resmi LANJUT ---- */
+  --blue-100: #e4f3f7;
+  --blue-200: #b4e1eb;
+  --blue-300: #95bdd7; /* latar acuan (#97C1D5) */
+  --blue-400: #78a4cb; /* tombol acuan */
+  --blue-500: #5e88af; /* kepala kartu acuan (#5F91BD) */
+  --blue-600: #456a8c;
+
+  /* Turunan gelap untuk teks putih. Kontras putih: 700 = 4,53:1, 800 = 6,39:1, 900 = 9,2:1. */
+  --blue-700: #4f7aa1;
+  --blue-800: #3f6283;
+  --blue-900: #2e4a66;
+  --blue-950: #22384e; /* putih 12,3:1 — pita kaki */
+
+  --white: #ffffff;
+  --ink-900: #1a1a1a;
+  --ink-700: #3d4450;
+  --ink-500: #6b7480;
+  --ink-100: #e6e9ed;
+  --ink-050: #f5f7f9;
+  --border-soft: #d6e5ee;
+
+  /* Status tenang: tanpa merah atau oranye (aturan design system). */
+  --status-ok-bg: #e6f2ef;
+  --status-ok-fg: #2f6b5c;
+  --status-ok: #4e9c87;
+  --status-attention-bg: #e4edf5;
+  --status-attention-fg: #456a8c;
+  --status-idle-bg: #f1f3f5;
+  --status-idle-fg: #3d4450;
+
+  /* ---- Gradasi: selalu vertikal, terang → gelap ---- */
+  --gradasi-halaman: linear-gradient(180deg, var(--blue-700) 0%, var(--blue-800) 100%);
+  --gradasi-tombol: linear-gradient(180deg, var(--white) 0%, var(--blue-100) 100%);
+  --gradasi-tombol-aktif: linear-gradient(180deg, var(--blue-100) 0%, var(--blue-200) 100%);
+  --gradasi-kartu: linear-gradient(180deg, var(--blue-600) 0%, var(--blue-900) 100%);
+  --gradasi-pita: linear-gradient(180deg, var(--blue-700) 0%, var(--blue-800) 100%);
+  /* Untuk gradasi yang bergeser pelan (CTA penutup, kaki): tiga kali tinggi kotaknya. */
+  --gradasi-geser: linear-gradient(180deg, var(--blue-800) 0%, var(--blue-900) 50%, var(--blue-800) 100%);
+  --gradasi-kaki: linear-gradient(180deg, var(--blue-900) 0%, var(--blue-950) 50%, var(--blue-900) 100%);
+
+  /* ---- Teks di atas warna merek ---- */
+  --teks-terang: var(--white);
+  --teks-gelap: var(--blue-900);
+  --bayangan-teks: 0 2px 6px rgba(20, 35, 55, 0.35);
+
+  /* ---- Tipografi: Poppins saja ---- */
+  --font: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  --ukuran-hero: clamp(2.5rem, 6.4vw, 5.75rem);
+  --ukuran-h2: clamp(2rem, 4.2vw, 3.75rem);
+  --ukuran-h3: clamp(1.5rem, 2.8vw, 2.625rem);
+  --ukuran-judul-kartu: clamp(1.375rem, 2vw, 1.875rem);
+  --ukuran-lead: clamp(1.0625rem, 1.5vw, 1.375rem);
+  --ukuran-isi: clamp(1rem, 1.25vw, 1.1875rem);
+  --ukuran-kecil: 0.9375rem;
+  --ukuran-meta: 0.875rem;
+  --ukuran-label: 0.75rem;
+  --tinggi-baris: 1.6;
+  --tinggi-baris-judul: 1.08;
+
+  /* ---- Ruang dan tata letak (kelipatan 4) ---- */
+  --ruang-1: 4px;
+  --ruang-2: 8px;
+  --ruang-3: 12px;
+  --ruang-4: 16px;
+  --ruang-5: 20px;
+  --ruang-6: 24px;
+  --ruang-8: 32px;
+  --ruang-10: 40px;
+  --ruang-12: 48px;
+  --ruang-16: 64px;
+  --ruang-20: 80px;
+  --ruang-24: 96px;
+  --ruang-seksi: clamp(64px, 8vw, 112px);
+  --tepi: clamp(20px, 5vw, 76px);
+  --wadah: 1280px;
+  --baca: 720px;
+
+  /* ---- Radius ---- */
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
+
+  /* ---- Bayangan bernuansa biru, tidak pernah abu-abu ---- */
+  --bayangan-1: 0 1px 2px rgba(69, 106, 140, 0.08);
+  --bayangan-2: 0 2px 8px rgba(69, 106, 140, 0.1);
+  --bayangan-3: 0 6px 20px rgba(69, 106, 140, 0.12);
+  --bayangan-4: 0 14px 40px rgba(69, 106, 140, 0.16);
+  --bayangan-gelap: 0 18px 40px -16px rgba(16, 28, 44, 0.55);
+
+  /* ---- Gerak ---- */
+  --durasi-cepat: 120ms;
+  --durasi: 200ms;
+  --durasi-lambat: 320ms;
+  --durasi-halaman: 420ms;
+  --durasi-cerita: 640ms;
+  --gerak-masuk: cubic-bezier(0.16, 0.84, 0.44, 1);
+  --gerak-standar: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ---- Fokus: cincin putih di atas merek, biru tua di atas permukaan terang ---- */
+  --warna-fokus: var(--white);
+
+  /* ---- Alias lama: halaman yang belum didesain ulang (dokumentasi, unduh, AI, privasi) ----
+     Hapus bersamaan dengan langkah 5 redesign. */
+  --color-ink: var(--ink-900);
+  --color-primary: var(--blue-600);
+  --color-primary-dark: var(--blue-900);
+  --color-teal: var(--status-ok);
+  --color-sky: var(--blue-100);
+  --color-paper: var(--ink-050);
+  --color-white: var(--white);
+  --color-muted: var(--ink-700);
+  --color-border: var(--border-soft);
+  --color-accent: var(--blue-300);
+  --color-teal-soft: var(--status-ok-bg);
+  --color-teal-ink: var(--status-ok-fg);
+  --color-accent-soft: var(--status-attention-bg);
+  --color-accent-ink: var(--blue-600);
+  --color-ink-2: var(--blue-900);
+  --color-on-dark: var(--white);
+  --color-on-dark-muted: var(--blue-100);
+  --font-sans: var(--font);
+  --tinggi-kepala: 0px; /* kepala tidak lagi menempel; sidebar dokumentasi menempel di atas layar */
+  --text-hero: var(--ukuran-hero);
+  --text-h1: clamp(2.1rem, 4vw, 3.25rem);
+  --text-h2: clamp(1.6rem, 2.6vw, 2.25rem);
+  --text-h3: 1.25rem;
+  --text-lead: clamp(1.0625rem, 1.4vw, 1.25rem);
+  --text-body: 1rem;
+  --text-small: 0.9375rem;
+  --text-meta: 0.875rem;
+  --text-caption: 0.8125rem;
+  --leading-body: 1.65;
+  --leading-tight: 1.12;
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 24px;
+  --bayang-panel: var(--bayangan-3);
+  --gerak: var(--gerak-standar);
+}

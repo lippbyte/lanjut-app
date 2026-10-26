@@ -1,0 +1,422 @@
+/* Komponen bersama: tombol, status, label, catatan, kartu, judul seksi, logo, maskot, bingkai HP,
+   contoh obrolan, akordeon. Nilai dari token.css; kontras teks dicatat di sebelah warnanya. */
+
+/* ---------- Tombol (pill) ---------- */
+.tombol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ruang-2);
+  min-height: 48px;
+  padding: 12px 24px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-pill);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background var(--durasi) var(--gerak-standar),
+    border-color var(--durasi) var(--gerak-standar),
+    color var(--durasi) var(--gerak-standar),
+    box-shadow var(--durasi) var(--gerak-standar),
+    transform var(--durasi-cepat) var(--gerak-standar);
+}
+
+.tombol:active {
+  transform: scale(0.97);
+}
+
+/* Utama di permukaan merek: pill terang, teks blue-900 (8,1–9,2:1). */
+.tombol--utama {
+  background: var(--gradasi-tombol);
+  color: var(--teks-gelap);
+  box-shadow: var(--bayangan-gelap);
+}
+
+.tombol--utama:hover {
+  background: var(--gradasi-tombol-aktif);
+  color: var(--teks-gelap);
+}
+
+/* Kedua di permukaan merek: garis putih, teks putih (≥ 4,53:1 di atas latar halaman). */
+.tombol--kedua {
+  background: transparent;
+  border-color: var(--white);
+  color: var(--white);
+}
+
+.tombol--kedua:hover {
+  background: var(--blue-900);
+  color: var(--white);
+}
+
+.tombol--kecil {
+  min-height: 44px;
+  padding: 8px 20px;
+  font-size: 0.9375rem;
+}
+
+.tombol--besar {
+  min-height: 56px;
+  padding: 14px 30px;
+  font-size: 1.0625rem;
+}
+
+.tombol--penuh {
+  width: 100%;
+}
+
+.tombol[aria-current='page'] {
+  box-shadow:
+    0 0 0 3px var(--blue-300),
+    var(--bayangan-gelap);
+}
+
+/* Di permukaan terang: utama jadi biru tua bergradasi dengan teks putih (5,69–6,39:1). */
+.situs--terang main .tombol--utama {
+  background: linear-gradient(180deg, var(--blue-600) 0%, var(--blue-800) 100%);
+  color: var(--white);
+  box-shadow: var(--bayangan-2);
+}
+
+.situs--terang main .tombol--utama:hover {
+  background: linear-gradient(180deg, var(--blue-800) 0%, var(--blue-900) 100%);
+}
+
+.situs--terang main .tombol--kedua {
+  border-color: var(--blue-600);
+  color: var(--blue-600);
+}
+
+.situs--terang main .tombol--kedua:hover {
+  background: var(--blue-100);
+  color: var(--blue-900);
+}
+
+/* ---------- Status fitur: teks + bentuk ikon; warna hanya pendukung ---------- */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 11px 3px 9px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0;
+  white-space: nowrap;
+  vertical-align: middle;
+  text-shadow: none;
+}
+
+.status__ikon {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+/* #2F6B5C di atas #E6F2EF: 5,45:1 */
+.status--tersedia {
+  background: var(--status-ok-bg);
+  color: var(--status-ok-fg);
+}
+
+.status--tersedia .status__ikon {
+  background: currentColor;
+}
+
+/* #456A8C di atas #E4EDF5: 4,8:1 */
+.status--pengembangan {
+  background: var(--status-attention-bg);
+  color: var(--status-attention-fg);
+}
+
+.status--pengembangan .status__ikon {
+  border: 1.5px solid currentColor;
+  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+}
+
+/* #3D4450 di atas #F1F3F5: 8,6:1 */
+.status--rencana {
+  background: var(--status-idle-bg);
+  border-color: var(--ink-100);
+  color: var(--status-idle-fg);
+}
+
+.status--rencana .status__ikon {
+  border: 1.5px solid currentColor;
+}
+
+.label {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  vertical-align: middle;
+  text-shadow: none;
+}
+
+.label--netral {
+  background: var(--status-idle-bg);
+  color: var(--status-idle-fg);
+}
+
+.label--hangat {
+  background: var(--status-attention-bg);
+  color: var(--blue-900);
+}
+
+/* ---------- Catatan (permukaan terang); tanpa garis aksen kiri (aturan design system) ---------- */
+.catatan {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--ruang-3);
+  margin: var(--ruang-6) 0;
+  padding: var(--ruang-4) var(--ruang-5);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--blue-100);
+  color: var(--ink-900);
+}
+
+.catatan--penting {
+  border-color: var(--blue-300);
+  background: var(--status-attention-bg);
+}
+
+.catatan__ikon {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  color: var(--blue-600);
+}
+
+.catatan__judul {
+  margin-bottom: var(--ruang-1);
+  font-weight: 600;
+}
+
+.catatan__isi > :last-child {
+  margin-bottom: 0;
+}
+
+.catatan__isi ul {
+  padding-left: 1.2rem;
+}
+
+/* ---------- Judul seksi (permukaan merek) ---------- */
+.judul-seksi {
+  margin-bottom: var(--ruang-6);
+  font-size: var(--ukuran-h2);
+  text-shadow: var(--bayangan-teks);
+}
+
+.judul-seksi--tengah {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.judul-seksi--kanan {
+  margin-left: auto;
+  text-align: right;
+}
+
+/* ---------- Logo ---------- */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.logo img {
+  width: auto;
+  height: 40px;
+}
+
+.logo-sebaris {
+  display: inline-block;
+  width: auto;
+  height: 0.92em;
+  vertical-align: -0.12em;
+}
+
+/* ---------- Maskot ---------- */
+.maskot img {
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Loop yang sangat tipis, hanya selama terlihat (lib/gerak.ts → data-terlihat). */
+  .maskot--melayang[data-terlihat='ya'] img {
+    animation: melayang 7s ease-in-out infinite;
+  }
+}
+
+@keyframes melayang {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* ---------- Bingkai HP (tangkapan layar app versi uji) ---------- */
+.ponsel {
+  margin: 0;
+}
+
+.ponsel__bingkai {
+  position: relative;
+  padding: 8px;
+  border-radius: 30px;
+  background: var(--blue-900);
+  box-shadow: var(--bayangan-gelap);
+}
+
+.ponsel__bingkai img {
+  width: 100%;
+  aspect-ratio: 360 / 780;
+  border-radius: 23px;
+  background: var(--white);
+  object-fit: cover;
+  object-position: top;
+}
+
+.ponsel__keterangan {
+  margin-top: var(--ruang-3);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  text-align: center;
+}
+
+/* ---------- Contoh obrolan AI (konsep) ---------- */
+.obrolan-konsep {
+  display: grid;
+  gap: var(--ruang-4);
+  justify-items: start;
+  margin: 0;
+  padding: var(--ruang-6);
+  border-radius: var(--radius-lg);
+  background: var(--blue-900);
+  color: var(--white);
+}
+
+.obrolan-konsep__daftar {
+  display: grid;
+  gap: var(--ruang-4);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gelembung {
+  max-width: 92%;
+  padding: 14px 16px;
+  border-radius: 18px;
+  font-size: var(--ukuran-kecil);
+  line-height: 1.55;
+}
+
+.gelembung__oleh {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+/* Putih di atas blue-600: 5,69:1 */
+.gelembung--siswa {
+  justify-self: end;
+  border-bottom-right-radius: 6px;
+  background: var(--blue-600);
+}
+
+.gelembung--konsep {
+  justify-self: start;
+  border: 1px solid var(--blue-200);
+  border-bottom-left-radius: 6px;
+}
+
+.obrolan-konsep figcaption {
+  font-size: 0.8125rem;
+}
+
+/* ---------- Akordeon (FAQ) ---------- */
+.akordeon {
+  display: grid;
+  gap: var(--ruang-3);
+}
+
+.akordeon__butir {
+  border-radius: var(--radius-lg);
+  background: var(--blue-900);
+  color: var(--white);
+  box-shadow: var(--bayangan-gelap);
+}
+
+.akordeon__tanya {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ruang-4);
+  min-height: 60px;
+  padding: var(--ruang-4) var(--ruang-6);
+  font-weight: 600;
+  line-height: 1.35;
+  list-style: none;
+  cursor: pointer;
+}
+
+.akordeon__tanya::-webkit-details-marker {
+  display: none;
+}
+
+.akordeon__tanda {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+.akordeon__tanda::before,
+.akordeon__tanda::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform var(--durasi-lambat) var(--gerak-standar);
+}
+
+.akordeon__tanda::after {
+  transform: rotate(90deg);
+}
+
+.akordeon__butir[open] .akordeon__tanda::after {
+  transform: rotate(0deg);
+}
+
+.akordeon__jawab {
+  padding: 0 var(--ruang-6) var(--ruang-5);
+}
+
+.akordeon__jawab p {
+  margin: 0;
+  max-width: 40em;
+}

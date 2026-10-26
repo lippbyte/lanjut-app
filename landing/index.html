@@ -1,18 +1,20 @@
 <!doctype html>
-<!-- DRAF LANJUT_083: teks halaman ini belum disetujui PM (docs/salinan-teks-lanjut.md §4.21). -->
+<!-- Templat semua halaman situs LANJUT. Saat build, scripts/bangun.mjs mengisi judul, deskripsi,
+     dan isi #root per rute (prerender), lalu menulisnya ke dist/<jalur>/index.html.
+     Teks situs DRAF, belum disetujui PM. -->
 <html lang="id" data-status="draf">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="referrer" content="no-referrer">
     <meta name="robots" content="noindex">
-    <meta name="description" content="LANJUT membantu siswa SMP, SMA, SMK, dan MA menyiapkan langkah berikutnya. Versi uji untuk Android.">
-    <title>LANJUT — Langkah berikutnya, dari SMP sampai kelas 12</title>
+    <meta name="theme-color" content="#F7F8F4">
+    <title>LANJUT</title>
+    <!--lanjut:kepala-->
     <link rel="icon" href="/favicon.png">
   </head>
   <body>
-    <div id="root"></div>
-    <noscript>Halaman ini butuh JavaScript. Nyalakan JavaScript di peramban untuk melihatnya.</noscript>
-    <script type="module" src="/src/entri/index.tsx"></script>
+    <div id="root"><!--lanjut:isi--></div>
+    <script type="module" src="/src/entri/klien.tsx"></script>
   </body>
 </html>

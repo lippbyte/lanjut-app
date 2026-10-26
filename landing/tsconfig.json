@@ -12,5 +12,5 @@
     "skipLibCheck": true,
     "types": ["vite/client"]
   },
-  "include": ["src", "tests/ssr-entri.tsx"]
+  "include": ["src"]
 }

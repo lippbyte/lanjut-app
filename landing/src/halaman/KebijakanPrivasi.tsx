@@ -1,33 +1,38 @@
 import { Fragment } from 'react';
 
 import kebijakan from '../data/kebijakan-privasi.json';
-import { Kaki, Kepala, LabelDraf } from '../komponen/Kerangka';
+import { Catatan } from '../komponen/Catatan';
+import { Kerangka } from '../komponen/Kerangka';
+import { Tautan } from '../komponen/Situs';
+import type { PropsHalaman } from './jenis';
 
 type Bagian = { judul: string; paragraf?: string[]; butir?: string[] };
 
-// Kebijakan privasi. Data ditulis `npm run landing-kebijakan` (folder LANJUT_App/server) dari
-// teks kebijakan yang sama dengan app; susunan sama dengan halaman 083. Status DRAF dari datanya.
-export function KebijakanPrivasi() {
+// Kebijakan privasi APLIKASI (/privacy/app; alamat lama kebijakan-privasi.html dialihkan ke
+// sini). Data ditulis `npm run landing-kebijakan` (folder LANJUT_App/server) dari teks yang sama
+// dengan app; isi dan urutannya apa adanya. Status DRAF dari datanya.
+export default function KebijakanPrivasi({ jalur, akar }: PropsHalaman) {
   const isi = kebijakan.isi as Bagian[];
   return (
-    <>
-      <LabelDraf>{kebijakan.status}</LabelDraf>
-      <Kepala />
-      <main>
-        <div className="bungkus">
-          <h1>Kebijakan Privasi</h1>
-          <p className="kecil">Versi {kebijakan.versi} · DRAF, belum berlaku.</p>
-          <div className="peringatan" role="note">
+    <Kerangka jalur={jalur} akar={akar}>
+      <div className="wadah wadah--baca">
+        <article className="prosa halaman-teks" aria-labelledby="judul-kebijakan">
+          <header>
+            <p className="eyebrow">Privasi</p>
+            <h1 id="judul-kebijakan">Kebijakan Privasi Aplikasi</h1>
+            <p className="meta">Versi {kebijakan.versi} · DRAF, belum berlaku.</p>
+          </header>
+          <Catatan nada="penting" judul={kebijakan.status}>
             <p>
               <strong>Ringkasan</strong>
             </p>
-            <ul className="butir">
+            <ul>
               {kebijakan.ringkasan.map((t, i) => (
                 <li key={i}>{t}</li>
               ))}
             </ul>
             <p>Masuk dengan kode email dan masuk dengan Google belum dibahas di kebijakan ini. Keduanya sedang ditinjau.</p>
-          </div>
+          </Catatan>
           {/* Isi statis yang tidak pernah diurut ulang: indeks sebagai key. */}
           {isi.map((b, i) => (
             <Fragment key={i}>
@@ -36,7 +41,7 @@ export function KebijakanPrivasi() {
                 <p key={j}>{p}</p>
               ))}
               {b.butir ? (
-                <ul className="butir">
+                <ul>
                   {b.butir.map((t, j) => (
                     <li key={j}>{t}</li>
                   ))}
@@ -44,14 +49,11 @@ export function KebijakanPrivasi() {
               ) : null}
             </Fragment>
           ))}
-        </div>
-      </main>
-      <Kaki
-        tautan={[
-          { href: './', label: 'Halaman utama' },
-          { href: 'panduan-uji.html', label: 'Panduan uji' },
-        ]}
-      />
-    </>
+          <p className="meta">
+            Privasi website ini dijelaskan terpisah di <Tautan ke="/privacy">Privasi situs</Tautan>.
+          </p>
+        </article>
+      </div>
+    </Kerangka>
   );
 }

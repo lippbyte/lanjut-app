@@ -2,14 +2,15 @@
   "name": "lanjut-landing",
   "private": true,
   "version": "0.0.0",
-  "description": "Landing page LANJUT (LANJUT_083b): Vite + React + TypeScript, multi-page, tanpa router.",
+  "description": "Situs LANJUT: Vite + React + TypeScript, setiap rute diprerender jadi HTML statis.",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/bangun.mjs",
     "preview": "vite preview",
     "test": "node --test tests/*.test.mjs",
-    "periksa-tipe": "node ../LANJUT_App/node_modules/typescript/bin/tsc -p tsconfig.json"
+    "periksa-tipe": "node ../LANJUT_App/node_modules/typescript/bin/tsc -p tsconfig.json",
+    "hitung-apk": "node scripts/hitung-apk.mjs"
   },
   "dependencies": {
     "react": "19.2.8",
