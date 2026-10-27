@@ -38,7 +38,10 @@ Build **gagal** bila metadata rilis tidak sah atau ada tautan/berkas internal ya
 ## Di mana mengubah apa
 
 - Isi dokumentasi: `src/konten/docs.ts` (penanda sebaris: `**tebal**`, `[label](/jalur)`, `` `kode` ``).
-- Fitur dan statusnya (beranda, dokumentasi, roadmap memakai sumber yang sama): `src/konten/fitur.ts`.
+- Glosarium: `src/konten/glosarium.ts`. Definisi paling banyak dua kalimat. Istilah aturan
+  seleksi (kelompok `seleksi`) wajib punya sumber resmi, tanggal `dicek`, dan tahun `ketentuan`;
+  periksa ulang setiap SNPMB atau Kemendikdasmen menerbitkan ketentuan tahun baru.
+- Fitur dan statusnya (beranda, dokumentasi, glosarium, roadmap memakai sumber yang sama): `src/konten/fitur.ts`.
   Status hanya `Tersedia`, `Dalam Pengembangan`, atau `Direncanakan`.
 - Warna, huruf, jarak, gerak: token di `src/gaya/token.css` (DESIGN-landpage §0, revisi
   27 Okt 2026). Gaya dibagi: `dasar.css`, `komponen.css`, `kerangka.css`, `beranda.css`,

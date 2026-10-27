@@ -4,6 +4,7 @@ export type IdHalaman =
   | 'beranda'
   | 'docs'
   | 'artikel'
+  | 'glosarium'
   | 'ai'
   | 'unduh'
   | 'rilis'

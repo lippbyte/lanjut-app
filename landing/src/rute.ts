@@ -26,6 +26,12 @@ export const RUTE: Rute[] = [
   },
   ...ARTIKEL.map((a): Rute => ({ jalur: a.jalur, halaman: 'artikel', judul: `${a.judul} · Dokumentasi LANJUT`, deskripsi: a.deskripsi })),
   {
+    jalur: 'docs/glossary',
+    halaman: 'glosarium',
+    judul: 'Glosarium · Dokumentasi LANJUT',
+    deskripsi: 'Arti istilah seleksi masuk kuliah seperti SNBP, SNBT, UTBK, TKA, dan PDSS dengan sumber resminya, serta istilah di aplikasi LANJUT.',
+  },
+  {
     jalur: 'ai',
     halaman: 'ai',
     judul: 'AI LANJUT · LANJUT',

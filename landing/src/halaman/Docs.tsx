@@ -19,7 +19,7 @@ export default function Docs({ jalur, akar }: PropsHalaman) {
       >
         <p className="pita__pengantar">Produk, bisnis, teknis, dan bantuan, terbuka untuk siapa saja tanpa akun.</p>
         <p className="pita__catatan">Rencana dan hipotesis diberi label agar tidak terbaca sebagai fakta final.</p>
-        <nav aria-label="Kategori dokumentasi">
+        <nav aria-label="Pintasan dokumentasi">
           <ul className="pita__pintas">
             {KATEGORI.map((k) => (
               <li key={k.id}>
@@ -28,6 +28,12 @@ export default function Docs({ jalur, akar }: PropsHalaman) {
                 </a>
               </li>
             ))}
+            <li>
+              <Tautan ke="/docs/glossary" className="pita__pil pita__pil--halaman">
+                Glosarium
+                <Ikon nama="panah" />
+              </Tautan>
+            </li>
           </ul>
         </nav>
       </PitaHalaman>

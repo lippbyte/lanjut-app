@@ -114,6 +114,8 @@ test('noindex, bahasa id, status DRAF, dan viewport di semua halaman HTML', () =
     assert.match(html, /<html lang="id" data-status="draf">/, nama);
     assert.match(html, /<meta name="viewport" content="width=device-width, initial-scale=1">/, nama);
   }
+  // Label DRAF terlihat di setiap halaman, bukan hanya atribut data-status.
+  for (const r of s.RUTE) assert.ok(isiRoot(halaman(r.jalur)).includes(`<p class="draf">${s.TEKS_DRAF}</p>`), `${r.jalur || '/'}: label DRAF`);
   assert.match(fs.readFileSync(path.join(DIST, 'robots.txt'), 'utf8'), /noindex/);
   assert.ok(!fs.existsSync(path.join(DIST, 'sitemap.xml')), 'tanpa domain resmi tidak ada sitemap');
   assert.doesNotMatch(htmlDist().map((f) => fs.readFileSync(f, 'utf8')).join(''), /rel="canonical"|og:url/);
@@ -144,8 +146,16 @@ test('CSP hanya berkas sendiri; tanpa skrip sebaris, atribut style, atau skrip/g
   }
 });
 
-test('URL http(s) di dist hanya string yang tidak memicu permintaan (namespace dan tautan galat React)', () => {
-  const DISENGAJA = [/^http:\/\/www\.w3\.org\/(1998\/Math\/MathML|1999\/xhtml|1999\/xlink|2000\/svg|XML\/1998\/namespace)$/, /^https:\/\/react\.dev\/errors\/$/];
+test('URL http(s) di dist hanya string yang tidak memicu permintaan (namespace, tautan galat React, sumber resmi glosarium)', () => {
+  // Sumber resmi glosarium hanya tautan <a> yang diklik pembaca, bukan permintaan; domainnya
+  // dibatasi ke penyelenggara seleksi (snpmb.id dan *.go.id).
+  const sumber = Object.values(s.SUMBER).map((x) => x.url);
+  for (const u of sumber) assert.match(new URL(u).hostname, /(^|\.)snpmb\.id$|\.go\.id$/, u);
+  const DISENGAJA = [
+    /^http:\/\/www\.w3\.org\/(1998\/Math\/MathML|1999\/xhtml|1999\/xlink|2000\/svg|XML\/1998\/namespace)$/,
+    /^https:\/\/react\.dev\/errors\/$/,
+    ...sumber.map((u) => new RegExp(`^${u.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')}$`)),
+  ];
   const ditemukan = new Set();
   // lisensi/: teks lisensi huruf (OFL) memuat alamat situs lisensinya; itu bukan permintaan.
   for (const { isi } of teksDist().filter((t) => !t.nama.startsWith('lisensi/'))) {
@@ -434,6 +444,63 @@ test('tampilan dokumentasi: pita judul, sidebar dengan artikel aktif, kartu kate
   const css = fs.readFileSync(path.join(AKAR, 'src', 'gaya', 'docs.css'), 'utf8');
   assert.match(css, /\.kode \{[^}]*background: var\(--blue-950\)/);
   assert.doesNotMatch(css, /border-left/, 'tanpa garis aksen kiri (aturan design system)');
+});
+
+test('glosarium: definisi ≤ 2 kalimat, istilah seleksi bersumber resmi, kartu per huruf, alat cari dan huruf', () => {
+  const kalimat = (t) => (t.match(/[.!?](\s|$)/g) ?? []).length;
+  const ids = new Set(s.ISTILAH.map((i) => i.id));
+  assert.equal(ids.size, s.ISTILAH.length, 'id istilah unik');
+  // Urut abjad, seperti yang dibaca orang.
+  const urut = [...s.ISTILAH].sort((a, b) => a.istilah.localeCompare(b.istilah, 'id', { sensitivity: 'base' }));
+  assert.deepEqual(s.ISTILAH.map((i) => i.id), urut.map((i) => i.id));
+  for (const i of s.ISTILAH) {
+    assert.ok(kalimat(i.definisi) >= 1 && kalimat(i.definisi) <= 2, `${i.istilah}: definisi 1–2 kalimat (${kalimat(i.definisi)})`);
+    for (const t of i.terkait ?? []) assert.ok(ids.has(t), `${i.istilah}: istilah terkait ${t} tidak ada`);
+    if (i.kelompok === 'seleksi') {
+      assert.ok(i.sumber?.length, `${i.istilah}: istilah seleksi wajib bersumber resmi`);
+      assert.match(i.dicek ?? '', /^\d{4}-\d{2}-\d{2}$/, `${i.istilah}: tanggal dicek`);
+      assert.ok(i.dicek <= HARI_INI || i.dicek <= s.hariIniWib(), `${i.istilah}: tanggal dicek di masa depan`);
+      assert.match(i.ketentuan ?? '', /\b20\d\d\b/, `${i.istilah}: tahun ketentuan`);
+      for (const x of i.sumber) assert.match(new URL(x.url).hostname, /(^|\.)snpmb\.id$|\.go\.id$/, `${i.istilah}: ${x.url} bukan sumber resmi`);
+    }
+  }
+  // Istilah aturan seleksi yang wajib ada, semuanya berkelompok seleksi (jadi bersumber).
+  for (const nama of ['SNPMB', 'SNBP', 'SNBT', 'UTBK', 'TKA', 'PDSS', 'KIP Kuliah', 'Seleksi mandiri', 'Siswa eligible']) {
+    const i = s.ISTILAH.find((x) => x.istilah === nama);
+    assert.ok(i, `istilah ${nama} hilang`);
+    assert.equal(i.kelompok, 'seleksi', `${nama} harus berkelompok seleksi`);
+  }
+  // Istilah aplikasi mengikuti konten/fitur.ts, termasuk statusnya.
+  for (const f of s.FITUR) assert.equal(s.ISTILAH.find((i) => i.id === `aplikasi-${f.id}`)?.status, f.status, f.nama);
+
+  const html = isiRoot(halaman('docs/glossary'));
+  assert.match(html, /<header class="pita pita--penuh">[\s\S]*?aria-label="Remah roti"[\s\S]*?<h1 id="judul-glosarium"/);
+  // Pola kartu dokumentasi: satu kartu per huruf awal, semua istilah tampil di HTML awal.
+  const huruf = [...new Set(s.ISTILAH.map((i) => i.istilah[0].toUpperCase()))];
+  for (const h of huruf) assert.match(html, new RegExp(`<section id="huruf-${h}" class="kartu-docs glosarium__grup"`), `kartu huruf ${h}`);
+  for (const i of s.ISTILAH) assert.ok(html.includes(`id="${i.id}"`), `butir ${i.id}`);
+  assert.doesNotMatch(html, /\shidden=""/, 'tanpa JS tidak ada istilah yang tersembunyi');
+  // Tautan sumber keluar tanpa referrer, dengan keterangan situs luar untuk pembaca layar.
+  for (const u of Object.values(s.SUMBER).map((x) => x.url)) {
+    assert.ok(html.includes(`href="${u}" rel="noopener noreferrer" class="tautan-luar"`), `tautan sumber ${u}`);
+  }
+  // Alat: kolom cari berlabel, tombol huruf A–Z (yang tanpa istilah dinonaktifkan), jumlah hasil diumumkan.
+  assert.match(html, /<label for="cari-istilah"[^>]*>Cari istilah<\/label><input id="cari-istilah"[^>]*type="search"/);
+  for (const h of 'ABCDEFGHIJKLMNOPQRSTUVWXYZ') {
+    const tombol = new RegExp(`<button type="button" class="glosarium__tombol-huruf" aria-pressed="false"( disabled="")?>${h}</button>`).exec(html);
+    assert.ok(tombol, `tombol huruf ${h}`);
+    assert.equal(Boolean(tombol[1]), !huruf.includes(h), `tombol ${h}: nonaktif hanya bila tanpa istilah`);
+  }
+  assert.match(html, /<p class="glosarium__jumlah" aria-live="polite">\d+ istilah<\/p>/);
+  const css = semuaBerkas(path.join(DIST, 'assets')).filter((f) => f.endsWith('.css')).map((f) => fs.readFileSync(f, 'utf8')).join('');
+  assert.match(css, /html:not\(\[data-js\]\) \.glosarium__alat\{display:none\}/, 'alat cari disembunyikan tanpa JS');
+  // Pencarian: istilah, kepanjangan, dan definisi; tanpa beda huruf besar/kecil.
+  const snbp = s.ISTILAH.find((i) => i.id === 'snbp');
+  assert.ok(s.cocokIstilah(snbp, 'snbp') && s.cocokIstilah(snbp, 'PRESTASI') && s.cocokIstilah(snbp, '  rapor '));
+  assert.ok(!s.cocokIstilah(snbp, 'politeknik'));
+  // Bisa dicapai dari dokumentasi dan kaki situs.
+  assert.match(isiRoot(halaman('docs')), /href="\.\.\/docs\/glossary\/"/);
+  assert.match(isiRoot(halaman('docs/faq')), /href="\.\.\/\.\.\/docs\/glossary\/"/);
 });
 
 test('kebijakan privasi aplikasi dirender persis dari datanya, urut, dengan status DRAF', () => {

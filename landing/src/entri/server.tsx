@@ -6,6 +6,7 @@ import Artikel from '../halaman/Artikel';
 import Beranda from '../halaman/Beranda';
 import DetailRilis, { IsiRilis } from '../halaman/DetailRilis';
 import Docs from '../halaman/Docs';
+import Glosarium from '../halaman/Glosarium';
 import { GoogleKembali } from '../halaman/GoogleKembali';
 import type { IdHalaman, PropsHalaman } from '../halaman/jenis';
 import KebijakanPrivasi from '../halaman/KebijakanPrivasi';
@@ -23,6 +24,7 @@ export { default as dataRilis } from '../data/releases.json';
 export { default as dataKebijakan } from '../data/kebijakan-privasi.json';
 export { ALIHAN, RUTE, RUTE_404, cariRute } from '../rute';
 export { ARTIKEL, KATEGORI } from '../konten/docs';
+export { ISTILAH, SUMBER, cocok as cocokIstilah } from '../konten/glosarium';
 export { FITUR, LABEL_STATUS, TOPIK_KHUSUS_SMK } from '../konten/fitur';
 export { POLA_TEKS } from '../komponen/TeksKaya';
 export { TEKS_DRAF } from '../komponen/Kerangka';
@@ -43,6 +45,7 @@ export const BERKAS_HALAMAN: Record<IdHalaman, string> = {
   beranda: 'src/halaman/Beranda.tsx',
   docs: 'src/halaman/Docs.tsx',
   artikel: 'src/halaman/Artikel.tsx',
+  glosarium: 'src/halaman/Glosarium.tsx',
   ai: 'src/halaman/Ai.tsx',
   unduh: 'src/halaman/Unduh.tsx',
   rilis: 'src/halaman/DetailRilis.tsx',
@@ -55,6 +58,7 @@ const HALAMAN: Record<IdHalaman, ComponentType<PropsHalaman>> = {
   beranda: Beranda,
   docs: Docs,
   artikel: Artikel,
+  glosarium: Glosarium,
   ai: Ai,
   unduh: Unduh,
   rilis: DetailRilis,

@@ -37,6 +37,11 @@ kejujuran konten, aksesibilitas) tetap berlaku.
   Artikel memakai sidebar kartu putih (artikel aktif berupa pill bergradasi, tanpa garis kiri),
   daftar isi yang menandai bagian yang sedang dibaca, dan blok kode gelap (`blue-950`, teks
   `blue-100`) dengan label bahasa dan tombol Salin bila clipboard tersedia.
+- **Glosarium** (`/docs/glossary`): pola kartu indeks Dokumentasi, satu kartu per huruf awal.
+  Ada kolom cari dan tombol huruf A–Z (huruf tanpa istilah dinonaktifkan), keduanya tanpa
+  pustaka tambahan dan disembunyikan bila JavaScript mati. Definisi paling banyak dua kalimat.
+  Istilah aturan seleksi wajib mencantumkan sumber resmi (snpmb.id atau *.go.id), tanggal dicek,
+  dan tahun ketentuannya.
 - **Copy beranda:** judul ≤ 8 kata, isi satu kalimat; penjelasan panjang pindah ke dokumentasi.
 - **Huruf kapital judul:** sentence case, bukan Title Case — contoh "Mau lanjut kuliah, mulai dari
   mana?". Huruf besar hanya di awal judul, singkatan (LANJUT, SMK, PKL), dan nama diri (nama fitur

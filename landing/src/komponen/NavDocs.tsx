@@ -11,6 +11,11 @@ export function DaftarDocs() {
           Semua dokumentasi
         </Tautan>
       </li>
+      <li>
+        <Tautan ke="/docs/glossary" className="nav-docs__indeks" aria-current={jalur === 'docs/glossary' ? 'page' : undefined}>
+          Glosarium
+        </Tautan>
+      </li>
       {KATEGORI.map((k) => (
         <li key={k.id}>
           <p className="nav-docs__kategori">{k.judul}</p>

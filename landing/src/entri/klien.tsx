@@ -12,6 +12,7 @@ const MUAT: Record<IdHalaman, () => Promise<{ default: ComponentType<PropsHalama
   beranda: () => import('../halaman/Beranda'),
   docs: () => import('../halaman/Docs'),
   artikel: () => import('../halaman/Artikel'),
+  glosarium: () => import('../halaman/Glosarium'),
   ai: () => import('../halaman/Ai'),
   unduh: () => import('../halaman/Unduh'),
   rilis: () => import('../halaman/DetailRilis'),

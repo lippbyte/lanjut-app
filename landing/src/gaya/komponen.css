@@ -534,3 +534,16 @@
 .pita__pil:hover {
   background: var(--gradasi-tombol-aktif);
 }
+
+/* Pintasan ke halaman lain di pita: pill garis putih (beda dari pintasan jangkar yang terang). */
+.pita__pil--halaman {
+  gap: 8px;
+  border: 1.5px solid var(--white);
+  background: transparent;
+  color: var(--white);
+  box-shadow: none;
+}
+
+.pita__pil--halaman:hover {
+  background: var(--blue-800);
+}

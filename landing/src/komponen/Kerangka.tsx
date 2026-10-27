@@ -17,6 +17,7 @@ const KAKI: { judul: string; tautan: { ke: string; label: string }[] }[] = [
     judul: 'Halaman',
     tautan: [
       { ke: '/docs', label: 'Dokumentasi' },
+      { ke: '/docs/glossary', label: 'Glosarium' },
       { ke: '/ai', label: 'AI LANJUT' },
       { ke: '/download', label: 'Unduh' },
       { ke: '/docs/technical/releases', label: 'Proses rilis' },
