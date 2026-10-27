@@ -31,6 +31,12 @@ kejujuran konten, aksesibilitas) tetap berlaku.
 - **Gerak:** CSS + IntersectionObserver, tanpa pustaka. Setiap seksi beranda punya jenis gerak sendiri.
   Dua loop yang diizinkan, keduanya sangat tipis, hanya berjalan saat terlihat, dan mati saat
   "kurangi gerakan": maskot hero melayang dan gradasi CTA penutup/kaki yang bergeser.
+- **Halaman selain beranda:** permukaan terang. Judul halaman ada di pita bergradasi
+  `blue-800 → blue-900` yang menyambung gradasi kepala (`PitaHalaman`).
+- **Dokumentasi:** indeks berupa kartu kategori dengan kepala bergradasi seperti kartu beranda.
+  Artikel memakai sidebar kartu putih (artikel aktif berupa pill bergradasi, tanpa garis kiri),
+  daftar isi yang menandai bagian yang sedang dibaca, dan blok kode gelap (`blue-950`, teks
+  `blue-100`) dengan label bahasa dan tombol Salin bila clipboard tersedia.
 - **Copy beranda:** judul ≤ 8 kata, isi satu kalimat; penjelasan panjang pindah ke dokumentasi.
 - **Huruf kapital judul:** sentence case, bukan Title Case — contoh "Mau lanjut kuliah, mulai dari
   mana?". Huruf besar hanya di awal judul, singkatan (LANJUT, SMK, PKL), dan nama diri (nama fitur

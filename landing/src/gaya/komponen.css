@@ -420,3 +420,117 @@
   margin: 0;
   max-width: 40em;
 }
+
+/* ---------- Pita judul halaman (halaman selain beranda) ---------- */
+/* Menyambung gradasi kepala: putih di atas blue-800 → blue-900 (≥ 6,39:1). */
+.pita {
+  padding-block: var(--ruang-6) var(--ruang-12);
+  background: var(--gradasi-pita-lanjut);
+  color: var(--white);
+  --warna-fokus: var(--white);
+}
+
+.pita__isi > * {
+  max-width: var(--baca);
+}
+
+.pita--penuh .pita__isi > * {
+  max-width: 52rem;
+}
+
+.pita__judul {
+  margin: 0 0 var(--ruang-4);
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  text-shadow: var(--bayangan-teks);
+}
+
+.pita__pengantar {
+  margin: 0 0 var(--ruang-3);
+  font-size: var(--ukuran-lead);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.pita__catatan,
+.pita__meta {
+  margin: 0;
+  color: var(--blue-100);
+  font-size: var(--ukuran-meta);
+}
+
+.pita__label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0 0 var(--ruang-4);
+  font-size: var(--ukuran-kecil);
+  font-weight: 500;
+}
+
+.pita a:not(.pita__pil) {
+  color: var(--white);
+}
+
+/* Remah roti: di permukaan terang (detail rilis) dan di pita. */
+.remah ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0;
+  margin: 0 0 var(--ruang-4);
+  padding: 0;
+  list-style: none;
+  color: var(--ink-700);
+  font-size: var(--ukuran-meta);
+}
+
+.remah li + li::before {
+  content: '/';
+  margin: 0 8px;
+  color: var(--ink-500);
+}
+
+.remah [aria-current='page'] {
+  color: var(--ink-900);
+  font-weight: 600;
+}
+
+.pita .remah ol {
+  color: var(--blue-100);
+}
+
+.pita .remah li + li::before {
+  color: var(--blue-300);
+}
+
+.pita .remah [aria-current='page'] {
+  color: var(--white);
+}
+
+.pita__pintas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ruang-2);
+  margin: var(--ruang-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Pill terang seperti tombol utama: blue-900 di atas putih → blue-100 (≥ 8,1:1). */
+.pita__pil {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 20px;
+  border-radius: var(--radius-pill);
+  background: var(--gradasi-tombol);
+  color: var(--teks-gelap);
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: var(--bayangan-gelap);
+  transition: background var(--durasi) var(--gerak-standar);
+}
+
+.pita__pil:hover {
+  background: var(--gradasi-tombol-aktif);
+}

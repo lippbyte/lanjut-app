@@ -1,5 +1,6 @@
 import type { Blok } from '../konten/docs';
 import { ARTI_STATUS, FITUR, type StatusFitur } from '../konten/fitur';
+import { BlokKode } from './BlokKode';
 import { Catatan } from './Catatan';
 import { Status } from './Status';
 import { TeksKaya } from './TeksKaya';
@@ -89,6 +90,8 @@ export function BlokDocs({ blok }: { blok: Blok }) {
           </table>
         </div>
       );
+    case 'kode':
+      return <BlokKode bahasa={blok.bahasa} judul={blok.judul} kode={blok.kode} />;
     case 'fitur':
       return <DaftarFitur kelompok={blok.kelompok} />;
     case 'arti-status':

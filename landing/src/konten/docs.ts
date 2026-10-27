@@ -1,3 +1,4 @@
+import dataRilis from '../data/releases.json';
 import type { KelompokFitur } from './fitur';
 
 // Dokumentasi publik (PRD-landpage §8.2). Isi dipisah dari tampilan: halaman Artikel merender
@@ -19,6 +20,8 @@ export type Blok =
   | { jenis: 'daftar'; butir: string[]; urut?: boolean }
   | { jenis: 'catatan'; teks: string; judul?: string; nada?: 'info' | 'penting' }
   | { jenis: 'tabel'; judul: string; kepala: string[]; baris: string[][] }
+  /** Blok kode gelap. `bahasa` tampil sebagai label (mis. "PowerShell"); `judul` untuk pembaca layar. */
+  | { jenis: 'kode'; bahasa: string; judul: string; kode: string }
   | { jenis: 'fitur'; kelompok: (KelompokFitur | 'lain')[] }
   | { jenis: 'arti-status' };
 
@@ -653,17 +656,20 @@ export const ARTIKEL: Artikel[] = [
               ['`changes`, `knownIssues`', 'Daftar perubahan dan masalah yang diketahui.'],
             ],
           },
+          { jenis: 'p', teks: 'Isi `releases.json` yang diterbitkan bersama halaman ini:' },
+          // Diambil dari berkas datanya saat build, jadi tidak pernah berbeda dengan yang terbit.
+          { jenis: 'kode', bahasa: 'JSON', judul: 'Isi releases.json saat ini', kode: JSON.stringify(dataRilis, null, 2) },
         ],
       },
       {
         id: 'periksa-apk',
         judul: 'Memeriksa APK yang kamu unduh',
         blok: [
-          { jenis: 'p', teks: 'Bila halaman rilis mencantumkan SHA-256, cocokkan dengan checksum berkas yang kamu unduh di komputer:' },
-          {
-            jenis: 'daftar',
-            butir: ['Windows (PowerShell): `Get-FileHash lanjut.apk -Algorithm SHA256`', 'macOS atau Linux: `shasum -a 256 lanjut.apk`'],
-          },
+          { jenis: 'p', teks: 'Bila halaman rilis mencantumkan SHA-256, cocokkan dengan checksum berkas yang kamu unduh di komputer.' },
+          { jenis: 'p', teks: 'Di Windows, buka PowerShell di folder unduhan:' },
+          { jenis: 'kode', bahasa: 'PowerShell', judul: 'Perintah checksum di Windows', kode: 'Get-FileHash lanjut.apk -Algorithm SHA256' },
+          { jenis: 'p', teks: 'Di macOS atau Linux, buka Terminal:' },
+          { jenis: 'kode', bahasa: 'Terminal', judul: 'Perintah checksum di macOS atau Linux', kode: 'shasum -a 256 lanjut.apk' },
           { jenis: 'p', teks: 'Ganti `lanjut.apk` dengan nama berkas yang kamu unduh. Bila hasilnya tidak sama, jangan pasang berkas itu.' },
         ],
       },

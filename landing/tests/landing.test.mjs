@@ -406,6 +406,36 @@ test('dokumentasi: kategori, daftar isi, tanggal pembaruan, remah roti, dan taut
   assert.deepEqual(s.KATEGORI.map((k) => k.id), ['produk', 'bisnis', 'teknis', 'bantuan']);
 });
 
+test('tampilan dokumentasi: pita judul, sidebar dengan artikel aktif, kartu kategori, blok kode gelap', () => {
+  // Indeks: pintasan ke setiap kartu kategori, dan kartunya memang ada.
+  const indeks = isiRoot(halaman('docs'));
+  assert.match(indeks, /<header class="pita pita--penuh">[\s\S]*?<h1 id="judul-docs"/);
+  for (const k of s.KATEGORI) {
+    assert.ok(indeks.includes(`href="#kategori-${k.id}"`), `pintasan ${k.id}`);
+    assert.match(indeks, new RegExp(`<section id="kategori-${k.id}" class="kartu-docs"`), `kartu ${k.id}`);
+  }
+  // Artikel: judul di pita, tepat satu artikel aktif di sidebar (desktop dan menu HP).
+  for (const a of s.ARTIKEL) {
+    const html = isiRoot(halaman(a.jalur));
+    assert.match(html, /<header class="pita pita--baca">[\s\S]*?aria-label="Remah roti"[\s\S]*?<h1 id="judul-artikel"/, a.jalur);
+    assert.equal((html.match(/aria-current="page" href=|href="[^"]*" aria-current="page"/g) ?? []).length, 2, `${a.jalur}: artikel aktif di sidebar dan menu HP`);
+  }
+  // Blok kode: gelap, bisa difokus untuk digulir, dan isi releases.json persis datanya.
+  const rilis = isiRoot(halaman('docs/technical/releases'));
+  const blok = [...rilis.matchAll(/<figure class="kode" aria-label="([^"]+)">[\s\S]*?<div class="kode__gulir" role="region" aria-label="[^"]+" tabindex="0"><pre><code>([\s\S]*?)<\/code><\/pre><\/div><\/figure>/g)];
+  assert.deepEqual(
+    blok.map((m) => m[1]),
+    ['Isi releases.json saat ini', 'Perintah checksum di Windows', 'Perintah checksum di macOS atau Linux']
+  );
+  assert.equal(dekode(blok[0][2]), JSON.stringify(s.dataRilis, null, 2));
+  assert.equal(dekode(blok[1][2]), 'Get-FileHash lanjut.apk -Algorithm SHA256');
+  // Tanpa JS tombol Salin tidak dirender (baru muncul bila clipboard tersedia).
+  assert.doesNotMatch(rilis, /kode__salin/);
+  const css = fs.readFileSync(path.join(AKAR, 'src', 'gaya', 'docs.css'), 'utf8');
+  assert.match(css, /\.kode \{[^}]*background: var\(--blue-950\)/);
+  assert.doesNotMatch(css, /border-left/, 'tanpa garis aksen kiri (aturan design system)');
+});
+
 test('kebijakan privasi aplikasi dirender persis dari datanya, urut, dengan status DRAF', () => {
   const k = s.dataKebijakan;
   const html = isiRoot(halaman('privacy/app'));
@@ -576,6 +606,11 @@ test('token: palet resmi LANJUT, gradasi terpasang, dan pasangan teks/latar lolo
     ['--status-idle-fg', '--status-idle-bg'],
     ['--blue-600', '--white'], // tautan di permukaan terang
     ['--ink-900', '--ink-050'],
+    ['--blue-100', '--blue-950'], // isi blok kode dokumentasi
+    ['--blue-200', '--blue-900'], // label bahasa blok kode
+    ['--blue-100', '--blue-600'], // nomor kategori di kepala kartu dokumentasi
+    ['--ink-700', '--white'], // deskripsi artikel di kartu
+    ['--ink-700', '--ink-050'], // judul daftar isi di latar halaman
   ];
   for (const [a, b] of PASANGAN) assert.ok(kontras(a, b) >= 4.5, `${a} di ${b}: ${kontras(a, b).toFixed(2)}:1`);
   assert.match(token, /--gradasi-halaman: linear-gradient\(180deg, var\(--blue-700\) 0%, var\(--blue-800\) 100%\)/);
@@ -587,6 +622,8 @@ test('token: palet resmi LANJUT, gradasi terpasang, dan pasangan teks/latar lolo
     ['.fitur__kartu', '--gradasi-kartu'],
     ['.penutup', '--gradasi-geser'],
     ['.kaki', '--gradasi-kaki'],
+    ['.pita', '--gradasi-pita-lanjut'],
+    ['.kartu-docs__kepala', '--gradasi-kartu'],
   ]) {
     assert.match(css, new RegExp(`${pemilih.replace('.', '\\.')}\\{[^}]*background:var\\(${gradasi}\\)`), `${pemilih} tanpa ${gradasi}`);
   }

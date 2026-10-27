@@ -82,6 +82,8 @@
   --gradasi-tombol-aktif: linear-gradient(180deg, var(--blue-100) 0%, var(--blue-200) 100%);
   --gradasi-kartu: linear-gradient(180deg, var(--blue-600) 0%, var(--blue-900) 100%);
   --gradasi-pita: linear-gradient(180deg, var(--blue-700) 0%, var(--blue-800) 100%);
+  /* Pita judul halaman tepat di bawah kepala: mulai dari warna akhir kepala, jadi tanpa sambungan. */
+  --gradasi-pita-lanjut: linear-gradient(180deg, var(--blue-800) 0%, var(--blue-900) 100%);
   /* Untuk gradasi yang bergeser pelan (CTA penutup, kaki): tiga kali tinggi kotaknya. */
   --gradasi-geser: linear-gradient(180deg, var(--blue-800) 0%, var(--blue-900) 50%, var(--blue-800) 100%);
   --gradasi-kaki: linear-gradient(180deg, var(--blue-900) 0%, var(--blue-950) 50%, var(--blue-900) 100%);
