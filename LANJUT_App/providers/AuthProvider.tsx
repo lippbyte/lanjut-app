@@ -23,6 +23,9 @@ type NilaiAuth = {
   token: string | null;
   pengguna: Pengguna | null;
   alasanKeluar: AlasanKeluar;
+  /** Onboarding cerita (lib/onboarding.ts) belum dilewati: app dibuka tanpa sesi tersimpan. */
+  perluOnboarding: boolean;
+  selesaikanOnboarding: () => void;
   terapkanSesi: (sesi: Sesi) => void;
   perbaruiPengguna: (profil: Pengguna) => Promise<void>;
   keluar: () => Promise<void>;
@@ -35,6 +38,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [pengguna, setPengguna] = useState<Pengguna | null>(null);
   const [alasanKeluar, setAlasanKeluar] = useState<AlasanKeluar>(null);
+  // Hanya diisi true di satu tempat: pemeriksaan sesi saat app dibuka, bila tidak ada sesi
+  // tersimpan. Keluar atau sesi berakhir di tengah pemakaian tidak memunculkan onboarding.
+  const [perluOnboarding, setPerluOnboarding] = useState(false);
   const queryClient = useQueryClient();
   // Token yang sedang dipakai, dibaca sinkron oleh pendengar 401 (jawaban
   // bisa datang sebelum render berikutnya). Diisi langsung di setiap
@@ -81,6 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const tersimpan = await authApi.bacaSesiTersimpan().catch(() => null);
       if (batal) return;
       if (!tersimpan) {
+        setPerluOnboarding(true);
         setStatus('keluar');
         return;
       }
@@ -142,9 +149,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setStatus('keluar');
   }, [token, queryClient]);
 
+  const selesaikanOnboarding = useCallback(() => setPerluOnboarding(false), []);
+
   const nilai = useMemo(
-    () => ({ status, token, pengguna, alasanKeluar, terapkanSesi, perbaruiPengguna, keluar }),
-    [status, token, pengguna, alasanKeluar, terapkanSesi, perbaruiPengguna, keluar]
+    () => ({ status, token, pengguna, alasanKeluar, perluOnboarding, selesaikanOnboarding, terapkanSesi, perbaruiPengguna, keluar }),
+    [status, token, pengguna, alasanKeluar, perluOnboarding, selesaikanOnboarding, terapkanSesi, perbaruiPengguna, keluar]
   );
 
   return <AuthContext.Provider value={nilai}>{children}</AuthContext.Provider>;

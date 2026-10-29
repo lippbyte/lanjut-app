@@ -944,8 +944,16 @@ const PETA = [
     butir: [
       { task: 'LANJUT_041', awal: '**Pintu di Arsip Belajar:**', nama: 'Pintu di Arsip Belajar', di: 'Arsip Belajar, tombol menuju Latihan.', oleh: 'Semua akun.' },
       { task: 'LANJUT_041', awal: '**Sebelum mulai:**', nama: 'Sebelum mulai', di: 'Latihan, sebelum sesi dimulai.', oleh: 'Semua akun yang punya kartu.' },
-      { task: 'LANJUT_041', awal: '**Arsip kosong:**', nama: 'Arsip kosong', di: 'Latihan, bila belum ada kartu sama sekali.', oleh: 'Akun tanpa kartu.' },
+      { task: 'LANJUT_041', awal: '**Arsip kosong:**', nama: 'Arsip kosong', di: 'Latihan, bila belum ada kartu maupun modul sama sekali.', oleh: 'Akun tanpa kartu dan tanpa modul.' },
       { task: 'LANJUT_041', awal: '**Selama sesi:**', nama: 'Selama sesi', di: 'Latihan, kartu satu per satu.', oleh: 'Semua akun yang berlatih.' },
+      {
+        // Blok DRAF LANJUT_041; butirnya sendiri baru (pilihan percakapan 15 Okt 2026).
+        task: 'LANJUT_041',
+        awal: '**Potongan modul di sesi Latihan',
+        nama: 'Potongan modul di sesi Latihan (15 Okt 2026)',
+        di: 'Latihan, butir yang berasal dari modul unggahan (diacak bersama kartu).',
+        oleh: 'Akun yang sudah mengunggah modul.',
+      },
       {
         task: 'LANJUT_041',
         awal: '**Sesudah selesai:**',

@@ -7,6 +7,16 @@ import { useAlamat } from './Situs';
 
 export const BELUM_DIVERIFIKASI = 'Belum diverifikasi';
 
+/** Penanda nilai yang belum diverifikasi: pill abu tenang dengan cincin (status idle). */
+export function TandaBelum() {
+  return (
+    <span className="tanda-belum">
+      <span className="tanda-belum__ikon" aria-hidden="true" />
+      {BELUM_DIVERIFIKASI}
+    </span>
+  );
+}
+
 /** Tombol unduh APK. Hanya dirender bila ada rilis yang lolos periksaDataRilis(). */
 export function TombolUnduh({ rilis }: { rilis: Rilis }) {
   const ubah = useAlamat();
@@ -34,11 +44,11 @@ export function MetaRilis({ rilis, lengkap = false }: { rilis: Rilis; lengkap?: 
       </div>
       <div>
         <dt>Ukuran berkas</dt>
-        <dd>{rilis.fileSizeBytes === null ? BELUM_DIVERIFIKASI : formatUkuran(rilis.fileSizeBytes)}</dd>
+        <dd>{rilis.fileSizeBytes === null ? <TandaBelum /> : formatUkuran(rilis.fileSizeBytes)}</dd>
       </div>
       <div>
         <dt>Android minimum</dt>
-        <dd>{rilis.minAndroidVersion === null ? BELUM_DIVERIFIKASI : `Android ${rilis.minAndroidVersion}`}</dd>
+        <dd>{rilis.minAndroidVersion === null ? <TandaBelum /> : `Android ${rilis.minAndroidVersion}`}</dd>
       </div>
       <div>
         <dt>Kanal</dt>
@@ -47,7 +57,7 @@ export function MetaRilis({ rilis, lengkap = false }: { rilis: Rilis; lengkap?: 
       {lengkap ? (
         <div className="meta-rilis__penuh">
           <dt>SHA-256</dt>
-          <dd>{rilis.sha256 === null ? BELUM_DIVERIFIKASI : <code className="checksum">{rilis.sha256}</code>}</dd>
+          <dd>{rilis.sha256 === null ? <TandaBelum /> : <code className="checksum">{rilis.sha256}</code>}</dd>
         </div>
       ) : null}
     </dl>

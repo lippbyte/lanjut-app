@@ -42,6 +42,11 @@ kejujuran konten, aksesibilitas) tetap berlaku.
   pustaka tambahan dan disembunyikan bila JavaScript mati. Definisi paling banyak dua kalimat.
   Istilah aturan seleksi wajib mencantumkan sumber resmi (snpmb.id atau *.go.id), tanggal dicek,
   dan tahun ketentuannya.
+- **Download** (`/download`, `/download/<versi>`): pola kartu yang sama. Kartu versi terbaru
+  (atau kartu "Unduhan belum tersedia"), riwayat sebagai kartu versi, kartu syarat perangkat,
+  dan langkah pasang APK sebagai kartu bernomor. Syarat yang belum diuji di HP sungguhan
+  tampil dengan penanda "Belum diverifikasi" (pill abu bercincin), tidak pernah ditebak; data
+  rilis yang `null` memakai penanda yang sama. Di detail rilis, judul dan tombol unduh ada di pita.
 - **Copy beranda:** judul ≤ 8 kata, isi satu kalimat; penjelasan panjang pindah ke dokumentasi.
 - **Huruf kapital judul:** sentence case, bukan Title Case — contoh "Mau lanjut kuliah, mulai dari
   mana?". Huruf besar hanya di awal judul, singkatan (LANJUT, SMK, PKL), dan nama diri (nama fitur

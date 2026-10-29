@@ -2,21 +2,26 @@ import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { CatatanLatihan, Kartu as DataKartu, Mapel, SesiLatihan } from '../../api/types';
+import type { CatatanLatihan, Mapel, SesiLatihan } from '../../api/types';
 import { useKartuSaya } from '../../hooks/useKartu';
 import { useMulaiSesi, useSimpanHasilSesi } from '../../hooks/useLatihan';
 import { useMapel } from '../../hooks/useMapel';
-import { jenisKartu, mapelBerkartu, namaMapel } from '../../lib/arsip';
+import { useModulLatihan } from '../../hooks/useModul';
+import { namaMapel } from '../../lib/arsip';
 import {
   BATAS_SESI,
   BATAS_SINGKAT,
   KEYAKINAN,
   TEKS_KEYAKINAN,
+  TEKS_LATIHAN_MODUL,
   buatId,
-  kartuUntukLatihan,
+  catatanJawaban,
+  jumlahBahan,
+  mapelLatihan,
   nilaiKeyakinan,
   perkiraanMenit,
   susunAntrian,
+  type ItemLatihan,
   type KodeKeyakinan,
 } from '../../lib/latihan';
 import { TEKS_LEVELIN } from '../../lib/levelin';
@@ -28,7 +33,7 @@ import { DaftarOpsi, OpsiPil, PesanGalat } from './auth/AuthUI';
 
 const SEMUA = '__semua__';
 
-type Sesi = { id: string; mapelId: string | null; batas: number; antrian: DataKartu[] };
+type Sesi = { id: string; mapelId: string | null; batas: number; antrian: ItemLatihan[] };
 
 /**
  * F7 Latihan (LANJUT_041) — antrian sederhana TANPA Level-In (lib/latihan.ts):
@@ -42,9 +47,13 @@ type Sesi = { id: string; mapelId: string | null; batas: number; antrian: DataKa
  * LANJUT_058: tiap kartu bertanya "Seberapa yakin kamu?" (boleh dilewati);
  * keyakinan ikut di catatan yang sama, jadi ikut terkirim ulang lewat
  * "Coba lagi". `?mapel=&asal=saran` (dari saran Level-In) memilih mapelnya.
+ * 15 Okt 2026 (pilihan percakapan, belum disetujui PM): potongan modul yang diunggah ikut
+ * dilatih (lib/latihan.ts ItemLatihan), jadi ikut dihitung Level-In. Modul gagal dimuat →
+ * Latihan tetap jalan dengan kartu saja.
  */
 export function LatihanScreen() {
   const kartuQuery = useKartuSaya();
+  const modulQuery = useModulLatihan();
   const mapelQuery = useMapel();
   const { pengguna } = useSesi();
   const mulaiSesi = useMulaiSesi();
@@ -60,13 +69,15 @@ export function LatihanScreen() {
     if (param.mapel) setPilihanMapel(param.mapel);
   }, [param.mapel]);
 
-  if (kartuQuery.isPending || mapelQuery.isPending) return <View style={gaya.layarIsiRapat}><Memuat /></View>;
+  if (kartuQuery.isPending || mapelQuery.isPending || modulQuery.isPending) return <View style={gaya.layarIsiRapat}><Memuat /></View>;
   if (kartuQuery.isError) return <View style={gaya.layarIsiRapat}><KeadaanGalat /></View>;
   const kartu = kartuQuery.data;
+  const potongan = modulQuery.data?.potongan ?? [];
+  const modulPerMapel = modulQuery.data?.per_mapel ?? [];
   const mapel = mapelQuery.data ?? [];
 
   const mulai = (mapelId: string | null, batas: number) => {
-    const antrian = susunAntrian(kartu, mapelId, batas);
+    const antrian = susunAntrian(kartu, potongan, mapelId, batas);
     if (!antrian.length) return;
     const id = buatId();
     mulaiSesi.mutate(
@@ -75,6 +86,8 @@ export function LatihanScreen() {
         onSuccess: () => {
           setHasil(null);
           setSesi({ id, mapelId, batas, antrian });
+          // Contoh potongan modul berikutnya diacak ulang untuk sesi sesudahnya ("Ulangi").
+          void modulQuery.refetch();
         },
       }
     );
@@ -102,14 +115,14 @@ export function LatihanScreen() {
 
   // Saringan yang mapelnya sudah tidak punya kartu kembali ke Semua.
   // LANJUT_079: mapel pilihan (Mapel Saya / Pilih Mapel) tampil lebih dulu.
-  const perMapel = mapelBerkartu(kartu, urutkanMapelPilihan(mapel, pengguna?.mapel_pilihan));
+  const perMapel = mapelLatihan(kartu, modulPerMapel, urutkanMapelPilihan(mapel, pengguna?.mapel_pilihan));
   const aktif = pilihanMapel !== SEMUA && perMapel.some((m) => m.id === pilihanMapel) ? pilihanMapel : SEMUA;
   const mapelId = aktif === SEMUA ? null : aktif;
   return (
     <LangkahPilih
-      tersedia={kartuUntukLatihan(kartu, mapelId).length}
+      tersedia={jumlahBahan(perMapel, mapelId)}
       perMapel={perMapel}
-      totalKartu={kartu.length}
+      totalKartu={jumlahBahan(perMapel, null)}
       aktif={aktif}
       onPilih={setPilihanMapel}
       onMulai={(batas) => mulai(mapelId, batas)}
@@ -146,9 +159,14 @@ function LangkahPilih({
       <Kepala judul="Latihan Hari Ini" pengantar="15 menit cukup." />
       {!totalKartu ? (
         <Kosong
-          judul="Belum ada kartu untuk dilatih."
-          teks="Latihan memakai kartu buatanmu di Arsip Belajar. Tambah satu dulu."
-          aksi={<Tombol label="Tambah kartu" varian="sekunder" onPress={() => router.push('/arsip-tulis')} />}
+          judul={TEKS_LATIHAN_MODUL.kosongJudul}
+          teks={TEKS_LATIHAN_MODUL.kosongTeks}
+          aksi={
+            <View style={s.tumpuk}>
+              <Tombol label="Tambah kartu" varian="sekunder" onPress={() => router.push('/arsip-tulis')} />
+              <Tombol label={TEKS_LATIHAN_MODUL.unggahModul} varian="garis" onPress={() => router.push('/arsip-modul-unggah')} />
+            </View>
+          }
         />
       ) : (
         <>
@@ -190,7 +208,8 @@ function LangkahSesi({ sesi, mapel, onSelesai }: { sesi: Sesi; mapel: Mapel[]; o
 
   const total = sesi.antrian.length;
   const k = sesi.antrian[indeks];
-  const soal = jenisKartu(k) === 'Soal';
+  const soal = k.soal;
+  const dariModul = k.modul !== null;
   const terakhir = indeks === total - 1;
 
   const berikutnya = () => {
@@ -198,7 +217,7 @@ function LangkahSesi({ sesi, mapel, onSelesai }: { sesi: Sesi; mapel: Mapel[]; o
     const nilai = nilaiKeyakinan(keyakinan); // dilewati → tidak dikirim (kompatibel dengan server & app lama)
     const baru = [
       ...catatan,
-      { id: buatId(), sesi_id: sesi.id, kartu_id: k.id, benar, waktu: new Date().toISOString(), ...(nilai ? { keyakinan: nilai } : {}) },
+      catatanJawaban(k, { id: buatId(), sesi_id: sesi.id, benar, waktu: new Date().toISOString(), ...(nilai ? { keyakinan: nilai } : {}) }),
     ];
     if (terakhir) return onSelesai(baru);
     setCatatan(baru);
@@ -221,13 +240,13 @@ function LangkahSesi({ sesi, mapel, onSelesai }: { sesi: Sesi; mapel: Mapel[]; o
 
       <Kartu style={s.kartu}>
         <Text style={s.eyebrow}>
-          {namaMapel(k.mapel_id, mapel)} · {soal ? 'Soal' : 'Catatan'}
+          {namaMapel(k.mapelId, mapel)} · {soal ? 'Soal' : dariModul ? TEKS_LATIHAN_MODUL.jenis : 'Catatan'}
         </Text>
         <Text style={s.judul}>{k.judul}</Text>
-        {soal ? (
-          <Text style={gaya.teksBody}>{k.isi}</Text>
-        ) : (
-          <Text style={gaya.teksKecil}>Coba ingat isi catatan ini dulu.</Text>
+        {k.modul ? <Text style={gaya.teksKecil}>{TEKS_LATIHAN_MODUL.bagian(k.modul.bagian, k.modul.jumlahBagian)}</Text> : null}
+        {k.isyarat ? <Text style={gaya.teksBody}>{k.isyarat}</Text> : null}
+        {soal ? null : (
+          <Text style={gaya.teksKecil}>{dariModul ? TEKS_LATIHAN_MODUL.ajakan : 'Coba ingat isi catatan ini dulu.'}</Text>
         )}
       </Kartu>
 
@@ -235,8 +254,8 @@ function LangkahSesi({ sesi, mapel, onSelesai }: { sesi: Sesi; mapel: Mapel[]; o
         <>
           <Text style={gaya.teksKecil}>{labelKeyakinan ? TEKS_KEYAKINAN.terpilih(labelKeyakinan) : TEKS_KEYAKINAN.dilewati}</Text>
           <View style={s.jawaban}>
-            <Text style={s.labelJawaban}>{soal ? 'Jawaban' : 'Isi catatan'}</Text>
-            <Text style={gaya.teksBody}>{soal ? k.jawaban : k.isi}</Text>
+            <Text style={s.labelJawaban}>{soal ? 'Jawaban' : dariModul ? TEKS_LATIHAN_MODUL.labelIsi : 'Isi catatan'}</Text>
+            <Text style={gaya.teksBody}>{k.isi}</Text>
           </View>
           <Text style={s.label}>{soal ? 'Jawabanmu tadi?' : 'Kamu ingat?'}</Text>
           <DaftarOpsi>

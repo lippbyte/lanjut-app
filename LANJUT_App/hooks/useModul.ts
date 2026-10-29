@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { apiFetch } from '../api/client';
-import type { HasilCariModul, Modul, ModulRingkas } from '../api/types';
+import type { BahanModulLatihan, HasilCariModul, Modul, ModulRingkas } from '../api/types';
 import type { BerkasTerpilih } from '../lib/modul';
 import { useSesi } from '../providers/AuthProvider';
 
@@ -38,6 +38,19 @@ export function useCariModul(q: string) {
     queryKey: [...KUNCI, 'cari', q],
     queryFn: () => apiFetch<HasilCariModul>('/modul/cari', { token: token!, query: { q } }),
     enabled: !!token && q.trim().length >= 3,
+  });
+}
+
+/**
+ * GET /modul/latihan — potongan modul sendiri sebagai bahan Latihan (contoh acak per mapel).
+ * Di bawah kunci ['modul'], jadi ikut segar sesudah unggah/hapus dan dibuang saat ganti akun.
+ */
+export function useModulLatihan() {
+  const { token } = useSesi();
+  return useQuery({
+    queryKey: [...KUNCI, 'latihan'],
+    queryFn: () => apiFetch<BahanModulLatihan>('/modul/latihan', { token: token! }),
+    enabled: !!token,
   });
 }
 

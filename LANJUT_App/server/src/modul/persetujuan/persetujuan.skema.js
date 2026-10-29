@@ -14,4 +14,10 @@ const catatSkema = z.object({
   versi: versiKebijakan,
 });
 
-module.exports = { catatSkema, versiKebijakan };
+// Konfirmasi orang tua/wali di app: harus pernyataan eksplisit (`pernyataan: true`).
+const ortuWaliSkema = z.object({
+  versi: versiKebijakan,
+  pernyataan: z.literal(true),
+});
+
+module.exports = { catatSkema, ortuWaliSkema, versiKebijakan };

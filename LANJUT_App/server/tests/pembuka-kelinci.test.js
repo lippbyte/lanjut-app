@@ -47,16 +47,66 @@ describe('aturan waktu layar pembuka', () => {
     }
   });
 
-  test('"tipis": singkat dan gerakannya kecil', () => {
-    assert.ok(MAKS_TAMPIL_MS <= 4000, 'tidak menahan app lebih dari 4 detik');
-    assert.ok(MIN_TAMPIL_MS <= 1000, 'minimum tampil paling lama 1 detik');
+  // Revisi 15 Okt (pilihan percakapan): versi 0,9 detik terasa "terlalu sekilas" dan kurang halus.
+  test('tidak sekilas, tetapi tetap tidak menahan app', () => {
+    assert.ok(MIN_TAMPIL_MS >= 1500 && MIN_TAMPIL_MS <= 2500, `minimum tampil ${MIN_TAMPIL_MS} ms`);
+    assert.ok(MAKS_TAMPIL_MS <= 5000, 'tidak menahan app lebih dari 5 detik');
     assert.ok(MIN_TAMPIL_MS < MAKS_TAMPIL_MS);
-    assert.ok(pembuka.DURASI_MASUK_MS < MIN_TAMPIL_MS, 'animasi masuk selesai sebelum boleh tutup');
-    assert.ok(pembuka.DURASI_KELUAR_MS <= 400);
+    assert.ok(pembuka.TUNGGU_GAMBAR_MS <= 500, 'menunggu gambar kelinci sebentar saja');
+    const wordmarkSelesai = pembuka.JEDA_WORDMARK_MS + pembuka.DURASI_WORDMARK_MS;
+    assert.ok(pembuka.DURASI_MASUK_MS < MIN_TAMPIL_MS && wordmarkSelesai < MIN_TAMPIL_MS, 'animasi masuk selesai sebelum boleh tutup');
+    assert.ok(pembuka.DURASI_MASUK_MS >= 600, 'masuk tidak tergesa');
+    assert.ok(pembuka.DURASI_KELUAR_MS >= 400 && pembuka.DURASI_KELUAR_MS <= 700, 'pudar keluar terlihat, tidak berlarut');
     assert.ok(pembuka.DURASI_KELUAR_TANPA_GERAK_MS < pembuka.DURASI_KELUAR_MS);
-    assert.ok(pembuka.SKALA_AWAL >= 0.85 && pembuka.SKALA_AWAL < 1);
-    assert.ok(pembuka.GESER_AWAL_PX > 0 && pembuka.GESER_AWAL_PX <= 12);
+    assert.ok(pembuka.DURASI_MENGAMBANG_MS >= 2000, 'mengambang pelan');
+  });
+
+  test('gerakannya tetap kecil ("tipis")', () => {
+    assert.ok(pembuka.SKALA_AWAL >= 0.8 && pembuka.SKALA_AWAL < 1);
+    assert.ok(pembuka.SKALA_KELUAR > 1 && pembuka.SKALA_KELUAR <= 1.1);
+    assert.ok(pembuka.GESER_AWAL_PX > 0 && pembuka.GESER_AWAL_PX <= 16);
     assert.ok(pembuka.AMBANG_MENGAMBANG_PX > 0 && pembuka.AMBANG_MENGAMBANG_PX <= 6);
+  });
+
+  test('kurva masuk & keluar: titik kendali cubic-bezier yang sah, masuk melambat di akhir', () => {
+    for (const kurva of [pembuka.KURVA_MASUK, pembuka.KURVA_KELUAR]) {
+      assert.equal(kurva.length, 4);
+      assert.ok(kurva[0] >= 0 && kurva[0] <= 1 && kurva[2] >= 0 && kurva[2] <= 1, `x1/x2 di [0,1]: ${kurva}`);
+    }
+    // ease-out: lereng awal (y1/x1) curam, mendarat mendatar (y2 = 1).
+    assert.ok(pembuka.KURVA_MASUK[1] / pembuka.KURVA_MASUK[0] > 3);
+    assert.equal(pembuka.KURVA_MASUK[3], 1);
+  });
+});
+
+describe('lintasan mengambang', () => {
+  const { lintasanMengambang, AMBANG_MENGAMBANG_PX } = pembuka;
+
+  test('mulai dan berakhir di 0, puncak −amplitudo di tengah: putaran bersambung tanpa lompatan', () => {
+    const { inputRange, outputRange } = lintasanMengambang();
+    assert.equal(inputRange[0], 0);
+    assert.equal(inputRange.at(-1), 1);
+    assert.equal(outputRange[0], 0);
+    assert.ok(Math.abs(outputRange.at(-1)) < 1e-9);
+    assert.equal(Math.min(...outputRange), -AMBANG_MENGAMBANG_PX);
+    assert.equal(outputRange[inputRange.indexOf(0.5)], -AMBANG_MENGAMBANG_PX);
+  });
+
+  test('inputRange naik tegas (syarat interpolate) dan langkahnya kecil (halus)', () => {
+    const { inputRange, outputRange } = lintasanMengambang(5, 16);
+    assert.equal(inputRange.length, outputRange.length);
+    for (let i = 1; i < inputRange.length; i++) {
+      assert.ok(inputRange[i] > inputRange[i - 1]);
+      assert.ok(Math.abs(outputRange[i] - outputRange[i - 1]) <= 1.1, `lompatan ${i}`);
+    }
+  });
+
+  test('kecepatan nol di sambungan putaran: langkah pertama & terakhir paling kecil', () => {
+    const { outputRange } = lintasanMengambang(5, 16);
+    const langkah = outputRange.slice(1).map((v, i) => Math.abs(v - outputRange[i]));
+    assert.ok(langkah[0] - Math.min(...langkah) < 1e-9);
+    assert.ok(Math.abs(langkah.at(-1) - langkah[0]) < 1e-9);
+    assert.ok(langkah[0] < langkah[4] / 3, 'jauh lebih pelan di ujung daripada di tengah naik');
   });
 });
 
@@ -81,9 +131,27 @@ describe('komponen PembukaKelinci', () => {
     assert.match(sumber, /if \(tanpaGerak\) \{/);
   });
 
-  test('jadwal tutup memakai aturan lib/pembuka dan dilepas sesudah selesai', () => {
-    assert.match(sumber, /sisaSebelumTutup\(siap, Date\.now\(\) - mulai\)/);
+  test('jadwal tutup memakai aturan lib/pembuka, dihitung sejak animasi masuk dimulai, dan dilepas sesudah selesai', () => {
+    assert.match(sumber, /sisaSebelumTutup\(siap, Date\.now\(\) - mulaiMs\)/);
+    assert.match(sumber, /if \(menutup\.current \|\| mulaiMs === null\) return;/);
     assert.match(sumber, /if \(selesai\) return null;/);
+  });
+
+  test('halus: masuk menunggu gambar kelinci (dengan batas), mengambang dimulai bersamaan, simpul animasi dibuat sekali', () => {
+    assert.match(sumber, /onLoad=\{\(\) => setGambarSiap\(true\)\}/);
+    assert.match(sumber, /setTimeout\(\(\) => setGambarSiap\(true\), TUNGGU_GAMBAR_MS\)/);
+    assert.match(sumber, /if \(selesai \|\| !gambarSiap\) return;/);
+    // Satu Animated.parallel: masuk, wordmark, dan loop mengambang (bukan masuk.start(() => mengambang.start())).
+    assert.match(sumber, /Animated\.parallel\(\[[\s\S]*Animated\.loop\(\s*Animated\.timing\(ambang/);
+    assert.doesNotMatch(sumber, /\.start\(\(\) => \w+\.start\(\)\)/);
+    assert.match(sumber, /ambang\.interpolate\(MENGAMBANG\)/);
+    assert.match(sumber, /const \[gerak\] = useState\(\(\) => \(\{/);
+    assert.doesNotMatch(sumber.slice(sumber.indexOf('if (selesai) return null;')), /\.interpolate\(/, 'tanpa interpolate baru di render');
+  });
+
+  test('memberi sinyal saat mulai memudar keluar (untuk onboarding di bawahnya)', () => {
+    assert.match(sumber, /menutup\.current = true;\s*tandaiMenutup\(\);/);
+    assert.match(sumber, /export function usePembukaMenutup\(\): boolean/);
   });
 
   test('tanpa paket baru: hanya react, react-native, dan berkas lokal', () => {

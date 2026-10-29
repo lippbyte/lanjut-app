@@ -39,6 +39,8 @@ const HALAMAN_ANAK: Record<string, string> = {
   '/level-in': 'Level-In',
   // LANJUT_048 — dari Data Akun dan Ngobrol.
   '/terima-kebijakan': 'Kebijakan Privasi',
+  // 15 Okt 2026 — dari Ngobrol yang terkunci.
+  '/persetujuan-ortu': 'Persetujuan Orang Tua/Wali',
 };
 
 // Tab yang tetap aktif untuk halaman anak: lib/navigasi.ts `tabAktif` (TAB_INDUK,

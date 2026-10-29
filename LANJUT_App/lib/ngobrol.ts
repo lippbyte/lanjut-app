@@ -6,7 +6,9 @@ export const TEKS_NGOBROL = {
   catatanAi: 'Dijawab AI, jadi bisa keliru. Cek lagi info penting ke sumber resmi. LANJUT tidak menyimpan obrolan ini; obrolan hilang saat aplikasi ditutup.',
   terkunciJudul: 'Fitur AI belum aktif untuk akunmu',
   terkunciIsi:
-    'Ngobrol Bareng LANJUT dijawab AI dari penyedia pihak ketiga. Fitur ini baru aktif setelah orang tua atau walimu memberi persetujuan lewat sekolah, dan kamu sudah menerima kebijakan privasi.',
+    'Ngobrol Bareng LANJUT dijawab AI dari penyedia pihak ketiga. Fitur ini baru aktif setelah kamu menerima kebijakan privasi dan orang tua atau walimu menyatakan persetujuan, di aplikasi ini atau lewat sekolah.',
+  ajakOrtu: 'Orang tua atau wali perlu menyatakan persetujuan dulu supaya fitur AI bisa dipakai.',
+  tautanOrtu: 'Minta orang tua atau wali menyetujui',
   belumBisaDimuat: 'Status fitur AI belum bisa dimuat. Coba lagi sebentar lagi.',
   cobaLagi: 'Coba lagi',
   placeholder: 'Tulis pesanmu…',

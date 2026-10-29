@@ -468,8 +468,23 @@
   font-weight: 500;
 }
 
-.pita a:not(.pita__pil) {
+.pita a:not(.pita__pil):not(.tombol) {
   color: var(--white);
+}
+
+/* Tombol utama di pita: pill terang seperti di beranda (blue-900 di atas putih → blue-100). */
+.situs--terang .pita .tombol--utama {
+  background: var(--gradasi-tombol);
+  color: var(--teks-gelap);
+  box-shadow: var(--bayangan-gelap);
+}
+
+.situs--terang .pita .tombol--utama:hover {
+  background: var(--gradasi-tombol-aktif);
+}
+
+.pita__aksi {
+  margin-top: var(--ruang-6);
 }
 
 /* Remah roti: di permukaan terang (detail rilis) dan di pita. */

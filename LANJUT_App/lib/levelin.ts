@@ -151,6 +151,7 @@ export function kartuSaran(saran: SaranHarian, nama: (mapelId: string) => string
       };
     case 'arsip_kosong':
     default:
-      return { teks: 'Belum ada kartu untuk dilatih. Tulis kartu dulu di Arsip Belajar.', tombol: 'Tulis kartu', tujuan: { pathname: '/arsip-tulis' } };
+      // 15 Okt 2026: modul yang diunggah juga bahan latihan (DRAF).
+      return { teks: 'Belum ada bahan untuk dilatih. Tulis kartu atau unggah modul dulu di Arsip Belajar.', tombol: 'Tulis kartu', tujuan: { pathname: '/arsip-tulis' } };
   }
 }

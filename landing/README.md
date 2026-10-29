@@ -45,7 +45,10 @@ Build **gagal** bila metadata rilis tidak sah atau ada tautan/berkas internal ya
   Status hanya `Tersedia`, `Dalam Pengembangan`, atau `Direncanakan`.
 - Warna, huruf, jarak, gerak: token di `src/gaya/token.css` (DESIGN-landpage §0, revisi
   27 Okt 2026). Gaya dibagi: `dasar.css`, `komponen.css`, `kerangka.css`, `beranda.css`,
-  `docs.css`, `halaman.css`.
+  `docs.css`, `unduh.css`, `halaman.css`.
+- Syarat perangkat dan langkah pasang APK: `src/halaman/Unduh.tsx` (`daftarSyarat`,
+  `LANGKAH_PASANG`). Isi nilai syarat hanya setelah diuji di HP sungguhan; selama `null`,
+  halaman menampilkan "Belum diverifikasi".
 - Teks beranda (judul ≤ 8 kata, isi satu kalimat; tes memeriksanya): `src/konten/beranda.ts`.
 - `Kerangka` punya dua permukaan: `varian="merek"` (beranda, gradasi biru dan teks putih) dan
   `varian="terang"` (halaman lain, hanya kepalanya bergradasi).

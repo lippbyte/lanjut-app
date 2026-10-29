@@ -11,6 +11,7 @@ const { GalatApi } = require('../../util/respons');
 const { keIso, keDbDariKlien, sekarangIso } = require('../../util/waktu');
 const repo = require('./levelin.repo');
 const kartuRepo = require('../kartu/kartu.repo');
+const modulRepo = require('../modul/modul.repo');
 const keputusan = require('./keputusan');
 const { bentukKonfig, KUNCI_KONFIG } = require('./konfigurasi');
 
@@ -137,14 +138,19 @@ async function hitungKalibrasi(penggunaId, jendela) {
   const { cfg, versi } = await muatKonfig();
   if (jendela) cfg.ambang.jendela_per_mapel = jendela;
   const n = cfg.ambang.jendela_per_mapel;
-  const [peristiwa, jawaban, mapelIds, ketersediaan] = await Promise.all([
+  const [peristiwa, jawaban, mapelIds, ketersediaan, potonganModul] = await Promise.all([
     repo.ambilRiwayatUntukAgregasi(penggunaId, n),
     repo.ambilJawabanUntukLevel(penggunaId, n),
     repo.semuaMapelId(),
     repo.ambilKetersediaanKartuPerMapel(penggunaId),
+    modulRepo.jumlahPotonganPerMapel(penggunaId),
   ]);
+  // Bahan latihan = kartu + potongan modul sendiri (pilihan percakapan 15 Okt 2026, belum
+  // disetujui PM): akun yang baru mengunggah modul tidak lagi dianggap "arsip kosong".
   const petaKetersediaan = {};
-  for (const b of ketersediaan) petaKetersediaan[b.mapel_id] = Number(b.jumlah);
+  for (const b of [...ketersediaan, ...potonganModul]) {
+    petaKetersediaan[b.mapel_id] = (petaKetersediaan[b.mapel_id] || 0) + Number(b.jumlah);
+  }
   return {
     cfg,
     versi,

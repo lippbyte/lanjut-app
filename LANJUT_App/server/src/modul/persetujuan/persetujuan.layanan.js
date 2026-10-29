@@ -4,9 +4,11 @@
 // setiap setuju/cabut; status berlaku = baris terakhir per jenis):
 //   - kebijakan_privasi: dicatat siswa sendiri (sumber 'mandiri'), saat daftar
 //     atau lewat POST /persetujuan.
-//   - ortu_wali: TIDAK PERNAH dari akun siswa (itu sama saja siswa menyetujui
-//     untuk dirinya). Hanya lewat skrip admin `npm run persetujuan-ortu`
-//     (sumber 'surat_sekolah' / 'admin').
+//   - ortu_wali: TIDAK PERNAH lewat POST /persetujuan (itu sama saja siswa
+//     menyetujui untuk dirinya). Dua jalur: skrip admin `npm run persetujuan-ortu`
+//     (sumber 'surat_sekolah' / 'admin'), atau konfirmasi orang tua/wali di app lewat
+//     POST /persetujuan/ortu-wali (sumber 'konfirmasi_di_app'; identitas TIDAK
+//     diverifikasi, jadi sumbernya sengaja dibedakan).
 //
 // GERBANG AI: bolehPakaiAi(penggunaId) adalah SATU-SATUNYA penentu boleh
 // tidaknya data akun diproses fitur AI. Setiap endpoint AI di masa depan
@@ -126,8 +128,38 @@ async function catatOlehSiswa(penggunaId, { jenis, versi }) {
   return terimaKebijakan(penggunaId, versi);
 }
 
+/** Catatan yang tersimpan untuk jalur konfirmasi di app; tidak dari klien. */
+const CATATAN_KONFIRMASI_DI_APP = 'Dinyatakan orang tua/wali di app, di perangkat siswa; identitas tidak diverifikasi.';
+
+/**
+ * POST /persetujuan/ortu-wali — orang tua/wali menyatakan persetujuan di app. Syarat:
+ * versi = versi berlaku, dan siswa sudah menerima kebijakan versi itu (urutan sama dengan
+ * jalur surat: kebijakan dulu). Sudah aktif → tidak menambah baris. Sumber dan catatan
+ * ditentukan server.
+ */
+async function konfirmasiOrtuWali(penggunaId, versi) {
+  await pastikanVersiBerlaku(versi);
+  const [cfg, catatan] = await Promise.all([ambilKonfigurasi(), repo.catatanAkun(penggunaId)]);
+  const terakhir = terakhirPerJenis(catatan);
+  if (!kebijakanTerkini(terakhir, cfg)) {
+    throw new GalatApi('AI_BELUM_DIIZINKAN', 'Terima kebijakan privasi dulu, baru orang tua/wali bisa menyatakan persetujuan.');
+  }
+  if (ortuWaliAktif(terakhir, cfg)) return { baru: false };
+  await repo.tambah({
+    penggunaId,
+    jenis: 'ortu_wali',
+    versi,
+    status: 'setuju',
+    sumber: 'konfirmasi_di_app',
+    catatan: CATATAN_KONFIRMASI_DI_APP,
+    dicatatPada: sekarangUntukDb(),
+  });
+  return { baru: true };
+}
+
 module.exports = {
   bolehPakaiAi,
+  konfirmasiOrtuWali,
   kebijakanDiterima,
   statusSaya,
   catatOlehSiswa,

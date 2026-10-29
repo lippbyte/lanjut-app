@@ -122,6 +122,46 @@ async function kandidatUntukAi(penggunaId, q, mapelId, batas) {
   return baris;
 }
 
+/**
+ * Jumlah potongan modul SENDIRI per mapel (pilihan percakapan 15 Okt 2026, belum disetujui PM):
+ * potongan modul ikut dihitung sebagai bahan Latihan, jadi juga sebagai ketersediaan bahan di
+ * saran harian Level-In (levelin.layanan.js).
+ */
+async function jumlahPotonganPerMapel(penggunaId) {
+  const [baris] = await pool.execute(
+    `SELECT m.mapel_id, COUNT(*) AS jumlah
+       FROM potongan_modul p
+       JOIN modul m ON m.id = p.modul_id
+      WHERE p.pengguna_id = ? AND m.pengguna_id = ?
+      GROUP BY m.mapel_id`,
+    [penggunaId, penggunaId]
+  );
+  return baris.map((b) => ({ mapel_id: b.mapel_id, jumlah: Number(b.jumlah) }));
+}
+
+/**
+ * Bahan Latihan dari modul SENDIRI: paling banyak `batasPerMapel` potongan ACAK per mapel
+ * (cukup untuk satu sesi di mapel mana pun), dengan judul modul dan jumlah bagiannya.
+ * Filter pemilik di kedua tabel.
+ */
+async function potonganUntukLatihan(penggunaId, batasPerMapel) {
+  const [baris] = await pool.query(
+    `SELECT modul_id, judul, mapel_id, urutan, jumlah_bagian, isi
+       FROM (
+         SELECT p.modul_id, m.judul, m.mapel_id, p.urutan, p.isi,
+                COUNT(*) OVER (PARTITION BY p.modul_id) AS jumlah_bagian,
+                ROW_NUMBER() OVER (PARTITION BY m.mapel_id ORDER BY RAND()) AS acak
+           FROM potongan_modul p
+           JOIN modul m ON m.id = p.modul_id
+          WHERE p.pengguna_id = ? AND m.pengguna_id = ?
+       ) t
+      WHERE t.acak <= ?
+      ORDER BY t.mapel_id, t.acak`,
+    [penggunaId, penggunaId, batasPerMapel]
+  );
+  return baris;
+}
+
 /** Hapus permanen satu modul milik sendiri (potongan dihapus eksplisit, juga ikut CASCADE). */
 async function hapusMilik(penggunaId, id) {
   const koneksi = await pool.getConnection();
@@ -175,6 +215,8 @@ module.exports = {
   daftarMilik,
   ambilMilik,
   cariMilik,
+  jumlahPotonganPerMapel,
+  potonganUntukLatihan,
   hapusMilik,
   hapusSemuaMilik,
   rapikanIndeks,

@@ -17,6 +17,8 @@ const { potongTeks } = require('./potong');
 
 const HASIL_CARI_MAKS = 10;
 const JEDA_RAPIKAN_INDEKS_MS = 30000;
+// Sama dengan BATAS_SESI di LANJUT_App/lib/latihan.ts: satu sesi penuh dari satu mapel.
+const POTONGAN_LATIHAN_PER_MAPEL = 12;
 
 // Salinan teks §4.5 (LANJUT_049) — DRAF belum disetujui Khalifa.
 const PESAN = {
@@ -155,6 +157,30 @@ async function cari(penggunaId, q) {
   }));
 }
 
+/**
+ * Bahan Latihan dari modul sendiri (pilihan percakapan 15 Okt 2026, belum disetujui PM): modul
+ * yang diunggah ikut menjadi Arsip Belajar yang bisa dilatih, jadi ikut dihitung Level-In.
+ * `per_mapel` = semua potongan per mapel (untuk pilihan mapel di Latihan); `potongan` = contoh
+ * acak per mapel, cukup untuk satu sesi (BATAS_SESI di LANJUT_App/lib/latihan.ts).
+ */
+async function untukLatihan(penggunaId) {
+  const [perMapel, potongan] = await Promise.all([
+    repo.jumlahPotonganPerMapel(penggunaId),
+    repo.potonganUntukLatihan(penggunaId, POTONGAN_LATIHAN_PER_MAPEL),
+  ]);
+  return {
+    per_mapel: perMapel,
+    potongan: potongan.map((p) => ({
+      modul_id: p.modul_id,
+      judul: p.judul,
+      mapel_id: p.mapel_id,
+      urutan: Number(p.urutan),
+      jumlah_bagian: Number(p.jumlah_bagian),
+      isi: p.isi,
+    })),
+  };
+}
+
 // --- hapus permanen & perapian indeks FULLTEXT ---------------------------------
 // InnoDB menyimpan kata dari baris FULLTEXT yang dihapus sampai tabel
 // dirapikan. Setelah setiap penghapusan, perapian dijadwalkan (digabung bila
@@ -188,4 +214,17 @@ async function hapusSemua(penggunaId) {
   return jumlah;
 }
 
-module.exports = { batas, unggah, daftar, ambil, cari, hapus, hapusSemua, rapikanIndeksSekarang, galatBerkasBesar, PESAN };
+module.exports = {
+  batas,
+  unggah,
+  daftar,
+  ambil,
+  cari,
+  untukLatihan,
+  hapus,
+  hapusSemua,
+  rapikanIndeksSekarang,
+  galatBerkasBesar,
+  PESAN,
+  POTONGAN_LATIHAN_PER_MAPEL,
+};

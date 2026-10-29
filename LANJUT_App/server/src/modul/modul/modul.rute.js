@@ -5,6 +5,7 @@
 //                         atau JSON (judul + mapel_id + teks ditempel)
 //   GET    /             daftar modul sendiri (tanpa isi)
 //   GET    /cari?q=      potongan yang cocok dari modul sendiri (FULLTEXT)
+//   GET    /latihan      bahan Latihan: jumlah potongan per mapel + contoh acak per mapel
 //   GET    /:id          satu modul, isi lengkap
 //   DELETE /:id          hapus permanen (teks + potongan)
 //   DELETE /?semua=ya    hapus permanen SEMUA modul sendiri
@@ -80,6 +81,15 @@ router.get('/', async (req, res, next) => {
 router.get('/cari', validasiQuery(cariSkema), async (req, res, next) => {
   try {
     sukses(res, { q: req.query.q, hasil: await layanan.cari(req.pengguna.id, req.query.q) });
+  } catch (galat) {
+    next(galat);
+  }
+});
+
+// Sebelum /:id, supaya "latihan" tidak dibaca sebagai id modul.
+router.get('/latihan', async (req, res, next) => {
+  try {
+    sukses(res, await layanan.untukLatihan(req.pengguna.id));
   } catch (galat) {
     next(galat);
   }

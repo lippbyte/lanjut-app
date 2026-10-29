@@ -217,7 +217,17 @@ export type SesiLatihan = {
 };
 // Satu catatan POST /riwayat-latihan (levelin.skema.js `catatanRiwayatSkema`).
 // LANJUT_058: `keyakinan` opsional, skala PWA 1–5 (pemetaan di lib/latihan.ts).
-export type CatatanLatihan = { id: string; sesi_id: string; kartu_id: string; benar: boolean; waktu: string; keyakinan?: number };
+// Jawaban kartu: kartu_id (server mengambil mapelnya dari kartu). Jawaban potongan modul
+// (15 Okt 2026): mapel_id saja, tanpa kartu_id — levelin.skema.js menerima keduanya.
+export type CatatanLatihan = {
+  id: string;
+  sesi_id: string;
+  kartu_id?: string;
+  mapel_id?: string;
+  benar: boolean;
+  waktu: string;
+  keyakinan?: number;
+};
 
 // LANJUT_058 — GET /kalibrasi/ringkasan (levelin.layanan.js `ringkasanKalibrasi`):
 // satu baris per mapel yang dikenal. Kalibrasi = jawaban BERKEYAKINAN saja;
@@ -252,7 +262,7 @@ export type KonfigurasiLevelIn = Record<string, { nilai: string; versi: number; 
 export type CatatanPersetujuan = {
   status: 'setuju' | 'cabut';
   versi: number;
-  sumber: 'mandiri' | 'surat_sekolah' | 'admin';
+  sumber: 'mandiri' | 'surat_sekolah' | 'admin' | 'konfirmasi_di_app';
   dicatat_pada: string;
 };
 export type StatusPersetujuan = {
@@ -276,6 +286,9 @@ export type ModulRingkas = {
   diunggah_pada: string;
 };
 export type Modul = ModulRingkas & { isi: string };
+// GET /modul/latihan (modul.layanan.js `untukLatihan`, 15 Okt 2026): potongan modul sebagai bahan Latihan.
+export type PotonganLatihan = { modul_id: string; judul: string; mapel_id: string; urutan: number; jumlah_bagian: number; isi: string };
+export type BahanModulLatihan = { per_mapel: { mapel_id: string; jumlah: number }[]; potongan: PotonganLatihan[] };
 export type HasilCariModul = {
   q: string;
   hasil: { modul_id: string; judul: string; mapel_id: string; urutan: number; potongan: string; skor: number }[];

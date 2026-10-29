@@ -28,7 +28,7 @@
     {
       "id": "fisika",
       "nama": "Fisika",
-      "tersedia_di_smk": true
+      "tersedia_di_smk": false
     },
     {
       "id": "kimia",

@@ -65,6 +65,9 @@ export const gradient = {
   // warna kartu tenggat (blue200 → blue300), tetapi tegak lurus supaya tepi atasnya
   // persis blue200, warna app bar (appbarBg), tanpa sambungan terlihat.
   kepala: { colors: [color.blue200, color.blue300], start: { x: 0, y: 0 }, end: { x: 0, y: 1 } },
+  // Onboarding (15 Okt 2026, pilihan percakapan): seperti cover di atas, tetapi berakhir di blue600
+  // supaya teks putih terbaca; letak warna terdalam dihitung dari tata letak (lib/onboarding.ts).
+  onboarding: { colors: [color.blue200, color.blue400, color.blue600], start: { x: 0, y: 0 }, end: { x: 0, y: 1 } },
   // .progress__isi: linear-gradient(90deg, blue200, blue400).
   progress: { colors: [color.blue200, color.blue400], start: { x: 0, y: 0 }, end: { x: 1, y: 0 } },
 } as const;

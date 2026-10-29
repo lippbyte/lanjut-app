@@ -8,7 +8,8 @@ import type { JenisModul } from '../api/types';
 
 export const TEKS_MODUL = {
   seksi: 'Modul',
-  pengantar: 'Simpan materi pelajaranmu (.txt, .md, atau PDF berisi teks) supaya mudah dibaca dan dicari lagi.',
+  // 15 Okt 2026: modul ikut jadi bahan Latihan (dan Level-In) — kalimat diperluas, DRAF.
+  pengantar: 'Simpan materi pelajaranmu (.txt, .md, atau PDF berisi teks) supaya mudah dibaca, dicari lagi, dan dilatih di Latihan.',
   tombolUnggah: 'Unggah modul',
   kosong: 'Belum ada modul. Unggah materi pelajaran yang ingin kamu simpan.',
   cariPlaceholder: 'Cari di modulmu (minimal 3 huruf)',

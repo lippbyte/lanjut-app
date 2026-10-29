@@ -382,9 +382,13 @@ describe('LANJUT_079 app: tab Pilih Mapel, urutan Arsip & Latihan, teks', () => 
     const hasil = app.urutkanMapelPilihan(daftar, ['matematika', 'TIDAK-ADA', 'biologi']).map((m) => m.id);
     assert.deepEqual(hasil, ['matematika', 'biologi', 'ekonomi', 'fisika', 'kimia']);
     assert.deepEqual(app.urutkanMapelPilihan(daftar, undefined).map((m) => m.id), daftar.map((m) => m.id));
-    for (const berkas of ['ArsipScreen.tsx', 'LatihanScreen.tsx']) {
+    // Latihan: sejak 15 Okt 2026 mapelLatihan (kartu + potongan modul), urutannya tetap dari urutkanMapelPilihan.
+    for (const [berkas, pola] of [
+      ['ArsipScreen.tsx', /mapelBerkartu\(kartu, urutkanMapelPilihan\(/],
+      ['LatihanScreen.tsx', /mapelLatihan\(kartu, modulPerMapel, urutkanMapelPilihan\(/],
+    ]) {
       const isi = baca('components', 'screens', berkas);
-      assert.ok(/mapelBerkartu\(kartu, urutkanMapelPilihan\(/.test(isi), `${berkas} memakai urutkanMapelPilihan`);
+      assert.ok(pola.test(isi), `${berkas} memakai urutkanMapelPilihan`);
     }
   });
 

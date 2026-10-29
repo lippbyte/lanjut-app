@@ -1,0 +1,423 @@
+/* Download (/download) dan detail rilis (/download/<versi>). Pola kartu Dokumentasi: kepala
+   bergradasi, isi putih. Tanpa garis putus-putus dan tanpa garis aksen kiri (design system). */
+
+.unduh {
+  display: grid;
+  gap: var(--ruang-12);
+  padding-block: var(--ruang-12) var(--ruang-seksi);
+}
+
+.unduh .kartu-docs,
+.unduh__versi,
+.cara-pasang,
+.riwayat {
+  scroll-margin-top: var(--ruang-6);
+}
+
+/* Judul seksi di permukaan terang (di luar kartu). */
+.judul-blok {
+  max-width: 46rem;
+  margin-bottom: var(--ruang-6);
+}
+
+.judul-blok h2 {
+  margin-bottom: var(--ruang-3);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.judul-blok p {
+  margin: 0;
+  color: var(--ink-700);
+}
+
+/* ---------- Kartu versi terbaru / belum ada rilis ---------- */
+.rilis-terbaru h2 {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.rilis-terbaru__judul {
+  color: var(--blue-100);
+  font-size: var(--ukuran-lead);
+  font-weight: 500;
+}
+
+.rilis-terbaru__isi,
+.unduh-kosong__isi {
+  display: grid;
+  gap: var(--ruang-4);
+  padding: var(--ruang-6);
+}
+
+.rilis-terbaru__ringkas {
+  margin: 0;
+  font-size: var(--ukuran-lead);
+}
+
+.rilis-terbaru__aksi {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ruang-3) var(--ruang-6);
+}
+
+.rilis-terbaru__perubahan h3 {
+  margin: var(--ruang-2) 0 var(--ruang-2);
+  font-size: 1.125rem;
+}
+
+.rilis-terbaru__perubahan ul {
+  margin-top: 0;
+  padding-left: 1.3rem;
+}
+
+.unduh-kosong h2 {
+  margin: 0 0 var(--ruang-2);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.unduh-kosong__isi p {
+  max-width: 44em;
+  margin: 0;
+}
+
+.unduh-kosong__tautan {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ruang-2) var(--ruang-6);
+}
+
+/* Data teknis rilis: kotak-kotak kecil, bukan tabel bergaris. */
+.meta-rilis {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ruang-2);
+  margin: 0;
+}
+
+.meta-rilis > div {
+  padding: var(--ruang-3) var(--ruang-4);
+  border-radius: var(--radius-md);
+  background: var(--blue-100);
+}
+
+/* ink-700 di atas blue-100: 8,8:1 */
+.meta-rilis dt {
+  color: var(--ink-700);
+  font-size: var(--ukuran-label);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.meta-rilis dd {
+  margin: 0;
+  color: var(--blue-900);
+  font-weight: 600;
+}
+
+.meta-rilis__penuh {
+  grid-column: 1 / -1;
+}
+
+.checksum {
+  display: inline-block;
+  word-break: break-all;
+  font-size: 0.8125rem;
+}
+
+/* Empat kolom hanya di kartu versi terbaru yang lebar; detail rilis (kolom baca) tetap dua. */
+@media (min-width: 1040px) {
+  .rilis-terbaru .meta-rilis {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Di sel data yang sempit penanda tanpa latar pill, jadi boleh terlipat dengan wajar. */
+.meta-rilis .tanda-belum {
+  align-items: flex-start;
+  padding: 0;
+  background: none;
+  white-space: normal;
+}
+
+.meta-rilis .tanda-belum__ikon {
+  margin-top: 0.35em;
+}
+
+/* ---------- Riwayat: kartu versi ---------- */
+.riwayat__daftar {
+  display: grid;
+  gap: var(--ruang-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kartu-versi {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  box-shadow: var(--bayangan-2);
+  overflow: hidden;
+  color: var(--ink-900);
+  text-decoration: none;
+  transition:
+    box-shadow var(--durasi) var(--gerak-standar),
+    transform var(--durasi) var(--gerak-standar);
+}
+
+.kartu-versi:hover {
+  box-shadow: var(--bayangan-4);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .kartu-versi:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.kartu-versi__kepala {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ruang-3);
+  padding: var(--ruang-3) var(--ruang-5);
+  background: var(--gradasi-kartu);
+  color: var(--white);
+}
+
+.kartu-versi__nomor {
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.kartu-versi__kanal {
+  color: var(--blue-100);
+  font-size: var(--ukuran-meta);
+  font-weight: 500;
+}
+
+.kartu-versi__isi {
+  display: grid;
+  gap: 4px;
+  padding: var(--ruang-4) var(--ruang-5) var(--ruang-5);
+}
+
+.kartu-versi__judul {
+  color: var(--blue-900);
+  font-weight: 600;
+}
+
+.kartu-versi__lanjut {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--ruang-2);
+  color: var(--blue-600);
+  font-size: var(--ukuran-kecil);
+  font-weight: 600;
+}
+
+@media (min-width: 640px) {
+  .riwayat__daftar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1040px) {
+  .riwayat__daftar {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Syarat perangkat ---------- */
+.syarat__daftar {
+  display: grid;
+  margin: 0;
+  padding: var(--ruang-2) var(--ruang-6) var(--ruang-4);
+}
+
+.syarat__butir {
+  display: grid;
+  gap: 4px var(--ruang-4);
+  padding: var(--ruang-3) 0;
+}
+
+.syarat__butir + .syarat__butir {
+  border-top: 1px solid var(--border-soft);
+}
+
+.syarat__butir dt {
+  color: var(--ink-700);
+  font-size: var(--ukuran-kecil);
+  font-weight: 500;
+}
+
+.syarat__butir dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 0;
+  color: var(--blue-900);
+  font-weight: 600;
+}
+
+.syarat__catatan {
+  color: var(--ink-700);
+  font-size: var(--ukuran-meta);
+  font-weight: 400;
+}
+
+/* Penanda "Belum diverifikasi": pill abu tenang dengan cincin (status idle design system). */
+.tanda-belum {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 11px 3px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--status-idle-bg);
+  color: var(--status-idle-fg);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.tanda-belum__ikon {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+@media (min-width: 720px) {
+  .syarat__butir {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    align-items: center;
+  }
+}
+
+@media (min-width: 1040px) {
+  .syarat__daftar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--ruang-10);
+  }
+
+  /* Garis antarbaris per kolom: butir ke-2 di kolom kanan juga tanpa garis atas. */
+  .syarat__butir:nth-child(2) {
+    border-top: 0;
+  }
+}
+
+/* ---------- Cara pasang: kartu langkah bernomor ---------- */
+.langkah-pasang {
+  display: grid;
+  gap: var(--ruang-4);
+  margin: 0 0 var(--ruang-6);
+  padding: 0;
+  list-style: none;
+}
+
+.langkah-pasang__kartu {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px var(--ruang-4);
+  align-content: start;
+  padding: var(--ruang-5);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  box-shadow: var(--bayangan-2);
+}
+
+/* Putih di atas gradasi kartu: ≥ 5,6:1. */
+.langkah-pasang__nomor {
+  grid-row: span 2;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--gradasi-kartu);
+  color: var(--white);
+  font-weight: 700;
+}
+
+.langkah-pasang__kartu h3 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.langkah-pasang__kartu p {
+  margin: 0;
+}
+
+.langkah-pasang > :nth-child(2) {
+  transition-delay: 60ms;
+}
+
+.langkah-pasang > :nth-child(3) {
+  transition-delay: 120ms;
+}
+
+.langkah-pasang > :nth-child(4) {
+  transition-delay: 180ms;
+}
+
+.langkah-pasang > :nth-child(5) {
+  transition-delay: 240ms;
+}
+
+.langkah-pasang > :nth-child(6) {
+  transition-delay: 300ms;
+}
+
+.cara-pasang .catatan {
+  margin-top: 0;
+}
+
+@media (min-width: 720px) {
+  .langkah-pasang {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1040px) {
+  .langkah-pasang {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Detail rilis ---------- */
+.rilis-detail {
+  display: grid;
+  gap: var(--ruang-5);
+  padding-block: var(--ruang-10) var(--ruang-seksi);
+}
+
+.rilis-detail__kartu {
+  padding: var(--ruang-5) var(--ruang-6);
+  border-radius: var(--radius-lg);
+  background: var(--white);
+  box-shadow: var(--bayangan-2);
+}
+
+.rilis-detail__kartu h2 {
+  margin: 0 0 var(--ruang-3);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+}
+
+.rilis-detail__kartu ul {
+  margin: 0;
+  padding-left: 1.3rem;
+}
+
+.rilis-detail__kartu p {
+  margin: 0;
+}

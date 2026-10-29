@@ -64,6 +64,7 @@ function Terkunci() {
   const { data: persetujuan } = usePersetujuan();
   const keadaan = persetujuan ? keadaanKebijakan(persetujuan) : null;
   const ajakKebijakan = keadaan === 'bisa_diterima' || keadaan === 'versi_app_berbeda';
+  const ajakOrtu = keadaan === 'diterima' && !persetujuan?.ortu_wali_aktif;
   return (
     <ScrollView contentContainerStyle={s.terkunci}>
       <Peringatan judul={TEKS_NGOBROL.terkunciJudul}>{TEKS_NGOBROL.terkunciIsi}</Peringatan>
@@ -71,6 +72,13 @@ function Terkunci() {
         <Pressable onPress={() => router.push('/terima-kebijakan')} style={s.gaya} accessibilityRole="link">
           <Text style={s.gayaTeks}>
             {AJAKAN_KEBIJAKAN} <Text style={s.gayaTautan}>Baca dan terima</Text>
+          </Text>
+        </Pressable>
+      ) : null}
+      {ajakOrtu ? (
+        <Pressable onPress={() => router.push('/persetujuan-ortu')} style={s.gaya} accessibilityRole="link">
+          <Text style={s.gayaTeks}>
+            {TEKS_NGOBROL.ajakOrtu} <Text style={s.gayaTautan}>{TEKS_NGOBROL.tautanOrtu}</Text>
           </Text>
         </Pressable>
       ) : null}

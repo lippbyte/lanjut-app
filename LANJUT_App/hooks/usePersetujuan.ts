@@ -21,10 +21,30 @@ export function usePersetujuan() {
 }
 
 /**
+ * Orang tua/wali menyatakan persetujuan di app (POST /persetujuan/ortu-wali; 15 Okt 2026,
+ * pilihan percakapan belum disetujui PM). Server mensyaratkan kebijakan versi berlaku sudah
+ * diterima, dan menentukan sumber sendiri. Setelah berhasil, status (termasuk boleh_pakai_ai)
+ * langsung diperbarui sehingga Ngobrol terbuka tanpa muat ulang.
+ */
+export function useKonfirmasiOrtuWali() {
+  const { token } = useSesi();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () =>
+      apiFetch<StatusPersetujuan>('/persetujuan/ortu-wali', {
+        method: 'POST',
+        body: { versi: VERSI_KEBIJAKAN, pernyataan: true },
+        token: token!,
+      }),
+    onSuccess: (status) => queryClient.setQueryData(KUNCI_PERSETUJUAN, status),
+  });
+}
+
+/**
  * LANJUT_048 — siswa menerima kebijakan untuk dirinya: POST /persetujuan
  * (endpoint LANJUT_047). Versi yang dikirim = versi TEKS yang ditampilkan app,
  * bukan versi dari server; server menolak (409) bila bukan versi berlaku.
- * Hanya jenis kebijakan_privasi — app tidak punya jalan ke ortu_wali.
+ * Hanya jenis kebijakan_privasi; persetujuan ortu/wali lewat useKonfirmasiOrtuWali.
  */
 export function useTerimaKebijakan() {
   const { token } = useSesi();

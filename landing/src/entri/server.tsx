@@ -12,7 +12,7 @@ import type { IdHalaman, PropsHalaman } from '../halaman/jenis';
 import KebijakanPrivasi from '../halaman/KebijakanPrivasi';
 import Privasi from '../halaman/Privasi';
 import TidakDitemukan from '../halaman/TidakDitemukan';
-import Unduh, { IsiUnduh } from '../halaman/Unduh';
+import Unduh, { HalamanUnduh } from '../halaman/Unduh';
 import { Kerangka } from '../komponen/Kerangka';
 import { akarDari } from '../lib/situs';
 import type { DataRilis } from '../lib/rilis';
@@ -77,11 +77,11 @@ export function render(halaman: IdHalaman, jalur: string, akar: string = akarDar
   );
 }
 
-/** Untuk tes: halaman unduhan dengan metadata rilis tiruan. */
+/** Untuk tes: halaman unduhan lengkap dengan metadata rilis tiruan. */
 export function renderUnduh(data: DataRilis): string {
   return renderToStaticMarkup(
     <Kerangka jalur="download" akar="../">
-      <IsiUnduh data={data} />
+      <HalamanUnduh data={data} />
     </Kerangka>
   );
 }

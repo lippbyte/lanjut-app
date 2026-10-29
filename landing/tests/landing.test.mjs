@@ -322,6 +322,61 @@ test('halaman unduhan dengan rilis tiruan: versi terbaru, data teknis jujur, riw
   assert.equal(s.alamat('../../', '/docs/faq#data'), '../../docs/faq/#data');
 });
 
+test('tampilan download: pita, kartu versi, syarat perangkat "Belum diverifikasi", langkah pasang bernomor', () => {
+  const html = isiRoot(halaman('download'));
+  assert.match(html, /<header class="pita pita--penuh">[\s\S]*?<h1 id="judul-unduh"/);
+  // Pintasan di pita menuju bagian yang memang ada.
+  for (const id of ['versi', 'syarat', 'cara-pasang']) {
+    assert.ok(html.includes(`href="#${id}"`), `pintasan #${id}`);
+    assert.ok(html.includes(`id="${id}"`), `bagian #${id}`);
+  }
+  // Belum ada rilis: kartu kosong dengan pola kartu dokumentasi.
+  assert.match(html, /<section class="kartu-docs unduh-kosong" aria-labelledby="judul-kosong">/);
+
+  // Syarat perangkat: hanya fakta yang pasti yang bernilai; sisanya "Belum diverifikasi", tidak ditebak.
+  const syarat = (h) =>
+    [...(/<section class="kartu-docs syarat"[\s\S]*?<\/section>/.exec(h)?.[0] ?? '').matchAll(/<div class="syarat__butir"><dt>([^<]+)<\/dt><dd>([\s\S]*?)<\/dd><\/div>/g)].map((m) => [
+      m[1],
+      tanpaTag(m[2]),
+    ]);
+  const kosong = syarat(html);
+  assert.deepEqual(
+    kosong.map(([label]) => label),
+    ['Sistem operasi', 'Versi Android minimum', 'Ukuran berkas APK', 'Ruang penyimpanan kosong', 'Memori (RAM)', 'Koneksi internet', 'iPhone (iOS)']
+  );
+  assert.match(kosong[0][1], /^Android\b/);
+  for (const [label, nilai] of kosong.slice(1, 5)) assert.equal(nilai, s.BELUM_DIVERIFIKASI, label);
+  // Internet: yang pasti hanya untuk masuk ke akun; pemakaian tanpa internet tetap ditandai belum diverifikasi.
+  assert.match(kosong[5][1], /^Diperlukan untuk masuk .*belum diverifikasi/i);
+  assert.equal(kosong[6][1], 'Belum tersedia');
+  // Dengan rilis: ukuran dari metadata; Android minimum hanya bila metadata mengisinya.
+  const tiruan = syarat(s.renderUnduh(dataTiruan()));
+  assert.equal(tiruan[1][1], s.BELUM_DIVERIFIKASI);
+  assert.equal(tiruan[2][1], '24,3 MB');
+  const d = dataTiruan();
+  d.releases[0].minAndroidVersion = '8.0';
+  assert.equal(syarat(s.renderUnduh(d))[1][1], 'Android 8.0');
+
+  // Langkah pasang: enam kartu bernomor berjudul.
+  const langkah = [...html.matchAll(/<li class="langkah-pasang__kartu" data-gerak="naik"><span class="langkah-pasang__nomor" aria-hidden="true">(\d)<\/span><h3>([^<]+)<\/h3>/g)];
+  assert.deepEqual(
+    langkah.map((m) => m[1]),
+    ['1', '2', '3', '4', '5', '6']
+  );
+  assert.match(langkah.at(-1)[2], /Matikan/, 'langkah terakhir: matikan lagi izin pemasangan');
+
+  // Rilis tiruan: kartu versi terbaru dan riwayat berupa kartu yang menautkan detailnya.
+  const unduhTiruan = s.renderUnduh(dataTiruan());
+  assert.match(unduhTiruan, /<section class="kartu-docs rilis-terbaru" aria-labelledby="judul-terbaru">/);
+  assert.match(unduhTiruan, /<a href="\.\.\/download\/1\.1\.0\/" class="kartu-versi">/);
+  // Detail rilis: judul dan tombol unduh di pita.
+  assert.match(s.renderRilis(dataTiruan(), '1.2.0'), /<header class="pita pita--baca">[\s\S]*?<h1 id="judul-rilis" class="pita__judul">LANJUT 1\.2\.0<\/h1>[\s\S]*?<div class="pita__aksi"><a class="tombol tombol--utama tombol--besar"/);
+
+  // Design system: tanpa garis putus-putus dan tanpa garis aksen kiri.
+  const css = fs.readFileSync(path.join(AKAR, 'src', 'gaya', 'unduh.css'), 'utf8');
+  assert.doesNotMatch(css, /dashed|border-left/);
+});
+
 test('status fitur jujur dan konsisten: label resmi saja, AI dan Cerita Alumni belum disebut tersedia', () => {
   const label = Object.values(s.LABEL_STATUS);
   assert.deepEqual(label, ['Tersedia', 'Dalam Pengembangan', 'Direncanakan']);
