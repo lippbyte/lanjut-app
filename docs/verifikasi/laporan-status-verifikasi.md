@@ -1,7 +1,7 @@
 # Laporan Status Verifikasi Konten & Kesenjangan Profil (LANJUT_043)
 
 Per 3 Oktober 2026. Sumbernya basis data lokal `lanjut_test` (dibaca dengan
-SELECT saja) dan berkas `MVP-PWA/data/*.json`. **Basis data produksi terpisah**:
+SELECT saja) dan berkas `server/data-konten/*.json`. **Basis data produksi terpisah**:
 tanda verifikasi di sini tidak ikut ke server (lihat
 `docs/LANJUT_024_Checklist-Hari-Deploy.md`).
 
@@ -245,7 +245,7 @@ nanti sudah ditandai.
    pilihannya, karena FK `pengguna.prodi_tujuan` memakai `ON DELETE SET NULL`.
 2. **Biarkan tanpa profil**, seperti sekarang.
 3. **Riset susulan** sampai menjadi profil ke-19. Kalau pilihan ini diambil,
-   tim konten perlu menyiapkan satu entri di `MVP-PWA/data/profil-prodi.json`
+   tim konten perlu menyiapkan satu entri di `server/data-konten/profil-prodi.json`
    dengan bentuk yang sama seperti 18 entri lain:
 
 | Field | Yang dibutuhkan | Sumber yang disarankan | Catatan |

@@ -190,7 +190,7 @@ export const fitur = (id: string): Fitur => {
   return f;
 };
 
-/** Topik di bagian Khusus SMK aplikasi versi uji (MVP-PWA/data/khusus-smk.json; belum diverifikasi). */
+/** Topik di bagian Khusus SMK aplikasi versi uji (server/data-konten/khusus-smk.json; belum diverifikasi). */
 export const TOPIK_KHUSUS_SMK = [
   'Nilai rapor mapel pendukung SNBP',
   'Sertifikat kompetensi keahlian dan PKL',

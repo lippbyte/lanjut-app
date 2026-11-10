@@ -50,7 +50,7 @@
 | `PORT` | tidak | `3000` | biarkan hosting menentukan |
 | `SESI_UMUR_HARI` | tidak | `90` | |
 | `JUMLAH_PROXY` | tidak | `0` | biasanya `1` di belakang proxy cPanel; jangan lebih dari jumlah proxy sebenarnya |
-| `LOKASI_DATA_KONTEN` | tidak | `../../MVP-PWA/data` | `data-konten` bila hanya folder `server/` yang diunggah |
+| `LOKASI_DATA_KONTEN` | tidak | `server/data-konten` | `data-konten` bila hanya folder `server/` yang diunggah |
 | `OPENROUTER_API_KEY` | tidak | kosong = AI mati (503) | **biarkan kosong** sampai daftar periksa keselamatan (bagian 3) beres |
 | `OPENROUTER_BASE_URL` | tidak | `https://openrouter.ai/api/v1` | jangan diubah (hanya untuk uji); selain `https://` ditolak |
 
@@ -137,7 +137,7 @@ Jalur Web SPA adalah wahana tercepat membawa LANJUT ke siswa dan guru tanpa perl
 Semua kunci dibaca **tiap permintaan**, jadi berlaku tanpa restart.
 
 Cara mengubah:
-- **Kunci Level-In** (11 kunci, tandai L): ubah di `MVP-PWA/data/levelin-konfig.json` (atau `data-konten/` di server), lalu `npm run benih`. **Jangan** mengubahnya dengan SQL: setiap `npm run benih` menimpa nilainya dari JSON (`server/src/db/benih/benih.js`, `benihKonfigurasiLevelin`). Hanya 11 kunci ini yang dikirim endpoint publik `/konfigurasi/levelin`.
+- **Kunci Level-In** (11 kunci, tandai L): ubah di `server/data-konten/levelin-konfig.json`, lalu `npm run benih`. **Jangan** mengubahnya dengan SQL: setiap `npm run benih` menimpa nilainya dari JSON (`server/src/db/benih/benih.js`, `benihKonfigurasiLevelin`). Hanya 11 kunci ini yang dikirim endpoint publik `/konfigurasi/levelin`.
 - **Kunci lain** (dari migrasi): ubah dengan SQL, mis. `UPDATE konfigurasi_levelin SET nilai = '0' WHERE kunci = 'ai_aktif';`. Benih dan migrasi ulang tidak menimpanya.
 - **Nilai tidak sah membuat fiturnya mati** (gagal-tertutup) untuk kunci `ai_*`, `ai_web_*`, dan `persetujuan_*`. Pengecualian: `ngobrol_batas_*` yang tidak sah membuat Ngobrol galat 500.
 

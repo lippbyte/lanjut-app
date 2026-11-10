@@ -194,7 +194,7 @@ pm2 startup
    ```bash
    npm run benih
    ```
-   > **PERINGATAN LEVEL-IN:** `npm run benih` **selalu menimpa** 11 kunci konfigurasi Level-In di tabel `konfigurasi_levelin` dengan nilai dari `MVP-PWA/data/levelin-konfig.json` (atau folder data yang disetel). Jika ada perubahan ambang atau bobot Level-In yang diizinkan Khalifa, lakukan perubahan pada berkas JSON tersebut sebelum menjalankan `npm run benih`, **jangan** mengubahnya langsung lewat SQL karena akan tertimpa saat benih berikutnya.
+   > **PERINGATAN LEVEL-IN:** `npm run benih` **selalu menimpa** 11 kunci konfigurasi Level-In di tabel `konfigurasi_levelin` dengan nilai dari `server/data-konten/levelin-konfig.json` (atau folder data yang disetel). Jika ada perubahan ambang atau bobot Level-In yang diizinkan Khalifa, lakukan perubahan pada berkas JSON tersebut sebelum menjalankan `npm run benih`, **jangan** mengubahnya langsung lewat SQL karena akan tertimpa saat benih berikutnya.
 5. Verifikasi Konten (Manual oleh Kurator / Khalifa):
    ```bash
    npm run verifikasi-konten -- --jenis=semua
