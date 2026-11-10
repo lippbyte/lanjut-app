@@ -1,6 +1,6 @@
 # Lembar Review Konten LANJUT
 
-Dibuat otomatis 2026-10-03 dengan `npm run lembar-review` (folder `LANJUT_App/server`) dari basis data `lanjut_test` dan berkas `MVP-PWA/data/`. Lembar ini **hanya bacaan**: membuat atau mengisinya tidak mengubah apa pun di aplikasi.
+Dibuat otomatis 2026-11-10 dengan `npm run lembar-review` (folder `LANJUT_App/server`) dari basis data `lanjut_test_salinan` dan berkas `server/data-konten/`. Lembar ini **hanya bacaan**: membuat atau mengisinya tidak mengubah apa pun di aplikasi.
 
 ## Standar pemeriksaan
 
@@ -16,7 +16,7 @@ Dibuat otomatis 2026-10-03 dengan `npm run lembar-review` (folder `LANJUT_App/se
 1. Kerjakan dari atas. Bagian 1 (profil prodi) paling mendesak: layar Eksplorasi Tujuan sudah jadi, tetapi kosong untuk semua siswa sampai profilnya ditandai. Bagian 2 (kartu kurasi) menyusul untuk alasan yang sama.
 2. Untuk setiap butir: buka sumber yang tercatat, cocokkan dengan isi yang (akan) tampil ke siswa, centang **satu** keputusan (ganti `[ ]` menjadi `[x]`), lalu isi nama, tanggal, dan catatan.
 3. Butir baru berstatus terverifikasi setelah orang yang berwenang menjalankan perintah di butir itu dari folder `LANJUT_App/server`. Tanpa `--ya` perintah hanya menampilkan pratinjau dan **tidak mengubah apa pun**; ulangi dengan `--ya` di akhir untuk benar-benar menandai. Tambahkan `--tanggal=TAHUN-BULAN-TANGGAL` bila tanggal pengecekan berbeda dari hari perintah dijalankan.
-4. Kalau isinya perlu diperbaiki: ubah berkas data di `MVP-PWA/data/`, jalankan `npm run benih`, lalu buat ulang lembar ini. Isi yang berubah otomatis kembali ke "belum terverifikasi", termasuk yang sudah pernah ditandai.
+4. Kalau isinya perlu diperbaiki: ubah berkas data di `server/data-konten/`, jalankan `npm run benih`, lalu buat ulang lembar ini. Isi yang berubah otomatis kembali ke "belum terverifikasi", termasuk yang sudah pernah ditandai.
 5. Jangan menandai butir yang sumbernya tidak bisa dibuka atau tidak cocok. Pilih "Tidak bisa dicek" dan tulis alasannya. Jangan mengisi kekosongan dengan perkiraan sendiri.
 
 ## Ringkasan
@@ -28,7 +28,7 @@ Dibuat otomatis 2026-10-03 dengan `npm run lembar-review` (folder `LANJUT_App/se
 | 3 | Prodi — daftar prodi & pemetaan mapel (F3 Penolong Pilih Mapel) | `prodi` | 19 | 0 | 19 | 19 |
 | 4 | Mapel — ketersediaan di SMK (F3) | `mapel` | 10 | 0 | 10 | 10 |
 | 5 | Khusus SMK (F2) | `khusus-smk` | 6 | 0 | 6 | 6 |
-| 6 | Daftar Periksa (F5) | `checklist` | 11 | 0 | 11 | 11 |
+| 6 | Daftar Periksa (F5) | `checklist` | 15 | 0 | 15 | 15 |
 | 7 | Linimasa (Beranda, F1) | `linimasa` | 6 | 3 | 3 | 3 (+3 konfirmasi ulang) |
 | 8 | Cerita Alumni (F4) | `cerita-alumni` | 2 | 0 | 2 | 2 |
 
@@ -36,7 +36,7 @@ Dibuat otomatis 2026-10-03 dengan `npm run lembar-review` (folder `LANJUT_App/se
 
 > Di aplikasi sekarang: profil yang belum ditandai **tidak dikirim server sama sekali**. Semua siswa melihat "Profil prodi sedang kami cek", padahal layarnya sudah jadi. Profil yang ditandai langsung tampil.
 >
-> Satu profil = satu tanda, berlaku untuk **seluruh** isinya (angka, mata kuliah, profesi, kampus). Kalau ada bagian yang salah, perbaiki dulu di `MVP-PWA/data/profil-prodi.json` → `npm run benih` → baru tandai.
+> Satu profil = satu tanda, berlaku untuk **seluruh** isinya (angka, mata kuliah, profesi, kampus). Kalau ada bagian yang salah, perbaiki dulu di `server/data-konten/profil-prodi.json` → `npm run benih` → baru tandai.
 >
 > Label status data ("Terverifikasi"/"Perkiraan") tampil ke siswa sebagai lencana di tiap bagian. Menandai profil **tidak** mengubah label itu. Yang dicek: isi cocok dengan sumber, dan label "Perkiraan" memang dipasang pada bagian yang belum bersumber resmi.
 >
@@ -1697,7 +1697,7 @@ Dibuat otomatis 2026-10-03 dengan `npm run lembar-review` (folder `LANJUT_App/se
 **Yang tampil ke siswa sekarang:**
 
 - **Nama:** Fisika
-- **Tersedia di SMK:** ya
+- **Tersedia di SMK:** tidak
 - **Dipakai di pemetaan:** 8 prodi
 
 **Sumber yang tercatat:**
@@ -2050,7 +2050,7 @@ Dibuat otomatis 2026-10-03 dengan `npm run lembar-review` (folder `LANJUT_App/se
 
 ---
 
-## 6. Daftar Periksa (F5) — 11 belum terverifikasi
+## 6. Daftar Periksa (F5) — 15 belum terverifikasi
 
 > Di aplikasi sekarang: butir **tampil**, dan selama ada butir yang belum ditandai, di bawah daftar muncul "Perlu dicek ke laman resmi SNPMB · belum diverifikasi".
 
@@ -2373,6 +2373,122 @@ Dibuat otomatis 2026-10-03 dengan `npm run lembar-review` (folder `LANJUT_App/se
 
 ---
 
+### 6.12 Ikut minimal satu tryout TKA
+
+**ID:** `tryout-tka` · **jenis:** `checklist`
+
+**Yang tampil ke siswa sekarang:**
+
+- **Kategori:** Persiapan Ujian
+- **Butir:** Ikut minimal satu tryout TKA
+- **Berlaku untuk:** kelas 12 · jalur TKA · rumpun semua
+
+**Sumber yang tercatat:**
+
+- Tempat memverifikasi (url_sumber): — (tidak tercatat)
+- Asal isi: tim
+
+**Perintah setelah dicek** (pratinjau dulu, lalu ulangi dengan `--ya`): `npm run verifikasi-konten -- --jenis=checklist --id=tryout-tka --oleh="Nama Pemeriksa"`
+
+**Keputusan reviewer:**
+
+- [ ] Sesuai sumber — boleh ditandai terverifikasi
+- [ ] Perlu diperbaiki dulu (jelaskan di catatan)
+- [ ] Tidak bisa dicek — sumber tidak tersedia / tidak cocok
+
+**Diperiksa oleh, tanggal:** ……
+
+**Catatan reviewer:** ……
+
+---
+
+### 6.13 Ikut simulasi atau gladi TKA kalau sekolahmu mengadakannya
+
+**ID:** `simulasi-tka` · **jenis:** `checklist`
+
+**Yang tampil ke siswa sekarang:**
+
+- **Kategori:** Persiapan Ujian
+- **Butir:** Ikut simulasi atau gladi TKA kalau sekolahmu mengadakannya
+- **Berlaku untuk:** kelas 12 · jalur TKA · rumpun semua
+
+**Sumber yang tercatat:**
+
+- Tempat memverifikasi (url_sumber): — (tidak tercatat)
+- Asal isi: tim
+
+**Perintah setelah dicek** (pratinjau dulu, lalu ulangi dengan `--ya`): `npm run verifikasi-konten -- --jenis=checklist --id=simulasi-tka --oleh="Nama Pemeriksa"`
+
+**Keputusan reviewer:**
+
+- [ ] Sesuai sumber — boleh ditandai terverifikasi
+- [ ] Perlu diperbaiki dulu (jelaskan di catatan)
+- [ ] Tidak bisa dicek — sumber tidak tersedia / tidak cocok
+
+**Diperiksa oleh, tanggal:** ……
+
+**Catatan reviewer:** ……
+
+---
+
+### 6.14 Cek Level-In untuk mapel pilihan TKA-mu
+
+**ID:** `levelin-mapel-tka` · **jenis:** `checklist`
+
+**Yang tampil ke siswa sekarang:**
+
+- **Kategori:** Persiapan Ujian
+- **Butir:** Cek Level-In untuk mapel pilihan TKA-mu
+- **Berlaku untuk:** kelas 11,12 · jalur TKA · rumpun semua
+
+**Sumber yang tercatat:**
+
+- Tempat memverifikasi (url_sumber): — (tidak tercatat)
+- Asal isi: tim
+
+**Perintah setelah dicek** (pratinjau dulu, lalu ulangi dengan `--ya`): `npm run verifikasi-konten -- --jenis=checklist --id=levelin-mapel-tka --oleh="Nama Pemeriksa"`
+
+**Keputusan reviewer:**
+
+- [ ] Sesuai sumber — boleh ditandai terverifikasi
+- [ ] Perlu diperbaiki dulu (jelaskan di catatan)
+- [ ] Tidak bisa dicek — sumber tidak tersedia / tidak cocok
+
+**Diperiksa oleh, tanggal:** ……
+
+**Catatan reviewer:** ……
+
+---
+
+### 6.15 Ikut minimal satu tryout UTBK-SNBT
+
+**ID:** `tryout-snbt` · **jenis:** `checklist`
+
+**Yang tampil ke siswa sekarang:**
+
+- **Kategori:** Persiapan Ujian
+- **Butir:** Ikut minimal satu tryout UTBK-SNBT
+- **Berlaku untuk:** kelas 12 · jalur SNBT · rumpun semua
+
+**Sumber yang tercatat:**
+
+- Tempat memverifikasi (url_sumber): — (tidak tercatat)
+- Asal isi: tim
+
+**Perintah setelah dicek** (pratinjau dulu, lalu ulangi dengan `--ya`): `npm run verifikasi-konten -- --jenis=checklist --id=tryout-snbt --oleh="Nama Pemeriksa"`
+
+**Keputusan reviewer:**
+
+- [ ] Sesuai sumber — boleh ditandai terverifikasi
+- [ ] Perlu diperbaiki dulu (jelaskan di catatan)
+- [ ] Tidak bisa dicek — sumber tidak tersedia / tidak cocok
+
+**Diperiksa oleh, tanggal:** ……
+
+**Catatan reviewer:** ……
+
+---
+
 ## 7. Linimasa (Beranda, F1) — 3 belum terverifikasi
 
 > Di aplikasi sekarang: tahapan yang belum ditandai **disembunyikan** (PRD F1 melarang menampilkan tanggal yang belum diverifikasi).
@@ -2489,6 +2605,10 @@ Butir di bawah sudah berstatus terverifikasi. Penandanya tercatat di log; mohon 
 
 - 2026-09-27 · tandai (dicek 2026-09-27) · oleh: Claude (LANJUT_020), diverifikasi dari siaran pers Kemendikdasmen 561/sipers/A6/VII/2026
 - 2026-09-28 · tandai (dicek 2026-09-27) · oleh: uji LANJUT_022
+- 2026-10-11 · batal · oleh: (tidak diisi)
+- 2026-10-11 · tandai (dicek 2026-09-27) · oleh: (tidak diisi)
+- 2026-10-23 · tandai (dicek 2026-09-27) · oleh: Claude - samakan DB tes lanjut_test_085 dengan lanjut_test (LANJUT_085)
+- 2026-10-25 · tandai (dicek 2026-09-27) · oleh: Claude - samakan DB tes lanjut_test_086 dengan lanjut_test (LANJUT_086)
 
 **Bila tanda ini ternyata salah** (pratinjau dulu, lalu ulangi dengan `--ya`): `npm run verifikasi-konten -- --jenis=linimasa --id=daftar-akun-tka --batal --oleh="Nama Pemeriksa"`
 
@@ -2529,6 +2649,11 @@ Butir di bawah sudah berstatus terverifikasi. Penandanya tercatat di log; mohon 
 - 2026-09-27 · batal · oleh: (tidak diisi)
 - 2026-09-27 · tandai (dicek 2026-09-27) · oleh: Claude (LANJUT_020), diverifikasi dari siaran pers Kemendikdasmen 561/sipers/A6/VII/2026
 - 2026-09-28 · tandai (dicek 2026-09-27) · oleh: uji LANJUT_022
+- 2026-10-11 · batal · oleh: (tidak diisi)
+- 2026-10-11 · tandai (dicek 2026-09-27) · oleh: (tidak diisi)
+- 2026-10-11 · tandai (dicek 2026-09-27) · oleh: (tidak diisi)
+- 2026-10-23 · tandai (dicek 2026-09-27) · oleh: Claude - samakan DB tes lanjut_test_085 dengan lanjut_test (LANJUT_085)
+- 2026-10-25 · tandai (dicek 2026-09-27) · oleh: Claude - samakan DB tes lanjut_test_086 dengan lanjut_test (LANJUT_086)
 
 **Bila tanda ini ternyata salah** (pratinjau dulu, lalu ulangi dengan `--ya`): `npm run verifikasi-konten -- --jenis=linimasa --id=pelaksanaan-tka --batal --oleh="Nama Pemeriksa"`
 
@@ -2561,6 +2686,10 @@ Butir di bawah sudah berstatus terverifikasi. Penandanya tercatat di log; mohon 
 
 - 2026-09-27 · tandai (dicek 2026-09-27) · oleh: Claude (LANJUT_020), diverifikasi dari siaran pers Kemendikdasmen 561/sipers/A6/VII/2026
 - 2026-09-28 · tandai (dicek 2026-09-27) · oleh: uji LANJUT_022
+- 2026-10-11 · batal · oleh: (tidak diisi)
+- 2026-10-11 · tandai (dicek 2026-09-27) · oleh: (tidak diisi)
+- 2026-10-23 · tandai (dicek 2026-09-27) · oleh: Claude - samakan DB tes lanjut_test_085 dengan lanjut_test (LANJUT_085)
+- 2026-10-25 · tandai (dicek 2026-09-27) · oleh: Claude - samakan DB tes lanjut_test_086 dengan lanjut_test (LANJUT_086)
 
 **Bila tanda ini ternyata salah** (pratinjau dulu, lalu ulangi dengan `--ya`): `npm run verifikasi-konten -- --jenis=linimasa --id=susulan-tka --batal --oleh="Nama Pemeriksa"`
 
