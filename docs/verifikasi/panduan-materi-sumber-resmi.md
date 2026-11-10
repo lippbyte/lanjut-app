@@ -20,7 +20,7 @@ dan punya nama sumber serta tautan sumber `https://`.
 
 ## Cara memasang
 
-1. Tambahkan satu kartu ke `MVP-PWA/data/arsip.json` (bagian `data`):
+1. Tambahkan satu kartu ke `server/data-konten/arsip.json` (bagian `data`):
 
    ```json
    {

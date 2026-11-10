@@ -235,7 +235,7 @@ Dua siswa berlatih 30 menit sehari selama 3 bulan. Yang satu melatih topik yang 
 > **Diperbarui 27 Sep 2026.** Diagram di atas adalah rancangan 6 Agustus; kondisi sekarang:
 > - **Klien:** ~~PWA~~ → klien utama adalah app **Expo** (`LANJUT_App/`, Android + Web). PWA (`MVP-PWA/`) berstatus arsip.
 > - **Kemajuan daftar periksa:** ~~penyimpanan lokal~~ → di app Expo, centang ditulis ke akun lewat `/kemajuan` (commit 0341ff6, 26 Sep 2026). PWA arsip masih menyimpannya di localStorage.
-> - **Panel admin tim:** belum dibangun. Konten diisi lewat `MVP-PWA/data/*.json` + `npm run benih`, dan tanda sudah-dicek lewat `npm run verifikasi-konten` (LANJUT_008, LANJUT_010).
+> - **Panel admin tim:** belum dibangun. Konten diisi lewat `server/data-konten/*.json` + `npm run benih`, dan tanda sudah-dicek lewat `npm run verifikasi-konten` (LANJUT_008, LANJUT_010).
 
 **Prinsip yang mengikat:** setiap potongan konten wajib punya kolom `sumber` (resmi/pengguna/mitra), `pemilik`, dan `diperiksa_pada` **sejak versi pertama**, meskipun v1 hanya memakai kelas "resmi". Menambahkannya belakangan berarti menulis ulang model data pada Oktober — persis saat tim menghadapi TKA.
 

@@ -885,7 +885,7 @@ pilihan tampil lebih dulu di Arsip dan Latihan, tanpa label tambahan.
 
 **LANJUT_App (15 Okt 2026) — pilihan percakapan, belum disetujui PM. DRAF, belum disetujui
 Khalifa.** Kategori keempat Daftar Periksa, sesudah Jalur Pembiayaan (data
-`MVP-PWA/data/checklist.json`, tersaring kelas & jalur seperti butir lain): kelas 12 jalur TKA
+`server/data-konten/checklist.json`, tersaring kelas & jalur seperti butir lain): kelas 12 jalur TKA
 melihat tiga butir, jalur SNBT satu, jalur SNBP tidak ada; kelas 11 jalur TKA hanya butir
 Level-In. Isinya saran tim, bukan syarat resmi: tanpa tanggal, tanpa nama penyelenggara tryout,
 `url_sumber` kosong, dan tidak memicu catatan "Perlu dicek ke laman resmi SNPMB". Centangnya ikut
