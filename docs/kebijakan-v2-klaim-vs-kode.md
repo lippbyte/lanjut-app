@@ -232,7 +232,6 @@ PDP). Tes memastikan setiap `[ISI]` di JSON dan surat ada di tabel ini.
 |---|---|---|---|
 | I1 | Kebijakan: Tentang | `[ISI: nama badan pengelola dan alamatnya]` | Khalifa |
 | I2 | Kebijakan: Data di server | `[ISI: berapa lama catatan teknis disimpan oleh server dan penyedianya.]` | Khalifa (setelah memilih hosting) |
-| I3 | Kebijakan: Data di server | `[ISI: kapan data yang dihapus benar-benar dihapus permanen.]` | Khalifa + peninjau hukum |
 | I4 | Kebijakan: Untuk apa | `[ISI: tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.]` | Khalifa |
 | I5 | Kebijakan: Siapa melihat | `[ISI: siapa saja dan untuk keperluan apa.]` | Khalifa |
 | I6 | Kebijakan: Siapa melihat | `[ISI: nama penyedia dan lokasi servernya.]` | Khalifa |
@@ -245,8 +244,6 @@ PDP). Tes memastikan setiap `[ISI]` di JSON dan surat ada di tabel ini.
 | I13 | Kebijakan: Persetujuan | `[ISI: apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.]` | Peninjau hukum, lalu Khalifa |
 | I14 | Kebijakan: Hak | `[ISI: cara meminta penghapusan di OpenRouter dan penyedia model, bila ada.]` | Khalifa |
 | I15 | Kebijakan: Hak | `[ISI: berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.]` | Khalifa + peninjau hukum |
-| I16 | Kebijakan: Berapa lama | `[ISI: masa simpan data akun, data latihan, catatan persetujuan, dan catatan teknis server, serta apa yang terjadi pada data akun yang lama tidak dipakai.]` | Khalifa + peninjau hukum |
-| I17 | Kebijakan: Berapa lama | `[ISI: masa simpan modul bila akunnya lama tidak dipakai.]` | Khalifa + peninjau hukum (Lampiran C butir 8c) |
 | I18 | Kebijakan: Keamanan | `[ISI: perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) antara aplikasi dan server, dan pencadangan.]` | Khalifa (setelah memilih hosting) |
 | I19 | Kebijakan: Perubahan | `[ISI: kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.]` | Peninjau hukum + Khalifa |
 | I20 | Kebijakan: Perubahan | `[ISI: cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.]` | Khalifa |
