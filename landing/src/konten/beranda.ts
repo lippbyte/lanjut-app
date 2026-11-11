@@ -43,7 +43,7 @@ export const LANGKAH = {
   butir: [
     { judul: 'Pilih kelas dan sekolahmu', isi: 'Isi LANJUT menyesuaikan jenjangmu, dari SMP sampai kelas 12.' },
     { judul: 'Kenali minat dan cara belajarmu', isi: 'Eksplorasi Kampus dan Gaya Belajar membantumu mengenali bidang yang cocok.' },
-    { judul: 'Pahami jalur dan mapelnya', isi: 'Jalur Saya dan Pilih Mapel menunjukkan posisimu dan mapel pendukung prodi incaran.' },
+    { judul: 'Pahami jalur dan mapelnya', isi: 'Profil Saya dan Pilih Mapel menunjukkan posisimu dan mapel pendukung prodi incaran.' },
     { judul: 'Siapkan langkah satu per satu', isi: 'Daftar Periksa memecah persiapan jadi langkah kecil yang bisa dicentang.' },
   ],
 };
@@ -66,7 +66,7 @@ export const SOLUSI = {
   judul: 'Dari masalah ke langkah nyata',
   baris: [
     { masalah: 'Bingung menentukan arah', fitur: 'Eksplorasi Kampus · Gaya Belajar', status: 'tersedia', isi: 'Kenali bidang yang cocok dan cara belajarmu.' },
-    { masalah: 'Tidak tahu jalur yang tepat', fitur: 'Jalur Saya · Pilih Mapel', status: 'tersedia', isi: 'Lihat posisimu dan mapel yang mendukung prodi incaran.' },
+    { masalah: 'Tidak tahu jalur yang tepat', fitur: 'Profil Saya · Pilih Mapel', status: 'tersedia', isi: 'Lihat posisimu dan mapel yang mendukung prodi incaran.' },
     { masalah: 'Informasi sulit dipahami', fitur: 'Linimasa · Khusus SMK', status: 'tersedia', isi: 'Tenggat dan ketentuan dirangkum, isinya masih dicek ke sumber resmi.' },
     { masalah: 'Sulit memulai persiapan', fitur: 'Daftar Periksa', status: 'tersedia', isi: 'Centang persiapan satu per satu, tidak perlu sekaligus.' },
     { masalah: 'Butuh ruang untuk bercerita', fitur: 'AI LANJUT (Ngobrol)', status: 'pengembangan', isi: 'Layarnya sudah ada, tetapi jawaban AI belum aktif.' },

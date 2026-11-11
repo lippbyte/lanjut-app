@@ -50,7 +50,7 @@ kejujuran konten, aksesibilitas) tetap berlaku.
 - **Copy beranda:** judul ≤ 8 kata, isi satu kalimat; penjelasan panjang pindah ke dokumentasi.
 - **Huruf kapital judul:** sentence case, bukan Title Case — contoh "Mau lanjut kuliah, mulai dari
   mana?". Huruf besar hanya di awal judul, singkatan (LANJUT, SMK, PKL), dan nama diri (nama fitur
-  seperti "Jalur Saya", "Play Store"). Berlaku untuk semua judul h1–h3, judul kartu, dan judul tab
+  seperti "Profil Saya", "Play Store"). Berlaku untuk semua judul h1–h3, judul kartu, dan judul tab
   halaman. Label status resmi (`Tersedia`, `Dalam Pengembangan`, `Direncanakan`) tetap seperti
   ditetapkan PRD karena berupa label, bukan judul. (Pilihan percakapan 27 Okt 2026, belum
   disetujui PM.)

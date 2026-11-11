@@ -275,7 +275,7 @@ export const ARTIKEL: Artikel[] = [
         blok: [
           {
             jenis: 'p',
-            teks: 'Berstatus **Tersedia** dan dipakai terbatas oleh penguji dari tim: Linimasa, Khusus SMK, Pilih Mapel, Eksplorasi Kampus, Jalur Saya, Daftar Periksa, Arsip Belajar, Latihan, Level-In, dan Gaya Belajar.',
+            teks: 'Berstatus **Tersedia** dan dipakai terbatas oleh penguji dari tim: Linimasa, Khusus SMK, Pilih Mapel, Eksplorasi Kampus, Profil Saya, Daftar Periksa, Arsip Belajar, Latihan, Level-In, dan Gaya Belajar.',
           },
         ],
       },
@@ -714,7 +714,7 @@ export const ARTIKEL: Artikel[] = [
         blok: [
           {
             jenis: 'p',
-            teks: 'Fokus awal kami siswa SMK kelas XII. Siswa SMA, MA, dan SMP sudah bisa memakai sebagian fitur versi uji. Fitur kelas 12 seperti Linimasa dan Jalur Saya juga berlaku untuk siswa SMA dan MA kelas 12.',
+            teks: 'Fokus awal kami siswa SMK kelas XII. Siswa SMA, MA, dan SMP sudah bisa memakai sebagian fitur versi uji. Fitur kelas 12 seperti Linimasa dan Profil Saya juga berlaku untuk siswa SMA dan MA kelas 12.',
           },
         ],
       },
@@ -812,7 +812,7 @@ export const ARTIKEL: Artikel[] = [
             butir: [
               '**Masuk** dengan akun uji. Pastikan kamu sampai di Beranda.',
               '**Beranda**: lihat apakah isinya cocok dengan kelasmu.',
-              '**Jalur Saya** (kelas 12): jawab pertanyaannya, lalu lihat tahap dan langkah berikutnya.',
+              '**Profil Saya** (kelas 12): jawab pertanyaannya, lalu lihat tahap dan langkah berikutnya.',
               '**Eksplorasi Kampus**: pilih bidang yang kamu minati, lalu simpan.',
               '**Pilih Mapel** (kelas 12) atau **Mapel Saya** (kelas 7–11): pilih mapel, lalu simpan.',
               '**Arsip Belajar**: tulis dua atau tiga kartu catatan atau soal.',
