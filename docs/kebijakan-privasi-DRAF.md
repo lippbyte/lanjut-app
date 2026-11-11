@@ -4,7 +4,7 @@
 > Disusun LANJUT_047 (3 Oktober 2026), diperbarui menjadi **draf v2** di
 > LANJUT_056 (8 Oktober 2026) karena fitur AI, modul, dan pencarian web sudah
 > dibangun. Diselaraskan dengan produk di LANJUT_012 seri v2 (tinjauan terakhir
-> 11 November 2026), rumusan masa simpan K27 ditambahkan di LANJUT_014, dan keputusan K29 serta data yang tertinggal ditambahkan di LANJUT_017. Bahan review, bukan dokumen yang berlaku, dan bukan nasihat hukum:
+> 11 November 2026), rumusan masa simpan K27 ditambahkan di LANJUT_014, keputusan K29 serta data yang tertinggal ditambahkan di LANJUT_017, dan fakta yang terbukti diisi di LANJUT_018 (sumbernya di `hasil-pengisian-fakta.md`). Bahan review, bukan dokumen yang berlaku, dan bukan nasihat hukum:
 > tetap perlu ditinjau orang yang paham UU PDP. Bagian bertanda `[ISI: ...]`
 > menunggu diisi; siapa pengisinya ada di
 > [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md). Nama
@@ -118,7 +118,7 @@ LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya].
 
 - Kamu sendiri, lewat aplikasi. Akun lain tidak bisa melihat datamu, termasuk modulmu.
 - Catatan portofolio dan fotomu hanya bisa dibuka lewat akunmu di aplikasi, dan siswa lain tidak bisa melihatnya. Pengelola layanan secara teknis bisa mengakses tempat penyimpanannya. Saat ini tidak ada fitur berbagi, dan foto tidak punya alamat yang bisa dibuka umum.
-- Tim pengelola LANJUT yang mengurus server. [ISI: siapa saja dan untuk keperluan apa.]
+- Tim pengelola LANJUT yang mengurus server. Aplikasi tidak punya layar atau fitur bagi tim untuk membuka data siswa. Orang yang memegang akses ke server dan basis data secara teknis bisa mengaksesnya. Alat yang tersedia di server dipakai untuk mencatat persetujuan orang tua atau wali, menghitung pemakaian fitur, dan membuat cadangan. [ISI: siapa saja yang memegang akses ke server dan basis data.]
 - Penyedia server dan basis data tempat LANJUT berjalan. [ISI: nama penyedia dan lokasi servernya.]
 - Penyedia AI pihak ketiga, tetapi hanya data yang dikirim untuk fitur AI (lihat bagian Fitur AI).
 - Sekolah hanya mencatat persetujuan orang tua atau wali ke akunmu. Saat ini tidak ada fitur bagi sekolah atau guru untuk melihat data siswa. [ISI: konfirmasi apakah ini akan berubah.]
@@ -159,7 +159,7 @@ Penyamaran ini otomatis dan tidak sempurna. Nama, alamat rumah, nama sekolah, da
 ### Pertanyaan pelajaran: modul dan pencarian web
 
 - Kalau pesanmu dikenali sebagai pertanyaan materi pelajaran, server mencari potongan yang berkaitan di modul milikmu sendiri. Saat ini paling banyak 3 potongan, masing-masing sekitar 800–1.200 karakter, ikut dikirim ke penyedia AI setelah disamarkan. Modul milik akun lain tidak pernah dipakai. [ISI: aturan untuk modul dari guru atau penerbit (hak cipta) yang potongannya dikirim ke penyedia AI.]
-- Pencarian web, berlaku bila fitur ini diaktifkan (bawaannya mati): untuk pertanyaan materi, server mengirim permintaan terpisah yang hanya berisi pertanyaan terbarumu yang sudah disamarkan, tanpa profil, riwayat, atau modul. OpenRouter meneruskannya ke mesin pencari pihak ketiga. Ada batas jumlah pencarian web per akun per hari. [ISI: hasil pengecekan Khalifa: mesin pencari mana yang menerima pertanyaan, dan apakah permintaan agar data tidak dikumpulkan juga berlaku di sana.]
+- Pencarian web, berlaku bila fitur ini diaktifkan (bawaannya mati): untuk pertanyaan materi, server mengirim permintaan terpisah yang hanya berisi pertanyaan terbarumu yang sudah disamarkan, tanpa profil, riwayat, atau modul. OpenRouter meneruskannya ke mesin pencari pihak ketiga. Ada batas jumlah pencarian web per akun per hari. Menurut dokumentasi OpenRouter, jaminan tanpa penyimpanan data hanya berlaku untuk model AI, tidak untuk pencarian web, dan mesin pencari punya aturan penyimpanan sendiri. Dokumentasi itu tidak menyebut bahwa permintaan agar data tidak dikumpulkan berlaku di mesin pencari. [ISI: mesin pencari yang dipakai menurut pengaturan di server produksi.]
 - Tautan sumber web di bawah jawaban membuka situs pihak ketiga di luar LANJUT. Kebijakan ini tidak berlaku di situs itu.
 - Obrolan biasa dan pertanyaan tentang jalur masuk kuliah tidak memakai modul maupun pencarian web.
 
@@ -169,7 +169,7 @@ Penyamaran ini otomatis dan tidak sempurna. Nama, alamat rumah, nama sekolah, da
 - Yang tercatat di catatan teknis server hanya: permintaan ke Ngobrol (seperti fitur lain: hasil, lama proses, dan ID akun), jumlah potongan modul dan hasil web yang dipakai, jenis gangguan bila penyedia AI gagal, serta tingkat tanda bahaya beserta waktunya, tanpa isi pesan.
 - Untuk membatasi pemakaian, server menghitung jumlah pesan dan pencarian web per akun. Hitungan ini hanya ada di memori server dan hilang saat server dinyalakan ulang.
 - Untuk memantau biaya dan keselamatan, server menyimpan hitungan harian gabungan untuk semua pengguna, misalnya jumlah permintaan ke penyedia AI, jumlah token, jumlah tanda bahaya, dan jumlah gangguan. Hitungan ini tidak memuat ID akun maupun isi pesan.
-- Di sisi penyedia AI: kami meminta OpenRouter hanya memakai penyedia model yang tidak mengumpulkan data pengguna (pengaturan data_collection: deny). Apa yang tetap disimpan OpenRouter dan penyedia model, dan berapa lama, mengikuti kebijakan mereka. [ISI: hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model: apa yang disimpan dan berapa lama.]
+- Di sisi penyedia AI: kami meminta OpenRouter hanya memakai penyedia model yang tidak mengumpulkan data pengguna (pengaturan data_collection: deny). Apa yang tetap disimpan OpenRouter dan penyedia model, dan berapa lama, mengikuti kebijakan mereka. Menurut dokumentasi OpenRouter, OpenRouter tidak menyimpan isi pesan dan balasan kecuali pemilik akun menyalakan pencatatan, atau isinya ditandai untuk ditinjau demi keselamatan anak, dan tetap menyimpan data teknis seperti jumlah token dan lama proses. Tiap penyedia model punya aturan sendiri. [ISI: apakah pencatatan isi pesan di akun OpenRouter LANJUT dimatikan, dan berapa lama penyedia model menyimpan data.]
 
 ### Keselamatan
 
@@ -205,7 +205,7 @@ Tanpa persetujuan itu, layar Ngobrol terkunci dan tidak ada data akunmu yang dik
 - Membetulkan data yang salah. Nama tampilan, kelas, jenis sekolah, prodi impian, dan gaya belajar bisa kamu ubah sendiri di Data Akun.
 - Meminta datamu dihapus. Modul bisa kamu hapus sendiri secara permanen di Arsip Belajar, satu per satu atau semuanya sekaligus. Akun dan semua datanya bisa kamu hapus sendiri di Data Akun, kalau fiturnya sudah dibuka untukmu. Kamu perlu memastikan bahwa ini benar-benar kamu, dengan kata sandi atau kode email. Penghapusan berlaku seketika dan tidak bisa dibatalkan. Selama fiturnya belum dibuka untukmu, ajukan lewat kontak di bawah.
 - Yang tidak bisa dihapus dari aplikasi: salinan cadangan basis data (lihat bagian Berapa lama data disimpan), catatan teknis server yang memuat ID akun tetapi bukan nama, pesan yang sudah pernah dikirim ke penyedia AI, dan email yang sudah terkirim.
-- Isi obrolan tidak perlu dihapus dari server LANJUT karena memang tidak disimpan di sana. Untuk data yang sudah dikirim ke penyedia AI: [ISI: cara meminta penghapusan di OpenRouter dan penyedia model, bila ada.]
+- Isi obrolan tidak perlu dihapus dari server LANJUT karena memang tidak disimpan di sana. Untuk data yang sudah dikirim ke penyedia AI: menurut dokumentasi OpenRouter, pemilik akun OpenRouter bisa meminta penghapusan catatan yang tersimpan di sana. Anthropic menyatakan tidak melayani penghapusan satu per satu bagi pelanggan API berbayar. [ISI: bagaimana LANJUT meneruskan permintaan penghapusan ke OpenRouter dan penyedia model.]
 - Mencabut persetujuan. Orang tua atau wali cukup memberi tahu sekolah atau kontak di bawah bahwa persetujuannya dicabut. Setelah pencabutan dicatat, fitur AI tertutup untuk akunmu mulai pesan berikutnya, dan fitur lain tetap bisa dipakai. Pencabutan tidak menghapus data yang sudah pernah dikirim ke penyedia AI.
 - [ISI: berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.]
 
@@ -223,7 +223,7 @@ Kata sandi dan tanda masuk disimpan dalam bentuk acak (hash). Setiap akun hanya 
 
 Data untuk fitur AI dikirim ke penyedia AI oleh server LANJUT, bukan langsung dari HP-mu, lewat koneksi terenkripsi (HTTPS). Kunci akses ke penyedia AI hanya ada di server.
 
-[ISI: perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) antara aplikasi dan server, dan pencadangan.]
+Aplikasi Android versi rilis hanya bisa tersambung ke server lewat koneksi terenkripsi (HTTPS). [ISI: perlindungan lain di server yang dipakai sungguhan, termasuk pencadangan.]
 
 ### Perubahan kebijakan
 
@@ -346,18 +346,18 @@ di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md) bagian
 3. **Data yang kami simpan di server** — penyedia layanan email yang mengirim kode, dan negara pemrosesannya.
 4. **Data yang kami simpan di server** — berapa lama catatan teknis disimpan oleh server dan penyedianya.
 5. **Untuk apa datanya dipakai** — tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.
-6. **Siapa yang bisa melihat datamu** — siapa saja dan untuk keperluan apa.
+6. **Siapa yang bisa melihat datamu** — siapa saja yang memegang akses ke server dan basis data.
 7. **Siapa yang bisa melihat datamu** — nama penyedia dan lokasi servernya.
 8. **Siapa yang bisa melihat datamu** — konfirmasi apakah ini akan berubah.
 9. **Fitur AI: siapa penyedianya** — penyedia model yang benar-benar menerima data menurut pengaturan di server, dan lokasinya.
 10. **Fitur AI: siapa penyedianya** — negara atau wilayah pemrosesan, dan dasar pengirimannya ke luar negeri.
 11. **Pertanyaan pelajaran: modul dan pencarian web** — aturan untuk modul dari guru atau penerbit (hak cipta) yang potongannya dikirim ke penyedia AI.
-12. **Pertanyaan pelajaran: modul dan pencarian web** — hasil pengecekan Khalifa: mesin pencari mana yang menerima pertanyaan, dan apakah permintaan agar data tidak dikumpulkan juga berlaku di sana.
-13. **Apa yang disimpan dari obrolanmu** — hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model: apa yang disimpan dan berapa lama.
+12. **Pertanyaan pelajaran: modul dan pencarian web** — mesin pencari yang dipakai menurut pengaturan di server produksi.
+13. **Apa yang disimpan dari obrolanmu** — apakah pencatatan isi pesan di akun OpenRouter LANJUT dimatikan, dan berapa lama penyedia model menyimpan data.
 14. **Persetujuan orang tua atau wali** — apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.
-15. **Hak kamu dan orang tua atau walimu** — cara meminta penghapusan di OpenRouter dan penyedia model, bila ada.
+15. **Hak kamu dan orang tua atau walimu** — bagaimana LANJUT meneruskan permintaan penghapusan ke OpenRouter dan penyedia model.
 16. **Hak kamu dan orang tua atau walimu** — berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.
-17. **Keamanan** — perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) antara aplikasi dan server, dan pencadangan.
+17. **Keamanan** — perlindungan lain di server yang dipakai sungguhan, termasuk pencadangan.
 18. **Perubahan kebijakan** — kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.
 19. **Perubahan kebijakan** — cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.
 20. **Kontak** — kontak resmi tim LANJUT: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.

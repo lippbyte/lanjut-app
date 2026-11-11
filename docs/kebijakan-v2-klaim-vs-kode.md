@@ -166,6 +166,12 @@ kebijakan (dicocokkan dengan migrasi 001–016) dan di tes kebijakan.
 | H5 | Setelah pencabutan dicatat, AI tertutup mulai pesan berikutnya; fitur lain tetap jalan. | `srv/modul/ngobrol/ngobrol.layanan.js:381` (gerbang dicek tiap permintaan); `app/providers/ObrolanProvider.tsx:96-98`; `tes/ngobrol.test.js:136`; `tes/persetujuan.test.js:132` | terbukti |
 | H6 | Pencabutan tidak menghapus data yang sudah dikirim ke penyedia AI. | `srv/modul/ngobrol/penyedia-ai.js:50-88` (hanya permintaan chat; tidak ada permintaan hapus ke penyedia) | terbukti |
 | H7 | Cadangan basis data tidak bisa disunting per akun, jadi cadangan lama masih memuat data yang sudah dihapus sampai tergantikan. Catatan teknis server tidak ikut terhapus. | `app/docs/audit-hapus-akun-ekspor.md` bagian 1 | terbukti |
+| FK1 | Aplikasi tidak punya layar atau fitur bagi tim untuk membuka data siswa. | `srv/middleware/wajibTim.js` tidak dipasang di rute mana pun; `srv/db/persetujuan/persetujuan-ortu.js` ("Tidak ada panel admin web"), diperiksa 2026-11-11 | terbukti |
+| FK2 | Alat di server dipakai untuk mencatat persetujuan, menghitung pemakaian fitur, dan membuat cadangan. | `srv/db/persetujuan/persetujuan-ortu.js`; `app/server/tools/metrik-portofolio.js`, `pemakaian-ai.js`, `cadangan-db.js`, diperiksa 2026-11-11 | terbukti |
+| FK3 | Jaminan tanpa penyimpanan hanya untuk model AI, tidak untuk pencarian web. Dokumentasi tidak menyebut `data_collection` berlaku di mesin pencari. | https://openrouter.ai/docs/guides/features/zdr; https://openrouter.ai/docs/guides/features/plugins/web-search, diperiksa 2026-11-11 | terbukti |
+| FK4 | OpenRouter tidak menyimpan isi pesan kecuali pencatatan dinyalakan atau isinya ditandai, dan tetap menyimpan metadata. | https://openrouter.ai/docs/guides/privacy/data-collection, diperiksa 2026-11-11 | terbukti |
+| FK5 | Pemilik akun OpenRouter bisa meminta penghapusan catatan. Anthropic tidak melayani penghapusan satu per satu bagi pelanggan API berbayar. | https://openrouter.ai/docs/guides/features/input-output-logging; https://privacy.claude.com/en/articles/7996875-can-you-delete-data-that-i-sent-via-api, diperiksa 2026-11-11 | terbukti |
+| FK6 | Aplikasi Android versi rilis hanya bisa tersambung lewat HTTPS. | `app/app.config.ts:59-66`, `:88`; `app/docs/rilis/lanjut-1.0.0.md`, diperiksa 2026-11-11 | terbukti |
 | KM1 | Data AI dikirim server ke penyedia, bukan langsung dari HP, lewat HTTPS. | `app/providers/ObrolanProvider.tsx:77` (app hanya memanggil `/ngobrol`); `srv/config/env.js:75-77` (selain localhost uji, wajib `https://`) | terbukti |
 | KM2 | Kunci akses penyedia AI hanya di server. | `srv/config/env.js:69`; `srv/modul/ngobrol/penyedia-ai.js:6`, `:59` | terbukti |
 | PB1 | Versi naik → persetujuan versi lama tidak membuka fitur AI. | `srv/modul/persetujuan/persetujuan.layanan.js:38-41`; `tes/persetujuan.test.js:157` | terbukti |
@@ -250,18 +256,18 @@ PDP). Tes memastikan setiap `[ISI]` di JSON dan surat ada di tabel ini.
 | I1 | Kebijakan: Tentang | `[ISI: nama badan pengelola dan alamatnya]` | Khalifa |
 | I2 | Kebijakan: Data di server | `[ISI: berapa lama catatan teknis disimpan oleh server dan penyedianya.]` | Khalifa (setelah memilih hosting) |
 | I4 | Kebijakan: Untuk apa | `[ISI: tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.]` | Khalifa |
-| I5 | Kebijakan: Siapa melihat | `[ISI: siapa saja dan untuk keperluan apa.]` | Khalifa |
+| I5 | Kebijakan: Siapa melihat | `[ISI: siapa saja yang memegang akses ke server dan basis data.]` | Khalifa |
 | I6 | Kebijakan: Siapa melihat | `[ISI: nama penyedia dan lokasi servernya.]` | Khalifa |
 | I7 | Kebijakan: Siapa melihat | `[ISI: konfirmasi apakah ini akan berubah.]` | Khalifa |
 | I8 | Kebijakan: Fitur AI penyedia | `[ISI: penyedia model yang benar-benar menerima data menurut pengaturan di server, dan lokasinya.]` | Khalifa (cek `ai_model`, `ai_penyedia_only`, dan halaman model di OpenRouter) |
 | I9 | Kebijakan: Fitur AI penyedia | `[ISI: negara atau wilayah pemrosesan, dan dasar pengirimannya ke luar negeri.]` | Khalifa (negara) + peninjau hukum (dasar pengiriman) |
 | I10 | Kebijakan: Pertanyaan pelajaran | `[ISI: aturan untuk modul dari guru atau penerbit (hak cipta) yang potongannya dikirim ke penyedia AI.]` | Peninjau hukum + Khalifa (Lampiran C butir 12a) |
-| I11 | Kebijakan: Pertanyaan pelajaran | `[ISI: hasil pengecekan Khalifa: mesin pencari mana yang menerima pertanyaan, dan apakah permintaan agar data tidak dikumpulkan juga berlaku di sana.]` | Khalifa |
-| I12 | Kebijakan: Apa yang disimpan | `[ISI: hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model: apa yang disimpan dan berapa lama.]` | Khalifa (retensi OpenRouter dan penyedia model) |
+| I11 | Kebijakan: Pertanyaan pelajaran | `[ISI: mesin pencari yang dipakai menurut pengaturan di server produksi.]` | Khalifa |
+| I12 | Kebijakan: Apa yang disimpan | `[ISI: apakah pencatatan isi pesan di akun OpenRouter LANJUT dimatikan, dan berapa lama penyedia model menyimpan data.]` | Khalifa (retensi OpenRouter dan penyedia model) |
 | I13 | Kebijakan: Persetujuan | `[ISI: apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.]` | Peninjau hukum, lalu Khalifa |
-| I14 | Kebijakan: Hak | `[ISI: cara meminta penghapusan di OpenRouter dan penyedia model, bila ada.]` | Khalifa |
+| I14 | Kebijakan: Hak | `[ISI: bagaimana LANJUT meneruskan permintaan penghapusan ke OpenRouter dan penyedia model.]` | Khalifa |
 | I15 | Kebijakan: Hak | `[ISI: berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.]` | Khalifa + peninjau hukum |
-| I18 | Kebijakan: Keamanan | `[ISI: perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) antara aplikasi dan server, dan pencadangan.]` | Khalifa (setelah memilih hosting) |
+| I18 | Kebijakan: Keamanan | `[ISI: perlindungan lain di server yang dipakai sungguhan, termasuk pencadangan.]` | Khalifa (setelah memilih hosting) |
 | I19 | Kebijakan: Perubahan | `[ISI: kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.]` | Peninjau hukum + Khalifa |
 | I20 | Kebijakan: Perubahan | `[ISI: cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.]` | Khalifa |
 | I21 | Kebijakan: Kontak | `[ISI: kontak resmi tim LANJUT: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.]` | Khalifa |
@@ -271,7 +277,7 @@ PDP). Tes memastikan setiap `[ISI]` di JSON dan surat ada di tabel ini.
 | I23 | Surat: pembuka | `[ISI: nama badan pengelola]` | Khalifa (sama dengan I1) |
 | I24 | Surat: Fitur AI | `[ISI: penyedia model yang dipakai]` | Khalifa (sama dengan I8) |
 | I25 | Surat: Fitur AI | `[ISI: negara atau wilayah]` | Khalifa (sama dengan I9) |
-| I26 | Surat: Fitur AI | `[ISI: hasil pengecekan kebijakan OpenRouter dan penyedia model]` | Khalifa (sama dengan I12) |
+| I26 | Surat: Fitur AI | `[ISI: pengaturan pencatatan di akun OpenRouter LANJUT dan penyedia model yang dipakai]` | Khalifa (sama dengan I12) |
 | I27 | Surat: Hak | `[ISI: kontak resmi tim LANJUT]` | Khalifa (sama dengan I21) |
 | I28 | Surat: versi (dua tempat) dan catatan peninjau | `[ISI: nomor versi saat dirilis]` | Khalifa, saat versi dinaikkan sesudah rilis app |
 | I29 | Surat: tanda tangan | `[ISI: wali kelas / kepala sekolah]` | Sekolah (lewat Khalifa) |
