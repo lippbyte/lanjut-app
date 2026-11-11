@@ -255,7 +255,6 @@ PDP). Tes memastikan setiap `[ISI]` di JSON dan surat ada di tabel ini.
 |---|---|---|---|
 | I1 | Kebijakan: Tentang | `[ISI: nama badan pengelola dan alamatnya]` | Khalifa |
 | I2 | Kebijakan: Data di server | `[ISI: berapa lama catatan teknis disimpan oleh server dan penyedianya.]` | Khalifa (setelah memilih hosting) |
-| I4 | Kebijakan: Untuk apa | `[ISI: tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.]` | Khalifa |
 | I5 | Kebijakan: Siapa melihat | `[ISI: siapa saja yang memegang akses ke server dan basis data.]` | Khalifa |
 | I6 | Kebijakan: Siapa melihat | `[ISI: nama penyedia dan lokasi servernya.]` | Khalifa |
 | I7 | Kebijakan: Siapa melihat | `[ISI: konfirmasi apakah ini akan berubah.]` | Khalifa |

@@ -1,6 +1,6 @@
 # Lembar isian fakta LANJUT
 
-**Status:** belum ada butir yang terisi penuh, dan 5 butir terisi sebagian (LANJUT_018). Pertanyaan pada butir itu menanyakan sisanya. Bukti tiap butir ada di `docs/hasil-pengisian-fakta.md`. Isi kolom Jawaban, lalu teksnya dipindahkan ke kebijakan dan surat sebagai task terpisah.
+**Status:** 1 butir terjawab (LANJUT_019), dan 5 butir terisi sebagian (LANJUT_018). Pertanyaan pada butir itu menanyakan sisanya. Bukti tiap butir ada di `docs/hasil-pengisian-fakta.md`. Isi kolom Jawaban, lalu teksnya dipindahkan ke kebijakan dan surat sebagai task terpisah.
 
 Lembar ini menggabungkan semua `[ISI]` di draf kebijakan dan surat orang tua. Satu pertanyaan yang muncul di beberapa tempat cukup dijawab sekali.
 
@@ -16,7 +16,7 @@ Lembar ini menggabungkan semua `[ISI]` di draf kebijakan dan surat orang tua. Sa
 | 2 | `docs/kebijakan-privasi-DRAF.md`, bagian "Data yang kami simpan di server": `[ISI: berapa lama catatan teknis disimpan oleh server dan penyedianya.]` | Berapa lama catatan teknis server disimpan? | Angka Dokploy | |
 | 3 | `docs/kebijakan-privasi-DRAF.md`, bagian "Data yang kami simpan di server": `[ISI: apakah konfirmasi orang tua atau wali di aplikasi diterima sebagai persetujuan; menunggu tinjauan hukum.]` | Apakah centang orang tua atau wali di HP siswa, tanpa pemeriksaan identitas, sah sebagai persetujuan? | Pertimbangan hukum | |
 | 4 | `docs/kebijakan-privasi-DRAF.md`, bagian "Data yang kami simpan di server": `[ISI: penyedia layanan email yang mengirim kode, dan negara pemrosesannya.]` | Layanan email apa yang mengirim kode, dan di negara mana datanya diproses? | Fakta | |
-| 5 | `docs/kebijakan-privasi-DRAF.md`, bagian "Untuk apa datanya dipakai": `[ISI: tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.]` | Apakah data dipakai untuk tujuan lain, misalnya penelitian atau laporan ke sekolah? | Fakta | |
+| 5 | Tidak lagi muncul. Butirnya dihapus dari kebijakan di LANJUT_019 | Apakah data dipakai untuk tujuan lain, misalnya penelitian atau laporan ke sekolah? | Fakta | Terjawab. Sumber: `docs/hasil-pengisian-fakta.md` butir 5, diperiksa 2026-11-11. |
 | 6 | `docs/kebijakan-privasi-DRAF.md`, bagian "Siapa yang bisa melihat datamu": `[ISI: siapa saja yang memegang akses ke server dan basis data.]` | Siapa saja yang memegang akses ke server dan basis data? | Fakta | Sebagian terisi. Sumber: `docs/hasil-pengisian-fakta.md` butir 6, diperiksa 2026-11-11. |
 | 7 | `docs/kebijakan-privasi-DRAF.md`, bagian "Siapa yang bisa melihat datamu": `[ISI: nama penyedia dan lokasi servernya.]` | Apa nama penyedia server dan basis data, dan di mana lokasinya? | Fakta | |
 | 8 | `docs/kebijakan-privasi-DRAF.md`, bagian "Siapa yang bisa melihat datamu": `[ISI: konfirmasi apakah ini akan berubah.]` | Apakah sekolah atau guru nanti akan bisa melihat data siswa? | Fakta | |

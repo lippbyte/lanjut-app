@@ -11,7 +11,7 @@ Akses ke panel Dokploy, basis data produksi, dan akun OpenRouter tidak tersedia.
 
 ## 1. Dua puluh tiga butir
 
-Belum ada butir yang terisi penuh. Lima butir terisi sebagian, dan sisanya tetap `[ISI]`.
+Satu butir terjawab oleh keputusan Khalifa (butir 5). Lima butir terisi sebagian, dan sisanya tetap `[ISI]`.
 
 | No | Pertanyaan | Golongan | Status | Bukti |
 |---|---|---|---|---|
@@ -19,7 +19,7 @@ Belum ada butir yang terisi penuh. Lima butir terisi sebagian, dan sisanya tetap
 | 2 | Lama penyimpanan catatan teknis | A | `[ISI]` belum terverifikasi | `docker-compose.yml` tidak mengatur batas log, jadi mengikuti pengaturan host yang tidak terlihat dari repo |
 | 3 | Sahkah konfirmasi orang tua di aplikasi | D | `[ISI]` menunggu peninjau | Lihat bagian 5 |
 | 4 | Penyedia layanan email dan negaranya | A | `[ISI]` belum terverifikasi | `SMTP_HOST` kosong di `server/.env.example` dan diisi di Dokploy (`docker-compose.yml`) |
-| 5 | Tujuan lain pemakaian data | B | `[ISI]` untuk Khalifa | Tidak ada tujuan lain di kode. Lihat bagian 6 |
+| 5 | Tujuan lain pemakaian data | B | terisi (bersumber) | `docs/audit-teks-kebijakan-aplikasi.md` bagian 10 di `lanjut_app`, dan keputusan Khalifa, diperiksa 2026-11-11. Butirnya dihapus dari kebijakan |
 | 6 | Siapa yang bisa melihat data | B | terisi sebagian (bersumber) | `server/src/middleware/wajibTim.js` tidak dipasang di rute mana pun; `server/src/db/persetujuan/persetujuan-ortu.js`; `server/tools/metrik-portofolio.js`, diperiksa 2026-11-11. Siapa orangnya tetap `[ISI]`. Lihat bagian 3 |
 | 7 | Penyedia server dan lokasinya | A | `[ISI]` belum terverifikasi | `docker-compose.yml` dan `docs/audit-portofolio-server.md` hanya menyebut Dokploy. Lokasi tidak ditebak dari domain |
 | 8 | Apakah sekolah atau guru nanti bisa melihat data | C | `[ISI]` untuk Khalifa | Saat ini tidak ada fiturnya. Rencana ke depan adalah keputusan |
@@ -34,7 +34,7 @@ Belum ada butir yang terisi penuh. Lima butir terisi sebagian, dan sisanya tetap
 | 17 | Perlindungan di server | A | terisi sebagian (bersumber) | `app.config.ts:59-66`, `:88`; `docs/rilis/lanjut-1.0.0.md`, diperiksa 2026-11-11. Jadwal cadangan tidak ada di `docker-compose.yml`, jadi tetap `[ISI]` |
 | 18 | Kapan persetujuan diminta ulang | D | `[ISI]` menunggu peninjau | Sistem punya `persetujuan_versi_min_ortu`, tetapi kapan dipakai adalah pertimbangan |
 | 19 | Cara memberi tahu perubahan kebijakan | C | `[ISI]` untuk Khalifa | Aplikasi meminta siswa menerima ulang (`components/screens/TerimaKebijakan.tsx`). Cara memberi tahu orang tua tidak ada di repo |
-| 20 | Kontak resmi dan petugas pelindungan data | C | `[ISI]` untuk Khalifa | Tidak ada kontak resmi di repo |
+| 20 | Kontak resmi dan petugas pelindungan data | C | `[ISI]` untuk Khalifa | Repo hanya memuat alamat email untuk kiriman cerita alumni (`components/screens/CeritaAlumniScreen.tsx:13`), tanpa pernyataan bahwa itu kontak resmi, jadi tidak dipakai |
 | 21 | Kop surat sekolah | E | `[ISI]` untuk Khalifa | Tergantung sekolah |
 | 22 | Nomor versi di surat | E | `[ISI]` untuk Khalifa | Versi tetap 1 sampai diputuskan. Lihat `docs/audit-teks-kebijakan-aplikasi.md` bagian 8 di `lanjut_app` |
 | 23 | Penanda tangan dari sekolah | E | `[ISI]` untuk Khalifa | Tergantung sekolah |
@@ -111,7 +111,7 @@ Catatan tambahan: syarat OpenRouter menetapkan pemegang akun minimal 18 tahun da
 
 Audit alur data tidak menemukan tujuan di luar yang sudah tertulis di bagian "Untuk apa datanya dipakai". Tidak ada pengiriman laporan ke sekolah, penelitian, analitik, atau iklan di kode.
 
-**Rekomendasi:** bila Khalifa memastikan memang tidak ada rencana lain, butir `[ISI]` itu sebaiknya dihapus. Penanda tetap dibiarkan sampai ada keputusan itu.
+**Keputusan Khalifa, 11 November 2026:** tidak ada tujuan tambahan yang direncanakan, jadi butir itu dihapus di LANJUT_019.
 
 ## 7. Pertanyaan untuk Khalifa
 
@@ -130,6 +130,6 @@ Informasi:
 
 - Badan pengelola dan alamat, kontak resmi (butir 1, 20).
 - Siapa yang memegang akses server (butir 6).
-- Rencana akses sekolah atau guru, dan tujuan lain (butir 5, 8).
+- Rencana akses sekolah atau guru (butir 8).
 - Cara memberi tahu perubahan, dan cara meneruskan permintaan hapus (butir 15, 19).
 - Kop surat, nomor versi, dan penanda tangan (butir 21, 22, 23).

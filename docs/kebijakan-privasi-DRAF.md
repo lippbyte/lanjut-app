@@ -112,7 +112,6 @@ LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya].
 - Memastikan email benar-benar milikmu, dan mengirim kode masuk.
 - Menjawab pesanmu di Ngobrol Bareng LANJUT lewat penyedia AI (lihat bagian Fitur AI).
 - Menjaga keamanan akun.
-- [ISI: tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.]
 
 ### Siapa yang bisa melihat datamu
 
@@ -339,28 +338,27 @@ di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md) bagian
 "Yang harus dilengkapi manusia".
 
 <!-- ISI:MULAI -->
-20 bagian menunggu keputusan Khalifa:
+19 bagian menunggu keputusan Khalifa:
 
 1. **Tentang kebijakan ini** — nama badan pengelola dan alamatnya
 2. **Data yang kami simpan di server** — apakah konfirmasi orang tua atau wali di aplikasi diterima sebagai persetujuan; menunggu tinjauan hukum.
 3. **Data yang kami simpan di server** — penyedia layanan email yang mengirim kode, dan negara pemrosesannya.
 4. **Data yang kami simpan di server** — berapa lama catatan teknis disimpan oleh server dan penyedianya.
-5. **Untuk apa datanya dipakai** — tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.
-6. **Siapa yang bisa melihat datamu** — siapa saja yang memegang akses ke server dan basis data.
-7. **Siapa yang bisa melihat datamu** — nama penyedia dan lokasi servernya.
-8. **Siapa yang bisa melihat datamu** — konfirmasi apakah ini akan berubah.
-9. **Fitur AI: siapa penyedianya** — penyedia model yang benar-benar menerima data menurut pengaturan di server, dan lokasinya.
-10. **Fitur AI: siapa penyedianya** — negara atau wilayah pemrosesan, dan dasar pengirimannya ke luar negeri.
-11. **Pertanyaan pelajaran: modul dan pencarian web** — aturan untuk modul dari guru atau penerbit (hak cipta) yang potongannya dikirim ke penyedia AI.
-12. **Pertanyaan pelajaran: modul dan pencarian web** — mesin pencari yang dipakai menurut pengaturan di server produksi.
-13. **Apa yang disimpan dari obrolanmu** — apakah pencatatan isi pesan di akun OpenRouter LANJUT dimatikan, dan berapa lama penyedia model menyimpan data.
-14. **Persetujuan orang tua atau wali** — apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.
-15. **Hak kamu dan orang tua atau walimu** — bagaimana LANJUT meneruskan permintaan penghapusan ke OpenRouter dan penyedia model.
-16. **Hak kamu dan orang tua atau walimu** — berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.
-17. **Keamanan** — perlindungan lain di server yang dipakai sungguhan, termasuk pencadangan.
-18. **Perubahan kebijakan** — kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.
-19. **Perubahan kebijakan** — cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.
-20. **Kontak** — kontak resmi tim LANJUT: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.
+5. **Siapa yang bisa melihat datamu** — siapa saja yang memegang akses ke server dan basis data.
+6. **Siapa yang bisa melihat datamu** — nama penyedia dan lokasi servernya.
+7. **Siapa yang bisa melihat datamu** — konfirmasi apakah ini akan berubah.
+8. **Fitur AI: siapa penyedianya** — penyedia model yang benar-benar menerima data menurut pengaturan di server, dan lokasinya.
+9. **Fitur AI: siapa penyedianya** — negara atau wilayah pemrosesan, dan dasar pengirimannya ke luar negeri.
+10. **Pertanyaan pelajaran: modul dan pencarian web** — aturan untuk modul dari guru atau penerbit (hak cipta) yang potongannya dikirim ke penyedia AI.
+11. **Pertanyaan pelajaran: modul dan pencarian web** — mesin pencari yang dipakai menurut pengaturan di server produksi.
+12. **Apa yang disimpan dari obrolanmu** — apakah pencatatan isi pesan di akun OpenRouter LANJUT dimatikan, dan berapa lama penyedia model menyimpan data.
+13. **Persetujuan orang tua atau wali** — apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.
+14. **Hak kamu dan orang tua atau walimu** — bagaimana LANJUT meneruskan permintaan penghapusan ke OpenRouter dan penyedia model.
+15. **Hak kamu dan orang tua atau walimu** — berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.
+16. **Keamanan** — perlindungan lain di server yang dipakai sungguhan, termasuk pencadangan.
+17. **Perubahan kebijakan** — kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.
+18. **Perubahan kebijakan** — cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.
+19. **Kontak** — kontak resmi tim LANJUT: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.
 <!-- ISI:SELESAI -->
 
 ## Lampiran C — Pertanyaan terbuka untuk Khalifa dan ahli hukum
