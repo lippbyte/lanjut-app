@@ -4,12 +4,12 @@
 > Disusun LANJUT_047 (3 Oktober 2026), diperbarui menjadi **draf v2** di
 > LANJUT_056 (8 Oktober 2026) karena fitur AI, modul, dan pencarian web sudah
 > dibangun. Diselaraskan dengan produk di LANJUT_012 seri v2 (tinjauan terakhir
-> 11 November 2026). Bahan review, bukan dokumen yang berlaku, dan bukan nasihat hukum:
+> 11 November 2026), dan rumusan masa simpan K27 ditambahkan di LANJUT_014. Bahan review, bukan dokumen yang berlaku, dan bukan nasihat hukum:
 > tetap perlu ditinjau orang yang paham UU PDP. Bagian bertanda `[ISI: ...]`
 > menunggu diisi; siapa pengisinya ada di
 > [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md). Nama
-> badan, alamat, kontak, negara pemrosesan, dan masa simpan sengaja tidak
-> diisi.
+> badan, alamat, kontak, negara pemrosesan, dan lama penyimpanan catatan teknis
+> sengaja tidak diisi.
 
 ## Catatan untuk peninjau (bukan bagian kebijakan)
 
@@ -17,17 +17,12 @@
   SMK, dan MA (banyak yang di bawah 18 tahun), dengan bahasa sehari-hari.
   Surat untuk orang tua atau wali ada terpisah di
   [`surat-persetujuan-ortu-wali-DRAF.md`](surat-persetujuan-ortu-wali-DRAF.md).
-- **Sumber teks, dan penyimpangan sementara.** Bagian "Isi kebijakan" di bawah
-  biasanya ditulis otomatis dari `LANJUT_App/lib/kebijakan-privasi.json`, yaitu
+- **Teks ini sama persis dengan yang tampil di app.** Bagian "Isi kebijakan"
+  di bawah ditulis otomatis dari `LANJUT_App/lib/kebijakan-privasi.json`, yaitu
   sumber teks yang dipakai app (ringkasan di layar Daftar dan halaman
-  Kebijakan Privasi), dengan `npm run dokumen-kebijakan` (folder
-  `LANJUT_App/server`). **Sejak LANJUT_012, bagian itu sengaja lebih baru dari
-  JSON**, karena task itu tidak boleh mengubah repo `lanjut_app`. Jangan
-  menjalankan perintah itu sebelum JSON diselaraskan, karena perubahannya akan
-  tertimpa. Selama belum selaras, tes yang membandingkan keduanya gagal, dan
-  app serta landing masih menampilkan teks lama. Kalimat yang harus dipindahkan
-  tercatat di [`audit-kebijakan-privasi.md`](audit-kebijakan-privasi.md)
-  bagian 3.
+  Kebijakan Privasi). Perubahan dikerjakan di berkas JSON itu, lalu dokumen ini
+  diperbarui dengan `npm run dokumen-kebijakan` (folder `LANJUT_App/server`).
+  Tes menolak bila keduanya berbeda.
 - **Fitur di balik saklar.** Hapus akun, unduh data, dan Portofolio sudah
   dibuat, tetapi saklarnya masih mati (`EXPO_PUBLIC_KELOLA_DATA_AKUN`,
   `EXPO_PUBLIC_PORTOFOLIO`, `PORTOFOLIO_AKTIF`). Kalimat yang menyebutnya
@@ -85,7 +80,7 @@ LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya].
 - Persetujuan: kapan kamu membaca kebijakan ini (dan versinya), serta kapan orang tua atau walimu memberi atau mencabut persetujuan lewat sekolah, termasuk nomor atau tanggal suratnya.
 - Keamanan akun: kapan akun dibuat, kapan terakhir kamu masuk, status akun (aktif atau nonaktif), sesi masuk yang masih aktif, dan jumlah percobaan masuk yang gagal (supaya akun bisa dikunci sementara kalau ada yang mencoba menebak kata sandi).
 - Catatan teknis server: setiap permintaan ke server mencatat fitur yang dibuka, hasilnya, lama prosesnya, dan ID akunmu (bukan namamu). Alamat IP perangkatmu dipakai sementara untuk membatasi permintaan yang terlalu sering, dan tidak disimpan di basis data. [ISI: berapa lama catatan teknis disimpan oleh server dan penyedianya.]
-- Kartu atau butir Daftar Periksa yang kamu hapus disembunyikan dari aplikasi, tetapi saat ini masih tersimpan di server (modul tidak termasuk: modul dihapus permanen). Saat akunmu dihapus, semuanya ikut terhapus permanen. [ISI: kapan data yang dihapus benar-benar dihapus permanen.]
+- Kartu atau butir Daftar Periksa yang kamu hapus disembunyikan dari aplikasi, tetapi masih tersimpan di server sampai akunmu dihapus (modul tidak termasuk: modul dihapus permanen). Saat akunmu dihapus, semuanya ikut terhapus permanen.
 
 ### Data yang hanya ada di HP atau browsermu
 
@@ -206,11 +201,9 @@ Tanpa persetujuan itu, layar Ngobrol terkunci dan tidak ada data akunmu yang dik
 
 ### Berapa lama data disimpan
 
-Cadangan basis data tidak bisa disunting per akun, jadi cadangan lama masih memuat akun yang sudah dihapus sampai cadangan itu tergantikan. Kalau cadangan lama dipulihkan, akun yang pernah dihapus harus dihapus lagi. Foto disimpan terpisah dari basis data, jadi tidak ikut cadangan basis data.
+Akun dan data di dalamnya, termasuk modul, disimpan sampai kamu menghapus akunmu. Akun yang lama tidak dipakai tidak dihapus otomatis. Hapus akun berlaku seketika, tanpa masa tenggang.
 
-[ISI: masa simpan data akun, data latihan, catatan persetujuan, dan catatan teknis server, serta apa yang terjadi pada data akun yang lama tidak dipakai.]
-
-[ISI: masa simpan modul bila akunnya lama tidak dipakai.]
+Cadangan basis data tidak bisa disunting per akun, jadi cadangan lama masih memuat akun yang sudah dihapus sampai cadangan itu tergantikan. Kalau cadangan lama dipulihkan, akun yang pernah dihapus harus dihapus lagi. Foto disimpan terpisah dari basis data, jadi tidak ikut cadangan basis data. Catatan teknis server juga tidak ikut terhapus saat akunmu dihapus.
 
 ### Keamanan
 
@@ -325,29 +318,26 @@ di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md) bagian
 "Yang harus dilengkapi manusia".
 
 <!-- ISI:MULAI -->
-21 bagian menunggu keputusan Khalifa:
+18 bagian menunggu keputusan Khalifa:
 
 1. **Tentang kebijakan ini** — nama badan pengelola dan alamatnya
 2. **Data yang kami simpan di server** — berapa lama catatan teknis disimpan oleh server dan penyedianya.
-3. **Data yang kami simpan di server** — kapan data yang dihapus benar-benar dihapus permanen.
-4. **Untuk apa datanya dipakai** — tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.
-5. **Siapa yang bisa melihat datamu** — siapa saja dan untuk keperluan apa.
-6. **Siapa yang bisa melihat datamu** — nama penyedia dan lokasi servernya.
-7. **Siapa yang bisa melihat datamu** — konfirmasi apakah ini akan berubah.
-8. **Fitur AI: siapa penyedianya** — penyedia model yang benar-benar menerima data menurut pengaturan di server, dan lokasinya.
-9. **Fitur AI: siapa penyedianya** — negara atau wilayah pemrosesan, dan dasar pengirimannya ke luar negeri.
-10. **Pertanyaan pelajaran: modul dan pencarian web** — aturan untuk modul dari guru atau penerbit (hak cipta) yang potongannya dikirim ke penyedia AI.
-11. **Pertanyaan pelajaran: modul dan pencarian web** — hasil pengecekan Khalifa: mesin pencari mana yang menerima pertanyaan, dan apakah permintaan agar data tidak dikumpulkan juga berlaku di sana.
-12. **Apa yang disimpan dari obrolanmu** — hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model: apa yang disimpan dan berapa lama.
-13. **Persetujuan orang tua atau wali** — apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.
-14. **Hak kamu dan orang tua atau walimu** — cara meminta penghapusan di OpenRouter dan penyedia model, bila ada.
-15. **Hak kamu dan orang tua atau walimu** — berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.
-16. **Berapa lama data disimpan** — masa simpan data akun, data latihan, catatan persetujuan, dan catatan teknis server, serta apa yang terjadi pada data akun yang lama tidak dipakai.
-17. **Berapa lama data disimpan** — masa simpan modul bila akunnya lama tidak dipakai.
-18. **Keamanan** — perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) antara aplikasi dan server, dan pencadangan.
-19. **Perubahan kebijakan** — kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.
-20. **Perubahan kebijakan** — cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.
-21. **Kontak** — kontak resmi tim LANJUT: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.
+3. **Untuk apa datanya dipakai** — tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.
+4. **Siapa yang bisa melihat datamu** — siapa saja dan untuk keperluan apa.
+5. **Siapa yang bisa melihat datamu** — nama penyedia dan lokasi servernya.
+6. **Siapa yang bisa melihat datamu** — konfirmasi apakah ini akan berubah.
+7. **Fitur AI: siapa penyedianya** — penyedia model yang benar-benar menerima data menurut pengaturan di server, dan lokasinya.
+8. **Fitur AI: siapa penyedianya** — negara atau wilayah pemrosesan, dan dasar pengirimannya ke luar negeri.
+9. **Pertanyaan pelajaran: modul dan pencarian web** — aturan untuk modul dari guru atau penerbit (hak cipta) yang potongannya dikirim ke penyedia AI.
+10. **Pertanyaan pelajaran: modul dan pencarian web** — hasil pengecekan Khalifa: mesin pencari mana yang menerima pertanyaan, dan apakah permintaan agar data tidak dikumpulkan juga berlaku di sana.
+11. **Apa yang disimpan dari obrolanmu** — hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model: apa yang disimpan dan berapa lama.
+12. **Persetujuan orang tua atau wali** — apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.
+13. **Hak kamu dan orang tua atau walimu** — cara meminta penghapusan di OpenRouter dan penyedia model, bila ada.
+14. **Hak kamu dan orang tua atau walimu** — berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.
+15. **Keamanan** — perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) antara aplikasi dan server, dan pencadangan.
+16. **Perubahan kebijakan** — kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.
+17. **Perubahan kebijakan** — cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.
+18. **Kontak** — kontak resmi tim LANJUT: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.
 <!-- ISI:SELESAI -->
 
 ## Lampiran C — Pertanyaan terbuka untuk Khalifa dan ahli hukum
