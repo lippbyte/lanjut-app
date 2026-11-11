@@ -211,7 +211,7 @@ yang menunjuk ke halaman akun ikut diganti di butir masing-masing (§4.2, §4.10
 kecuali isi kebijakan privasi (`lib/kebijakan-privasi.json`) yang menunggu review hukum.
 
 - **Tab tengah — label:** Ngobrol (tab ketiga dari lima, di antara Jenjang Saya dan Pilih Mapel; lingkaran lebih besar berisi ikon kelinci LANJUT putih — sejak 15 Okt 2026 menggantikan huruf "L", pilihan percakapan, belum disetujui PM; ikon yang sama versi biru menjadi avatar balasan AI di Ngobrol; membuka Ngobrol Bareng LANJUT)
-- **Nama fitur `/cek-posisi`:** Jalur Saya (judul bilah halaman dan kartu pintu di Data Akun, serta — khusus kelas 12 — label grid Beranda, tombol kartu "Mulai dari Sini", dan pintu Jenjang Saya; menggantikan nama lama). Sejak LANJUT_077b kartu pintu Data Akun tidak tampil untuk kelas 7–9.
+- **Nama fitur `/cek-posisi`:** Profil Saya (judul bilah halaman dan kartu pintu di Data Akun, serta — khusus kelas 12 — label grid Beranda, tombol kartu "Mulai dari Sini", dan pintu Jenjang Saya; menggantikan nama lama). Sejak LANJUT_077b kartu pintu Data Akun tidak tampil untuk kelas 7–9.
 - **Nama halaman akun `/akun`:** Data Akun (judul bilah halaman dan judul bagian di kartu akun; isi bagiannya tidak berubah)
 - **Data Akun — judul form ubah:** Ubah Data Akun
 
@@ -241,7 +241,7 @@ kartu "Belum perlu mikirin jadwal daftar") tidak dipakai lagi dan dihapus dari d
   - Ngobrol Bareng LANJUT — Cerita soal yang kamu suka, nanti dibantu cari arahnya. (tanpa kelas)
   - Eksplorasi Tujuan — Intip prodi kuliah: belajar apa dan lulusannya kerja di mana. (tanpa kelas)
   - Pilih Mapel — Lihat mapel yang mendukung jurusan incaranmu, dan mana yang ada di sekolahmu. (tanpa kelas)
-  - Jalur Saya — Lihat kamu lagi di tahap mana dan langkah berikutnya. (kelas 12; nama sejak LANJUT_074)
+  - Profil Saya — Lihat kamu lagi di tahap mana dan langkah berikutnya. (kelas 12; nama sejak LANJUT_013 seri v2)
   - Daftar Periksa — Satu per satu, tidak perlu sekaligus. (kelas 12)
 - **Seksi SMK (kelas 10–12 dengan jenis sekolah SMK, LANJUT_038):** Kalau kamu anak SMK
   - **Pembuka kelas 10–11:** Beberapa hal memang beda buat anak SMK. Yang ini sudah bisa kamu siapkan dari sekarang.
@@ -875,7 +875,7 @@ pilihan tampil lebih dulu di Arsip dan Latihan, tanpa label tambahan.
 - **Pilih Mapel kelas 12 — catatan pengelompokan:** Belum dicek ke sumber resmi. (di bawah judul setiap kelompok rumpun; LANJUT_079b, sebelumnya satu kalimat di atas semua kelompok: "Pengelompokan ini sementara, untuk memudahkan memilih. Belum dicek ke sumber resmi.")
 - **Pilih Mapel kelas 12 — judul kelompok:** [nama rumpun] (Ekonomi & Bisnis · Kesehatan · Sosial & Humaniora · Teknologi & Rekayasa)
 - **Pilih Mapel kelas 12 — tombol ubah rumpun:** Ubah rumpun favorit (membuka pilihan rumpun di layar yang sama)
-- **Rumpun favorit (Jalur Saya kelas 12 dan ajakan Pilih Mapel):** judul seksi (Profil Saya): Rumpun favorit · petunjuk: Pilih satu sampai tiga rumpun yang paling kamu minati. · tombol: Simpan rumpun
+- **Rumpun favorit (Profil Saya kelas 12 dan ajakan Pilih Mapel):** judul seksi (Profil Saya): Rumpun favorit · petunjuk: Pilih satu sampai tiga rumpun yang paling kamu minati. · tombol: Simpan rumpun
 - **Mapel Saya — judul & pengantar:** Mapel Saya · Pilih paling banyak 5 mapel yang kamu sukai atau ingin kamu perdalam. Mapel ini tampil lebih dulu di Arsip dan Latihan.
 - **Pilihan mapel — hitungan & batas:** [n] dari 5 dipilih · batas tercapai: Paling banyak [maks]. Lepas satu dulu untuk memilih yang lain. (dipakai juga untuk rumpun, maks. 3)
 - **Rumpun favorit — lebih dari batas (akun lama):** Pilihanmu ada [n], padahal paling banyak [maks]. Kurangi dulu, lalu simpan. (baru LANJUT_079b)
@@ -912,7 +912,7 @@ tersimpan, gagal, dan perlu kebijakan memakai kalimat §4.9 yang sudah ada. Teks
 - **Saran — hampir/sudah siap, sudah tryout, belum simulasi (jalur TKA):** Kalau sekolahmu mengadakan simulasi atau gladi TKA, ikut bisa bikin hari ujian terasa lebih akrab. · tombol: Lihat Persiapan Ujian
 - **Saran — hampir siap, langkah ujian beres:** Tinggal merapikan mapel yang masih lemah. Level-In bisa bantu memilihnya. · tombol: Lihat Level-In
 - **Saran — sudah siap, langkah ujian beres:** Persiapanmu sudah jalan. Menjaga ritme latihan dan istirahat yang cukup bisa jadi pegangan menjelang ujian. (tanpa tombol)
-- **Penafian Jalur Saya (diubah):** Posisi ini dihitung dari target prodi di Data Akun dan kemajuan Daftar Periksa, termasuk Persiapan Ujian. Jawaban kesiapanmu hanya mengubah saran, bukan tahapmu. Ini cuma gambaran, keputusannya tetap di tanganmu. (sebelumnya tanpa kalimat "termasuk Persiapan Ujian" dan kalimat kedua)
+- **Penafian Profil Saya (diubah):** Posisi ini dihitung dari target prodi di Data Akun dan kemajuan Daftar Periksa, termasuk Persiapan Ujian. Jawaban kesiapanmu hanya mengubah saran, bukan tahapmu. Ini cuma gambaran, keputusannya tetap di tanganmu. (sebelumnya tanpa kalimat "termasuk Persiapan Ujian" dan kalimat kedua)
 
 ### 4.21 Masuk dengan kode email, masuk dengan Google, dan landing page
 

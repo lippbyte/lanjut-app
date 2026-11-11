@@ -1,6 +1,6 @@
 # Lembar Review Draf Teks LANJUT
 
-Disusun otomatis dengan `npm run lembar-review-teks` (folder `LANJUT_App/server`) dari `docs/salinan-teks-lanjut.md` (sidik `9adf082a53c0`). Lembar ini **hanya bacaan**: mengisinya tidak mengubah teks apa pun di app. Bunyi teks disalin persis dari berkas sumber.
+Disusun otomatis dengan `npm run lembar-review-teks` (folder `LANJUT_App/server`) dari `docs/salinan-teks-lanjut.md` (sidik `07ec4201ca44`). Lembar ini **hanya bacaan**: mengisinya tidak mengubah teks apa pun di app. Bunyi teks disalin persis dari berkas sumber.
 
 **266 butir** dari 43 blok DRAF menunggu keputusan. 4 baris lain di blok DRAF tidak dijadikan butir karena sudah disetujui atau bukan teks yang tampil (lihat Lampiran).
 
@@ -82,12 +82,12 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 | Terima kebijakan privasi (jendela setelah login & halaman /terima-kebijakan) | 9 | 44–52 |
 | Ngobrol Bareng LANJUT | 29 | 53–81 |
 | Jenjang Saya (tab "Jenjang") | 25 | 82–106 |
-| Bagian khusus kelas 12 (Jalur Saya /cek-posisi, Daftar Periksa) — pengganti untuk kelas lain | 6 | 107–112 |
+| Bagian khusus kelas 12 (Profil Saya /cek-posisi, Daftar Periksa) — pengganti untuk kelas lain | 6 | 107–112 |
 | Daftar Periksa | 4 | 113–116 |
 | Daftar Periksa — Persiapan Event (SMP kelas 7–9, saklar bawaan mati) | 24 | 117–140 |
 | Eksplorasi Tujuan (F10) | 9 | 141–149 |
 | Pilih Mapel per rumpun (kelas 12) & Mapel Saya (kelas 7–11) | 11 | 150–160 |
-| Persiapan Ujian (Daftar Periksa) & Kesiapan Ujian (Jalur Saya) | 18 | 161–178 |
+| Persiapan Ujian (Daftar Periksa) & Kesiapan Ujian (Profil Saya) | 18 | 161–178 |
 | Eksplorasi Kampus (SMP & kelas 10–11) | 23 | 179–201 |
 | Arsip Belajar | 8 | 202–209 |
 | Arsip Belajar — Modul (materi unggahan) | 10 | 210–219 |
@@ -751,7 +751,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ---
 
-### 30. Nama "Jalur Saya" untuk /cek-posisi
+### 30. Nama "Profil Saya" untuk /cek-posisi
 
 - **Asal:** §4.1 Linimasa · LANJUT_074 · baris 214
 - **Tampil di:** Judul bilah halaman /cek-posisi dan kartu pintu di Data Akun; label grid Beranda, tombol "Mulai dari Sini", dan pintu Jenjang Saya.
@@ -759,7 +759,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 **Bunyi teks (persis dari berkas):**
 
-> **Nama fitur `/cek-posisi`:** Jalur Saya (judul bilah halaman dan kartu pintu di Data Akun, serta — khusus kelas 12 — label grid Beranda, tombol kartu "Mulai dari Sini", dan pintu Jenjang Saya; menggantikan nama lama). Sejak LANJUT_077b kartu pintu Data Akun tidak tampil untuk kelas 7–9.
+> **Nama fitur `/cek-posisi`:** Profil Saya (judul bilah halaman dan kartu pintu di Data Akun, serta — khusus kelas 12 — label grid Beranda, tombol kartu "Mulai dari Sini", dan pintu Jenjang Saya; menggantikan nama lama). Sejak LANJUT_077b kartu pintu Data Akun tidak tampil untuk kelas 7–9.
 
 **Keputusan:**
 
@@ -2115,7 +2115,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ---
 
-### 91. Pintu Jalur Saya (/cek-posisi; nama sejak LANJUT_074)
+### 91. Pintu Profil Saya (/cek-posisi; nama sejak LANJUT_013 seri v2)
 
 - **Asal:** §4.2 Khusus SMK → Jenjang Saya · LANJUT_037 · baris 244
 - **Tampil di:** Jenjang Saya, seksi pintu.
@@ -2123,7 +2123,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 **Bunyi teks (persis dari berkas):**
 
-> Jalur Saya — Lihat kamu lagi di tahap mana dan langkah berikutnya. (kelas 12; nama sejak LANJUT_074)
+> Profil Saya — Lihat kamu lagi di tahap mana dan langkah berikutnya. (kelas 12; nama sejak LANJUT_013 seri v2)
 
 **Keputusan:**
 
@@ -2470,13 +2470,13 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ---
 
-## Bagian khusus kelas 12 (Jalur Saya /cek-posisi, Daftar Periksa) — pengganti untuk kelas lain
+## Bagian khusus kelas 12 (Profil Saya /cek-posisi, Daftar Periksa) — pengganti untuk kelas lain
 
 ### 107. Pengganti kelas 7–11 — judul ⚠
 
 - **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 625
-- **Tampil di:** Jalur Saya /cek-posisi (kelas 7–11), menggantikan isinya. Tidak lagi di Daftar Periksa: kelas 10–11 sejak LANJUT_069 dan kelas 7–9 sejak LANJUT_076b melihat kalimat netral. Tidak tampil di Beranda.
-- **Dilihat oleh:** Kelas 10–11, hanya di layar /cek-posisi (Jalur Saya); kelas 7–9 tidak bisa membuka layar itu dari app sejak LANJUT_077b.
+- **Tampil di:** Profil Saya /cek-posisi (kelas 7–11), menggantikan isinya. Tidak lagi di Daftar Periksa: kelas 10–11 sejak LANJUT_069 dan kelas 7–9 sejak LANJUT_076b melihat kalimat netral. Tidak tampil di Beranda.
+- **Dilihat oleh:** Kelas 10–11, hanya di layar /cek-posisi (Profil Saya); kelas 7–9 tidak bisa membuka layar itu dari app sejak LANJUT_077b.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
 
 **Bunyi teks (persis dari berkas):**
@@ -2498,8 +2498,8 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 108. Pengganti kelas 7–11 — isi ⚠
 
 - **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 626
-- **Tampil di:** Sama dengan butir judul di atasnya: hanya Jalur Saya /cek-posisi (kelas 7–11); sejak LANJUT_076b tidak lagi di Daftar Periksa.
-- **Dilihat oleh:** Kelas 10–11, hanya di layar /cek-posisi (Jalur Saya); kelas 7–9 tidak bisa membuka layar itu dari app sejak LANJUT_077b.
+- **Tampil di:** Sama dengan butir judul di atasnya: hanya Profil Saya /cek-posisi (kelas 7–11); sejak LANJUT_076b tidak lagi di Daftar Periksa.
+- **Dilihat oleh:** Kelas 10–11, hanya di layar /cek-posisi (Profil Saya); kelas 7–9 tidak bisa membuka layar itu dari app sejak LANJUT_077b.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
 
 **Bunyi teks (persis dari berkas):**
@@ -2521,8 +2521,8 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 109. Pengganti kelas 7–11 — tombol
 
 - **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 627
-- **Tampil di:** Sama dengan butir judul di atasnya: hanya Jalur Saya /cek-posisi (kelas 7–11); sejak LANJUT_076b tidak lagi di Daftar Periksa.
-- **Dilihat oleh:** Kelas 10–11, hanya di layar /cek-posisi (Jalur Saya); kelas 7–9 tidak bisa membuka layar itu dari app sejak LANJUT_077b.
+- **Tampil di:** Sama dengan butir judul di atasnya: hanya Profil Saya /cek-posisi (kelas 7–11); sejak LANJUT_076b tidak lagi di Daftar Periksa.
+- **Dilihat oleh:** Kelas 10–11, hanya di layar /cek-posisi (Profil Saya); kelas 7–9 tidak bisa membuka layar itu dari app sejak LANJUT_077b.
 
 **Bunyi teks (persis dari berkas):**
 
@@ -2543,7 +2543,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 110. Pengganti tanpa kelas — judul
 
 - **Asal:** §4.11 Bukan kelas 12 (placeholder sementara) · LANJUT_035 · baris 628
-- **Tampil di:** Jalur Saya /cek-posisi dan Daftar Periksa (jaring pengaman; biasanya tertahan di gerbang isi kelas dulu). Tidak tampil di Beranda.
+- **Tampil di:** Profil Saya /cek-posisi dan Daftar Periksa (jaring pengaman; biasanya tertahan di gerbang isi kelas dulu). Tidak tampil di Beranda.
 - **Dilihat oleh:** Akun tanpa kelas.
 
 **Bunyi teks (persis dari berkas):**
@@ -3572,12 +3572,12 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 156. Pilihan rumpun favorit (1–3)
 
 - **Asal:** §4.19 Pilih Mapel per rumpun favorit dan Mapel Saya · LANJUT_079 · baris 878
-- **Tampil di:** Jalur Saya /cek-posisi (sesudah Langkah Berikutnya) dan ajakan di tab Pilih Mapel.
+- **Tampil di:** Profil Saya /cek-posisi (sesudah Langkah Berikutnya) dan ajakan di tab Pilih Mapel.
 - **Dilihat oleh:** Kelas 12.
 
 **Bunyi teks (persis dari berkas):**
 
-> **Rumpun favorit (Jalur Saya kelas 12 dan ajakan Pilih Mapel):** judul seksi (Profil Saya): Rumpun favorit · petunjuk: Pilih satu sampai tiga rumpun yang paling kamu minati. · tombol: Simpan rumpun
+> **Rumpun favorit (Profil Saya kelas 12 dan ajakan Pilih Mapel):** judul seksi (Profil Saya): Rumpun favorit · petunjuk: Pilih satu sampai tiga rumpun yang paling kamu minati. · tombol: Simpan rumpun
 
 **Keputusan:**
 
@@ -3638,7 +3638,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 159. Rumpun lebih dari batas (akun lama, LANJUT_079b)
 
 - **Asal:** §4.19 Pilih Mapel per rumpun favorit dan Mapel Saya · LANJUT_079 · baris 881
-- **Tampil di:** Pilihan rumpun favorit (Pilih Mapel, terbuka sendiri; dan Jalur Saya) selama pilihan masih lebih dari 3.
+- **Tampil di:** Pilihan rumpun favorit (Pilih Mapel, terbuka sendiri; dan Profil Saya) selama pilihan masih lebih dari 3.
 - **Dilihat oleh:** Akun kelas 12 yang menyimpan lebih dari 3 rumpun sebelum batas 3 berlaku.
 
 **Bunyi teks (persis dari berkas):**
@@ -3679,7 +3679,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ---
 
-## Persiapan Ujian (Daftar Periksa) & Kesiapan Ujian (Jalur Saya)
+## Persiapan Ujian (Daftar Periksa) & Kesiapan Ujian (Profil Saya)
 
 ### 161. Judul kategori "Persiapan Ujian"
 
@@ -3817,7 +3817,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 167. Judul & pertanyaan Kesiapan Ujian
 
 - **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 904
-- **Tampil di:** Jalur Saya /cek-posisi, sesudah Langkah Berikutnya.
+- **Tampil di:** Profil Saya /cek-posisi, sesudah Langkah Berikutnya.
 - **Dilihat oleh:** Kelas 12.
 
 **Bunyi teks (persis dari berkas):**
@@ -3839,7 +3839,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 168. Petunjuk Kesiapan Ujian
 
 - **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 905
-- **Tampil di:** Jalur Saya, di bawah pertanyaan.
+- **Tampil di:** Profil Saya, di bawah pertanyaan.
 - **Dilihat oleh:** Kelas 12.
 
 **Bunyi teks (persis dari berkas):**
@@ -3861,7 +3861,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 169. Empat pilihan kesiapan
 
 - **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 906
-- **Tampil di:** Jalur Saya, pilihan berbentuk pil; ketukan langsung menyimpan.
+- **Tampil di:** Profil Saya, pilihan berbentuk pil; ketukan langsung menyimpan.
 - **Dilihat oleh:** Kelas 12.
 
 **Bunyi teks (persis dari berkas):**
@@ -3883,7 +3883,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 170. Status "Menyimpan…"
 
 - **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 907
-- **Tampil di:** Jalur Saya, di bawah pilihan selama menyimpan.
+- **Tampil di:** Profil Saya, di bawah pilihan selama menyimpan.
 - **Dilihat oleh:** Kelas 12.
 
 **Bunyi teks (persis dari berkas):**
@@ -3905,7 +3905,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 171. Ringkasan langkah Persiapan Ujian
 
 - **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 908
-- **Tampil di:** Jalur Saya, kartu saran; hanya bila jalurnya punya butir Persiapan Ujian.
+- **Tampil di:** Profil Saya, kartu saran; hanya bila jalurnya punya butir Persiapan Ujian.
 - **Dilihat oleh:** Kelas 12.
 
 **Bunyi teks (persis dari berkas):**
@@ -3927,7 +3927,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 172. Saran: belum siap
 
 - **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 909
-- **Tampil di:** Jalur Saya, kartu saran.
+- **Tampil di:** Profil Saya, kartu saran.
 - **Dilihat oleh:** Kelas 12.
 
 **Bunyi teks (persis dari berkas):**
@@ -3949,7 +3949,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 173. Saran: mulai siap
 
 - **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 910
-- **Tampil di:** Jalur Saya, kartu saran.
+- **Tampil di:** Profil Saya, kartu saran.
 - **Dilihat oleh:** Kelas 12.
 
 **Bunyi teks (persis dari berkas):**
@@ -3971,7 +3971,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 174. Saran: belum tryout
 
 - **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 911
-- **Tampil di:** Jalur Saya, kartu saran.
+- **Tampil di:** Profil Saya, kartu saran.
 - **Dilihat oleh:** Kelas 12.
 
 **Bunyi teks (persis dari berkas):**
@@ -3993,7 +3993,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 175. Saran: belum simulasi/gladi
 
 - **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 912
-- **Tampil di:** Jalur Saya, kartu saran (jalur TKA).
+- **Tampil di:** Profil Saya, kartu saran (jalur TKA).
 - **Dilihat oleh:** Kelas 12.
 
 **Bunyi teks (persis dari berkas):**
@@ -4015,7 +4015,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 176. Saran: hampir siap, langkah beres
 
 - **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 913
-- **Tampil di:** Jalur Saya, kartu saran.
+- **Tampil di:** Profil Saya, kartu saran.
 - **Dilihat oleh:** Kelas 12.
 
 **Bunyi teks (persis dari berkas):**
@@ -4037,7 +4037,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 ### 177. Saran: sudah siap, langkah beres
 
 - **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 914
-- **Tampil di:** Jalur Saya, kartu saran (tanpa tombol).
+- **Tampil di:** Profil Saya, kartu saran (tanpa tombol).
 - **Dilihat oleh:** Kelas 12.
 
 **Bunyi teks (persis dari berkas):**
@@ -4056,15 +4056,15 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ---
 
-### 178. Penafian Jalur Saya (diubah)
+### 178. Penafian Profil Saya (diubah)
 
 - **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 915
-- **Tampil di:** Jalur Saya, paling bawah.
+- **Tampil di:** Profil Saya, paling bawah.
 - **Dilihat oleh:** Kelas 12.
 
 **Bunyi teks (persis dari berkas):**
 
-> **Penafian Jalur Saya (diubah):** Posisi ini dihitung dari target prodi di Data Akun dan kemajuan Daftar Periksa, termasuk Persiapan Ujian. Jawaban kesiapanmu hanya mengubah saran, bukan tahapmu. Ini cuma gambaran, keputusannya tetap di tanganmu. (sebelumnya tanpa kalimat "termasuk Persiapan Ujian" dan kalimat kedua)
+> **Penafian Profil Saya (diubah):** Posisi ini dihitung dari target prodi di Data Akun dan kemajuan Daftar Periksa, termasuk Persiapan Ujian. Jawaban kesiapanmu hanya mengubah saran, bukan tahapmu. Ini cuma gambaran, keputusannya tetap di tanganmu. (sebelumnya tanpa kalimat "termasuk Persiapan Ujian" dan kalimat kedua)
 
 **Keputusan:**
 

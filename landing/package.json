@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "node --test tests/*.test.mjs",
     "periksa-tipe": "node ../LANJUT_App/node_modules/typescript/bin/tsc -p tsconfig.json",
-    "hitung-apk": "node scripts/hitung-apk.mjs"
+    "hitung-apk": "node scripts/hitung-apk.mjs",
+    "periksa-gerbang-landing": "node scripts/periksa-gerbang-landing.mjs"
   },
   "dependencies": {
     "react": "19.2.8",
