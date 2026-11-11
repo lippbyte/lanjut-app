@@ -92,8 +92,10 @@ telepon, email, dan nomor 16 angka seperti NIK di pesan disamarkan otomatis,
 tetapi nama atau alamat yang ditulis anak sendiri tetap terkirim. Isi
 obrolan tidak disimpan di server LANJUT dan hilang dari aplikasi saat
 ditutup. LANJUT meminta penyedia yang tidak mengumpulkan data pengguna;
-apa yang disimpan penyedia dan berapa lama mengikuti kebijakan mereka
-([ISI: hasil pengecekan kebijakan OpenRouter dan penyedia model]). Pesan
+apa yang disimpan penyedia dan berapa lama mengikuti kebijakan mereka. Menurut dokumentasi OpenRouter, OpenRouter tidak menyimpan
+isi pesan kecuali pemilik akun menyalakan pencatatan, atau isinya ditandai
+untuk ditinjau demi keselamatan anak, dan tetap menyimpan data teknis seperti
+jumlah token ([ISI: pengaturan pencatatan di akun OpenRouter LANJUT dan penyedia model yang dipakai]). Pesan
 yang menunjukkan tanda bahaya serius tidak diteruskan ke AI; LANJUT langsung
 menampilkan kartu layanan bantuan (bila obrolan dilanjutkan, isi pesan itu
 tetap tidak ikut terkirim; di riwayat obrolan, pesan itu diganti catatan
