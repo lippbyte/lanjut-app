@@ -68,8 +68,14 @@ kebijakan (dicocokkan dengan migrasi 001–016) dan di tes kebijakan.
 | HP1 | Riwayat obrolan hanya di memori app; hilang saat app ditutup, keluar, atau ganti akun. | `app/providers/ObrolanProvider.tsx:37-45` (tanpa AsyncStorage; provider berkunci id pengguna) | terbukti |
 | HP2 | Riwayat tidak disimpan di HP maupun di server LANJUT. | `app/providers/ObrolanProvider.tsx:40`; `tes/ngobrol.test.js:243` | terbukti |
 | HP3 | Setiap kali siswa mengirim pesan, riwayat ikut dikirim ke penyedia AI. | `app/providers/ObrolanProvider.tsx:72-77`; `srv/modul/ngobrol/ngobrol.layanan.js:181`, `:193` | terbukti |
-| N1 | Tidak mengumpulkan lokasi, kontak, foto, suara, nomor HP, tanggal lahir/usia, nama sekolah. | Lampiran A "Yang tidak dikumpulkan app" (skema `mig/001`–`016`, dependensi `app/package.json`) | terbukti |
+| N1 | Tidak mengumpulkan lokasi, kontak, suara, nomor HP, tanggal lahir/usia, nama sekolah. Foto hanya yang dipilih atau diambil siswa untuk Portofolio (PF1). | Lampiran A "Yang tidak dikumpulkan app" (skema `mig/001`–`016`, dependensi `app/package.json`) | terbukti |
 | N2 | Tidak memakai layanan analitik atau iklan pihak ketiga. | Lampiran A (dependensi app per 3 Okt 2026; tidak berubah di 049–055) | terbukti |
+| PF1 | Portofolio menyimpan catatan dan foto yang dipilih atau diambil siswa; 3 foto per catatan, 30 per akun, 5 MB per foto. | `srv/modul/butir-bukti/butir-bukti.layanan.js` (`BATAS_FOTO`); `tes/portofolio.test.js` | terbukti |
+| PF2 | Keterangan tersembunyi di foto, termasuk lokasi, dihapus sebelum disimpan. | `srv/modul/butir-bukti/foto-murni.js`; `tes/foto-murni.test.js`; `tes/portofolio.test.js` | terbukti |
+| PF3 | Foto privat: tanpa alamat umum, hanya terbuka lewat akun pemiliknya, siswa lain tidak bisa melihatnya. | `srv/modul/butir-bukti/butir-bukti.rute.js`; `tes/portofolio.test.js` ("Tidak ada jalur publik ke berkas") | terbukti |
+| PF4 | Pengelola layanan secara teknis bisa mengakses tempat penyimpanan foto. | Foto disimpan sebagai berkas di server (`srv/modul/butir-bukti/penyimpanan-foto.js`) | perlu dicek manusia (siapa yang punya akses ke server) |
+| PF5 | Catatan dan foto bisa dihapus sendiri oleh siswa. | `srv/modul/butir-bukti/butir-bukti.rute.js`; `tes/portofolio.test.js` ("Hapus foto dan hapus butir menghilangkan berkas dari disk") | terbukti |
+| PF6 | Portofolio diuji oleh kelompok kecil; saklarnya hanya menyala di profil build pilot. | `app/eas.json` profil `pilot`; `app/lib/fiturApp.ts` | perlu dicek manusia (siapa kelompok ujinya) |
 | U1 | Data dipakai untuk menjawab pesan di Ngobrol lewat penyedia AI. | `srv/modul/ngobrol/ngobrol.layanan.js:380-434` | terbukti |
 | V1 | Akun lain tidak bisa melihat data, termasuk modul. | `tes/modul.test.js:250`; `tes/ngobrol-materi.test.js:131` | terbukti |
 | V2 | Penyedia AI pihak ketiga hanya menerima data yang dikirim untuk fitur AI. | `srv/modul/ngobrol/penyedia-ai.js:3-4` (satu-satunya pengirim ke luar); `tes/ngobrol.test.js:560` | terbukti |
@@ -141,16 +147,17 @@ kebijakan (dicocokkan dengan migrasi 001–016) dan di tes kebijakan.
 | B1 | Fitur AI bisa dimatikan; selama mati, balasan uji coba bertanda dan pesan tidak dikirim ke penyedia AI. | `srv/modul/ngobrol/ngobrol.layanan.js:297`, `:385`; `app/components/screens/NgobrolScreen.tsx:210`; `tes/ngobrol.test.js:398` | terbukti |
 | B2 | Modul dan web bisa dimatikan terpisah. | `srv/modul/ngobrol/ngobrol.layanan.js:278-290`; `tes/ngobrol-materi.test.js:193`, `:290` | terbukti · 055 |
 | B3 | Batas pesan per akun per 5 menit dan per 24 jam; batas web per hari. | `srv/modul/ngobrol/ngobrol.rute.js:51-52`; `mig/014_ngobrol.sql:13`, `:16`; `tes/ngobrol.test.js:262`; W4 | terbukti |
-| P1 | Persetujuan orang tua/wali lewat surat; dicatat ke akun; status terlihat di Jalur Saya. | `srv/db/persetujuan/persetujuan-ortu.js:18-20`; `app/components/screens/AkunScreen.tsx:278-279` | terbukti (siapa yang menjalankan skrip pencatatan belum ditetapkan; kalimat v1 "Sekolah lalu mencatatnya" diganti, lihat G7) |
+| P1 | Persetujuan orang tua/wali lewat surat; dicatat ke akun; status terlihat di Data Akun. | `srv/db/persetujuan/persetujuan-ortu.js:18-20`; `app/components/screens/AkunScreen.tsx:278-279` | terbukti (siapa yang menjalankan skrip pencatatan belum ditetapkan; kalimat v1 "Sekolah lalu mencatatnya" diganti, lihat G7) |
 | P2 | AI aktif hanya bila persetujuan ortu/wali tercatat, tidak dicabut, dan kebijakan versi berlaku diterima. | `srv/modul/persetujuan/persetujuan.layanan.js:37-56`; `srv/modul/ngobrol/ngobrol.layanan.js:381-383`; `tes/persetujuan.test.js:91-172`; `tes/ngobrol.test.js:136` | terbukti |
 | P3 | Berlaku untuk semua akun karena LANJUT tidak menanyakan usia. | `srv/modul/persetujuan/persetujuan.layanan.js:43-49` (tanpa syarat usia); N1 | terbukti |
 | P4 | Tanpa persetujuan: layar Ngobrol terkunci, tidak ada data akun yang dikirim ke penyedia AI, fitur lain tetap jalan. | `app/components/screens/NgobrolScreen.tsx:51`; `srv/modul/ngobrol/ngobrol.layanan.js:381-383` (sebelum apa pun dikirim); `tes/ngobrol.test.js:136` (penyedia tidak dipanggil); gerbang hanya dipakai rute Ngobrol (`tes/ngobrol.test.js:560`) | terbukti |
-| H1 | Data profil bisa diubah sendiri di Jalur Saya. | `srv/modul/pengguna/pengguna.rute.js:10` | terbukti (tidak berubah dari v1) |
+| H1 | Data profil bisa diubah sendiri di Data Akun. | `srv/modul/pengguna/pengguna.rute.js:10` | terbukti (tidak berubah dari v1) |
 | H2 | Modul bisa dihapus permanen sendiri, satu per satu atau semuanya. | `app/hooks/useModul.ts:72-90`; `app/components/screens/ModulScreens.tsx:35`, `:57-69`; `tes/modul.test.js:274` | terbukti |
-| H3 | Fitur hapus akun di app belum ada. | Daftar rute `srv/modul/*/*.rute.js` (tidak ada rute hapus akun) | terbukti |
+| H3 | Akun dan datanya bisa dihapus sendiri di Data Akun, seketika, bila saklar build menyala. Salinan data bisa diunduh, memuat keterangan foto tanpa isinya. | `srv/modul/data-pengguna/data-pengguna.layanan.js`; `tes/hapus-akun-ekspor.test.js`; saklar di `app/lib/fiturApp.ts` | terbukti |
 | H4 | Isi obrolan tidak perlu dihapus dari server karena tidak disimpan. | S1 | terbukti |
 | H5 | Setelah pencabutan dicatat, AI tertutup mulai pesan berikutnya; fitur lain tetap jalan. | `srv/modul/ngobrol/ngobrol.layanan.js:381` (gerbang dicek tiap permintaan); `app/providers/ObrolanProvider.tsx:96-98`; `tes/ngobrol.test.js:136`; `tes/persetujuan.test.js:132` | terbukti |
 | H6 | Pencabutan tidak menghapus data yang sudah dikirim ke penyedia AI. | `srv/modul/ngobrol/penyedia-ai.js:50-88` (hanya permintaan chat; tidak ada permintaan hapus ke penyedia) | terbukti |
+| H7 | Cadangan basis data tidak bisa disunting per akun, jadi cadangan lama masih memuat data yang sudah dihapus sampai tergantikan. Catatan teknis server tidak ikut terhapus. | `app/docs/audit-hapus-akun-ekspor.md` bagian 1 | terbukti |
 | KM1 | Data AI dikirim server ke penyedia, bukan langsung dari HP, lewat HTTPS. | `app/providers/ObrolanProvider.tsx:77` (app hanya memanggil `/ngobrol`); `srv/config/env.js:75-77` (selain localhost uji, wajib `https://`) | terbukti |
 | KM2 | Kunci akses penyedia AI hanya di server. | `srv/config/env.js:69`; `srv/modul/ngobrol/penyedia-ai.js:6`, `:59` | terbukti |
 | PB1 | Versi naik → persetujuan versi lama tidak membuka fitur AI. | `srv/modul/persetujuan/persetujuan.layanan.js:38-41`; `tes/persetujuan.test.js:157` | terbukti |
@@ -163,7 +170,7 @@ Kalimat surat adalah ringkasan kalimat kebijakan di atas.
 
 | Kalimat di surat | Baris kebijakan | Status |
 |---|---|---|
-| Data yang disimpan LANJUT (akun, daftar persiapan, kartu, latihan, modul, keamanan akun); kata sandi acak; tidak mengumpulkan lokasi, kontak, foto, nomor HP, usia, nama sekolah | R1, R2, D2, N1 | terbukti |
+| Data yang disimpan LANJUT (akun, daftar persiapan, kartu, latihan, modul, keamanan akun); kata sandi acak; tidak mengumpulkan lokasi, kontak, nomor HP, usia, nama sekolah; foto hanya yang diunggah anak ke Portofolio | R1, R2, D2, N1, PF1 | terbukti |
 | Balasan dari OpenRouter yang meneruskan ke perusahaan penjalan model; dapat diproses di luar Indonesia | A2, A3, A5 | perlu dicek manusia (`[ISI]`) |
 | Dikirim: pesan + riwayat (hingga 20), kelas, jenis sekolah, prodi impian, gaya belajar | A6–A9 | terbukti |
 | Pertanyaan pelajaran: hingga 3 potongan modul; web bila diaktifkan, hanya pertanyaan | M1–M3, W1–W3 | terbukti · 055 (W3: perlu dicek manusia) |
@@ -173,6 +180,8 @@ Kalimat surat adalah ringkasan kalimat kebijakan di atas.
 | Tanda bahaya serius tidak diteruskan ke AI; kartu bantuan; bila obrolan dilanjutkan, isinya tetap tidak terkirim (diganti catatan singkat di riwayat) | K2, K4 | terbukti |
 | Mencabut kapan saja; AI tertutup mulai pesan berikutnya; tidak menghapus data yang sudah dikirim | H5, H6 | terbukti |
 | Tanpa persetujuan, fitur AI terkunci | P4 | terbukti |
+| Portofolio diuji kelompok kecil; foto dipilih anak, keterangan tersembunyi dihapus, privat, bisa dihapus anak; pengelola secara teknis bisa mengakses penyimpanan | PF1–PF6 | terbukti (PF4, PF6: perlu dicek manusia) |
+| Anak bisa mengunduh data dan menghapus akun sendiri bila fiturnya dibuka; cadangan lama bisa masih memuat data; catatan teknis dan pesan ke penyedia AI tidak ikut terhapus | H3, H6, H7 | terbukti |
 
 ## Klaim yang diganti atau dihapus
 

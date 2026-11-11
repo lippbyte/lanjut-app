@@ -107,7 +107,7 @@ Dipakai di: beranda, notifikasi, layar kosong.
 
 - **Tenggat terdekat:** Berikutnya: pendaftaran TKA — tutup 27 September
 - **Tenggat terdekat yang belum dimulai:** Berikutnya: pelaksanaan TKA — mulai 26 Oktober
-  *(Tahapan yang belum dimulai dihitung ke tanggal mulai; yang sudah berjalan — termasuk pada hari pertamanya — ke tanggal tutup. Berlaku sama di Beranda dan Jalur Saya `/cek-posisi`, LANJUT_021.)*
+  *(Tahapan yang belum dimulai dihitung ke tanggal mulai; yang sudah berjalan — termasuk pada hari pertamanya — ke tanggal tutup. Berlaku sama di Beranda dan Profil Saya `/cek-posisi`, LANJUT_021.)*
 - **Sesudah lewat:** Sudah lewat. Tenggat berikutnya ada di bawah.
 - **Penanda sumber:** Diperbarui dari laman resmi SNPMB · dicek 6 Agustus 2026
   *(Nama lembaga mengikuti `url_sumber` tiap tahapan, mis. "laman resmi Kemendikdasmen" untuk TKA — lihat `LANJUT_App/lib/sumber.ts`.)*
@@ -128,7 +128,7 @@ Dipakai di: beranda, notifikasi, layar kosong.
   - **Kelas 12:**
     - Judul: Mulai dari Sini
     - Penjelas: Cek posisi persiapanmu sekarang dan langkah yang perlu diambil.
-    - Tombol: Jalur Saya (ke `/cek-posisi`; nama sejak LANJUT_074)
+    - Tombol: Profil Saya (ke `/cek-posisi`; nama sejak LANJUT_013 seri v2)
   - **Tanpa kelas / umum:**
     - Judul: Mulai dari Sini
     - Penjelas: Mulai kenali pilihan jenjang dan arah langkahmu.
@@ -151,7 +151,7 @@ Dipakai di: beranda, notifikasi, layar kosong.
   - Level-In
   - ~~Ngobrol Bareng~~ — dihapus dari grid semua jenjang sejak LANJUT_075b (Ngobrol ada di tab tengah navigasi)
   - Cerita Alumni
-  - Jalur Saya (`/cek-posisi`; nama sejak LANJUT_074)
+  - Profil Saya (`/cek-posisi`; nama sejak LANJUT_013 seri v2)
   - Pilih Mapel
   - Daftar Periksa
 
@@ -176,7 +176,7 @@ LANJUT_074 — lihat blok LANJUT_074 di bawah. Bunyi sapaan tetap.
 disetujui Khalifa.** Info Penting di Beranda tidak menampilkan tahapan yang tanggal selesainya
 sudah lewat menurut tanggal hari ini di Asia/Jakarta (WIB). Tahapan yang selesai hari ini tetap
 tampil sampai akhir hari; tahapan tanpa tanggal selesai tetap tampil walau tanggal mulainya
-sudah lewat. Kartu tenggat (sejak LANJUT_074 kartu hero) dan Jalur Saya `/cek-posisi` memakai "hari ini" yang sama (`hariIniWib` di
+sudah lewat. Kartu tenggat (sejak LANJUT_074 kartu hero) dan Profil Saya `/cek-posisi` memakai "hari ini" yang sama (`hariIniWib` di
 `lib/linimasa.ts`). Data tidak dihapus. Bila tidak ada data terverifikasi sama sekali, seksi
 tetap hilang (aturan LANJUT_066); kalimat di bawah hanya tampil bila semua tahapan
 terverifikasi sudah lewat, di bawah judul seksi "Info Penting".
@@ -340,7 +340,7 @@ menampilkan apa pun. Butir bertanda LANJUT_076b diubah di task itu.
 sumber resmi. DRAF, belum disetujui Khalifa.** Halaman Daftar Periksa kelas 7–9 tidak
 lagi memuat placeholder §4.11 ("Bagian ini untuk kelas 12. … Versi untuk kelas [kelas]
 sedang kami siapkan." dan tombol "Buka Jenjang Saya"); placeholder itu masih dipakai
-di layar `/cek-posisi` (Jalur Saya) dan untuk akun tanpa kelas. Kalimat pengganti SMP memakai
+di layar `/cek-posisi` (Profil Saya) dan untuk akun tanpa kelas. Kalimat pengganti SMP memakai
 kalimat netral LANJUT_069 kelas 10–11 (§4.2), berlaku juga saat saklar mati — pilihan
 percakapan, belum disetujui PM. Materi event bisa kartu Arsip milik sendiri atau kartu
 kurasi tim yang terverifikasi dengan sumber resmi (`penyedia` + `url_sumber` https).
@@ -608,17 +608,17 @@ muncul (dan wajib) bila kelas yang dipilih 10–12; kelas 7–9 tidak ditanya
 ### 4.11 Bukan kelas 12 (placeholder sementara)
 
 **LANJUT_035 — DRAF belum disetujui Khalifa.** Linimasa (bagian tenggat &
-tahapan), Daftar Periksa, dan Jalur Saya `/cek-posisi` berisi SNBP/SNBT/TKA, jadi hanya
+tahapan), Daftar Periksa, dan Profil Saya `/cek-posisi` berisi SNBP/SNBT/TKA, jadi hanya
 tampil untuk kelas 12. Kelas 7–11 dan akun tanpa kelas melihat placeholder
 ini sampai konten per jenjang didesain (`components/screens/KhususKelas12.tsx`).
 Pengecualian sejak LANJUT_069: Daftar Periksa kelas 10–11 memakai kalimat netral
 di §4.2 (blok LANJUT_069), bukan placeholder ini; sejak LANJUT_076b kelas 7–9 juga
 (§4.4 blok LANJUT_076b), jadi di Daftar Periksa placeholder ini tinggal untuk akun
-tanpa kelas. Di layar `/cek-posisi` (Jalur Saya) tetap tampil untuk kelas 7–11; sejak
+tanpa kelas. Di layar `/cek-posisi` (Profil Saya) tetap tampil untuk kelas 7–11; sejak
 LANJUT_077b kelas 7–9 tidak lagi bisa membuka layar itu dari app (kartu pintunya di Data
 Akun disembunyikan untuk SMP), jadi dalam praktik placeholder ini dilihat kelas 10–11
 dan akun tanpa kelas. Letak sebenarnya (diperiksa
-LANJUT_071): placeholder ini hanya dirender di layar Jalur Saya `/cek-posisi` dan Daftar Periksa;
+LANJUT_071): placeholder ini hanya dirender di layar Profil Saya `/cek-posisi` dan Daftar Periksa;
 Beranda (Linimasa) untuk kelas selain 12 sejak LANJUT_064 tidak menampilkan bagian
 tenggat maupun placeholder ini.
 
@@ -862,7 +862,7 @@ dari rumpun favoritnya, dikelompokkan per rumpun (judul kelompok = nama rumpun).
 Pengelompokan rumpun → mapel diturunkan dari data prodi yang **belum terverifikasi**;
 keputusan PM di LANJUT_079b: pengelompokan tetap tampil, dengan catatan "Belum dicek ke
 sumber resmi." di bawah judul **setiap** kelompok. Pilihan rumpun favorit (1–3)
-juga tampil sebagai seksi di layar Jalur Saya `/cek-posisi`, dan "Ubah rumpun favorit"
+juga tampil sebagai seksi di layar Profil Saya `/cek-posisi`, dan "Ubah rumpun favorit"
 membukanya di layar Pilih Mapel itu sendiri. Akun kelas 12 lama yang menyimpan lebih dari
 3 rumpun (LANJUT_079b): pilihan rumpun langsung terbuka di Pilih Mapel, dan tombol Simpan
 muncul begitu pilihan dikurangi menjadi 3 atau kurang. Kelas 10–11: Mapel Saya di atas F3. Kelas 7–9: tab hanya
@@ -875,13 +875,13 @@ pilihan tampil lebih dulu di Arsip dan Latihan, tanpa label tambahan.
 - **Pilih Mapel kelas 12 — catatan pengelompokan:** Belum dicek ke sumber resmi. (di bawah judul setiap kelompok rumpun; LANJUT_079b, sebelumnya satu kalimat di atas semua kelompok: "Pengelompokan ini sementara, untuk memudahkan memilih. Belum dicek ke sumber resmi.")
 - **Pilih Mapel kelas 12 — judul kelompok:** [nama rumpun] (Ekonomi & Bisnis · Kesehatan · Sosial & Humaniora · Teknologi & Rekayasa)
 - **Pilih Mapel kelas 12 — tombol ubah rumpun:** Ubah rumpun favorit (membuka pilihan rumpun di layar yang sama)
-- **Rumpun favorit (Jalur Saya kelas 12 dan ajakan Pilih Mapel):** judul seksi (Jalur Saya): Rumpun favorit · petunjuk: Pilih satu sampai tiga rumpun yang paling kamu minati. · tombol: Simpan rumpun
+- **Rumpun favorit (Jalur Saya kelas 12 dan ajakan Pilih Mapel):** judul seksi (Profil Saya): Rumpun favorit · petunjuk: Pilih satu sampai tiga rumpun yang paling kamu minati. · tombol: Simpan rumpun
 - **Mapel Saya — judul & pengantar:** Mapel Saya · Pilih paling banyak 5 mapel yang kamu sukai atau ingin kamu perdalam. Mapel ini tampil lebih dulu di Arsip dan Latihan.
 - **Pilihan mapel — hitungan & batas:** [n] dari 5 dipilih · batas tercapai: Paling banyak [maks]. Lepas satu dulu untuk memilih yang lain. (dipakai juga untuk rumpun, maks. 3)
 - **Rumpun favorit — lebih dari batas (akun lama):** Pilihanmu ada [n], padahal paling banyak [maks]. Kurangi dulu, lalu simpan. (baru LANJUT_079b)
 - **Pilihan mapel — tombol:** Simpan mapel
 
-### 4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya)
+### 4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya)
 
 **LANJUT_App (15 Okt 2026) — pilihan percakapan, belum disetujui PM. DRAF, belum disetujui
 Khalifa.** Kategori keempat Daftar Periksa, sesudah Jalur Pembiayaan (data
@@ -889,8 +889,8 @@ Khalifa.** Kategori keempat Daftar Periksa, sesudah Jalur Pembiayaan (data
 melihat tiga butir, jalur SNBT satu, jalur SNBP tidak ada; kelas 11 jalur TKA hanya butir
 Level-In. Isinya saran tim, bukan syarat resmi: tanpa tanggal, tanpa nama penyelenggara tryout,
 `url_sumber` kosong, dan tidak memicu catatan "Perlu dicek ke laman resmi SNPMB". Centangnya ikut
-persen Daftar Periksa, jadi ikut menentukan tahap Jalur Saya. Seksi Kesiapan Ujian ada di layar
-Jalur Saya (kelas 12, sesudah Langkah Berikutnya): jawaban tersimpan di akun (`kesiapan_ujian`),
+persen Daftar Periksa, jadi ikut menentukan tahap Profil Saya. Seksi Kesiapan Ujian ada di layar
+Profil Saya (kelas 12, sesudah Langkah Berikutnya): jawaban tersimpan di akun (`kesiapan_ujian`),
 hanya mengubah saran, tidak pernah mengubah tahap, dan tidak dikirim ke penyedia AI. Teks
 tersimpan, gagal, dan perlu kebijakan memakai kalimat §4.9 yang sudah ada. Teks di
 `lib/kesiapanUjian.ts` (`KESIAPAN_UJIAN`, `TEKS_KESIAPAN`, `saranKesiapan`).
@@ -1054,3 +1054,7 @@ Teks tidak dimenangkan lewat perdebatan di rapat.
 2. **Nama fitur: "Latihan Hari Ini" atau "Sesi Latihan"?** Yang pertama lebih memicu kebiasaan; yang kedua lebih netral untuk pemakaian tidak harian.
 3. **Alamat domain final** — seluruh teks bagikan di Bagian 7 memakai `lanjut.app` sebagai contoh sementara.
 4. **Apakah hitungan mundur ditampilkan di beranda atau hanya di Linimasa** — menyangkut kaidah nomor 2 di Bagian 0.
+
+---
+
+**Nama layar:** `/cek-posisi` bernama Profil Saya sejak LANJUT_013 seri v2 (K15). Nama lamanya, Jalur Saya, masih tertulis di judul blok LANJUT_074 sebagai catatan sejarah, dan di empat tempat yang menjadi penanda alat lembar review dan tes di `lanjut_app` (lihat `docs/audit-rujukan-v2-repo-induk.md`).

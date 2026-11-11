@@ -105,13 +105,13 @@ export const FITUR: Fitur[] = [
   },
   {
     id: 'jalur-saya',
-    nama: 'Jalur Saya',
+    nama: 'Profil Saya',
     status: 'tersedia',
     kelompok: 'siap',
     ringkas: 'Menunjukkan kamu sedang di tahap mana dalam persiapan masuk kuliah, lalu langkah yang cocok berikutnya.',
     singkat: 'Lihat tahap persiapanmu sekarang dan langkah yang cocok berikutnya.',
     untuk: 'Kelas 12',
-    gambar: { berkas: 'jalur-saya.webp', alt: 'Layar Jalur Saya: posisi Tahap 2 dari 4, Pemantapan Awal, dengan daftar fokus sekarang.' },
+    gambar: { berkas: 'jalur-saya.webp', alt: 'Layar Profil Saya: posisi Tahap 2 dari 4, Pemantapan Awal, dengan daftar fokus sekarang.' },
   },
   {
     id: 'daftar-periksa',

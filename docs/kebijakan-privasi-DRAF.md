@@ -437,7 +437,7 @@ di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md) bagian
 14. **Temuan LANJUT_056: teks lain yang belum menyebut AI.** (a) Peringatan
     di formulir unggah modul (`lib/modul.ts`) belum menyebut bahwa potongan
     modul bisa dikirim ke penyedia AI; catatan itu baru ada di layar Ngobrol.
-    (b) Salinan teks §4.13 (Jalur Saya) dan §4.14 (jendela terima kebijakan)
+    (b) Salinan teks §4.13 (Data Akun) dan §4.14 (jendela terima kebijakan)
     masih menyebut "fitur AI nanti". (c) Penafian layar Gaya Belajar
     ("Disimpan di akunmu dan dipakai untuk menyesuaikan tips belajar di
     LANJUT.") belum menyebut bahwa gaya belajar juga dikirim ke penyedia AI.

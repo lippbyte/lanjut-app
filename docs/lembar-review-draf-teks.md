@@ -1,6 +1,6 @@
 # Lembar Review Draf Teks LANJUT
 
-Disusun otomatis dengan `npm run lembar-review-teks` (folder `LANJUT_App/server`) dari `docs/salinan-teks-lanjut.md` (sidik `9c190e68c5d1`). Lembar ini **hanya bacaan**: mengisinya tidak mengubah teks apa pun di app. Bunyi teks disalin persis dari berkas sumber.
+Disusun otomatis dengan `npm run lembar-review-teks` (folder `LANJUT_App/server`) dari `docs/salinan-teks-lanjut.md` (sidik `9adf082a53c0`). Lembar ini **hanya bacaan**: mengisinya tidak mengubah teks apa pun di app. Bunyi teks disalin persis dari berkas sumber.
 
 **266 butir** dari 43 blok DRAF menunggu keputusan. 4 baris lain di blok DRAF tidak dijadikan butir karena sudah disetujui atau bukan teks yang tampil (lihat Lampiran).
 
@@ -3577,7 +3577,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 **Bunyi teks (persis dari berkas):**
 
-> **Rumpun favorit (Jalur Saya kelas 12 dan ajakan Pilih Mapel):** judul seksi (Jalur Saya): Rumpun favorit · petunjuk: Pilih satu sampai tiga rumpun yang paling kamu minati. · tombol: Simpan rumpun
+> **Rumpun favorit (Jalur Saya kelas 12 dan ajakan Pilih Mapel):** judul seksi (Profil Saya): Rumpun favorit · petunjuk: Pilih satu sampai tiga rumpun yang paling kamu minati. · tombol: Simpan rumpun
 
 **Keputusan:**
 
@@ -3683,7 +3683,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 161. Judul kategori "Persiapan Ujian"
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 898
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 898
 - **Tampil di:** Daftar Periksa, kategori keempat sesudah Jalur Pembiayaan.
 - **Dilihat oleh:** Kelas 12 dengan jalur TKA atau SNBT.
 
@@ -3705,7 +3705,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 162. Catatan: saran, bukan syarat resmi
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 899
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 899
 - **Tampil di:** Daftar Periksa, di bawah judul kategori Persiapan Ujian.
 - **Dilihat oleh:** Kelas 12 dengan jalur TKA atau SNBT.
 
@@ -3727,7 +3727,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 163. Butir "Ikut minimal satu tryout TKA"
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 900
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 900
 - **Tampil di:** Daftar Periksa, kategori Persiapan Ujian.
 - **Dilihat oleh:** Kelas 12, jalur TKA.
 
@@ -3749,7 +3749,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 164. Butir "Cek Level-In untuk mapel pilihan TKA-mu"
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 902
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 902
 - **Tampil di:** Daftar Periksa, kategori Persiapan Ujian.
 - **Dilihat oleh:** Kelas 12 jalur TKA (dan saringan kelas 11 jalur TKA).
 
@@ -3771,7 +3771,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 165. Butir "Ikut minimal satu tryout UTBK-SNBT"
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 903
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 903
 - **Tampil di:** Daftar Periksa, kategori Persiapan Ujian.
 - **Dilihat oleh:** Kelas 12, jalur SNBT.
 
@@ -3793,7 +3793,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 166. Butir "Ikut simulasi atau gladi TKA kalau sekolahmu mengadakannya" ⚠
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 901
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 901
 - **Tampil di:** Daftar Periksa, kategori Persiapan Ujian.
 - **Dilihat oleh:** Kelas 12, jalur TKA.
 - **⚠ Klaim faktual:** lihat daftar di awal lembar.
@@ -3816,7 +3816,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 167. Judul & pertanyaan Kesiapan Ujian
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 904
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 904
 - **Tampil di:** Jalur Saya /cek-posisi, sesudah Langkah Berikutnya.
 - **Dilihat oleh:** Kelas 12.
 
@@ -3838,7 +3838,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 168. Petunjuk Kesiapan Ujian
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 905
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 905
 - **Tampil di:** Jalur Saya, di bawah pertanyaan.
 - **Dilihat oleh:** Kelas 12.
 
@@ -3860,7 +3860,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 169. Empat pilihan kesiapan
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 906
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 906
 - **Tampil di:** Jalur Saya, pilihan berbentuk pil; ketukan langsung menyimpan.
 - **Dilihat oleh:** Kelas 12.
 
@@ -3882,7 +3882,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 170. Status "Menyimpan…"
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 907
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 907
 - **Tampil di:** Jalur Saya, di bawah pilihan selama menyimpan.
 - **Dilihat oleh:** Kelas 12.
 
@@ -3904,7 +3904,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 171. Ringkasan langkah Persiapan Ujian
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 908
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 908
 - **Tampil di:** Jalur Saya, kartu saran; hanya bila jalurnya punya butir Persiapan Ujian.
 - **Dilihat oleh:** Kelas 12.
 
@@ -3926,7 +3926,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 172. Saran: belum siap
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 909
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 909
 - **Tampil di:** Jalur Saya, kartu saran.
 - **Dilihat oleh:** Kelas 12.
 
@@ -3948,7 +3948,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 173. Saran: mulai siap
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 910
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 910
 - **Tampil di:** Jalur Saya, kartu saran.
 - **Dilihat oleh:** Kelas 12.
 
@@ -3970,7 +3970,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 174. Saran: belum tryout
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 911
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 911
 - **Tampil di:** Jalur Saya, kartu saran.
 - **Dilihat oleh:** Kelas 12.
 
@@ -3992,7 +3992,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 175. Saran: belum simulasi/gladi
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 912
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 912
 - **Tampil di:** Jalur Saya, kartu saran (jalur TKA).
 - **Dilihat oleh:** Kelas 12.
 
@@ -4014,7 +4014,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 176. Saran: hampir siap, langkah beres
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 913
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 913
 - **Tampil di:** Jalur Saya, kartu saran.
 - **Dilihat oleh:** Kelas 12.
 
@@ -4036,7 +4036,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 177. Saran: sudah siap, langkah beres
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 914
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 914
 - **Tampil di:** Jalur Saya, kartu saran (tanpa tombol).
 - **Dilihat oleh:** Kelas 12.
 
@@ -4058,7 +4058,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 
 ### 178. Penafian Jalur Saya (diubah)
 
-- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) · (tidak disebut) · baris 915
+- **Asal:** §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) · (tidak disebut) · baris 915
 - **Tampil di:** Jalur Saya, paling bawah.
 - **Dilihat oleh:** Kelas 12.
 
@@ -6115,7 +6115,7 @@ Butir ini menyatakan sesuatu tentang aturan seleksi, data kampus, atau proses pe
 | §4.18 Level-In dan keyakinan di Latihan | LANJUT_058 | 825 | 12 |
 | §4.18 Level-In dan keyakinan di Latihan | LANJUT_077 | 844 | 1 |
 | §4.19 Pilih Mapel per rumpun favorit dan Mapel Saya | LANJUT_079 | 855 | 11 |
-| §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Jalur Saya) | (tidak disebut) | 886 | 18 |
+| §4.20 Persiapan Ujian (Daftar Periksa) dan Kesiapan Ujian (Profil Saya) | (tidak disebut) | 886 | 18 |
 | §4.21 Masuk dengan kode email, masuk dengan Google, dan landing page | LANJUT_083 | 919 | 11 |
 | §4.21 Masuk dengan kode email, masuk dengan Google, dan landing page | LANJUT_083b | 939 | 2 |
 | §4.21 Masuk dengan kode email, masuk dengan Google, dan landing page | LANJUT_083c | 947 | 8 |

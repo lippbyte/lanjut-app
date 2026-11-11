@@ -2,8 +2,9 @@
 
 > **DRAF — wajib direview ahli hukum sebelum dipakai.** Disusun LANJUT_047
 > (3 Oktober 2026), diperbarui menjadi **draf v2** di LANJUT_056 (8 Oktober
-> 2026) karena fitur AI sudah dibangun. Bukan nasihat hukum; tetap perlu
-> ditinjau orang yang paham UU PDP. Bagian `[ISI: ...]` menunggu diisi
+> 2026) karena fitur AI sudah dibangun, dan di LANJUT_015 seri v2 untuk
+> Portofolio, hapus akun, unduh data, dan cadangan. Bukan nasihat hukum; tetap
+> perlu ditinjau orang yang paham UU PDP. Bagian `[ISI: ...]` menunggu diisi
 > (pengisinya di `docs/kebijakan-v2-klaim-vs-kode.md`). Hapus kotak ini,
 > catatan untuk peninjau, dan bagian petugas sebelum dicetak untuk orang
 > tua/wali.
@@ -32,7 +33,10 @@
   persetujuan orang tua/wali; draf ini hanya meminta persetujuan untuk fitur
   AI, karena hanya itu yang dipagari sistem. (b) Apakah persetujuan untuk
   pengiriman potongan modul dan pencarian web perlu dipisah dari persetujuan
-  fitur AI; sistem saat ini mencatat satu persetujuan.
+  fitur AI; sistem saat ini mencatat satu persetujuan. (c) Apakah Portofolio
+  perlu persetujuan orang tua/wali sendiri. Fotonya bisa memuat wajah atau data
+  anak, tetapi sistem hanya mensyaratkan siswa menerima kebijakan, jadi surat
+  ini hanya memberi tahu dan tidak meminta persetujuan untuk Portofolio.
 
 ---
 
@@ -53,9 +57,23 @@ persetujuan Bapak/Ibu lewat surat ini.
 **Data yang disimpan LANJUT:** data akun (nama pengguna, email bila diisi,
 kelas, jenis sekolah, prodi impian, gaya belajar), centang daftar persiapan,
 kartu catatan, hasil latihan, modul pelajaran yang diunggah anak (hanya
-teksnya; bisa dihapus permanen oleh anak), dan catatan keamanan akun. Kata
-sandi disimpan dalam bentuk acak. LANJUT tidak mengumpulkan lokasi, kontak,
-foto, nomor HP, usia, atau nama sekolah.
+teksnya; bisa dihapus permanen oleh anak), catatan dan foto Portofolio bila
+fiturnya sudah dibuka untuk anak, dan catatan keamanan akun. Kata sandi
+disimpan dalam bentuk acak. LANJUT tidak mengumpulkan lokasi, kontak, nomor
+HP, usia, atau nama sekolah. Foto hanya disimpan bila anak sendiri
+mengunggahnya ke Portofolio.
+
+**Portofolio (sedang diuji).** Fitur ini sedang diuji oleh kelompok kecil
+siswa, jadi belum tentu terbuka untuk anak Bapak/Ibu. Di Portofolio, anak
+bisa menulis catatan karya dan mengunggah foto yang dipilih atau diambilnya
+sendiri. Sebelum disimpan, keterangan tersembunyi di foto, termasuk lokasi,
+dihapus. Foto disimpan privat: tidak punya alamat yang bisa dibuka umum,
+hanya bisa dibuka lewat akun anak di aplikasi, dan siswa lain tidak bisa
+melihatnya. Pengelola layanan secara teknis bisa mengakses tempat
+penyimpanannya. Anak bisa menghapus catatan dan fotonya sendiri. Surat ini
+hanya memberi tahu soal Portofolio; persetujuan di bawah hanya untuk fitur
+AI. Pertanyaan soal uji coba ini bisa disampaikan lewat sekolah atau [ISI:
+kontak resmi tim LANJUT].
 
 **Fitur AI (Ngobrol Bareng LANJUT).** Balasan dibuat AI dari penyedia pihak
 ketiga: OpenRouter, yang meneruskan permintaan ke perusahaan yang menjalankan
@@ -87,8 +105,16 @@ tim LANJUT]. Setelah pencabutan dicatat, fitur AI tertutup untuk akun anak
 mulai pesan berikutnya. Pencabutan tidak menghapus data yang sudah pernah
 dikirim ke penyedia AI.
 
+Bila fiturnya sudah dibuka untuk anak, anak juga bisa mengunduh salinan data
+akunnya dan menghapus akunnya sendiri di menu Data Akun. Salinan itu memuat
+keterangan foto, bukan isi fotonya. Penghapusan akun berlaku seketika dan
+tidak bisa dibatalkan. Cadangan basis data tidak bisa disunting per akun, jadi
+cadangan lama masih dapat memuat data yang sudah dihapus sampai cadangan itu
+tergantikan. Catatan teknis server dan pesan yang sudah dikirim ke penyedia AI
+juga tidak ikut terhapus.
+
 Persetujuan ini mengacu pada kebijakan privasi LANJUT versi [ISI: nomor versi
-saat dirilis], yang dapat dibaca lengkap di aplikasi (menu Jalur Saya → Baca
+saat dirilis], yang dapat dibaca lengkap di aplikasi (menu Data Akun → Baca
 kebijakan privasi) atau diminta ke sekolah dalam bentuk cetak.
 
 ### Data siswa

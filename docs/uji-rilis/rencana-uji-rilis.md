@@ -5,6 +5,8 @@
 > lengkapnya ada di §7. Kondisi kesiapan dan buktinya ada di
 > [`inventaris-080.md`](inventaris-080.md).
 >
+> Sejak LANJUT_015 seri v2, dokumen ini memakai nama layar terbaru, Profil Saya. APK 1.0.0 masih menampilkan nama lamanya.
+>
 > Tidak ada data anak sungguhan di dokumen ini, dan tidak boleh ada selama uji.
 
 ## 1. Lingkup uji
@@ -12,7 +14,7 @@
 **Yang diuji:** fitur yang aktif dengan saklar `ai_aktif = 0` dan `event_sekolah_aktif = 0`:
 - Daftar/Masuk, gerbang kelas & jenis sekolah, kebijakan privasi (DRAF);
 - Beranda per jenjang;
-- Jenjang Saya, Jalur Saya (kelas 12), Eksplorasi Kampus;
+- Jenjang Saya, Profil Saya (kelas 12), Eksplorasi Kampus;
 - Pilih Mapel / Mapel Saya, Daftar Periksa;
 - Arsip Belajar (kartu & unggah modul), Latihan, Level-In;
 - Data Akun, Gaya Belajar, Cerita Alumni (kosong);
@@ -109,7 +111,7 @@ Lulus/gagal per skenario ada di kolom tabel. Aturan putaran ada di §5.
 
 | ID | Langkah | Lulus bila | Gagal bila |
 |---|---|---|---|
-| S1 (Kritis) | Beranda, Jenjang Saya, Daftar Periksa, Data Akun | Tidak ada teks "kelas 12", SNBP, SNBT, atau tenggat kuliah; tidak ada pintu Jalur Saya | Ada teks/pintu kelas 12 |
+| S1 (Kritis) | Beranda, Jenjang Saya, Daftar Periksa, Data Akun | Tidak ada teks "kelas 12", SNBP, SNBT, atau tenggat kuliah; tidak ada pintu Profil Saya | Ada teks/pintu kelas 12 |
 | S2 | Eksplorasi Kampus ("Kenali Minatmu") → pilih maks. 5 bidang → simpan | Tersimpan; tidak ada daftar prodi | Tersimpan lebih dari 5, atau muncul daftar prodi |
 | S3 | Tab Pilih Mapel | Judul "Mapel Saya", maks. 5 mapel, tanpa prodi atau rumpun | Muncul alur prodi (F3) atau rumpun |
 | S4 | Daftar Periksa | Kalimat netral "Catat langkah-langkahmu…"; Persiapan Event **tidak** tampil (saklar 0) | Persiapan Event tampil, atau ada placeholder "Bagian ini untuk kelas 12" |
@@ -125,19 +127,19 @@ Catatan diketahui (bukan kegagalan): daftar Mapel Saya berisi mapel SMA (inventa
 | M2 | Beranda & Jenjang Saya | Pintu Pilih Mapel, Eksplorasi Kampus, Gaya Belajar; tanpa tenggat SNBP/SNBT | Ada teks khusus kelas 12 |
 | M3 | Eksplorasi Kampus ("Jalur dan Bidangmu") → baca jalur masuk → pilih maks. 3 bidang → simpan | Jalur berlabel "Perkiraan"; tersimpan | Label tidak ada, atau batas jebol |
 | M4 | Pilih Mapel → Mapel Saya (atas) → simpan; lalu F3 (bawah): pilih prodi → mapel pendukung → Simpan ke Daftar Periksa | Mapel Saya tersimpan; F3 tanpa "rangkuman umum"; butir pribadi muncul di Daftar Periksa | Rangkuman umum muncul, atau butir tidak tersimpan |
-| M5 | Jalur Saya lewat Data Akun | Kartu pengganti untuk kelas 10–11, tanpa tahapan SNBP/SNBT | Tahapan kelas 12 tampil |
+| M5 | Profil Saya lewat Data Akun | Kartu pengganti untuk kelas 10–11, tanpa tahapan SNBP/SNBT | Tahapan kelas 12 tampil |
 | M6 (akun SMK) | Jenjang Saya → bagian khusus SMK | Butir tampil berlabel belum diverifikasi | Tampil tanpa label |
 
 ### 4.4 Kelas 12
 
 | ID | Langkah | Lulus bila | Gagal bila |
 |---|---|---|---|
-| K1 | Beranda | Kartu hero tenggat, Info Penting hanya tahapan terverifikasi yang belum lewat, grid Jalur Saya / Eksplorasi Kampus / Arsip / Level-In / Cerita Alumni | Tahapan lewat atau belum terverifikasi tampil |
-| K2 | Jalur Saya → jawab atau Lewati pertanyaan → hasil → seksi "Rumpun favorit" → pilih 1–3 → Simpan rumpun | Tahap, fokus, dan langkah tampil; rumpun tersimpan; pilihan ke-4 tidak bisa ditambah | Rumpun ke-4 tersimpan, atau simpan gagal |
+| K1 | Beranda | Kartu hero tenggat, Info Penting hanya tahapan terverifikasi yang belum lewat, grid Profil Saya / Eksplorasi Kampus / Arsip / Level-In / Cerita Alumni | Tahapan lewat atau belum terverifikasi tampil |
+| K2 | Profil Saya → jawab atau Lewati pertanyaan → hasil → seksi "Rumpun favorit" → pilih 1–3 → Simpan rumpun | Tahap, fokus, dan langkah tampil; rumpun tersimpan; pilihan ke-4 tidak bisa ditambah | Rumpun ke-4 tersimpan, atau simpan gagal |
 | K3 (Kritis) | Pilih Mapel **sebelum** memilih rumpun | Ajakan "Pilih rumpun favoritmu dulu" + pilihan rumpun; **tidak ada** daftar mapel | Daftar mapel tampil |
 | K4 | Pilih Mapel **sesudah** 2 rumpun → pilih maks. 5 mapel → Simpan mapel | Mapel hanya dari 2 rumpun, dikelompokkan per rumpun, setiap kelompok bercatatan "Belum dicek ke sumber resmi."; pilihan ke-6 tidak bertambah | Ada kelompok tanpa catatan, mapel di luar rumpun, atau daftar penuh |
 | K5 | Pilih Mapel → F3 (bawah): pilih prodi → saran 2 mapel TKA → Simpan ke Daftar Periksa → Lihat prospek & kampus | Butir pribadi tercentang di Daftar Periksa; profil prodi menampilkan "sedang kami cek" (0/18 terverifikasi) | Profil yang belum terverifikasi tampil sebagai fakta |
-| K6 | Daftar Periksa → centang beberapa butir → kembali ke Jalur Saya | Persentase progres ikut berubah | Progres tidak berubah |
+| K6 | Daftar Periksa → centang beberapa butir → kembali ke Profil Saya | Persentase progres ikut berubah | Progres tidak berubah |
 | K7 | Cerita Alumni | Layar kosong yang jelas (0 cerita tayang) | Cerita contoh fiktif tampil |
 
 ## 5. Kriteria lulus dan gagal
