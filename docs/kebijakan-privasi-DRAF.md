@@ -4,7 +4,7 @@
 > Disusun LANJUT_047 (3 Oktober 2026), diperbarui menjadi **draf v2** di
 > LANJUT_056 (8 Oktober 2026) karena fitur AI, modul, dan pencarian web sudah
 > dibangun. Diselaraskan dengan produk di LANJUT_012 seri v2 (tinjauan terakhir
-> 11 November 2026), dan rumusan masa simpan K27 ditambahkan di LANJUT_014. Bahan review, bukan dokumen yang berlaku, dan bukan nasihat hukum:
+> 11 November 2026), rumusan masa simpan K27 ditambahkan di LANJUT_014, dan keputusan K29 serta data yang tertinggal ditambahkan di LANJUT_017. Bahan review, bukan dokumen yang berlaku, dan bukan nasihat hukum:
 > tetap perlu ditinjau orang yang paham UU PDP. Bagian bertanda `[ISI: ...]`
 > menunggu diisi; siapa pengisinya ada di
 > [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md). Nama
@@ -72,13 +72,19 @@ LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya].
 
 - Akun: nama pengguna, nama tampilan, email (kalau kamu isi), dan kata sandi. Kata sandi disimpan dalam bentuk acak (hash), jadi tidak bisa dibaca, termasuk oleh tim LANJUT.
 - Jalur belajarmu: kelas, jenis sekolah (SMP, SMA, SMK, atau MA), prodi impian, dan gaya belajar yang kamu pilih.
+- Pilihan belajar: bidang minat yang kamu pilih (misalnya Kesehatan atau Teknologi & Rekayasa, paling banyak 5), mapel pilihanmu (paling banyak 5), dan jawabanmu atas pertanyaan seberapa siap kamu menghadapi ujian. Ketiganya bisa kamu ubah atau kosongkan.
+- Persiapan Event, kalau fiturnya sudah dibuka untukmu: ujian atau ulangan sekolah yang kamu catat (jenis, tanggal, mapel, catatan materi singkat, dan kartu Arsip yang kamu tautkan). Event yang kamu hapus dihapus permanen.
 - Kemajuan: butir Daftar Periksa yang kamu centang, dan butir yang kamu simpan dari Pilih Mapel atau Eksplorasi Tujuan.
 - Arsip Belajar: kartu yang kamu tulis (mapel, judul, isi, dan jawaban). Isinya teks bebas, jadi sebaiknya jangan menulis data pribadi di kartu.
 - Modul: teks materi pelajaran yang kamu unggah ke Arsip Belajar (dari berkas .txt, .md, atau PDF, atau yang kamu tempel), beserta judul, mapel, nama berkas, dan waktu unggah. Berkas aslinya tidak disimpan, hanya teksnya. Teks itu juga dibelah menjadi potongan supaya bisa kamu cari dan supaya potongan yang berkaitan bisa dipakai fitur AI. Modul bisa kamu hapus permanen kapan saja; teks dan semua potongannya ikut terhapus.
 - Portofolio, kalau fiturnya sudah dibuka untukmu: catatan yang kamu buat (judul, jenis, cerita singkat, tautan, dan tanggal karya) beserta fotonya. Satu catatan paling banyak 3 foto, satu akun paling banyak 30 foto, dan satu foto paling besar 5 MB. Sebelum disimpan, keterangan tersembunyi di foto, termasuk lokasi, dihapus. Foto disimpan privat di server. Catatan dan foto yang kamu hapus dihapus permanen; kalau berkas fotonya gagal terhapus saat itu, server mencatat nama berkasnya (tanpa ID akun) supaya bisa dihapus lagi.
 - Latihan: kapan sesi latihan dimulai dan selesai, mapel yang dilatih, kartu yang kamu jawab, benar atau salahnya jawabanmu, dan seberapa yakin kamu (kalau kamu mengisinya).
 - Persetujuan: kapan kamu membaca kebijakan ini (dan versinya), serta kapan orang tua atau walimu memberi atau mencabut persetujuan lewat sekolah, termasuk nomor atau tanggal suratnya.
+- Konfirmasi orang tua atau wali di aplikasi: kalau orang tua atau wali menyatakan setuju langsung di HP-mu, server mencatat waktunya dan bahwa persetujuan itu diberikan di aplikasi. Identitasnya tidak diperiksa. [ISI: apakah konfirmasi orang tua atau wali di aplikasi diterima sebagai persetujuan; menunggu tinjauan hukum.]
 - Keamanan akun: kapan akun dibuat, kapan terakhir kamu masuk, status akun (aktif atau nonaktif), sesi masuk yang masih aktif, dan jumlah percobaan masuk yang gagal (supaya akun bisa dikunci sementara kalau ada yang mencoba menebak kata sandi).
+- Verifikasi email: apakah emailmu sudah terbukti milikmu, tenggat verifikasi untuk akun lama, dan tanda kalau kamu perlu membuat kata sandi baru.
+- Kode masuk lewat email: kode yang dikirim ke emailmu disimpan dalam bentuk acak, bersama bentuk acak alamat email dan jumlah percobaannya, supaya kode hanya bisa dipakai sekali dan tidak diminta terlalu sering. Catatan kode yang berumur lebih dari 24 jam dibersihkan saat ada permintaan kode berikutnya. [ISI: penyedia layanan email yang mengirim kode, dan negara pemrosesannya.]
+- Data daftar sementara: saat kamu mendaftar dengan email, data daftarmu (nama pengguna, nama tampilan, kata sandi dalam bentuk acak, bentuk acak alamat email, kelas, jenis sekolah, dan prodi impian) disimpan sementara sampai kodenya benar. Data ini dihapus saat akun dibuat, atau setelah 30 menit.
 - Catatan teknis server: setiap permintaan ke server mencatat fitur yang dibuka, hasilnya, lama prosesnya, dan ID akunmu (bukan namamu). Alamat IP perangkatmu dipakai sementara untuk membatasi permintaan yang terlalu sering, dan tidak disimpan di basis data. [ISI: berapa lama catatan teknis disimpan oleh server dan penyedianya.]
 - Kartu atau butir Daftar Periksa yang kamu hapus disembunyikan dari aplikasi, tetapi masih tersimpan di server sampai akunmu dihapus (modul tidak termasuk: modul dihapus permanen). Saat akunmu dihapus, semuanya ikut terhapus permanen.
 
@@ -101,6 +107,9 @@ LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya].
 - Menyimpan catatan portofolio dan fotomu supaya bisa kamu lihat lagi.
 - Menghitung berapa siswa yang sudah mengisi Portofolio, untuk menilai apakah fiturnya berguna. Hasilnya berupa jumlah, dan ID akun bila diminta tim, tanpa isi catatan.
 - Memberi saran mapel dan latihan dari prodi impian dan hasil latihanmu.
+- Menampilkan Eksplorasi Kampus sesuai bidang minatmu, mendahulukan mapel pilihanmu di Arsip Belajar dan Latihan, dan menyesuaikan saran dari jawaban kesiapan ujianmu.
+- Menampilkan ujian atau ulangan yang kamu catat di Persiapan Event.
+- Memastikan email benar-benar milikmu, dan mengirim kode masuk.
 - Menjawab pesanmu di Ngobrol Bareng LANJUT lewat penyedia AI (lihat bagian Fitur AI).
 - Menjaga keamanan akun.
 - [ISI: tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.]
@@ -108,7 +117,7 @@ LANJUT dikelola oleh [ISI: nama badan pengelola dan alamatnya].
 ### Siapa yang bisa melihat datamu
 
 - Kamu sendiri, lewat aplikasi. Akun lain tidak bisa melihat datamu, termasuk modulmu.
-- Catatan portofolio dan fotomu hanya terlihat olehmu di aplikasi. Saat ini tidak ada fitur berbagi, dan foto tidak punya alamat yang bisa dibuka umum.
+- Catatan portofolio dan fotomu hanya bisa dibuka lewat akunmu di aplikasi, dan siswa lain tidak bisa melihatnya. Pengelola layanan secara teknis bisa mengakses tempat penyimpanannya. Saat ini tidak ada fitur berbagi, dan foto tidak punya alamat yang bisa dibuka umum.
 - Tim pengelola LANJUT yang mengurus server. [ISI: siapa saja dan untuk keperluan apa.]
 - Penyedia server dan basis data tempat LANJUT berjalan. [ISI: nama penyedia dan lokasi servernya.]
 - Penyedia AI pihak ketiga, tetapi hanya data yang dikirim untuk fitur AI (lihat bagian Fitur AI).
@@ -132,12 +141,13 @@ Setiap kali kamu mengirim pesan di Ngobrol Bareng LANJUT, yang dikirim ke penyed
 - Riwayat obrolan di sesi itu, hingga 20 pesan terakhir, termasuk balasan sebelumnya. Riwayat juga disamarkan dulu. Salam pembuka yang memuat nama tampilanmu tidak ikut dikirim.
 - Profil belajarmu dari akun: kelas, jenis sekolah, nama prodi impian, dan gaya belajar (kalau sudah kamu isi).
 - Untuk pertanyaan materi pelajaran: potongan modul yang berkaitan, dan hasil pencarian web bila fitur itu diaktifkan (lihat bagian Pertanyaan pelajaran).
+- Kalau pertanyaanmu menyangkut latihan atau ujian: ringkasan singkat dari akunmu, yaitu nama mapel dan jenis saran latihanmu (dihitung dari hasil latihanmu), atau jenis, tanggal, dan mapel satu ujian terdekat yang kamu catat di Persiapan Event.
 
 ### Fitur AI: apa yang tidak dikirim
 
 - Nama tampilan, nama pengguna, email, kata sandi, dan ID akunmu.
 - Nama sekolahmu, karena LANJUT memang tidak menyimpannya.
-- Data lain di akunmu, seperti kartu, hasil latihan, dan centang Daftar Periksa.
+- Data lain di akunmu, seperti isi kartu, jawaban latihan per kartu, centang Daftar Periksa, catatan materi ujian, bidang minat, mapel pilihan, dan kesiapan ujian. Ringkasan singkat di atas adalah satu-satunya bagian dari data latihan dan Persiapan Event yang bisa ikut dikirim.
 - Tetapi apa pun yang kamu tulis sendiri di pesan ikut terkirim, termasuk nama, alamat, atau nama sekolah, kecuali bagian yang disamarkan. Karena itu, jangan menulis data pribadimu atau data orang lain di Ngobrol.
 
 ### Data pribadi disamarkan
@@ -203,6 +213,8 @@ Tanpa persetujuan itu, layar Ngobrol terkunci dan tidak ada data akunmu yang dik
 
 Akun dan data di dalamnya, termasuk modul, disimpan sampai kamu menghapus akunmu. Akun yang lama tidak dipakai tidak dihapus otomatis. Hapus akun berlaku seketika, tanpa masa tenggang.
 
+Saat akunmu dihapus, bidang minat, mapel pilihan, kesiapan ujian, Persiapan Event, kode email, dan data daftar sementara ikut terhapus.
+
 Cadangan basis data tidak bisa disunting per akun, jadi cadangan lama masih memuat akun yang sudah dihapus sampai cadangan itu tergantikan. Kalau cadangan lama dipulihkan, akun yang pernah dihapus harus dihapus lagi. Foto disimpan terpisah dari basis data, jadi tidak ikut cadangan basis data. Catatan teknis server juga tidak ikut terhapus saat akunmu dihapus.
 
 ### Keamanan
@@ -231,7 +243,7 @@ Sistem juga bisa mewajibkan persetujuan orang tua atau wali yang baru setelah ke
 ## Lampiran A — Inventaris data teknis (untuk peninjau)
 
 Sumber: migrasi `LANJUT_App/server/src/db/migrasi/001`–`018` dan kode app
-(diperbarui LANJUT_056, 8 Oktober 2026; LANJUT_060, 9 Oktober 2026; LANJUT_012 seri v2, 11 November 2026, untuk tabel migrasi 030 dan 032). "Siswa" = pemilik akun. Bukti per
+(diperbarui LANJUT_056, 8 Oktober 2026; LANJUT_060, 9 Oktober 2026; LANJUT_012 seri v2, 11 November 2026, untuk tabel migrasi 030 dan 032; LANJUT_017 seri v2 untuk migrasi 019 sampai 028). "Siswa" = pemilik akun. Bukti per
 klaim ada di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md).
 
 ### Di server (basis data MySQL)
@@ -265,6 +277,14 @@ klaim ada di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md).
 | Butir bukti (Portofolio) | `butir_bukti` (judul, uraian, tautan, jenis, tanggal_karya, jalur_minat_id, tujuan_id, visibilitas, rujukan_jenis, rujukan_id, dibuat/diubah_pada) | Siswa, di layar Portofolio (LANJUT_010, LANJUT_011) | Di balik saklar, bawaannya mati. Judul maks. 200, uraian maks. 5000, tautan maks. 500 karakter dan hanya `http`/`https`. Jenis: `karya`, `proses`, `refleksi`. `visibilitas` hanya `privat` dan tidak bisa diisi klien: **tidak ada fitur berbagi**. Layar belum mengirim `jalur_minat_id` dan `tujuan_id`. `rujukan_*` tidak bisa diisi klien. Hapus permanen. |
 | Lampiran foto | `lampiran_butir_bukti` (jenis_berkas, ukuran_byte, nama_tersimpan, nama_asli, dibuat_pada) | Server, saat foto diunggah (LANJUT_010) | Hanya metadata; berkasnya di tabel berikut. Maks. 5 MB per foto, 3 per butir, 30 per akun. JPEG, PNG, atau WebP. EXIF, GPS, XMP, IPTC, komentar, dan gambar kecil dihapus sebelum disimpan; dari EXIF hanya arah putar yang dipertahankan. Ikut terhapus bersama butirnya. |
 | Berkas yang tertunda dihapus | `berkas_tertunda_hapus` (nama_tersimpan, alasan, dicatat_pada, jumlah_percobaan) | Server, saat penghapusan berkas gagal (LANJUT_010) | Tidak memuat ID akun: `nama_tersimpan` berisi sidik akun (SHA-256) dan nama acak. Baris bertahan sesudah akun dihapus, sampai `npm run bersihkan-berkas` berhasil. |
+| Bidang minat | `pengguna.minat_rumpun` | Siswa, di Eksplorasi Kampus | Paling banyak 5 nama rumpun. Hanya disimpan bila kebijakan versi berlaku sudah diterima. |
+| Mapel pilihan | `pengguna.mapel_pilihan` | Siswa, di Pilih Mapel atau Mapel Saya | Paling banyak 5 id mapel. |
+| Kesiapan ujian | `pengguna.kesiapan_ujian` | Siswa kelas 12, di Profil Saya | Penilaian siswa sendiri. Hanya disimpan bila kebijakan versi berlaku sudah diterima. |
+| Persiapan Event | `event_sekolah` (jenis, tanggal, mapel_id, materi_teks, kartu_id, dibuat/diubah_pada) | Siswa kelas 7–9 | Saklar `event_sekolah_aktif` bawaan 0. Hapus permanen. |
+| Sumber persetujuan di aplikasi | `persetujuan.sumber = konfirmasi_di_app` | Orang tua atau wali, di HP siswa | Identitas tidak diverifikasi, jadi sumbernya dibedakan. |
+| Kode email | `kode_otp_email` (email_hash, tujuan, kode_hash, dibuat/kedaluwarsa/selesai_pada, jumlah_percobaan) | Server, saat kode diminta | SHA-256 email, hash bcrypt kode. Juga untuk email yang tidak terdaftar. Baris lebih dari 24 jam dibersihkan saat kode berikutnya diminta. |
+| Data daftar sementara | `pendaftaran_tertunda` | Server, saat daftar dengan email | Dihapus saat akun dibuat atau setelah 30 menit. |
+| Tanda verifikasi dan sandi | `pengguna.email_terverifikasi`, `batas_verifikasi`, `wajib_buat_sandi` | Server | Keamanan akun. |
 
 Tim bisa menjalankan `npm run metrik-portofolio` untuk menghitung siswa dengan
 butir bermakna. Keluarannya jumlah, dan ID akun bila diminta, tanpa isi butir.
@@ -297,6 +317,7 @@ persetujuan, saklar `ai_aktif`, dan penyamaran.
 | Profil belajar | Sama | Kelas, jenis sekolah, nama prodi impian, gaya belajar. |
 | Potongan modul (maks. `ai_modul_potongan_maks`, bawaan 3) | Pertanyaan materi, `ai_modul_aktif=1` (bawaan) | Hanya milik akun penanya; disamarkan. |
 | Pertanyaan terbaru (permintaan web terpisah) | Pertanyaan materi, `ai_web_aktif=1` (bawaan **0**), kuota harian tersisa, tanpa tanda bahaya | Hanya pertanyaan tersamarkan, tanpa profil/riwayat/modul; diteruskan OpenRouter ke mesin pencari pihak ketiga. |
+| Ringkasan fitur (LANJUT_078) | Pesan yang menyangkut latihan atau ujian | Nama mapel dan jenis saran, atau jenis, tanggal, sisa hari, dan nama mapel satu event terdekat. |
 | Pengaturan `provider` | Setiap permintaan | `data_collection` (bawaan `deny`), `zdr` (bawaan mati), `only` (bawaan kosong). |
 | **Tidak dikirim** | — | Nama tampilan, nama pengguna, email, kata sandi, ID akun, kartu, hasil latihan, kemajuan. Nama sekolah tidak disimpan LANJUT. |
 
@@ -318,26 +339,28 @@ di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md) bagian
 "Yang harus dilengkapi manusia".
 
 <!-- ISI:MULAI -->
-18 bagian menunggu keputusan Khalifa:
+20 bagian menunggu keputusan Khalifa:
 
 1. **Tentang kebijakan ini** — nama badan pengelola dan alamatnya
-2. **Data yang kami simpan di server** — berapa lama catatan teknis disimpan oleh server dan penyedianya.
-3. **Untuk apa datanya dipakai** — tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.
-4. **Siapa yang bisa melihat datamu** — siapa saja dan untuk keperluan apa.
-5. **Siapa yang bisa melihat datamu** — nama penyedia dan lokasi servernya.
-6. **Siapa yang bisa melihat datamu** — konfirmasi apakah ini akan berubah.
-7. **Fitur AI: siapa penyedianya** — penyedia model yang benar-benar menerima data menurut pengaturan di server, dan lokasinya.
-8. **Fitur AI: siapa penyedianya** — negara atau wilayah pemrosesan, dan dasar pengirimannya ke luar negeri.
-9. **Pertanyaan pelajaran: modul dan pencarian web** — aturan untuk modul dari guru atau penerbit (hak cipta) yang potongannya dikirim ke penyedia AI.
-10. **Pertanyaan pelajaran: modul dan pencarian web** — hasil pengecekan Khalifa: mesin pencari mana yang menerima pertanyaan, dan apakah permintaan agar data tidak dikumpulkan juga berlaku di sana.
-11. **Apa yang disimpan dari obrolanmu** — hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model: apa yang disimpan dan berapa lama.
-12. **Persetujuan orang tua atau wali** — apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.
-13. **Hak kamu dan orang tua atau walimu** — cara meminta penghapusan di OpenRouter dan penyedia model, bila ada.
-14. **Hak kamu dan orang tua atau walimu** — berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.
-15. **Keamanan** — perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) antara aplikasi dan server, dan pencadangan.
-16. **Perubahan kebijakan** — kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.
-17. **Perubahan kebijakan** — cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.
-18. **Kontak** — kontak resmi tim LANJUT: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.
+2. **Data yang kami simpan di server** — apakah konfirmasi orang tua atau wali di aplikasi diterima sebagai persetujuan; menunggu tinjauan hukum.
+3. **Data yang kami simpan di server** — penyedia layanan email yang mengirim kode, dan negara pemrosesannya.
+4. **Data yang kami simpan di server** — berapa lama catatan teknis disimpan oleh server dan penyedianya.
+5. **Untuk apa datanya dipakai** — tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.
+6. **Siapa yang bisa melihat datamu** — siapa saja dan untuk keperluan apa.
+7. **Siapa yang bisa melihat datamu** — nama penyedia dan lokasi servernya.
+8. **Siapa yang bisa melihat datamu** — konfirmasi apakah ini akan berubah.
+9. **Fitur AI: siapa penyedianya** — penyedia model yang benar-benar menerima data menurut pengaturan di server, dan lokasinya.
+10. **Fitur AI: siapa penyedianya** — negara atau wilayah pemrosesan, dan dasar pengirimannya ke luar negeri.
+11. **Pertanyaan pelajaran: modul dan pencarian web** — aturan untuk modul dari guru atau penerbit (hak cipta) yang potongannya dikirim ke penyedia AI.
+12. **Pertanyaan pelajaran: modul dan pencarian web** — hasil pengecekan Khalifa: mesin pencari mana yang menerima pertanyaan, dan apakah permintaan agar data tidak dikumpulkan juga berlaku di sana.
+13. **Apa yang disimpan dari obrolanmu** — hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model: apa yang disimpan dan berapa lama.
+14. **Persetujuan orang tua atau wali** — apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.
+15. **Hak kamu dan orang tua atau walimu** — cara meminta penghapusan di OpenRouter dan penyedia model, bila ada.
+16. **Hak kamu dan orang tua atau walimu** — berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.
+17. **Keamanan** — perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) antara aplikasi dan server, dan pencadangan.
+18. **Perubahan kebijakan** — kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.
+19. **Perubahan kebijakan** — cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.
+20. **Kontak** — kontak resmi tim LANJUT: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.
 <!-- ISI:SELESAI -->
 
 ## Lampiran C — Pertanyaan terbuka untuk Khalifa dan ahli hukum
@@ -357,7 +380,8 @@ di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md) bagian
    ikut terhapus bila akunnya dihapus (`ON DELETE CASCADE`). Apakah bukti
    persetujuan/pencabutan perlu disimpan lebih lama?
 5. **Hapus lunak.** Kartu dan butir yang dihapus siswa masih tersimpan.
-   Perlukah penghapusan permanen, dan kapan?
+   Terjawab keputusan K27: keduanya tetap tersimpan sampai akunnya dihapus,
+   lalu ikut terhapus permanen. Keputusan ini belum ditinjau hukum.
 6. **Pengiriman ke luar negeri.** Fitur AI (sudah dibangun, LANJUT_051)
    mengirim pesan siswa ke OpenRouter dan penyedia model, yang dapat
    memproses di luar Indonesia. Negara pemrosesan, dasar, dan syarat
@@ -372,16 +396,20 @@ di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md) bagian
    dan hanya materi yang boleh dipakai untuk belajar pribadi, tetapi isinya
    tidak diperiksa. Perlu diputuskan: (a) tanggung jawab bila materi
    melanggar hak cipta; (b) apakah data pribadi orang lain yang terbawa di
-   materi diperlakukan khusus; (c) masa simpan modul bila akun lama tidak
-   dipakai.
+   materi diperlakukan khusus. Butir (c), masa simpan modul bila akun lama
+   tidak dipakai, terjawab keputusan K27: modul disimpan sampai pemiliknya
+   menghapus akun, tanpa hapus otomatis. Keputusan ini belum ditinjau hukum.
 9. **Modul dan fitur AI.** Sudah dibangun (LANJUT_055) dan sudah dirinci di
    draf v2 (bagian "Pertanyaan pelajaran"). Yang tersisa: hak cipta modul
-   (butir 12a) dan masa simpan modul (butir 8c).
+   (butir 12a).
 10. **Versi kebijakan.** Penambahan data modul mengubah isi kebijakan, tetapi
     versinya **sengaja belum dinaikkan** (masih 1) di LANJUT_049. Karena
     seluruh teks masih DRAF dan belum berlaku, keputusan menaikkan versi ada
     di Khalifa. Bila dinaikkan: rilis app dengan teks baru dulu, baru naikkan
-    `persetujuan_versi_kebijakan` lewat migrasi.
+    `persetujuan_versi_kebijakan` lewat migrasi. Temuan LANJUT_017: menaikkan
+    versi di server membuat APK 1.0.0 tidak bisa mendaftar, dan penggunanya
+    tidak bisa menerima versi baru (`docs/audit-teks-kebijakan-aplikasi.md` di
+    `lanjut_app`).
 11. **Fitur AI sudah dibangun (LANJUT_051); teks diperbarui di draf v2
     (LANJUT_056).** Ringkasan 3, bagian "Data yang hanya ada di HP", dan
     bagian Fitur AI sekarang mengikuti kode; bukti per kalimat ada di
@@ -445,10 +473,11 @@ di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md) bagian
     sebaiknya diperbarui bersama rilis teks v2 (di luar LANJUT_056, yang hanya
     mengubah teks kebijakan).
 15. **Masuk dengan kode email dan masuk dengan Google (LANJUT_083).** Isi
-    kebijakan **belum** menyebut keduanya; versinya sengaja tidak dinaikkan.
+    kebijakan menyebut data kode email sejak LANJUT_017, tetapi **belum**
+    menyebut masuk dengan Google; versinya sengaja tidak dinaikkan.
     Yang perlu ditinjau:
     - **(a) Email jadi alat masuk.** Kode 6 angka dikirim lewat penyedia SMTP
-      yang dipilih PM `[ISI: penyedia dan negara pemrosesan]`. Tabel
+      yang dipilih PM `[ISI: penyedia layanan email yang mengirim kode, dan negara pemrosesannya.]`. Tabel
       `kode_otp_email` (migrasi 025) menyimpan SHA-256 dari email (termasuk
       email yang tidak terdaftar, untuk batas 3 kode/15 menit) dan hash bcrypt
       kode, tanpa email dalam teks biasa. Baris dihapus setelah 24 jam.
@@ -478,6 +507,6 @@ di [`kebijakan-v2-klaim-vs-kode.md`](kebijakan-v2-klaim-vs-kode.md) bagian
     - **(c) Foto siswa dan persetujuan.** Portofolio hanya mensyaratkan siswa
       menerima kebijakan, bukan persetujuan orang tua atau wali. Ini memperluas
       pertanyaan butir 1, karena fotonya bisa memuat wajah atau data anak.
-    - **(d) Data yang belum masuk inventaris.** Beberapa data dari fitur sesudah
-      migrasi 018 belum tercantum di kebijakan maupun Lampiran A. Daftarnya ada
-      di `audit-kebijakan-privasi.md` bagian 5.
+    - **(d) Data yang belum masuk inventaris.** Data dari fitur sesudah migrasi
+      018 yang terdaftar di `audit-kebijakan-privasi.md` bagian 5 sudah
+      dicantumkan di kebijakan dan Lampiran A pada LANJUT_017.

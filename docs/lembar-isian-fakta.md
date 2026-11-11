@@ -1,0 +1,37 @@
+# Lembar isian fakta LANJUT
+
+**Status:** semua jawaban masih kosong. Isi kolom Jawaban, lalu teksnya dipindahkan ke kebijakan dan surat sebagai task terpisah.
+
+Lembar ini menggabungkan semua `[ISI]` di draf kebijakan dan surat orang tua. Satu pertanyaan yang muncul di beberapa tempat cukup dijawab sekali.
+
+**Jenis:**
+
+- **Fakta** (15 butir): bisa dicari sendiri oleh Khalifa.
+- **Angka Dokploy** (2 butir): dilihat dari panel server.
+- **Pertimbangan hukum** (6 butir): tunggu peninjau.
+
+| No | Di mana muncul | Pertanyaan | Jenis | Jawaban |
+|---|---|---|---|---|
+| 1 | `docs/kebijakan-privasi-DRAF.md`, bagian "Tentang kebijakan ini": `[ISI: nama badan pengelola dan alamatnya]`<br>`docs/surat-persetujuan-ortu-wali-DRAF.md`, bagian "Pembuka": `[ISI: nama badan pengelola]` | Siapa nama badan yang mengelola LANJUT, dan di mana alamatnya? | Fakta | |
+| 2 | `docs/kebijakan-privasi-DRAF.md`, bagian "Data yang kami simpan di server": `[ISI: berapa lama catatan teknis disimpan oleh server dan penyedianya.]` | Berapa lama catatan teknis server disimpan? | Angka Dokploy | |
+| 3 | `docs/kebijakan-privasi-DRAF.md`, bagian "Data yang kami simpan di server": `[ISI: apakah konfirmasi orang tua atau wali di aplikasi diterima sebagai persetujuan; menunggu tinjauan hukum.]` | Apakah centang orang tua atau wali di HP siswa, tanpa pemeriksaan identitas, sah sebagai persetujuan? | Pertimbangan hukum | |
+| 4 | `docs/kebijakan-privasi-DRAF.md`, bagian "Data yang kami simpan di server": `[ISI: penyedia layanan email yang mengirim kode, dan negara pemrosesannya.]` | Layanan email apa yang mengirim kode, dan di negara mana datanya diproses? | Fakta | |
+| 5 | `docs/kebijakan-privasi-DRAF.md`, bagian "Untuk apa datanya dipakai": `[ISI: tujuan lain kalau ada, misalnya penelitian atau laporan ke sekolah. Kalau tidak ada, hapus butir ini.]` | Apakah data dipakai untuk tujuan lain, misalnya penelitian atau laporan ke sekolah? | Fakta | |
+| 6 | `docs/kebijakan-privasi-DRAF.md`, bagian "Siapa yang bisa melihat datamu": `[ISI: siapa saja dan untuk keperluan apa.]` | Siapa saja di tim yang bisa melihat data, dan untuk apa? | Fakta | |
+| 7 | `docs/kebijakan-privasi-DRAF.md`, bagian "Siapa yang bisa melihat datamu": `[ISI: nama penyedia dan lokasi servernya.]` | Apa nama penyedia server dan basis data, dan di mana lokasinya? | Fakta | |
+| 8 | `docs/kebijakan-privasi-DRAF.md`, bagian "Siapa yang bisa melihat datamu": `[ISI: konfirmasi apakah ini akan berubah.]` | Apakah sekolah atau guru nanti akan bisa melihat data siswa? | Fakta | |
+| 9 | `docs/kebijakan-privasi-DRAF.md`, bagian "Fitur AI: siapa penyedianya": `[ISI: penyedia model yang benar-benar menerima data menurut pengaturan di server, dan lokasinya.]`<br>`docs/surat-persetujuan-ortu-wali-DRAF.md`, bagian "Fitur AI": `[ISI: penyedia model yang dipakai]` | Perusahaan mana yang benar-benar menjalankan model AI, dan di mana lokasinya? | Fakta | |
+| 10 | `docs/kebijakan-privasi-DRAF.md`, bagian "Fitur AI: siapa penyedianya": `[ISI: negara atau wilayah pemrosesan, dan dasar pengirimannya ke luar negeri.]`<br>`docs/surat-persetujuan-ortu-wali-DRAF.md`, bagian "Fitur AI": `[ISI: negara atau wilayah]` | Di negara mana data AI diproses, dan apa dasar hukum pengirimannya ke luar negeri? | Pertimbangan hukum | |
+| 11 | `docs/kebijakan-privasi-DRAF.md`, bagian "Pertanyaan pelajaran": `[ISI: aturan untuk modul dari guru atau penerbit (hak cipta) yang potongannya dikirim ke penyedia AI.]` | Bolehkah potongan modul dari guru atau penerbit dikirim ke penyedia AI? | Pertimbangan hukum | |
+| 12 | `docs/kebijakan-privasi-DRAF.md`, bagian "Pertanyaan pelajaran": `[ISI: hasil pengecekan Khalifa: mesin pencari mana yang menerima pertanyaan, dan apakah permintaan agar data tidak dikumpulkan juga berlaku di sana.]` | Mesin pencari mana yang menerima pertanyaan, dan apakah permintaan agar data tidak dikumpulkan berlaku di sana? | Fakta | |
+| 13 | `docs/kebijakan-privasi-DRAF.md`, bagian "Apa yang disimpan dari obrolanmu": `[ISI: hasil pengecekan Khalifa terhadap kebijakan OpenRouter dan penyedia model: apa yang disimpan dan berapa lama.]`<br>`docs/surat-persetujuan-ortu-wali-DRAF.md`, bagian "Fitur AI": `[ISI: hasil pengecekan kebijakan OpenRouter dan penyedia model]` | Menurut kebijakan OpenRouter dan penyedia model, apa yang disimpan dan berapa lama? | Fakta | |
+| 14 | `docs/kebijakan-privasi-DRAF.md`, bagian "Persetujuan orang tua atau wali": `[ISI: apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.]` | Apakah akun tanpa AI juga butuh persetujuan orang tua atau wali? | Pertimbangan hukum | |
+| 15 | `docs/kebijakan-privasi-DRAF.md`, bagian "Hak kamu dan orang tua atau walimu": `[ISI: cara meminta penghapusan di OpenRouter dan penyedia model, bila ada.]` | Bagaimana cara meminta penghapusan data di OpenRouter dan penyedia model? | Fakta | |
+| 16 | `docs/kebijakan-privasi-DRAF.md`, bagian "Hak kamu dan orang tua atau walimu": `[ISI: berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.]` | Berapa lama permintaan ditanggapi, dan bagaimana memastikan pemintanya benar orang tua atau wali? | Pertimbangan hukum | |
+| 17 | `docs/kebijakan-privasi-DRAF.md`, bagian "Keamanan": `[ISI: perlindungan lain di server yang dipakai sungguhan, misalnya koneksi terenkripsi (HTTPS) antara aplikasi dan server, dan pencadangan.]` | Perlindungan apa yang benar-benar terpasang di server, termasuk HTTPS dan jadwal cadangan? | Angka Dokploy | |
+| 18 | `docs/kebijakan-privasi-DRAF.md`, bagian "Perubahan kebijakan": `[ISI: kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.]` | Kapan persetujuan orang tua atau wali perlu diminta ulang? | Pertimbangan hukum | |
+| 19 | `docs/kebijakan-privasi-DRAF.md`, bagian "Perubahan kebijakan": `[ISI: cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.]` | Bagaimana pengguna dan orang tua atau wali diberi tahu saat kebijakan berubah? | Fakta | |
+| 20 | `docs/kebijakan-privasi-DRAF.md`, bagian "Kontak": `[ISI: kontak resmi tim LANJUT: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.]`<br>`docs/surat-persetujuan-ortu-wali-DRAF.md`, bagian "Hak Bapak/Ibu dan Portofolio": `[ISI: kontak resmi tim LANJUT]` | Apa kontak resmi tim: nama pengelola, alamat, email, nomor, dan petugas pelindungan data bila ada? | Fakta | |
+| 21 | `docs/surat-persetujuan-ortu-wali-DRAF.md`, bagian "Kepala surat": `[ISI: kop surat sekolah]` | Kop surat sekolah mana yang dipakai? | Fakta | |
+| 22 | `docs/surat-persetujuan-ortu-wali-DRAF.md`, bagian "Catatan peninjau, persetujuan, dan pernyataan": `[ISI: nomor versi saat dirilis]` | Nomor versi kebijakan berapa yang dirujuk surat saat dirilis? | Fakta | |
+| 23 | `docs/surat-persetujuan-ortu-wali-DRAF.md`, bagian "Tanda tangan": `[ISI: wali kelas / kepala sekolah]` | Siapa yang menandatangani dari pihak sekolah? | Fakta | |

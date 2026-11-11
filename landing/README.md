@@ -31,6 +31,7 @@ npm test             # tes build, rute, noindex, CSP, tautan, metadata rilis, st
 npm run periksa-tipe # TypeScript (memakai TypeScript milik LANJUT_App)
 npm run dev          # server pengembangan Vite (tanpa CSP; halaman dipilih dari alamat)
 npm run hitung-apk -- <berkas.apk>   # ukuran dan SHA-256 untuk metadata rilis
+npm run periksa-gerbang-landing      # syarat sebelum situs terbit: tanpa [ISI, salinan kebijakan sama dengan aplikasi
 ```
 
 Build **gagal** bila metadata rilis tidak sah atau ada tautan/berkas internal yang rusak.
@@ -88,7 +89,7 @@ Build **gagal** bila metadata rilis tidak sah atau ada tautan/berkas internal ya
    relatif seperti `unduh/lanjut-1.0.0.apk`. Untuk berkas di `public/`, build mencocokkan
    ukuran dan SHA-256-nya dengan metadata. Contoh dari PRD (`example.com`, `YYYY-MM-DD`,
    kalimat contoh) ditolak.
-4. `npm run build`, lalu unggah isi `dist/`. Website dirilis terpisah dari aplikasi.
+4. Jalankan `npm run periksa-gerbang-landing`, dan situs tidak boleh terbit sebelum lolos. Lalu `npm run build`, dan unggah isi `dist/`. Website dirilis terpisah dari aplikasi.
 
 ## Hosting
 

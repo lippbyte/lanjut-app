@@ -76,6 +76,13 @@ kebijakan (dicocokkan dengan migrasi 001–016) dan di tes kebijakan.
 | PF4 | Pengelola layanan secara teknis bisa mengakses tempat penyimpanan foto. | Foto disimpan sebagai berkas di server (`srv/modul/butir-bukti/penyimpanan-foto.js`) | perlu dicek manusia (siapa yang punya akses ke server) |
 | PF5 | Catatan dan foto bisa dihapus sendiri oleh siswa. | `srv/modul/butir-bukti/butir-bukti.rute.js`; `tes/portofolio.test.js` ("Hapus foto dan hapus butir menghilangkan berkas dari disk") | terbukti |
 | PF6 | Portofolio diuji oleh kelompok kecil; saklarnya hanya menyala di profil build pilot. | `app/eas.json` profil `pilot`; `app/lib/fiturApp.ts` | perlu dicek manusia (siapa kelompok ujinya) |
+| DL1 | Bidang minat, mapel pilihan, dan kesiapan ujian disimpan di akun dan bisa diubah atau dikosongkan. | `mig/019_minat_rumpun.sql`, `mig/022_mapel_pilihan.sql`, `mig/023_kesiapan_ujian.sql`; `srv/modul/pengguna/pengguna.layanan.js` | terbukti |
+| DL2 | Persiapan Event menyimpan jenis, tanggal, mapel, catatan materi, dan kartu; yang dihapus hilang permanen. | `mig/020_event_sekolah.sql`, `mig/021_event_sekolah_jenis_smp.sql`; `tes/event-sekolah.test.js` | terbukti |
+| DL3 | Konfirmasi orang tua atau wali di aplikasi dicatat dengan sumber sendiri; identitasnya tidak diperiksa. | `mig/024_persetujuan_konfirmasi_di_app.sql`; `srv/modul/persetujuan/persetujuan.layanan.js`; `tes/persetujuan-ortu-app.test.js` | terbukti (apakah sah sebagai persetujuan: perlu dicek manusia) |
+| DL4 | Kode email disimpan dalam bentuk acak bersama bentuk acak alamat email; catatan lebih dari 24 jam dibersihkan saat kode berikutnya diminta. | `mig/025_kode_otp_email.sql`; `srv/modul/auth/otp.layanan.js` | terbukti |
+| DL5 | Data daftar sementara dihapus saat akun dibuat atau setelah 30 menit. | `mig/026_verifikasi_email_daftar.sql`; `srv/modul/auth/daftarEmail.layanan.js` | terbukti |
+| DL6 | Status verifikasi email, tenggat verifikasi, dan tanda wajib buat sandi disimpan untuk keamanan akun. | `mig/026_verifikasi_email_daftar.sql`, `mig/027_wajib_buat_sandi.sql`, `mig/028_batas_verifikasi.sql` | terbukti |
+| DL7 | Bidang minat, mapel pilihan, kesiapan ujian, Persiapan Event, kode email, dan data daftar sementara ikut terhapus saat akun dihapus. | `app/docs/audit-hapus-akun-ekspor.md` bagian 1; `tes/hapus-akun-ekspor.test.js` | terbukti |
 | U1 | Data dipakai untuk menjawab pesan di Ngobrol lewat penyedia AI. | `srv/modul/ngobrol/ngobrol.layanan.js:380-434` | terbukti |
 | V1 | Akun lain tidak bisa melihat data, termasuk modul. | `tes/modul.test.js:250`; `tes/ngobrol-materi.test.js:131` | terbukti |
 | V2 | Penyedia AI pihak ketiga hanya menerima data yang dikirim untuk fitur AI. | `srv/modul/ngobrol/penyedia-ai.js:3-4` (satu-satunya pengirim ke luar); `tes/ngobrol.test.js:560` | terbukti |
@@ -96,7 +103,8 @@ kebijakan (dicocokkan dengan migrasi 001–016) dan di tes kebijakan.
 | A10 | Data dikirim hanya untuk dibuatkan balasan. | `srv/modul/ngobrol/penyedia-ai.js:3-4`; pemanggil hanya `ngobrol.layanan.js:363` (web untuk jawaban) dan `:418` | terbukti (tujuan di pihak LANJUT; pemakaian di pihak penyedia lihat S4) |
 | T1 | Tidak dikirim: nama tampilan, nama pengguna, email, kata sandi, ID akun. | `srv/modul/ngobrol/penyedia-ai.js:63-70` (isi permintaan: model, messages, max_tokens, temperature, provider, plugins; tanpa `user`); `tes/ngobrol.test.js:179` | terbukti |
 | T2 | Nama sekolah tidak dikirim karena tidak disimpan LANJUT. | Lampiran A (tidak ada kolom nama sekolah di `mig/001`–`016`) | terbukti |
-| T3 | Kartu, hasil latihan, centang Daftar Periksa tidak dikirim. | `srv/modul/ngobrol/ngobrol.layanan.js:380-434` (hanya membaca profil, prodi, dan potongan modul) | terbukti |
+| T3 | Isi kartu, jawaban latihan per kartu, centang Daftar Periksa, catatan materi ujian, bidang minat, mapel pilihan, dan kesiapan ujian tidak dikirim. | `srv/modul/ngobrol/konteks.js`; `srv/modul/ngobrol/ngobrol.layanan.js` (`kumpulkanKonteks`) | terbukti |
+| T3b | Untuk pertanyaan latihan atau ujian, ringkasan singkat ikut dikirim: nama mapel dan jenis saran, atau jenis, tanggal, dan mapel satu ujian terdekat. | `srv/modul/ngobrol/konteks.js`; `tes/ngobrol-penghubung.test.js` | terbukti |
 | T4 | Yang ditulis siswa sendiri di pesan ikut terkirim, kecuali yang disamarkan. | `srv/modul/ngobrol/samarkan.js:10-17` (hanya tiga pola) | terbukti |
 | PS1 | Disamarkan: nomor telepon, email, deretan 16 angka seperti NIK → `[disamarkan]`. | `srv/modul/ngobrol/samarkan.js:10-24`; `tes/ngobrol-keselamatan.test.js:112` | terbukti |
 | PS2 | Berlaku untuk pesan, riwayat, potongan modul, hasil web. | `srv/modul/ngobrol/ngobrol.layanan.js:181`, `:185-187`, `:209`; `tes/ngobrol-materi.test.js:218` | terbukti (potongan & web: terbukti · 055) |
@@ -257,6 +265,8 @@ PDP). Tes memastikan setiap `[ISI]` di JSON dan surat ada di tabel ini.
 | I19 | Kebijakan: Perubahan | `[ISI: kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.]` | Peninjau hukum + Khalifa |
 | I20 | Kebijakan: Perubahan | `[ISI: cara memberi tahu pengguna dan orang tua atau wali saat kebijakan berubah.]` | Khalifa |
 | I21 | Kebijakan: Kontak | `[ISI: kontak resmi tim LANJUT: nama pengelola, alamat, email, dan nomor yang bisa dihubungi, termasuk petugas pelindungan data pribadi bila ada.]` | Khalifa |
+| I30 | Kebijakan: Data di server (konfirmasi di aplikasi) | `[ISI: apakah konfirmasi orang tua atau wali di aplikasi diterima sebagai persetujuan; menunggu tinjauan hukum.]` | Peninjau hukum, lalu Khalifa |
+| I31 | Kebijakan: Data di server (kode email) | `[ISI: penyedia layanan email yang mengirim kode, dan negara pemrosesannya.]` | Khalifa |
 | I22 | Surat: kop | `[ISI: kop surat sekolah]` | Sekolah (lewat Khalifa) |
 | I23 | Surat: pembuka | `[ISI: nama badan pengelola]` | Khalifa (sama dengan I1) |
 | I24 | Surat: Fitur AI | `[ISI: penyedia model yang dipakai]` | Khalifa (sama dengan I8) |
