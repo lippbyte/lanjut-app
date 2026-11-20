@@ -1,72 +1,86 @@
 # Ringkasan teknis untuk peninjau hukum
 
-**Status: bahan untuk diperiksa Khalifa. Kebijakan belum final dan belum ditinjau hukum.** Diperiksa 11 November 2026 terhadap kode LANJUT. Rujukan berkas relatif terhadap repo aplikasi; rujukan `docs/` terhadap repo induk. Banyak pengguna berusia di bawah 18 tahun, dan aplikasi tidak menanyakan usia.
+**Status: bahan untuk diperiksa Khalifa. Kebijakan belum final dan belum ditinjau hukum.** Diperiksa 19 November 2026 terhadap `lippbyte/lanjut_app` commit `e8a9839`. Rujukan `server/` dan `docs/audit-*` ada di repo aplikasi; dokumen `docs/` lain di repo induk. Pengguna adalah siswa kelas 7–12, sebagian besar di bawah 18 tahun. Aplikasi tidak menanyakan usia.
 
 ## 1. Data yang dikumpulkan
 
-| Data | Layar | Untuk apa | Rujukan |
-|---|---|---|---|
-| Akun: nama pengguna, email bila diisi, kata sandi dalam bentuk acak | Daftar, Data Akun | Masuk | `server/src/modul/auth/` |
-| Kelas, jenis sekolah, prodi impian, gaya belajar, bidang minat, mapel pilihan, kesiapan ujian | Data Akun, Eksplorasi, Pilih Mapel, Profil Saya | Menyesuaikan isi dan saran | `server/src/modul/pengguna/` |
-| Centang, kartu, hasil latihan | Daftar Periksa, Arsip, Latihan | Menyimpan kemajuan | `server/src/modul/kemajuan/`, `kartu/`, `levelin/` |
-| Teks modul | Arsip Belajar | Belajar dan pencarian | `server/src/modul/modul/` |
-| Catatan dan foto Portofolio | Portofolio, hanya build pilot | Catatan karya | `server/src/modul/butir-bukti/` |
-| Ujian yang dicatat, saklar bawaan mati | Persiapan Event | Persiapan ujian | `server/src/modul/event-sekolah/` |
-| Catatan persetujuan | Terima kebijakan, surat, layar orang tua | Bukti persetujuan | `server/src/modul/persetujuan/` |
-| Sesi, percobaan masuk, kode email dalam bentuk acak | Masuk, Daftar | Keamanan akun | `server/src/modul/auth/` |
-| Catatan teknis: fitur, hasil, lama proses, ID akun | Semua | Operasional | `server/src/app.js` |
+| Data | Untuk apa | Rujukan |
+|---|---|---|
+| Akun: nama pengguna, nama tampilan, email bila diisi, kata sandi sebagai hash satu arah | Masuk | `server/src/modul/auth/` |
+| Kelas, jenis sekolah, prodi impian, gaya belajar, bidang minat, mapel pilihan, kesiapan ujian | Menyesuaikan isi dan saran | `server/src/modul/pengguna/` |
+| Centang, kartu, hasil latihan | Menyimpan kemajuan | `server/src/modul/kemajuan/`, `kartu/`, `levelin/` |
+| Teks modul; berkas asli tidak disimpan | Belajar dan pencarian | `server/src/modul/modul/` |
+| Catatan dan foto Portofolio (hanya build pilot); EXIF dan lokasi dibuang | Catatan karya | `server/src/modul/butir-bukti/` |
+| Ujian yang dicatat; saklar bawaan mati | Persiapan ujian | `server/src/modul/event-sekolah/` |
+| Catatan persetujuan | Bukti persetujuan | `server/src/modul/persetujuan/` |
+| Sesi, hitungan gagal masuk, kode email; token dan kode disimpan sebagai hash | Keamanan akun | `server/src/modul/auth/` |
+| Catatan teknis: alamat permintaan (termasuk kata yang dicari di Arsip Belajar), hasil, lama proses, ID akun | Operasional | `server/src/app.js` |
 
-Daftar kolomnya ada di `docs/kebijakan-privasi-DRAF.md` Lampiran A.
+Server aplikasi tidak menyimpan alamat IP. Log di luar aplikasi, misalnya proxy server, tidak diperiksa. Daftar kolom: `docs/kebijakan-privasi-DRAF.md` Lampiran A.
 
 ## 2. Data yang keluar dari aplikasi
 
-**Pilot tanpa AI, yaitu `ai_aktif = 0`:** tidak ada data yang dikirim ke penyedia AI atau mesin pencari. Dibuktikan oleh `server/tests/pilot-tanpa-ai.test.js`, rinciannya di `docs/audit-pilot-tanpa-ai.md`. Yang tetap keluar:
+**Dengan `ai_aktif = 0`:** tidak ada data ke penyedia AI atau mesin pencari (`server/tests/pilot-tanpa-ai.test.js`, `docs/audit-pilot-tanpa-ai.md`). Yang tetap keluar:
 
-- alamat email dan kode, ke penyedia email, saat kode diminta (`server/src/util/surel.js`);
-- masuk dengan Google, bila dinyalakan (`server/src/modul/auth/tokenGoogle.js`);
+- email dan kode, ke penyedia email, saat kode diminta (`server/src/util/surel.js`);
+- masuk dengan Google, bila dinyalakan: siswa masuk langsung di Google; server hanya mengambil kunci publik Google (`server/src/modul/auth/tokenGoogle.js`);
 - kunjungan ke situs luar, saat siswa menekan tautan.
 
-**Bila AI dinyalakan,** server mengirim ke OpenRouter, yang meneruskan ke perusahaan penjalan model (`server/src/modul/ngobrol/penyedia-ai.js`):
+**Bila AI dinyalakan,** server mengirim ke OpenRouter, yang meneruskan ke penjalan model (`server/src/modul/ngobrol/penyedia-ai.js`):
 
-- pesan dan riwayat sesi, sesudah sebagian data pribadi disamarkan;
+- pesan dan riwayat sesi, sesudah email, nomor mirip NIK dan telepon, tanggal lahir, alamat, dan nama sekolah disamarkan;
 - kelas, jenis sekolah, prodi impian, gaya belajar;
-- satu ringkasan: modul, saran latihan, atau ujian terdekat (`server/src/modul/ngobrol/konteks.js`);
+- satu ringkasan fitur: modul, saran latihan, atau ujian terdekat (`server/src/modul/ngobrol/konteks.js`);
+- untuk pertanyaan pelajaran, potongan teks modul milik siswa yang cocok;
 - pertanyaan terbaru ke mesin pencari, bila pencarian web dinyalakan.
 
-Nama, email, dan ID akun tidak dikirim. Model bawaan tersedia dari beberapa perusahaan di beberapa wilayah ([daftar OpenRouter](https://openrouter.ai/api/v1/models/anthropic/claude-sonnet-5.5/endpoints), diperiksa 11 November 2026).
+Nama, nama pengguna, email, dan ID akun tidak dikirim. Model dan penyedia di produksi: [ISI: menunggu Khalifa].
 
 ## 3. Siapa yang bisa mengakses
 
 | Data | Lewat aplikasi | Lewat server |
 |---|---|---|
-| Foto Portofolio | Hanya akun siswa itu. Siswa lain tidak bisa (`server/tests/portofolio.test.js`) | Pengelola secara teknis bisa mengakses penyimpanannya |
-| Data akun lain | Hanya pemiliknya (`server/tests/modul.test.js`) | Siapa pun yang memegang akses basis data |
-| Hitungan pemakaian | Tidak ada | Alat tim, tanpa isi (`server/tools/metrik-portofolio.js`) |
+| Foto Portofolio | Hanya akun pemiliknya (`server/tests/portofolio.test.js`) | Pengelola secara teknis bisa mengakses penyimpanannya |
+| Data akun lain | Hanya pemiliknya; setiap kueri data pribadi memeriksa pemilik (`server/tools/periksa-sql.js`) | Siapa pun yang memegang akses basis data |
+| Hitungan pemakaian | Tidak ada | Alat tim: angka, ID akun hanya bila diminta, tanpa isi (`server/tools/metrik-portofolio.js`) |
 
-Tidak ada layar atau rute bagi tim, sekolah, atau guru untuk membuka data siswa. `server/src/middleware/wajibTim.js` tidak dipasang di rute mana pun.
+Tidak ada layar atau rute bagi tim, sekolah, atau guru untuk membuka data siswa (`server/src/middleware/wajibTim.js` tidak dipasang).
 
 ## 4. Penyimpanan dan penghapusan
 
-- Akun disimpan sampai pemiliknya menghapus, tanpa hapus otomatis (keputusan K27, `docs/kebijakan-privasi-DRAF.md`).
-- Hapus akun berlaku seketika dan menghapus data terkait, termasuk foto (`docs/audit-hapus-akun-ekspor.md`, `server/tests/hapus-akun-ekspor.test.js`). Fiturnya bersaklar build.
-- Kartu dan butir yang dihapus tetap tersimpan sampai akun dihapus. Modul, foto, dan event dihapus permanen.
-- Kode email dibersihkan sesudah 24 jam saat kode berikutnya diminta (`server/src/modul/auth/otp.layanan.js`). Data daftar sementara dihapus dalam 30 menit.
+- Akun disimpan sampai pemiliknya menghapus, tanpa hapus otomatis (K27).
+- Hapus akun langsung menghapus data terkait (`docs/audit-hapus-akun-ekspor.md`). Foto yang gagal dihapus dicoba ulang dengan `npm run bersihkan-berkas`; kata modul tersisa di indeks pencarian sekitar 30 detik. Layarnya bersaklar build dan mati di APK sekolah; rute servernya selalu ada.
+- Kartu dan butir pribadi yang dihapus tetap tersimpan sampai akun dihapus. Modul, Portofolio, dan event dihapus permanen.
+- Kode email dihapus sesudah 24 jam, saat kode berikutnya diminta. Data daftar sementara berlaku 30 menit, dibersihkan tiap 5 menit.
 
-**Tidak bisa dihapus dari aplikasi:** cadangan basis data sampai tergantikan, catatan teknis yang memuat ID akun, data yang sudah dikirim ke penyedia AI, dan email terkirim.
+**Tidak bisa dihapus dari aplikasi:** cadangan sampai tergantikan, catatan teknis berisi ID akun, data yang sudah dikirim ke penyedia AI, dan email terkirim.
 
-## 5. Yang belum diketahui, diisi Khalifa
+## 5. Belum tercakup di kebijakan privasi
 
-Lengkapnya di `docs/lembar-isian-fakta.md`.
+Fitur berikut di balik saklar mati, hanya dicoba di lingkungan pengembangan dengan data dummy, dan **belum dipakai siswa nyata**:
 
-- Badan pengelola, alamat, kontak resmi, petugas pelindungan data.
-- Penyedia dan lokasi server; lama penyimpanan log; jadwal cadangan.
-- Penyedia email dan negaranya.
-- Nilai `ai_aktif` di produksi, dan pengaturan akun OpenRouter.
-- Siapa yang memegang akses server.
+- **Discover:** refleksi bebas per kartu (dua isian, masing-masing paling panjang 280 karakter) dan Profil Eksplorasi (salinan refleksi dan pilihan siswa, catatan paling panjang 500 karakter), dengan versi lama tetap tersimpan.
+- **Jalur & Tujuan:** pilihan jalur dan riwayat jedanya, serta tujuan dengan versinya.
 
-## 6. Enam pertanyaan hukum
+Keduanya ikut diunduh dan ikut terhapus bersama akun. Keterbatasan yang terbukti:
 
-Dikutip apa adanya, belum dijawab.
+- Memulihkan cadangan tabel Discover dapat menghidupkan lagi data akun yang sudah dihapus; prosedurnya kini memuat langkah pembersihan (K43).
+- Memulihkan cadangan penuh menghidupkan lagi akun yang dihapus sesudahnya, dan belum ada alat untuk menghapusnya ulang (T20).
+
+## 6. Fakta dan pertanyaan tentang AI
+
+- `ai_aktif = 0` di produksi, dinyatakan diperiksa 12 November 2026. [ISI: bukti pemeriksaan.]
+- Tes pilot tanpa AI ada dan lolos.
+- `ai_zdr` bawaannya `0`; nilai produksi [ISI].
+- Pemegang akun OpenRouter wajib berusia 18 tahun ke atas (`docs/hasil-pengisian-fakta.md`). Relevan bila AI dinyalakan.
+
+## 7. Yang belum diketahui
+
+Lengkapnya di `docs/lembar-isian-fakta.md`: badan pengelola dan kontak resmi; penyedia, lokasi server, lama log, dan jadwal cadangan; penyedia email; pengaturan AI dan akun OpenRouter di produksi; siapa yang memegang akses server.
+
+## 8. Pertanyaan terbuka untuk peninjau
+
+Belum dijawab. Butir 1–6 dikutip apa adanya dari penanda `[ISI]` di kebijakan privasi; di `docs/lembar-isian-fakta.md` keenamnya butir 3, 10, 11, 14, 16, dan 18.
 
 1. apakah konfirmasi orang tua atau wali di aplikasi diterima sebagai persetujuan; menunggu tinjauan hukum.
 2. negara atau wilayah pemrosesan, dan dasar pengirimannya ke luar negeri.
@@ -74,7 +88,5 @@ Dikutip apa adanya, belum dijawab.
 4. apakah akun dasar (tanpa AI) juga butuh persetujuan orang tua atau wali; menunggu tinjauan hukum.
 5. berapa lama permintaan ditanggapi, dan cara memastikan permintaan benar-benar datang dari orang tua atau wali.
 6. kapan persetujuan orang tua atau wali perlu diminta ulang saat kebijakan berubah.
-
-## 7. Persetujuan orang tua untuk Portofolio
-
-Portofolio hanya mensyaratkan siswa menerima kebijakan (`server/src/modul/butir-bukti/butir-bukti.layanan.js`), dan foto bisa memuat wajah siswa. **Pertanyaan: apakah fitur ini perlu persetujuan orang tua atau wali sendiri?**
+7. Apakah Portofolio dan refleksi Discover perlu persetujuan orang tua atau wali tersendiri? Portofolio kini hanya mensyaratkan siswa menerima kebijakan, dan fotonya bisa memuat wajah.
+8. Berapa lama bukti persetujuan orang tua atau wali disimpan?
